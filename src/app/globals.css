@@ -1,0 +1,35 @@
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+.side-layout {
+  display: flex;
+  width: 100%;
+}
+.nav-layout {
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+.children{
+  padding: 24px;
+  padding-top: 100px;
+  width: 100%;
+  margin-left: 250px;
+}

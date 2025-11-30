@@ -1,0 +1,128 @@
+/* Existing styles remain unchanged */
+.dashNav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 38px;
+  border-bottom: rgba(221, 221, 228, 1) 1px solid;
+  background: rgba(244, 244, 244, 1);
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+}
+.nav-items {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.nav-search {
+  position: relative;
+}
+.nav-search input {
+  padding: 12px 24px;
+  width: 300px;
+  background: transparent;
+  border: 1px solid rgba(221, 221, 228, 1);
+  border-radius: 30px;
+}
+.nav-search input,
+.nav-search::placeholder {
+  font-size: 14px;
+  font-weight: 500;
+}
+.search-icon {
+  position: absolute;
+  top: 14%;
+  right: 5%;
+  cursor: pointer;
+  color: rgba(221, 221, 228, 1);
+}
+.notification {
+  cursor: pointer;
+}
+
+/* New styles for user profile and dropdown */
+.user-profile {
+  position: relative;
+}
+.user-icon {
+  cursor: pointer;
+}
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(221, 221, 228, 1);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  z-index: 10;
+  overflow: hidden;
+}
+.dropdown-item {
+  display: block;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.8);
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+.dropdown-item:hover {
+  background: rgba(244, 244, 244, 1);
+}
+
+/* New styles for notifications panel */
+.notifications {
+  position: relative;
+}
+.notifications-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(221, 221, 228, 1);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  z-index: 10;
+  overflow: hidden;
+}
+.notifications-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(221, 221, 228, 1);
+}
+.notifications-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.9);
+}
+.notifications-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+.notification-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(221, 221, 228, 1);
+}
+.notification-item:last-child {
+  border-bottom: none;
+}
+.notification-item p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.8);
+}
+.notification-item .timestamp {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.5);
+  margin-top: 4px;
+}
+.notification-item:hover {
+  background: rgba(244, 244, 244, 1);
+}

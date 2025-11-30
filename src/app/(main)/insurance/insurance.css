@@ -1,0 +1,270 @@
+.section-wrap {
+  padding: 60px 120px;
+  display: flex;
+  gap: 42px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(235, 235, 235, 1);
+}
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+.header h1 {
+  font-family: Plus Jakarta Sans;
+  font-weight: 800;
+  font-style: ExtraBold;
+  font-size: 64px;
+  line-height: 64px;
+  letter-spacing: -3%;
+  text-align: center;
+  vertical-align: middle;
+  color: rgba(8, 8, 8, 1);
+}
+.header h1 span {
+  font-style: Italic;
+  color: rgba(255, 194, 0, 1);
+}
+.header p {
+  font-family: Plus Jakarta Sans;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 20px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: center;
+  vertical-align: middle;
+  color: rgba(8, 8, 8, 1);
+  width: 555px;
+}
+
+.insurance-plans {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+}
+.plan {
+  border-radius: 32px;
+  border: 1px solid rgba(221, 221, 228, 1);
+  box-shadow: 0px 5px 11px 0px rgba(102, 102, 102, 0.1);
+  box-shadow: 0px 20px 20px 0px rgba(102, 102, 102, 0.09);
+  box-shadow: 0px 45px 27px 0px rgba(102, 102, 102, 0.05);
+  box-shadow: 0px 79px 32px 0px rgba(102, 102, 102, 0.01);
+  box-shadow: 0px 124px 35px 0px rgba(102, 102, 102, 0);
+  background: rgba(255, 255, 255, 1);
+  width: 384px;
+}
+.plan-head-wrap {
+  padding: 8px;
+}
+.plan-head {
+  background: rgba(244, 244, 244, 1);
+  padding: 32px;
+  border: 1px solid rgba(221, 221, 228, 1);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.plan-head h2 {
+  font-family: Plus Jakarta Sans;
+  font-weight: 800;
+  font-style: ExtraBold;
+  font-size: 24px;
+  color: black;
+  line-height: 100%;
+  letter-spacing: -2%;
+}
+.plan-head p {
+  font-family: Plus Jakarta Sans;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 13px;
+  line-height: 100%;
+  letter-spacing: -2%;
+
+  color: rgba(59, 63, 68, 1);
+}
+.price {
+  padding: 24px 32px;
+  font-family: Plus Jakarta Sans;
+  font-weight: 800;
+  font-style: ExtraBold;
+  font-size: 36px;
+  line-height: 100%;
+  letter-spacing: -4%;
+  color: black;
+}
+.price span:first-child {
+  font-size: 20px;
+}
+.price span:last-child {
+  font-size: 20px;
+  font-weight: 400;
+  font-family: Plus Jakarta Sans;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 18px;
+  color: rgba(144, 152, 162, 1);
+  line-height: 100%;
+  letter-spacing: -2%;
+}
+.bullets {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.bullets h4 {
+  font-family: Plus Jakarta Sans;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 14px;
+  color: rgba(59, 63, 68, 1);
+  line-height: 100%;
+  letter-spacing: -1%;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.plan-start {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.plan-start p {
+  font-family: Plus Jakarta Sans;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 10px;
+  color: rgba(59, 63, 68, 1);
+  line-height: 100%;
+  letter-spacing: -1%;
+  text-align: center;
+}
+.plan-start button {
+  text-align: center;
+  padding: 20px;
+  border-radius: 60px;
+  font-family: Plus Jakarta Sans;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 16px;
+  color: white;
+  background: rgba(8, 8, 8, 1);
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+}
+.plan-start button span {
+  font-family: Plus Jakarta Sans;
+  font-weight: 700;
+  font-style: Bold;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: center;
+  vertical-align: middle;
+  color: rgba(255, 194, 0, 1);
+}
+.switch-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 1);
+  border-radius: 44px;
+  padding: 8px 16px;
+  border: 1px solid rgba(221, 221, 228, 1);
+  position: relative;
+}
+.save15{
+  position: absolute;
+  right: -42%;
+  top: -15px;
+}
+.switch {
+  display: flex;
+  align-items: center;
+  /* gap: 8px; */
+  background: rgba(255, 255, 255, 1);
+  border-radius: 44px;
+}
+.switch-wrap h3 {
+  font-family: Plus Jakarta Sans;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: center;
+  vertical-align: middle;
+  color: rgba(59, 63, 68, 1);
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.switch .slider {
+  position: relative;
+  cursor: pointer;
+  width: 39px;
+  height: 22px;
+  background-color: rgba(229, 231, 234, 1);
+  border-radius: 44px;
+  box-shadow: 0px 3px 1px 0px rgba(0, 0, 0, 0.06);
+  box-shadow: 0px 3px 8px 0px rgba(0, 0, 0, 0.15);
+  transition: 0.4s;
+}
+.switch .slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+
+  transition: 0.4s;
+}
+.switch input:checked + .slider {
+  background-color: rgba(255, 194, 0, 1);
+}
+.switch input:checked + .slider:before {
+  transform: translateX(16px);
+}
+@media screen and (max-width: 900px) {
+  .insurance-plans{
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .section-wrap {
+  padding: 60px 80px;
+  }
+  .plan{
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .section-wrap {
+  padding: 60px 32px;
+  }
+  .header p{
+    width: 100%;
+    font-size: 18px;
+  }
+  .header h1{
+    font-size: 36px;
+    line-height: 32px;
+  }
+}

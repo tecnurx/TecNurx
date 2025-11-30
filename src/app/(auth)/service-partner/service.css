@@ -1,0 +1,284 @@
+.service-partner {
+  padding: 120px;
+  padding-top: 62px;
+  background: rgba(244, 244, 244, 1);
+  gap: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.hero-section {
+  display: flex;
+  align-items: start;
+  gap: 73px;
+}
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-between;
+  background-position: center;
+  background-size: cover;
+  gap: 40px;
+}
+.hero-content h1 {
+  font-family: Plus Jakarta Sans;
+  font-weight: 800;
+  font-style: ExtraBold;
+  font-size: 64px;
+  line-height: 64px;
+  letter-spacing: -3%;
+  vertical-align: middle;
+  color: Black;
+  width: 580px;
+}
+.hero-content h1 span {
+  font-style: italic;
+  color: rgba(255, 204, 42, 1);
+}
+.hero-content p {
+  font-family: Plus Jakarta Sans;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 20px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+  width: 508px;
+}
+.hero-content a {
+  padding: 24px 48px;
+  background: #000;
+  color: white;
+  border-radius: 60px;
+  font-family: Plus Jakarta Sans;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+}
+.requirements {
+  width: 750px;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  padding: 100px;
+  border-radius: 32px;
+  background: white;
+}
+.requirements h1 {
+  font-family: Plus Jakarta Sans;
+  font-weight: 700;
+  font-style: Bold;
+  font-size: 64px;
+  line-height: 64px;
+  letter-spacing: -3%;
+  text-align: start;
+  vertical-align: middle;
+}
+.requirements ul {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.requirements li {
+  font-family: Plus Jakarta Sans;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 20.84px;
+  color: rgba(59, 63, 68, 1);
+  line-height: 100%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+}
+.service-form {
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: 40px;
+  border-radius: 32px;
+  border: 1px solid rgba(221, 221, 228, 1);
+  background: rgba(255, 255, 255, 1);
+}
+.service-form h1 {
+  font-family: Plus Jakarta Sans;
+  font-weight: 800;
+  font-style: ExtraBold;
+  font-size: 24px;
+  color: #000;
+  line-height: 100%;
+  letter-spacing: -3%;
+  vertical-align: middle;
+}
+.service-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.service-group p {
+  font-family: Plus Jakarta Sans;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 14px;
+  color: rgba(144, 152, 162, 1);
+  line-height: 100%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+  text-transform: uppercase;
+}
+.service-form-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.service-form-wrap label,
+.service-check div {
+  font-family: Plus Jakarta Sans;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 16px;
+  color: rgba(59, 63, 68, 1);
+  line-height: 100%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+}
+.service-form-wrap input,
+.service-form-wrap select,
+.service-form-wrap option,
+.service-form-wrap textarea {
+  border-radius: 8px;
+  padding: 12px 16px;
+  border: 1px solid rgba(221, 221, 228, 1);
+}
+.service-form-wrap input,
+.service-form-wrap input::placeholder,
+.service-form-wrap select,
+.service-form-wrap option,
+.service-form-wrap textarea,
+.service-form-wrap textarea::placeholder {
+  font-family: Plus Jakarta Sans;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 14px;
+  color: rgba(144, 152, 162, 1);
+  line-height: 16px;
+  letter-spacing: 0%;
+}
+.service-check {
+  display: flex;
+  gap: 24px;
+}
+.service-check input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+.service-check div {
+  display: flex;
+  gap: 8px;
+}
+.service-form-wrap span {
+  color: rgba(144, 152, 162, 1);
+  font-family: Plus Jakarta Sans;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0%;
+  vertical-align: middle;
+}
+.service-form-wrap textarea {
+  height: 80px;
+  resize: none;
+}
+.service-form button {
+  font-family: Plus Jakarta Sans;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 16px;
+  color: white;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: center;
+  vertical-align: middle;
+  background: #000;
+  border-radius: 60px;
+  border: none;
+  padding: 24px;
+  cursor: pointer;
+}
+.service-logo {
+  display: flex;
+  justify-content: center;
+}
+
+
+@media screen and (max-width: 900px) {
+  .hero-section{
+    flex-direction: column;
+    gap: 42px;
+    padding: 62px 80px 120px;
+  }
+  .requirements{
+    padding: 50px;
+    width: 600px;
+  }
+  .service-partner{
+    gap: 32px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .service-partner{
+    padding: 62px 32px 80px;
+  }
+  .hero-section{
+    padding: 0;
+    gap: 32px;
+  }
+  .hero-content h1{
+    font-size: 42px;
+    line-height: 40px;
+    width: 100%;
+  }
+  .hero-content{
+    gap: 24px;
+  }
+  .hero-content p{
+    font-size: 18px;
+    width: 100%;
+  }
+  .hero-image{
+    width: 100%;
+    height: 400px;
+  }
+  .requirements h1{
+    font-size: 32px;
+  }
+  .requirements{
+    gap: 32px;
+    width: 100%;
+    padding: 24px;
+  }
+  .requirements li{
+    font-size: 18px;
+  }
+  .requirements ul{
+    margin-left: 24px;
+  }
+  .service-form{
+    width: 100%;
+    gap: 28px;
+    padding: 20px;
+  }
+  .service-form h1{
+    font-size: 22px;
+  }
+}

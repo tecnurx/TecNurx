@@ -1,0 +1,110 @@
+/* Infinite marquee container */
+.marquee {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* The track that moves */
+.marquee-track {
+  display: flex;
+  gap: 24px;
+  animation: scroll-left 45s linear infinite; /* Adjust speed here */
+  will-change: transform;
+}
+
+/* Pause on hover (nice UX) */
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Each card */
+.swiper-card {
+  flex: 0 0 auto;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  background-color: rgba(244, 244, 244, 1);
+  border-radius: 24px;
+  width: 520px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Text styling */
+.swiper-card p {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 400;
+  font-size: 20.84px;
+  color: #3b3f44;
+  line-height: 1.6;
+  text-wrap: wrap;
+  width: 100%;
+}
+
+/* Name & designation */
+.swiper-card h3 {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  color: #3b3f44;
+  margin: 0;
+}
+
+.swiper-card span {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #3b3f44;
+  margin-top: 4px;
+  display: block;
+}
+
+/* User image */
+.card-details {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+/* Quote decoration */
+.quote {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  width: 120px;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+/* Infinite scroll animation */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  .swiper-card {
+    width: 340px;
+  }
+  .swiper-card p {
+    width: 280px;
+    font-size: 16px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .swiper-card {
+    width: 300px;
+  }
+  .swiper-card p {
+    width: 240px;
+    font-size: 14px;
+  }
+}

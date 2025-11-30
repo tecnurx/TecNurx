@@ -1,0 +1,61 @@
+.privacy-wrap {
+  padding: 60px 120px;
+  display: flex;
+  gap: 42px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(235, 235, 235, 1);
+}
+.privacy-wrap h1 {
+  font-family: Plus Jakarta Sans;
+  font-weight: 800;
+  font-size: 64px;
+  line-height: 64px;
+  letter-spacing: -3%;
+  text-align: center;
+  vertical-align: middle;
+  color: rgba(8, 8, 8, 1);
+}
+.privacy-wrap h1 span {
+  font-style: Italic;
+  color: rgba(255, 194, 0, 1);
+}
+.write-up {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  color: rgba(8, 8, 8, 1);
+}
+.write-up h2 {
+  font-family: Plus Jakarta Sans;
+  font-weight: 700;
+  font-style: Bold;
+  font-size: 20px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+}
+.write-up p,
+.write-up li {
+  font-family: Plus Jakarta Sans;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 20px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+}
+.write-up li{
+    margin-left: 20px;
+    margin-bottom: 4px;
+}
+
+@media screen and (max-width: 600px) {
+  .privacy-wrap{
+    padding: 60px 32px;
+  }
+  .privacy-wrap h1{
+    font-size: 38px;
+  }
+}

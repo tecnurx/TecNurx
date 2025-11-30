@@ -1,0 +1,337 @@
+.section-wrap {
+  padding: 60px 120px;
+  display: flex;
+  gap: 100px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(235, 235, 235, 1);
+}
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+.header h1 {
+  font-family: Plus Jakarta Sans;
+  font-weight: 800;
+  font-style: ExtraBold;
+  font-size: 64px;
+  line-height: 64px;
+  letter-spacing: -3%;
+  text-align: center;
+  vertical-align: middle;
+  color: rgba(8, 8, 8, 1);
+}
+.header h1 span {
+  font-style: Italic;
+  color: rgba(255, 194, 0, 1);
+}
+.header p {
+  font-family: Plus Jakarta Sans;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 20px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: center;
+  vertical-align: middle;
+  color: rgba(8, 8, 8, 1);
+  width: 500px;
+}
+.form-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.form-wrap div {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+}
+.form-wrap label {
+  font-family: Plus Jakarta Sans;
+  font-weight: 700;
+  font-style: Bold;
+  font-size: 20px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+  color: rgba(59, 63, 68, 1);
+}
+.form-wrap p {
+  font-family: Plus Jakarta Sans;
+  font-weight: 400;
+  font-style: Italic;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+  color: rgba(144, 152, 162, 1);
+}
+.form-wrap input {
+  width: 760;
+  height: 79;
+  padding: 32px;
+  border-radius: 8px;
+  border: 2px solid rgba(221, 221, 228, 1);
+  background-color: rgba(255, 255, 255, 1);
+}
+.form-wrap input::placeholder,
+.form-wrap input {
+  font-family: Plus Jakarta Sans;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 20px;
+  line-height: 16px;
+  letter-spacing: 0%;
+  color: rgba(144, 152, 162, 1);
+}
+.form-wrap input {
+  color: rgba(8, 8, 8, 1);
+}
+.track-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  justify-content: center;
+}
+.track-form button {
+  width: 185;
+  padding: 20px;
+  border-radius: 60px;
+  font-family: Plus Jakarta Sans;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: center;
+  vertical-align: middle;
+  color: white;
+  background: #000;
+  border: none;
+  cursor: pointer;
+}
+/* MODAL */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal {
+  background-color: #fff;
+  border-radius: 32px;
+  width: 432px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 1);
+}
+.modalheader {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 24px;
+  background: rgba(255, 194, 0, 1);
+}
+.modalheader h2 {
+  font-family: Plus Jakarta Sans;
+  font-weight: 700;
+  font-style: Bold;
+  font-size: 32px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+  color: black;
+}
+.modalheader h2 span {
+  color: white;
+}
+.timersContainer {
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  width: 100%;
+}
+.timersContainer div {
+  width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.timersContainer h3 {
+  font-family: Plus Jakarta Sans;
+  font-weight: 300;
+  font-style: Light;
+  font-size: 12px;
+  color: rgba(59, 63, 68, 1);
+  line-height: 100%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+}
+.timersContainer p {
+  font-family: Plus Jakarta Sans;
+  font-weight: 700;
+  font-style: Bold;
+  font-size: 20px;
+  color: #000;
+  line-height: 100%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+}
+.timersContainer h5 {
+  font-family: Plus Jakarta Sans;
+  font-weight: 400;
+  font-style: Italic;
+  font-size: 10px;
+  color: rgba(59, 63, 68, 1);
+  line-height: 100%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+}
+.timelineContainer {
+  padding: 0 32px;
+  position: relative;
+}
+.timelineItem {
+  display: flex;
+  margin-bottom: 47px;
+  gap: 32px;
+  position: relative;
+}
+.timestamp {
+  font-family: Plus Jakarta Sans;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 12px;
+  color: rgba(144, 152, 162, 1);
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: right;
+  vertical-align: middle;
+  width: 74px;
+}
+.line1 {
+  height: 47px;
+  width: 3px;
+  background-color: rgba(255, 194, 0, 1);
+  margin-left: 115px;
+  margin-bottom: 2px;
+}
+/* Updated circle and line positioning to be inline horizontally */
+.circle {
+  height: 20px;
+  width: 20px;
+  background: white;
+  border: 2px solid rgba(221, 221, 228, 1);
+  border-radius: 100%;
+  flex-shrink: 0;
+  margin-bottom: 50px;
+  position: absolute;
+  z-index: 2;
+  left: 106px;
+  top: 0;
+}
+.circle.completed {
+  background: white;
+  border: 2px solid rgba(255, 194, 0, 1);
+}
+/* Updated line positioning and removed margin-top from content */
+.line {
+  height: 47px;
+  width: 3px;
+  margin-top: 2px;
+  position: absolute;
+  left: 115px;
+  top: 20px;
+  z-index: 1000;
+}
+.line-completed {
+  background-color: rgba(255, 194, 0, 1);
+}
+.line-split {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 194, 0, 1) 50%,
+    rgba(209, 213, 219, 1) 50%
+  );
+}
+.line-ash {
+  background-color: rgba(209, 213, 219, 1);
+}
+.step-label {
+  font-family: Plus Jakarta Sans;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+  /* margin-top: -2px; */
+}
+.content {
+  margin-left: 47px;
+}
+.close-wrap {
+  padding: 16px;
+  background: rgba(244, 244, 244, 1);
+  display: flex;
+  justify-content: right;
+  border-top: 1px solid rgba(221, 221, 228, 1);
+}
+.close-wrap button {
+  background-color: #000;
+  color: white;
+  padding: 16px 32px;
+  font-family: Plus Jakarta Sans;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: center;
+  vertical-align: middle;
+  border-radius: 40px;
+  border: none;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 600px) {
+  .form-wrap div {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .form-wrap input {
+    width: 100%;
+  }
+  .track-form {
+    width: 100%;
+    align-items: stretch;
+  }
+  .form-wrap {
+    width: 100%;
+    align-items: stretch;
+  }
+  .track-form button {
+    margin: auto;
+  }
+  .header h1 {
+    font-size: 38px;
+  }
+  .header p {
+    width: 100%;
+    font-size: 15px;
+  }
+  .section-wrap {
+    padding: 60px 28px;
+  }
+}
