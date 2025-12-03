@@ -254,13 +254,40 @@
   vertical-align: middle;
   color: rgba(59, 63, 68, 1);
 }
+.submit-disable{
+  opacity: 0.6;
+}
+
+
+/* Optional: little pulse animation when loading */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.submit-btn.loading {
+  animation: pulse 1.5s infinite;
+}
 
 @media screen and (max-width: 600px) {
-  .card{
-       width: 95%;
+  .card {
+    width: 95%;
     padding: 24px;
   }
-  .register-wrap{
+  .register-wrap {
     /* padding: 100px 24px; */
+  }
+}
+
+@media screen and (min-width: 2550px){
+  .register-wrap{
+    height: 100vh;
   }
 }

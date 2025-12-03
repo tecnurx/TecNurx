@@ -1,0 +1,259 @@
+.insurance-page {
+  padding: 24px;
+  /* max-width: 1100px; */
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.insurance-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.insurance-header p {
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 16px;
+}
+
+/* Tabs */
+.insurance-tabs {
+  display: flex;
+  gap: 4px;
+  margin: 32px 0 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tab {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.tab.active {
+  color: #000;
+  font-weight: 600;
+  border-bottom-color: #FFC400;
+}
+
+.tab:hover:not(.active) {
+  color: #000;
+  background: #f9f9f9;
+}
+
+/* Active Plans */
+.active-plans {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.plan-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid rgba(221, 221, 228, 0.8);
+  border-radius: 16px;
+  transition: all 0.2s;
+}
+
+.plan-card:hover {
+  border-color: rgba(255, 196, 0, 0.5);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+.plan-info h3 {
+  margin: 4px 0;
+  font-size: 18px;
+}
+
+.coverage {
+  color: #10b981;
+  font-weight: 500;
+  margin: 8px 0;
+}
+
+.plan-meta {
+  font-size: 14px;
+  color: #666;
+}
+
+.plan-id {
+  font-family: monospace;
+  font-weight: 600;
+  color: #FFC400;
+}
+
+.plan-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.renew-btn {
+  padding: 10px 20px;
+  background: #FFC400;
+  color: black;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.view-policy {
+  font-size: 14px;
+  color: #FFC400;
+  text-decoration: none;
+}
+
+/* Claim Form */
+.claim-form-container {
+  /* max-width: 680px; */
+  margin: 0 auto;
+}
+
+.claim-form h2 {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+.claim-form p {
+  color: #666;
+  margin-bottom: 28px;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.file-upload {
+  position: relative;
+}
+
+.file-upload input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload-area {
+  border: 2px dashed #ccc;
+  border-radius: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  background: #fafafa;
+  color: #888;
+  transition: all 0.2s;
+}
+
+.upload-area:hover {
+  border-color: #FFC400;
+  background: #fffbe6;
+}
+
+.uploaded-files {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #666;
+}
+
+.submit-claim-btn {
+  width: 100%;
+  padding: 14px;
+  background: #FFC400;
+  color: black;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+/* Claim History */
+.claim-history {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.claim-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 18px;
+  background: #fff;
+  border: 1px solid rgba(221, 221, 228, 0.8);
+  border-radius: 14px;
+}
+
+.claim-main h4 {
+  margin: 0 0 4px 0;
+}
+
+.claim-main p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.claim-id-date {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.claim-status {
+  text-align: right;
+}
+
+.status-badgee {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.status-badgee.approved   { background: #d1fae5; color: #065f46; }
+.status-badgee.rejected   { background: #fee2e2; color: #991b1b; }
+.status-badgee.pending    { background: #fff4e5; color: #d97706; }
+
+.payout {
+  margin-top: 8px;
+  font-weight: 600;
+  color: #000;
+}

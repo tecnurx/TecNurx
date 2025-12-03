@@ -76,7 +76,7 @@
 
 .view-details-btn {
   padding: 12px 20px;
-  background: #FFC400;
+  background: #f2f2f2;
   color: black;
   font-weight: 600;
   border: none;
@@ -85,9 +85,6 @@
   transition: background 0.2s;
 }
 
-.view-details-btn:hover {
-  background: #e0ad00;
-}
 
 /* Modal Styles */
 .modal-overlay {

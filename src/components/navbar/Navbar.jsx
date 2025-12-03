@@ -59,8 +59,10 @@ const Navbar = () => {
         <button
           className="mobile-menu-btn"
           onClick={() => setMobileMenuOpen(true)}
-        > MENU
-          <Menu size={28} />
+        >
+          {" "}
+          MENU
+          <Menu size={28} color="black" />
         </button>
       </nav>
 
@@ -69,7 +71,7 @@ const Navbar = () => {
         <div className="drawer-header">
           <Image src={logo} alt="logo" width={160} height={34} />
           <button onClick={() => setMobileMenuOpen(false)}>
-            <X size={28} />
+            <X size={28} color="black" />
           </button>
         </div>
 

@@ -1,4 +1,5 @@
 import "@/app/globals.css";
+import CustomToast from "@/components/CustomToast";
 import { Plus_Jakarta_Sans } from "next/font/google";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -20,6 +21,7 @@ export default function AuthLayout({ children }) {
   return (
     <html lang="en" className={plusJakartaSans.className}>
       <body>{children}</body>
+      <CustomToast />
     </html>
   );
 }

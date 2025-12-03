@@ -337,3 +337,22 @@
   top: 50%;
   z-index: 1;
 }
+
+@media screen and (min-width: 2550px) {
+  .shape2 {
+    width: 782px;
+  }
+  .shape {
+    width: 782px;
+  }
+  .foot-block-img{
+    width: 600px;
+  }
+  .foot-block-1{
+    width: 450px;
+  }
+  .foot-block{
+    padding: 64px 48px;
+
+  }
+}

@@ -4,7 +4,7 @@
   align-items: center;
   padding: 16px 120px 8px;
   border-bottom: rgba(221, 221, 228, 1) 1px solid;
-  background:  rgba(244, 244, 244, 1);
+  background: rgba(244, 244, 244, 1);
   position: relative;
 }
 .nav-links {
@@ -122,7 +122,6 @@
   color: #000;
 }
 
-
 /* Mobile Side Drawer */
 .mobile-drawer {
   position: fixed;
@@ -199,7 +198,7 @@
 
 .mobile-repair-item p {
   font-size: 14px;
-  color: #9098A2;
+  color: #9098a2;
   line-height: 1.4;
 }
 
@@ -238,7 +237,7 @@
   z-index: 999;
   backdrop-filter: blur(4px);
 }
-.mobile-menu-btn{
+.mobile-menu-btn {
   background: transparent;
   border: none;
   cursor: pointer;
@@ -248,19 +247,27 @@
   font-size: 16px;
   font-weight: 700;
   display: none;
+  color: #000;
 }
 
-@media screen and (max-width: 900px){
-  .mobile-menu-btn{
+@media screen and (max-width: 900px) {
+  .mobile-menu-btn {
     display: flex;
   }
-  .nav-links, .auth-btns{
+  .nav-links,
+  .auth-btns {
     display: none;
   }
 }
 
-@media screen and (max-width: 600px){
-  .navbar{
+@media screen and (max-width: 600px) {
+  .navbar {
     padding: 22px 32px;
+  }
+}
+
+@media screen and (min-width: 2550px) {
+  .navbar {
+    padding: 20px 320px 12px;
   }
 }

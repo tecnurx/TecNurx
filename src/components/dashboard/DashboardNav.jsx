@@ -73,16 +73,16 @@ const DashboardNav = () => {
             <CircleUserRound onClick={toggleDropdown} className="user-icon" />
             {isDropdownOpen && (
               <div className="dropdown-menu">
-                <Link href="/my-account" className="dropdown-item">
+                <Link href="#" className="dropdown-item">
                   My Account
                 </Link>
-                <Link href="/payment-settings" className="dropdown-item">
+                <Link href="#" className="dropdown-item">
                   Payment Settings
                 </Link>
-                <Link href="/preferences" className="dropdown-item">
+                <Link href="#" className="dropdown-item">
                   Preferences
                 </Link>
-                <Link href="/logout" className="dropdown-item">
+                <Link href="#" className="dropdown-item">
                   Logout
                 </Link>
               </div>

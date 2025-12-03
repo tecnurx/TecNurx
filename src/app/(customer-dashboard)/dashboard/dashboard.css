@@ -212,6 +212,7 @@
   color: #FFC400;
   text-decoration: none;
   transition: color 0.2s ease;
+  border-radius: 12px;
 }
 
 .view-details-btn:hover {

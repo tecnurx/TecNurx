@@ -1,6 +1,6 @@
 import React from "react";
 import "./service.css";
-import hero from "@/assets/images/servpartner.svg";
+import service from "@/assets/images/servpartner.svg";
 import Image from "next/image";
 import Navbar from "@/components/navbar/Navbar";
 import Link from "next/link";
@@ -10,8 +10,8 @@ const ServicePartner = () => {
     <>
       <Navbar />
       <div className="service-partner">
-        <div className="hero-section">
-          <div className="hero-content">
+        <div className="service-section">
+          <div className="service-content">
             <h1>
               Become a<span> Service Partner</span>
             </h1>
@@ -22,7 +22,7 @@ const ServicePartner = () => {
             </p>
             <Link href='/service-partner/signup'>Sign Up</Link>
           </div>
-          <Image src={hero} alt="Hero Image" className="hero-image" />
+          <Image src={service} alt="service Image" className="service-image" />
         </div>
         <div className="requirements">
           <h1>Requirements</h1>
