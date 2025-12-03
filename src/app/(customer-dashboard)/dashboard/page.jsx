@@ -9,16 +9,33 @@ import {
   MessageCircle,
   ThumbsUp,
   Calendar,
+  ShieldCheck,
+  CircleCheck,
 } from "lucide-react";
 
 const Dashboard = () => {
   const user = "JOHN DOE";
 
   const stats = [
-    { id: 1, title: "Active Repairs", value: "5" },
-    { id: 2, title: "Completed Repairs", value: "2" },
-    { id: 3, title: "Active Insurance Plans", value: "1" },
-    { id: 4, title: "Pending Payments", value: "0" },
+    { id: 1, title: "Active Repairs", value: "5", icon: <Wrench size={32} /> },
+    {
+      id: 2,
+      title: "Completed Repairs",
+      value: "2",
+      icon: <CircleCheck size={32} />,
+    },
+    {
+      id: 3,
+      title: "Active Insurance Plans",
+      value: "1",
+      icon: <ShieldCheck size={32} />,
+    },
+    {
+      id: 4,
+      title: "Pending Payments",
+      value: "0",
+      icon: <CreditCard size={32} />,
+    },
   ];
 
   // Recent Activity Feed Data
@@ -122,8 +139,11 @@ const Dashboard = () => {
       <div className="dashboard-cards">
         {stats.map((item) => (
           <div key={item.id} className="stat-card">
-            <span>{item.title}</span>
-            <h3>{item.value}</h3>
+            <div>
+              <span>{item.title}</span>
+              <h3>{item.value}</h3>
+            </div>
+            {item.icon}
           </div>
         ))}
       </div>

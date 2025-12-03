@@ -24,13 +24,18 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 18px;
 }
-.dashboard-cards div {
+.stat-card {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   gap: 24px;
-  padding: 14px;
+  padding: 20px;
   background: rgba(255, 196, 0, 0.355);
   border-radius: 12px;
+}
+.stat-card div {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
 .dashboard-cards h3 {
   font-size: 38px;
@@ -89,7 +94,6 @@
   justify-content: space-between;
   align-items: start;
 }
-
 
 /* Recent Activity Section */
 .activity-section {
@@ -173,14 +177,14 @@
 }
 
 /* Optional: make stat cards class consistent */
-.stat-card {
+/* .stat-card {
   display: flex;
   flex-direction: column;
   gap: 24px;
   padding: 14px;
   background: rgba(255, 196, 0, 0.355);
   border-radius: 12px;
-}
+} */
 
 /* Active Repair Tracker */
 .repair-tracker-section {
@@ -209,7 +213,7 @@
 .view-details-btn {
   font-size: 14px;
   font-weight: 500;
-  color: #FFC400;
+  color: #ffc400;
   text-decoration: none;
   transition: color 0.2s ease;
   border-radius: 12px;
@@ -255,17 +259,17 @@
 .pulse-dot {
   width: 18px;
   height: 18px;
-  background: #FFC400;
+  background: #ffc400;
   border-radius: 50%;
   position: relative;
 }
 
 .pulse-dot::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 100%;
   height: 100%;
-  background: #FFC400;
+  background: #ffc400;
   border-radius: 50%;
   animation: pulse 2s infinite;
   opacity: 0;
@@ -332,7 +336,7 @@
 }
 
 .connector.completed {
-  background: #FFC400;
+  background: #ffc400;
 }
 
 .current-status-summary {
