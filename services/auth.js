@@ -25,7 +25,7 @@ export const authService = {
 
   logout: async () => {
     try {
-      await axios.post("/logout");
+      await axios.post("/users/logout");
     } catch (err) {
       console.error("Logout API failed (continuing client-side cleanup)", err);
     }

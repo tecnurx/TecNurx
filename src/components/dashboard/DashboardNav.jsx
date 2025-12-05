@@ -33,14 +33,14 @@ const DashboardNav = () => {
     setIsLoggingOut(true);
 
     try {
-      await authService.logout(); 
+      await authService.logout();
+      router.push("/login");
     } catch (error) {
       console.error("Logout failed:", error);
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       localStorage.removeItem("pendingVerificationEmail");
       document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-      router.push("/login");
     } finally {
       setIsLoggingOut(false);
       setIsDropdownOpen(false);
