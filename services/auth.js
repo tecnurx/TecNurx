@@ -24,17 +24,19 @@ export const authService = {
   },
 
   logout: async () => {
-    await axios.post("/logout");
+    try {
+      await axios.post("/logout");
+    } catch (err) {
+      console.error("Logout API failed (continuing client-side cleanup)", err);
+    }
 
-    // Clear everything
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("pendingVerificationEmail");
-
-    // Clear cookie
-    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-
-    router.push("/login");
+    // Always clear client-side data
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("pendingVerificationEmail");
+      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
   },
 
   getCurrentUser: () => {
