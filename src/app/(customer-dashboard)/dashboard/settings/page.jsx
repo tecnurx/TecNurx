@@ -41,12 +41,12 @@ const Settings = () => {
     }
   };
 
-    const [currentUser, setCurrentUser] = useState();
-  
-    useEffect(() => {
-      const response = authService.getCurrentUser();
-      setCurrentUser(response);
-    }, []);
+  const [currentUser, setCurrentUser] = useState();
+
+  useEffect(() => {
+    const response = authService.getCurrentUser();
+    setCurrentUser(response);
+  }, []);
 
   return (
     <div className="settings-page">
@@ -111,9 +111,9 @@ const Settings = () => {
               </div>
               <div>
                 <h3>
-                  {currentUser.fname} {currentUser.lname}
+                  {currentUser?.fname} {currentUser?.lname}
                 </h3>
-                <p>{currentUser.email}</p>
+                <p>{currentUser?.email}</p>
               </div>
             </div>
 
@@ -121,19 +121,35 @@ const Settings = () => {
               <div className="form-row">
                 <div className="form-group">
                   <label>First Name</label>
-                  <input type="text" defaultValue="John" value={currentUser.fname} />
+                  <input
+                    type="text"
+                    defaultValue="John"
+                    value={currentUser?.fname}
+                  />
                 </div>
                 <div className="form-group">
                   <label>Last Name</label>
-                  <input type="text" defaultValue="Doe" value={currentUser.lname} />
+                  <input
+                    type="text"
+                    defaultValue="Doe"
+                    value={currentUser?.lname}
+                  />
                 </div>
                 <div className="form-group">
                   <label>Email</label>
-                  <input type="email" defaultValue="john.doe@example.com" value={currentUser.email} />
+                  <input
+                    type="email"
+                    defaultValue="john.doe@example.com"
+                    value={currentUser?.email}
+                  />
                 </div>
                 <div className="form-group">
                   <label>Phone Number</label>
-                  <input type="tel" defaultValue="+1 (555) 123-4567" value={currentUser.phoneNumber} />
+                  <input
+                    type="tel"
+                    defaultValue="+1 (555) 123-4567"
+                    value={currentUser?.phoneNumber}
+                  />
                 </div>
                 <div className="form-group">
                   <label>Address</label>

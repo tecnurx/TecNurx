@@ -157,7 +157,7 @@ const Dashboard = () => {
       {/* Active Repair Tracker */}
       <div className="repair-tracker-section">
         <div className="repair-tracker-header">
-          <h2 classGain="repair-tracker-title">Active Repair Tracker</h2>
+          <h2 className="repair-tracker-title">Active Repair Tracker</h2>
           <Link href="/repair/12345" className="view-details-btn">
             View Details →
           </Link>
