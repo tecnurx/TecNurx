@@ -39,6 +39,11 @@ export const authService = {
     }
   },
 
+  UpdateCurrentUser: async () => {
+    const response = await axios.get("/users/me");
+    return response.data;
+  },
+
   getCurrentUser: () => {
     if (typeof window === "undefined") return null;
     const user = localStorage.getItem("user");
@@ -54,6 +59,19 @@ export const authService = {
     const response = await axios.post("/users/verify-email", {
       email,
       verificationToken,
+    });
+    return response.data;
+  },
+
+  forgotPassword: async ({ email }) => {
+    const response = await axios.post("/users/forgotPassword", { email });
+    return response.data;
+  },
+
+  resetPassword: async ({ password, passwordConfirm, token }) => {
+    const response = await axios.patch(`/users/resetPassword/${token}`, {
+      password,
+      passwordConfirm,
     });
     return response.data;
   },

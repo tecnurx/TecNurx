@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./dashboard.css";
 import Link from "next/link";
 import {
@@ -12,10 +12,9 @@ import {
   ShieldCheck,
   CircleCheck,
 } from "lucide-react";
+import { authService } from "../../../../services/auth";
 
 const Dashboard = () => {
-  const user = "JOHN DOE";
-
   const stats = [
     { id: 1, title: "Active Repairs", value: "5", icon: <Wrench size={32} /> },
     {
@@ -107,12 +106,19 @@ const Dashboard = () => {
     { name: "Delivered", completed: false, active: false },
   ];
 
+  const [currentUser, setCurrentUser] = useState();
+
+  useEffect(() => {
+    const response = authService.getCurrentUser();
+    setCurrentUser(response);
+  }, []);
+
   return (
     <div className="dashboard-wrap">
       {/* Header + Quick Actions */}
       <div className="head-quick">
         <div className="dashboard-header">
-          <h1>Welcome back, {user}</h1>
+          <h1>Welcome back, {currentUser?.fname}</h1>
           <p>Here’s a quick summary of your device activity.</p>
         </div>
         <div className="quick-options">

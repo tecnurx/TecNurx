@@ -1,6 +1,6 @@
 // Settings.jsx
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./settings.css";
 import {
   User,
@@ -18,6 +18,7 @@ import {
   Trash2,
   Download,
 } from "lucide-react";
+import { authService } from "../../../../../services/auth";
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState("profile");
@@ -39,6 +40,13 @@ const Settings = () => {
       reader.readAsDataURL(file);
     }
   };
+
+    const [currentUser, setCurrentUser] = useState();
+  
+    useEffect(() => {
+      const response = authService.getCurrentUser();
+      setCurrentUser(response);
+    }, []);
 
   return (
     <div className="settings-page">
@@ -63,13 +71,13 @@ const Settings = () => {
           <Shield size={18} />
           Security
         </button>
-        <button
+        {/* <button
           className={activeTab === "notifications" ? "tab active" : "tab"}
           onClick={() => setActiveTab("notifications")}
         >
           <Bell size={18} />
           Notifications
-        </button>
+        </button> */}
         <button
           className={activeTab === "privacy" ? "tab active" : "tab"}
           onClick={() => setActiveTab("privacy")}
@@ -102,26 +110,30 @@ const Settings = () => {
                 </label>
               </div>
               <div>
-                <h3>John Doe</h3>
-                <p>john.doe@example.com</p>
+                <h3>
+                  {currentUser.fname} {currentUser.lname}
+                </h3>
+                <p>{currentUser.email}</p>
               </div>
             </div>
 
             <form className="profile-form">
               <div className="form-row">
                 <div className="form-group">
-                  <label>Full Name</label>
-                  <input type="text" defaultValue="John Doe" />
+                  <label>First Name</label>
+                  <input type="text" defaultValue="John" value={currentUser.fname} />
+                </div>
+                <div className="form-group">
+                  <label>Last Name</label>
+                  <input type="text" defaultValue="Doe" value={currentUser.lname} />
                 </div>
                 <div className="form-group">
                   <label>Email</label>
-                  <input type="email" defaultValue="john.doe@example.com" />
+                  <input type="email" defaultValue="john.doe@example.com" value={currentUser.email} />
                 </div>
-              </div>
-              <div className="form-row">
                 <div className="form-group">
                   <label>Phone Number</label>
-                  <input type="tel" defaultValue="+1 (555) 123-4567" />
+                  <input type="tel" defaultValue="+1 (555) 123-4567" value={currentUser.phoneNumber} />
                 </div>
                 <div className="form-group">
                   <label>Address</label>
@@ -162,7 +174,7 @@ const Settings = () => {
               </form>
             </div>
 
-            <div className="security-section">
+            {/* <div className="security-section">
               <div className="twofa-toggle">
                 <div>
                   <h3>Two-Factor Authentication</h3>
@@ -177,7 +189,7 @@ const Settings = () => {
                   <span className="slider"></span>
                 </label>
               </div>
-            </div>
+            </div> */}
 
             <div className="security-section">
               <h3>Recent Login Activity</h3>
