@@ -290,3 +290,15 @@
   color: #666;
   font-size: 14px;
 }
+
+@media screen and (max-width: 1290px) {
+  .feedback-page{
+    padding: 24px 0;
+  }
+}
+@media screen and (max-width: 900px) {
+  
+}
+@media screen and (max-width: 600px) {
+  
+}

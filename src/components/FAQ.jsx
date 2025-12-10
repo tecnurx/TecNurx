@@ -12,39 +12,51 @@ const FAQ = () => {
   const faquestions = [
     {
       id: 1,
-      question: "Lorem ipsum dolor, sit amet consectetur adipisicing elit.",
+      question: "What is TecNurx?",
       answer:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia in molestias ullam nulla facilis aperiam a quo animi minima illum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia in molestias ullam nulla facilis aperiam a quo animi minima illum.",
+        "TecNurx is a technology-enabled platform providing structured gadget repair, protection, and logistics services. We integrate professional repair expertise, flexible payments, and real-time tracking into a single, seamless experience.",
     },
     {
       id: 2,
-      question: "Lorem ipsum dolor, sit amet consectetur adipisicing elit.",
+      question: "How does the repair process work?",
       answer:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia in molestias ullam nulla facilis aperiam a quo animi minima illum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia in molestias ullam nulla facilis aperiam a quo animi minima illum.",
+        " Customers initiate a repair via our website. Upon confirmation, TecNurx coordinates device pickup, assigns a certified repair expert, manages the repair process, and returns the device all with transparent status updates.",
     },
     {
       id: 3,
-      question: "Lorem ipsum dolor, sit amet consectetur adipisicing elit.",
+      question: "How does TecNurx ensure quality and security?",
       answer:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia in molestias ullam nulla facilis aperiam a quo animi minima illum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia in molestias ullam nulla facilis aperiam a quo animi minima illum.",
+        " All repairs are carried out by vetted professionals following standardized quality checks. Devices are tracked end-to-end, ensuring accountability and security throughout the service cycle.",
     },
     {
       id: 4,
-      question: "Lorem ipsum dolor, sit amet consectetur adipisicing elit.",
+      question: "What is the typical repair timeline?",
       answer:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia in molestias ullam nulla facilis aperiam a quo animi minima illum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia in molestias ullam nulla facilis aperiam a quo animi minima illum.",
+        " Timelines vary by device and issue. However, most standard repairs are completed within 24 to 72 hours. Customers receive real-time updates at each stage.",
     },
     {
       id: 5,
-      question: "Lorem ipsum dolor, sit amet consectetur adipisicing elit.",
+      question: "What payment options are available?",
       answer:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia in molestias ullam nulla facilis aperiam a quo animi minima illum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia in molestias ullam nulla facilis aperiam a quo animi minima illum.",
+        "TecNurx offers flexible payment structures, including upfront payments, subscriptions, and installment plans through financial partners.",
     },
     {
       id: 6,
-      question: "Lorem ipsum dolor, sit amet consectetur adipisicing elit.",
+      question: "Do you offer device protection and insurance?",
       answer:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia in molestias ullam nulla facilis aperiam a quo animi minima illum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia in molestias ullam nulla facilis aperiam a quo animi minima illum.",
+        "Yes. TecNurx provides device insurance plans designed to reduce unexpected repair costs and provide long-term device protection.",
+    },
+    {
+      id: 7,
+      question: "Can TecNurx support corporate and enterprise clients?",
+      answer:
+        "Absolutely. We offer dedicated solutions for businesses, including centralized dashboards, bulk device management, reporting, and service-level support.",
+    },
+    {
+      id: 8,
+      question: "What markets does TecNurx operate in?",
+      answer:
+        "TecNurx is launching in Nigeria, with a roadmap to expand across key African markets as we scale partnerships and operations.",
     },
   ];
 

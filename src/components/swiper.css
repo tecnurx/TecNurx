@@ -11,6 +11,7 @@
   gap: 24px;
   animation: scroll-left 45s linear infinite; /* Adjust speed here */
   will-change: transform;
+  align-items: center;
 }
 
 /* Pause on hover (nice UX) */
@@ -24,12 +25,13 @@
   padding: 40px;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 24px;
   background-color: rgba(244, 244, 244, 1);
   border-radius: 24px;
   width: 520px;
   position: relative;
   box-sizing: border-box;
+  height: 100%;
 }
 
 /* Text styling */
@@ -37,6 +39,15 @@
   font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 400;
   font-size: 20.84px;
+  color: #3b3f44;
+  line-height: 1.6;
+  text-wrap: wrap;
+  width: 100%;
+}
+.swiper-card h4 {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 800;
+  font-size: 16px;
   color: #3b3f44;
   line-height: 1.6;
   text-wrap: wrap;

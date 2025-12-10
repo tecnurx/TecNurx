@@ -75,4 +75,27 @@ export const authService = {
     });
     return response.data;
   },
+
+  updatePassword: async ({ password, passwordCurrent }) => {
+    const response = await axios.patch("/users/updateMyPassword", {
+      password,
+      passwordCurrent,
+      passwordConfirm: password,
+    });
+    return response.data;
+  },
+  
+};
+
+
+export const deviceService = {
+  getAllUserDevices: async () => {
+    const response = await axios.get("/devices");
+    return response.data;
+  },
+
+  getDevicesbyId: async ({deviceId}) => {
+    const response = await axios.get(`/devices/${deviceId}`);
+    return response.data;
+  },
 };

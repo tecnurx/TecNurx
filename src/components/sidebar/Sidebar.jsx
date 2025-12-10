@@ -1,11 +1,16 @@
 "use client";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./sidebar.css";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { TrackRepairModal } from "@/app/(main)/track-repair/TrackModal";
+import Image from "next/image";
+import logo from "@/assets/images/logo.svg";
+import { Menu } from "lucide-react";
+import { SidebarContext } from './../../../context/SidebarContext';
 
 const Sidebar = () => {
+  const { isSidebarOpen, closeSidebar } = useContext(SidebarContext);
   const pathname = usePathname();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,9 +24,24 @@ const Sidebar = () => {
     setIsModalOpen(true);
   };
 
+  useEffect(() => {
+    if (window.innerWidth <= 1024) {
+      closeSidebar();
+    }
+  }, [pathname]);
+
   return (
     <div>
-      <div className="sidebar">
+      {/* Overlay for mobile */}
+      {isSidebarOpen && (
+        <div
+          className="sidebar-open-overlay active"
+          onClick={closeSidebar}
+          aria-hidden="true"
+        />
+      )}
+
+      <div className={`sidebar ${isSidebarOpen ? "open" : "collapsed"}`}>
         <div className="sidebar-links">
           <Link
             href="/dashboard"
@@ -67,10 +87,10 @@ const Sidebar = () => {
             Feedback & Reviews
           </Link>
           <Link
-            href="/dashboard/settings"
-            className={pathname === "/dashboard/settings" ? "active" : ""}
+            href="/dashboard/my-account"
+            className={pathname === "/dashboard/my-account" ? "active" : ""}
           >
-            Settings
+            My Account{" "}
           </Link>
         </div>
       </div>

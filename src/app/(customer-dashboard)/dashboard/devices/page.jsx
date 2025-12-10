@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./devices.css";
 import {
   Smartphone,
@@ -12,6 +12,7 @@ import {
   Calendar,
   X,
 } from "lucide-react";
+import { deviceService } from "../../../../../services/auth";
 
 const MyDevices = () => {
   const [selectedDevice, setSelectedDevice] = useState(null);
@@ -124,6 +125,11 @@ const MyDevices = () => {
     }
   };
 
+  useEffect(() => {
+    const response = deviceService.getAllUserDevices();
+    console.log(response);
+  }, []);
+
   return (
     <>
       <div className="mydevices-page">
@@ -160,7 +166,7 @@ const MyDevices = () => {
 
               <button
                 onClick={() => openModal(device)}
-                className="view-details-btn"
+                className="view-details-btnn"
               >
                 View Details →
               </button>

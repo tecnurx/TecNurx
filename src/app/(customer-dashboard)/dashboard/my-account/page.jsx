@@ -17,6 +17,7 @@ import {
   Lock,
   Trash2,
   Download,
+  Loader2,
 } from "lucide-react";
 import { authService } from "../../../../../services/auth";
 
@@ -48,10 +49,64 @@ const Settings = () => {
     setCurrentUser(response);
   }, []);
 
+  // Password Form State
+  const [passwordData, setPasswordData] = useState({
+    passwordCurrent: "",
+    password: "",
+    passwordConfirm: "",
+  });
+
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+
+    // Reset messages
+    setPasswordError("");
+    setPasswordSuccess("");
+
+    const { passwordCurrent, password, passwordConfirm } = passwordData;
+
+    // Validation
+    if (!passwordCurrent)
+      return setPasswordError("Current password is required");
+    if (!password) return setPasswordError("New password is required");
+    if (password.length < 8)
+      return setPasswordError("New password must be at least 8 characters");
+    if (password !== passwordConfirm) {
+      return setPasswordError("New passwords do not match");
+    }
+
+    setIsUpdating(true);
+
+    try {
+      await authService.updatePassword({
+        passwordCurrent,
+        password,
+      });
+
+      setPasswordSuccess("Password updated successfully!");
+      setPasswordData({
+        passwordCurrent: "",
+        password: "",
+        passwordConfirm: "",
+      });
+    } catch (err) {
+      const msg =
+        err.response?.data?.message ||
+        "Failed to update password. Please try again.";
+      setPasswordError(msg);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   return (
     <div className="settings-page">
       <div className="settings-header">
-        <h1>Settings</h1>
+        <h1>My Account</h1>
         <p>Manage your account preferences and security</p>
       </div>
 
@@ -166,47 +221,109 @@ const Settings = () => {
           </div>
         )}
 
-        {/* 2. Security */}
+        {/* Security Tab */}
         {activeTab === "security" && (
           <div className="security-tab">
+            {/* Change Password */}
             <div className="security-section">
               <h3>Change Password</h3>
-              <form className="password-form">
+
+              {/* Error / Success Messages */}
+              {passwordError && (
+                <div className="alert error">
+                  <X size={18} />
+                  {passwordError}
+                </div>
+              )}
+              {passwordSuccess && (
+                <div className="alert success">
+                  <Check size={18} />
+                  {passwordSuccess}
+                </div>
+              )}
+
+              <form className="password-form" onSubmit={handlePasswordChange}>
                 <div className="form-group">
                   <label>Current Password</label>
-                  <input type="password" />
+                  <input
+                    type="password"
+                    value={passwordData.passwordCurrent}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        passwordCurrent: e.target.value,
+                      })
+                    }
+                    disabled={isUpdating}
+                    required
+                  />
                 </div>
+
                 <div className="form-group">
                   <label>New Password</label>
-                  <input type="password" />
+                  <input
+                    type="password"
+                    value={passwordData.password}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        password: e.target.value,
+                      })
+                    }
+                    disabled={isUpdating}
+                    minLength={8}
+                    required
+                  />
                 </div>
+
                 <div className="form-group">
                   <label>Confirm New Password</label>
-                  <input type="password" />
+                  <input
+                    type="password"
+                    value={passwordData.passwordConfirm}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        passwordConfirm: e.target.value,
+                      })
+                    }
+                    disabled={isUpdating}
+                    required
+                  />
+                  {passwordData.password &&
+                    passwordData.passwordConfirm &&
+                    passwordData.password !== passwordData.passwordConfirm && (
+                      <small style={{ color: "#e74c3c" }}>
+                        Passwords do not match
+                      </small>
+                    )}
                 </div>
-                <button type="submit" className="save-btn">
-                  Update Password
+
+                <button
+                  type="submit"
+                  className="save-btn"
+                  disabled={
+                    isUpdating ||
+                    !passwordData.passwordCurrent ||
+                    !passwordData.password ||
+                    !passwordData.passwordConfirm ||
+                    passwordData.password !== passwordData.passwordConfirm ||
+                    passwordData.password.length < 8
+                  }
+                >
+                  {isUpdating ? (
+                    <>
+                      <Loader2 size={18} className="spin" />
+                      Updating...
+                    </>
+                  ) : (
+                    "Update Password"
+                  )}
                 </button>
               </form>
             </div>
 
-            {/* <div className="security-section">
-              <div className="twofa-toggle">
-                <div>
-                  <h3>Two-Factor Authentication</h3>
-                  <p>Add an extra layer of security to your account</p>
-                </div>
-                <label className="toggle-switch">
-                  <input
-                    type="checkbox"
-                    checked={twoFA}
-                    onChange={() => setTwoFA(!twoFA)}
-                  />
-                  <span className="slider"></span>
-                </label>
-              </div>
-            </div> */}
-
+            {/* Recent Login Activity */}
             <div className="security-section">
               <h3>Recent Login Activity</h3>
               <div className="login-history">

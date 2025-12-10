@@ -74,7 +74,7 @@
   border-radius: 20px;
 }
 
-.view-details-btn {
+.view-details-btnn {
   padding: 12px 20px;
   background: #f2f2f2;
   color: black;
@@ -245,4 +245,16 @@
 
 .action-btn.danger:hover {
   background: #fecaca;
+}
+
+@media screen and (max-width: 1290px) {
+  .mydevices-page{
+    padding: 24px 0;
+  }
+}
+@media screen and (max-width: 900px) {
+  
+}
+@media screen and (max-width: 600px) {
+  
 }

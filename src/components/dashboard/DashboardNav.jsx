@@ -1,35 +1,58 @@
 "use client";
 
-import { Bell, Search, CircleUserRound, LogOut } from "lucide-react";
-import React, { useState } from "react";
+import { Bell, Search, CircleUserRound, LogOut, Menu, X } from "lucide-react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import logo from "@/assets/images/logo.svg";
 import "./dashcomp.css";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authService } from "../../../services/auth";
+import { SidebarContext } from "../../../context/SidebarContext";
 
 const DashboardNav = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false); // Optional: loading state
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
+  const { isSidebarOpen, toggleSidebar } = useContext(SidebarContext);
   const router = useRouter();
 
+  // Refs for click-outside detection
+  const notificationsRef = useRef(null);
+  const profileRef = useRef(null);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        notificationsRef.current &&
+        !notificationsRef.current.contains(event.target)
+      ) {
+        setIsNotificationsOpen(false);
+      }
+
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-    setIsNotificationsOpen(false);
+    setIsDropdownOpen((prev) => !prev);
+    setIsNotificationsOpen(false); // Close notifications when opening profile
   };
 
   const toggleNotifications = () => {
-    setIsNotificationsOpen(!isNotificationsOpen);
-    setIsDropdownOpen(false);
+    setIsNotificationsOpen((prev) => !prev);
+    setIsDropdownOpen(false); // Close profile when opening notifications
   };
 
-  // Handle Logout
   const handleLogout = async () => {
     if (isLoggingOut) return;
-
     setIsLoggingOut(true);
 
     try {
@@ -37,10 +60,9 @@ const DashboardNav = () => {
       router.push("/login");
     } catch (error) {
       console.error("Logout failed:", error);
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      localStorage.removeItem("pendingVerificationEmail");
+      localStorage.clear();
       document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      router.push("/login");
     } finally {
       setIsLoggingOut(false);
       setIsDropdownOpen(false);
@@ -67,9 +89,18 @@ const DashboardNav = () => {
 
   return (
     <div className="dashNav">
-      <Link href="/dashboard">
-        <Image src={logo} alt="logo" width={150} height={40} />
+      {/* Desktop Logo */}
+      <Link href="/dashboard" className="navonelogo">
+        <Image src={logo} alt="logo" height={40} />
       </Link>
+
+      {/* Mobile Logo + Menu Toggle */}
+      <div className="side-logo-menu" onClick={toggleSidebar}>
+        <Image src={logo} alt="logo" height={40} />
+        <button className="menu-toggle-btn">
+          {isSidebarOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
+      </div>
 
       <div className="nav-items">
         {/* Search */}
@@ -78,8 +109,8 @@ const DashboardNav = () => {
           <Search className="search-icon" />
         </div>
 
-        {/* Notifications */}
-        <div className="notifications">
+        {/* Notifications – with ref */}
+        <div className="notifications" ref={notificationsRef}>
           <Bell onClick={toggleNotifications} className="notification" />
           {isNotificationsOpen && (
             <div className="notifications-panel">
@@ -88,12 +119,10 @@ const DashboardNav = () => {
               </div>
               <div className="notifications-list">
                 {notifications.length > 0 ? (
-                  notifications.map((notification) => (
-                    <div key={notification.id} className="notification-item">
-                      <p>{notification.message}</p>
-                      <span className="timestamp">
-                        {notification.timestamp}
-                      </span>
+                  notifications.map((n) => (
+                    <div key={n.id} className="notification-item">
+                      <p>{n.message}</p>
+                      <span className="timestamp">{n.timestamp}</span>
                     </div>
                   ))
                 ) : (
@@ -104,20 +133,17 @@ const DashboardNav = () => {
           )}
         </div>
 
-        {/* User Profile Dropdown */}
-        <div className="user-profile">
+        {/* User Profile Dropdown – with ref */}
+        <div className="user-profile" ref={profileRef}>
           <CircleUserRound onClick={toggleDropdown} className="user-icon" />
 
           {isDropdownOpen && (
             <div className="dropdown-menu">
-              <Link href="/dashboard/account" className="dropdown-item">
+              <Link href="/dashboard/my-account" className="dropdown-item">
                 My Account
               </Link>
               <Link href="/dashboard/payments" className="dropdown-item">
                 Payment Settings
-              </Link>
-              <Link href="/dashboard/preferences" className="dropdown-item">
-                Preferences
               </Link>
 
               <hr className="dropdown-divider" />

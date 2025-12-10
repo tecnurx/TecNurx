@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./dashboard.css";
 import Link from "next/link";
 import {
@@ -16,24 +16,24 @@ import { authService } from "../../../../services/auth";
 
 const Dashboard = () => {
   const stats = [
-    { id: 1, title: "Active Repairs", value: "5", icon: <Wrench size={32} /> },
+    { id: 1, title: "Active Repairs", value: "5", icon: <Wrench size={24} /> },
     {
       id: 2,
       title: "Completed Repairs",
       value: "2",
-      icon: <CircleCheck size={32} />,
+      icon: <CircleCheck size={24} />,
     },
     {
       id: 3,
       title: "Active Insurance Plans",
       value: "1",
-      icon: <ShieldCheck size={32} />,
+      icon: <ShieldCheck size={24} />,
     },
     {
       id: 4,
       title: "Pending Payments",
       value: "0",
-      icon: <CreditCard size={32} />,
+      icon: <CreditCard size={24} />,
     },
   ];
 
@@ -77,10 +77,26 @@ const Dashboard = () => {
   ];
 
   const [isQuickOptionsOpen, setIsQuickOptionsOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
+  // Toggle dropdown
   const toggleQuickOptions = () => {
-    setIsQuickOptionsOpen(!isQuickOptionsOpen);
+    setIsQuickOptionsOpen((prev) => !prev);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsQuickOptionsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const repairStages = [
     {
@@ -118,22 +134,25 @@ const Dashboard = () => {
       {/* Header + Quick Actions */}
       <div className="head-quick">
         <div className="dashboard-header">
-          <h1>Welcome back, {currentUser?.fname}</h1>
+          <h1>Welcome, {currentUser?.fname || "User"}</h1>
           <p>Here’s a quick summary of your device activity.</p>
         </div>
-        <div className="quick-options">
-          <button onClick={toggleQuickOptions}>
+
+        {/* Quick Actions with outside click detection */}
+        <div className="quick-options" ref={dropdownRef}>
+          <button onClick={toggleQuickOptions} className="quick-actions-btn">
             Quick actions <ChevronDown size={14} />
           </button>
+
           {isQuickOptionsOpen && (
             <div className="quick-options-dropdown">
-              <Link href="#" className="dropdown-item">
+              <Link href="/book-repair" className="dropdown-item">
                 Book Repair
               </Link>
-              <Link href="#" className="dropdown-item">
+              <Link href="/dashboard/devices" className="dropdown-item">
                 Add New Device
               </Link>
-              <Link href="#" className="dropdown-item">
+              <Link href="/dashboard/insurance" className="dropdown-item">
                 Claim Insurance
               </Link>
             </div>
@@ -158,7 +177,7 @@ const Dashboard = () => {
       <div className="repair-tracker-section">
         <div className="repair-tracker-header">
           <h2 className="repair-tracker-title">Active Repair Tracker</h2>
-          <Link href="/repair/12345" className="view-details-btn">
+          <Link href="#" className="view-details-btn">
             View Details →
           </Link>
         </div>

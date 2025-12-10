@@ -117,12 +117,53 @@
   color: rgba(0, 0, 0, 0.8);
 }
 .notification-item .timestamp {
-  display: block;
+  /* display: block; */
   font-size: 12px;
   font-weight: 400;
   color: rgba(0, 0, 0, 0.5);
   margin-top: 4px;
+  width: 100%;
 }
 .notification-item:hover {
   background: rgba(244, 244, 244, 1);
+}
+.side-logo-menu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  display: none;
+  /* justify-content: space-between; */
+  /* padding-left: 12px; */
+}
+.navonelogo img{
+  width: 150px;
+}
+.log-out-item{
+                  display: "flex";
+                  align-items: "center";
+                  gap: "8px";
+                  background: "none";
+                  border: "none";
+                  width: "100%";
+                  text-align: "left";
+                  padding: "12px 16px";
+                  /* cursor: isLoggingOut ? "not-allowed" : "pointer"; */
+                  color: "#e74c3c";
+                }
+
+@media screen and (max-width: 900px) {
+  .navonelogo {
+    display: none;
+  }
+  .side-logo-menu {
+    display: flex;
+  }
+}
+@media screen and (max-width: 600px) {
+  .dashNav {
+    padding: 16px 24px;
+  }
+  .side-menu-logo img {
+    width: 120px !important;
+  }
 }
