@@ -197,7 +197,7 @@ export default function MultiStepRegister() {
               >
                 <Image src={partImg} alt="partner" />
                 <h3>Partner</h3>
-                <p>Join as a repair technician</p>
+                <p>Join as a business</p>
               </button>
             </div>
 

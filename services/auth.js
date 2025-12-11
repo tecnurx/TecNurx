@@ -6,6 +6,11 @@ export const authService = {
     return response.data;
   },
 
+  partnerSignup: async (userData) => {
+    const response = await axios.post("/users/signupUser", userData);
+    return response.data;
+  },
+
   login: async (credentials) => {
     const response = await axios.post("/users/loginUser", credentials);
     const { token } = response.data;
@@ -82,20 +87,6 @@ export const authService = {
       passwordCurrent,
       passwordConfirm: password,
     });
-    return response.data;
-  },
-  
-};
-
-
-export const deviceService = {
-  getAllUserDevices: async () => {
-    const response = await axios.get("/devices");
-    return response.data;
-  },
-
-  getDevicesbyId: async ({deviceId}) => {
-    const response = await axios.get(`/devices/${deviceId}`);
     return response.data;
   },
 };
