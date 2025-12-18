@@ -3,32 +3,14 @@ import React, { useContext, useEffect, useState } from "react";
 import "./sidebar.css";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { TrackRepairModal } from "@/app/(main)/track-repair/TrackModal";
 import Image from "next/image";
 import logo from "@/assets/images/logo.svg";
 import { Menu } from "lucide-react";
-import { SidebarContext } from './../../../context/SidebarContext';
+import { SidebarContext } from "./../../../context/SidebarContext";
 
 const Sidebar = () => {
   const { isSidebarOpen, closeSidebar } = useContext(SidebarContext);
   const pathname = usePathname();
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [trackingData, setTrackingData] = useState({
-    trackingNumber: "",
-    totalTime: "00:40:00",
-    repairTime: "00:00:00",
-  });
-
-  const handleRequestRepair = () => {
-    setIsModalOpen(true);
-  };
-
-  useEffect(() => {
-    if (window.innerWidth <= 1024) {
-      closeSidebar();
-    }
-  }, [pathname]);
 
   return (
     <div>
@@ -62,9 +44,8 @@ const Sidebar = () => {
             Book a Repair
           </Link>
           <Link
-            href="#"
-            className={pathname === "/dashboard/orders" ? "active" : ""}
-            onClick={handleRequestRepair}
+            href="/dashboard/my-orders"
+            className={pathname === "/dashboard/my-orders" ? "active" : ""}
           >
             My Orders / Tracking
           </Link>
@@ -94,13 +75,6 @@ const Sidebar = () => {
           </Link>
         </div>
       </div>
-      <TrackRepairModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        trackingNumber={trackingData.trackingNumber}
-        totalTime={trackingData.totalTime}
-        repairTime={trackingData.repairTime}
-      />
     </div>
   );
 };

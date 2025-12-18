@@ -1,3 +1,307 @@
+.payments-page {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.payments-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.payments-header p {
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 16px;
+}
+
+/* Current Plan */
+.current-plan-section,
+.payment-history-section,
+.add-method-section,
+.plans-section {
+  margin-top: 48px;
+}
+
+.current-plan-section h2,
+.payment-history-section h2,
+.add-method-section h2,
+.plans-section h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.plan-summary-card {
+  background: #fff;
+  border: 1.5px solid rgba(221, 221, 228, 0.8);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.plan-tier {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.plan-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+  font-size: 15px;
+  color: #444;
+}
+
+.plan-meta span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.manage-plan-btn {
+  padding: 12px 24px;
+  background: #FFC400;
+  color: black;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Payment History */
+.history-table {
+  background: #fff;
+  border: 1.5px solid rgba(221, 221, 228, 0.8);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1.5fr 1fr;
+  padding: 16px 24px;
+  background: #f9f9f9;
+  font-weight: 600;
+  font-size: 14px;
+  color: #444;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1.5fr 1fr;
+  padding: 18px 24px;
+  border-top: 1px solid #eee;
+  align-items: center;
+}
+
+.amount {
+  font-weight: 600;
+}
+
+.status-success {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #10b981;
+  font-weight: 500;
+}
+
+/* Add Payment Method */
+.method-selector {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.method-selector button {
+  padding: 12px 20px;
+  background: #f3f4f6;
+  border: 1.5px solid #ddd;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.method-selector button.active {
+  background: #fffbe6;
+  border-color: #FFC400;
+  color: #c47b00;
+}
+
+.integration-note {
+  background: #f0fdf4;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+.integration-note p {
+  margin: 0 0 12px 0;
+  font-size: 15px;
+}
+
+.logos {
+  display: flex;
+  gap: 20px;
+  font-weight: 600;
+  color: #065f46;
+}
+
+.add-method-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 500px;
+}
+
+.add-method-form input {
+  padding: 14px;
+  border: 1.5px solid #ddd;
+  border-radius: 12px;
+  font-size: 15px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.info-text {
+  font-size: 15px;
+  color: #666;
+  font-style: italic;
+}
+
+.add-method-btn {
+  padding: 14px;
+  background: #FFC400;
+  color: black;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+/* Plans Grid */
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.plan-cardd {
+  background: #fff;
+  border: 1.5px solid rgba(221, 221, 228, 0.8);
+  border-radius: 20px;
+  padding: 28px;
+  position: relative;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.plan-cardd:hover {
+  border-color: #FFC400;
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.recommended-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #FFC400;
+  color: black;
+  padding: 6px 20px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.plan-cardd h3 {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.pricing {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.monthly {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.yearly {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.save {
+  display: block;
+  background: #d1fae5;
+  color: #065f46;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 32px 0;
+}
+
+.features li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  font-size: 15px;
+}
+
+.select-plan-btn {
+  width: 100%;
+  padding: 14px;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.select-plan-btn.primary {
+  background: #FFC400;
+  color: black;
+}
+
+.select-plan-btn:hover {
+  background: #e0ad00;
+}
+
 @media screen and (max-width: 1290px) {
   .payment-page {
     padding: 24px 0;

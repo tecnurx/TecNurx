@@ -98,10 +98,10 @@ const Login = () => {
                 <Image src={google} alt="google" />
                 <span>Google</span>
               </div>
-              <div>
+              {/* <div>
                 <Image src={facebook} alt="facebook" />
                 <span>Facebook</span>
-              </div>
+              </div> */}
             </div>
 
             <div className="divider">

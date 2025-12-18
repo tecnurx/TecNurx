@@ -42,7 +42,7 @@
 .tab.active {
   color: #000;
   font-weight: 600;
-  border-bottom-color: #FFC400;
+  border-bottom-color: #ffc400;
 }
 
 .tab:hover:not(.active) {
@@ -52,15 +52,16 @@
 
 /* Active Plans */
 .active-plans {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
 
 .plan-card {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 32px;
+  align-items: start;
   padding: 20px;
   background: #fff;
   border: 1px solid rgba(221, 221, 228, 0.8);
@@ -70,7 +71,7 @@
 
 .plan-card:hover {
   border-color: rgba(255, 196, 0, 0.5);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
 }
 
 .plan-info h3 {
@@ -92,19 +93,20 @@
 .plan-id {
   font-family: monospace;
   font-weight: 600;
-  color: #FFC400;
+  color: #ffc400;
 }
 
 .plan-actions {
   display: flex;
-  flex-direction: column;
   gap: 10px;
-  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
 }
 
 .renew-btn {
   padding: 10px 20px;
-  background: #FFC400;
+  background: #ffc400;
   color: black;
   border: none;
   border-radius: 10px;
@@ -114,13 +116,13 @@
 
 .view-policy {
   font-size: 14px;
-  color: #FFC400;
+  color: #ffc400;
   text-decoration: none;
 }
 
 /* Claim Form */
 .claim-form-container {
-  /* max-width: 680px; */
+  max-width: 680px;
   margin: 0 auto;
 }
 
@@ -179,7 +181,7 @@
 }
 
 .upload-area:hover {
-  border-color: #FFC400;
+  border-color: #ffc400;
   background: #fffbe6;
 }
 
@@ -192,7 +194,7 @@
 .submit-claim-btn {
   width: 100%;
   padding: 14px;
-  background: #FFC400;
+  background: #ffc400;
   color: black;
   border: none;
   border-radius: 12px;
@@ -204,14 +206,16 @@
 
 /* Claim History */
 .claim-history {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
 
 .claim-item {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: start;
+  gap: 32px;
   padding: 18px;
   background: #fff;
   border: 1px solid rgba(221, 221, 228, 0.8);
@@ -233,9 +237,13 @@
   color: #888;
   margin-bottom: 8px;
 }
-
 .claim-status {
-  text-align: right;
+  display: flex;
+  /* flex-direction: column; */
+  width: 100%;
+  gap: 12px;
+  align-items: start;
+  justify-content: space-between;
 }
 
 .status-badgee {
@@ -248,30 +256,48 @@
   font-weight: 600;
 }
 
-.status-badgee.approved   { background: #d1fae5; color: #065f46; }
-.status-badgee.rejected   { background: #fee2e2; color: #991b1b; }
-.status-badgee.pending    { background: #fff4e5; color: #d97706; }
+.status-badgee.approved {
+  background: #d1fae5;
+  color: #065f46;
+}
+.status-badgee.rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.status-badgee.pending {
+  background: #fff4e5;
+  color: #d97706;
+}
 
 .payout {
-  margin-top: 8px;
   font-weight: 600;
   color: #000;
 }
 @media screen and (max-width: 1290px) {
-  .insurance-page{
+  .insurance-page {
     padding: 24px 0;
+  }
+  .active-plans {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .claim-history{
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 @media screen and (max-width: 900px) {
-  
 }
 @media screen and (max-width: 600px) {
-  .plan-card{
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-  .plan-actions{
+  .plan-actions {
     align-items: stretch;
+  }
+  .active-plans {
+    grid-template-columns: 1fr;
+  }
+  .insurance-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+    .claim-history{
+    grid-template-columns: 1fr;
   }
 }

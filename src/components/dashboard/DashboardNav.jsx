@@ -96,10 +96,10 @@ const DashboardNav = () => {
 
       {/* Mobile Logo + Menu Toggle */}
       <div className="side-logo-menu" onClick={toggleSidebar}>
-        <Image src={logo} alt="logo" height={40} />
         <button className="menu-toggle-btn">
-          {isSidebarOpen ? <X size={28} /> : <Menu size={28} />}
+          {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
+        <Image src={logo} alt="logo" height={40} />
       </div>
 
       <div className="nav-items">

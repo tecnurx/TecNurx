@@ -1,11 +1,9 @@
-// middleware.js
 import { NextResponse } from "next/server";
 
-export function middleware(request) {
+export default function middleware(request) {
   const token = request.cookies.get("token")?.value;
   const pathname = request.nextUrl.pathname;
 
-  // Protect all /dashboard routes
   if (pathname.startsWith("/dashboard")) {
     if (!token) {
       const url = new URL("/login", request.url);
@@ -14,7 +12,6 @@ export function middleware(request) {
     }
   }
 
-  // Redirect logged-in users from auth pages
   if (["/login", "/register", "/verify-email"].includes(pathname) && token) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }

@@ -12,7 +12,7 @@
 }
 .dashboard-header h1 {
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 800;
   color: black;
 }
 .dashboard-header p {
@@ -23,7 +23,7 @@
 .dashboard-cards {
   display: grid;
   /* grid-template-columns: repeat(2, 1fr); */
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 18px;
 }
 .stat-card {

@@ -2,87 +2,97 @@
 import React, { useEffect, useState } from "react";
 import "./devices.css";
 import {
-  Smartphone, Laptop, Tablet, Watch, Shield, Wrench, Trash2,
-  X, Plus, Upload, Calendar, AlertCircle,
+  Smartphone,
+  Laptop,
+  Tablet,
+  Watch,
+  Shield,
+  Wrench,
+  Trash2,
+  X,
+  Plus,
+  Upload,
+  Calendar,
+  AlertCircle,
   SearchX,
-  MonitorSmartphone
+  MonitorSmartphone,
 } from "lucide-react";
 import { deviceService } from "../../../../../services/devices";
 
 const MyDevices = () => {
-  const [devices, setDevices] = useState([]);
+  // const [devices, setDevices] = useState([]);
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // // Sample user devices
-  // const devices = [
-  //   {
-  //     id: 1,
-  //     name: "iPhone 15 Pro",
-  //     type: "smartphone",
-  //     serial: "F2MKP123456789",
-  //     status: "active",
-  //     statusLabel: "Active",
-  //     thumbnail: "smartphone",
-  //     brand: "Apple",
-  //     model: "iPhone 15 Pro",
-  //     purchaseDate: "Oct 12, 2024",
-  //     insuredUntil: "Oct 12, 2026",
-  //     repairHistory: [
-  //       { date: "Jul 5, 2025", issue: "Screen replacement", cost: "$179" },
-  //       { date: "Mar 18, 2025", issue: "Battery replacement", cost: "$99" },
-  //     ],
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'MacBook Pro 14"',
-  //     type: "laptop",
-  //     serial: "C02ZJ9ABLVCF",
-  //     status: "repair",
-  //     statusLabel: "Under Repair",
-  //     thumbnail: "laptop",
-  //     brand: "Apple",
-  //     model: "MacBook Pro M3",
-  //     purchaseDate: "Jan 20, 2025",
-  //     insuredUntil: "Jan 20, 2027",
-  //     repairHistory: [
-  //       {
-  //         date: "Nov 18, 2025",
-  //         issue: "Keyboard replacement",
-  //         cost: "In progress",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Galaxy Fold 6",
-  //     type: "Fold",
-  //     serial: "R3X7N9012345",
-  //     status: "insured",
-  //     statusLabel: "Insured",
-  //     thumbnail: "smartphone",
-  //     brand: "Samsung",
-  //     model: "Galaxy Fold 6 Classic",
-  //     purchaseDate: "Aug 3, 2025",
-  //     insuredUntil: "Aug 3, 2026",
-  //     repairHistory: [],
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "iPad Air (5th Gen)",
-  //     type: "tablet",
-  //     serial: "MP123ABC456D",
-  //     status: "active",
-  //     statusLabel: "Active",
-  //     thumbnail: "tablet",
-  //     brand: "Apple",
-  //     model: 'iPad Air 11"',
-  //     purchaseDate: "Apr 10, 2025",
-  //     insuredUntil: null,
-  //     repairHistory: [],
-  //   },
-  // ];
+  const devices = [
+    {
+      id: 1,
+      name: "iPhone 15 Pro",
+      type: "smartphone",
+      serial: "F2MKP123456789",
+      status: "active",
+      statusLabel: "Active",
+      thumbnail: "smartphone",
+      brand: "Apple",
+      model: "iPhone 15 Pro",
+      purchaseDate: "Oct 12, 2024",
+      insuredUntil: "Oct 12, 2026",
+      repairHistory: [
+        { date: "Jul 5, 2025", issue: "Screen replacement", cost: "$179" },
+        { date: "Mar 18, 2025", issue: "Battery replacement", cost: "$99" },
+      ],
+    },
+    {
+      id: 2,
+      name: 'MacBook Pro 14"',
+      type: "laptop",
+      serial: "C02ZJ9ABLVCF",
+      status: "repair",
+      statusLabel: "Under Repair",
+      thumbnail: "laptop",
+      brand: "Apple",
+      model: "MacBook Pro M3",
+      purchaseDate: "Jan 20, 2025",
+      insuredUntil: "Jan 20, 2027",
+      repairHistory: [
+        {
+          date: "Nov 18, 2025",
+          issue: "Keyboard replacement",
+          cost: "In progress",
+        },
+      ],
+    },
+    {
+      id: 3,
+      name: "Galaxy Fold 6",
+      type: "Fold",
+      serial: "R3X7N9012345",
+      status: "insured",
+      statusLabel: "Insured",
+      thumbnail: "smartphone",
+      brand: "Samsung",
+      model: "Galaxy Fold 6 Classic",
+      purchaseDate: "Aug 3, 2025",
+      insuredUntil: "Aug 3, 2026",
+      repairHistory: [],
+    },
+    {
+      id: 4,
+      name: "iPad Air (5th Gen)",
+      type: "tablet",
+      serial: "MP123ABC456D",
+      status: "active",
+      statusLabel: "Active",
+      thumbnail: "tablet",
+      brand: "Apple",
+      model: 'iPad Air 11"',
+      purchaseDate: "Apr 10, 2025",
+      insuredUntil: null,
+      repairHistory: [],
+    },
+  ];
 
   // Add Device Form State
   const [formData, setFormData] = useState({
@@ -107,7 +117,7 @@ const MyDevices = () => {
     const fetchDevices = async () => {
       try {
         const res = await deviceService.getAllUserDevices();
-        setDevices(res.data || res); // Adjust based on API response
+        setDevices(res?.data?.devices); // Adjust based on API response
       } catch (err) {
         console.error("Failed to load devices:", err);
       }
@@ -161,6 +171,11 @@ const MyDevices = () => {
   const openDetails = (device) => {
     setSelectedDevice(device);
     setIsDetailsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsDetailsModalOpen(false);
+    setSelectedDevice(null);
   };
 
   const getDeviceIcon = (type) => {
@@ -231,20 +246,92 @@ const MyDevices = () => {
         </div>
       </div>
 
-      {/* Existing Details Modal */}
+      {/* Device Details Modal */}
       {isDetailsModalOpen && selectedDevice && (
-        <div
-          className="modal-overlay"
-          onClick={() => setIsDetailsModalOpen(false)}
-        >
+        <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="modal-close"
-              onClick={() => setIsDetailsModalOpen(false)}
-            >
+            <button className="modal-close" onClick={closeModal}>
               <X size={24} />
             </button>
-            {/* Your existing modal content */}
+
+            <div className="modal-header">
+              <div className="modal-thumbnail">
+                {getDeviceIcon(selectedDevice.type)}
+              </div>
+              <div>
+                <h2>{selectedDevice.name}</h2>
+                <p className="modal-subtitle">
+                  {selectedDevice.brand} • {selectedDevice.model}
+                </p>
+              </div>
+            </div>
+
+            <div className="modal-body">
+              <div className="info-grid">
+                <div>
+                  <span>Serial Number</span>
+                  <p>{selectedDevice.serial}</p>
+                </div>
+                <div>
+                  <span>Purchase Date</span>
+                  <p>{selectedDevice.purchaseDate}</p>
+                </div>
+                <div>
+                  <span>Insurance Coverage</span>
+                  <p>
+                    {selectedDevice.insuredUntil ? (
+                      <span style={{ color: "#10b981" }}>
+                        <Shield
+                          size={16}
+                          style={{ display: "inline", marginRight: 6 }}
+                        />
+                        Active until {selectedDevice.insuredUntil}
+                      </span>
+                    ) : (
+                      <span style={{ color: "#ef4444" }}>Not insured</span>
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              <div className="repair-history">
+                <h3>
+                  <Wrench size={18} /> Repair History
+                </h3>
+                {selectedDevice.repairHistory.length > 0 ? (
+                  <ul>
+                    {selectedDevice.repairHistory.map((repair, i) => (
+                      <li key={i}>
+                        <div>
+                          <strong>{repair.date}</strong> – {repair.issue}
+                        </div>
+                        <span className="repair-cost">{repair.cost}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No repairs recorded yet.</p>
+                )}
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              <button className="action-btn primary">
+                <Wrench size={18} /> Book New Repair
+              </button>
+              {selectedDevice.insuredUntil ? (
+                <button className="action-btn secondary">
+                  <Shield size={18} /> Renew Insurance
+                </button>
+              ) : (
+                <button className="action-btn secondary">
+                  <Shield size={18} /> Add Insurance
+                </button>
+              )}
+              <button className="action-btn danger">
+                <Trash2 size={18} /> Remove Device
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -289,10 +376,10 @@ const MyDevices = () => {
                     }
                     required
                   >
-                    <option value="smartphone">Smartphone</option>
+                    <option value="phone">Smartphone</option>
                     <option value="laptop">Laptop</option>
                     <option value="tablet">Tablet</option>
-                    <option value="watch">Smartwatch</option>
+                    <option value="camera">Camera</option>
                   </select>
                 </div>
 
@@ -377,7 +464,7 @@ const MyDevices = () => {
                 </div>
 
                 <div className="form-group full">
-                  <label>Photos (Optional)</label>
+                  <label>Photos (min. of 2 required)</label>
                   <label className="file-upload">
                     <Upload size={20} />
                     Upload Photos ({photos.length})

@@ -1166,4 +1166,14 @@
   .hero-content h1, .hero-content p, .hero-content button{
     margin-top: 24px;
   }
+  .schedule-pickup h1{
+    font-size: 92px;
+    width: 950px;
+  }
+  .faq{
+    width: 1250px;
+  }
+  .faq p{
+    font-size: 22px;
+  }
 }

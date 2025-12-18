@@ -10,6 +10,9 @@
   font-weight: 600;
   margin: 0 0 8px 0;
 }
+.feedback-header{
+  margin-bottom: 32px;
+}
 
 .feedback-header p {
   color: rgba(0, 0, 0, 0.7);
@@ -19,11 +22,13 @@
 /* Feedback Form */
 .feedback-form-container {
   margin: 40px 0;
+  margin:  0 auto;
   background: #fff;
   border: 1.5px solid rgba(221, 221, 228, 0.8);
   border-radius: 20px;
   padding: 32px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+  max-width: 800px;
 }
 
 .feedback-form h2 {
@@ -173,8 +178,8 @@
 }
 
 .feedback-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
 
@@ -295,10 +300,15 @@
   .feedback-page{
     padding: 24px 0;
   }
+  .feedback-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 @media screen and (max-width: 900px) {
   
 }
 @media screen and (max-width: 600px) {
-  
+  .feedback-list {
+    grid-template-columns: 1fr;
+  }
 }

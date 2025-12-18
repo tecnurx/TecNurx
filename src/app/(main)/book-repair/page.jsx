@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./book.css";
 import step1 from "@/assets/images/step1.svg";
 import upload from "@/assets/images/upload.svg";
@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import SelectGadgets from "@/components/SelectGadgets";
 import Footer from "@/components/footer/Footer";
+import { repairService } from "../../../../services/repairs";
 
 const BookRepair = () => {
   const router = useRouter();
@@ -16,6 +17,18 @@ const BookRepair = () => {
   };
 
   const [selectedGadgets, setSelectedGadgets] = useState([]);
+
+  useEffect(() => {
+    const fetchIssues = async () => {
+      try {
+        const res = await repairService.getIssues();
+        console.log(res)
+      } catch (err) {
+        console.error("Failed to load devices:", err);
+      }
+    };
+    fetchIssues();
+  }, []);
 
   return (
     <>

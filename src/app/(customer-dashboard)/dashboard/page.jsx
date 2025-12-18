@@ -25,7 +25,7 @@ const Dashboard = () => {
     },
     {
       id: 3,
-      title: "Active Insurance Plans",
+      title: "Active Plans",
       value: "1",
       icon: <ShieldCheck size={24} />,
     },
@@ -127,6 +127,17 @@ const Dashboard = () => {
   useEffect(() => {
     const response = authService.getCurrentUser();
     setCurrentUser(response);
+
+    //fetch user from server
+    const fetchUser = async () => {
+      try {
+        const response = authService.UpdateCurrentUser();
+        console.log(response);
+      } catch (err) {
+        console.error("Failed to fetch user from server:", err);
+      }
+    };
+    fetchUser();
   }, []);
 
   return (

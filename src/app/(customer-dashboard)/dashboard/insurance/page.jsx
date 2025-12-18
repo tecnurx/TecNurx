@@ -44,7 +44,7 @@ const DashboardInsurance = () => {
       device: "iPhone 13",
       issue: "Screen cracked",
       status: "approved",
-      payout: "$179",
+      payout: "179",
     },
     {
       id: "CLM-0994",

@@ -1,0 +1,160 @@
+.orders-page {
+  padding: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.orders-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.orders-header p {
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 16px;
+}
+
+.orders-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.order-card {
+  background: #fff;
+  border: 1.5px solid rgba(221, 221, 228, 0.8);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.order-card:hover {
+  border-color: rgba(255, 196, 0, 0.5);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.order-main {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.order-id-date {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.order-id {
+  font-family: monospace;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffc400;
+}
+
+.order-date {
+  font-size: 14px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.order-details h3 {
+  margin: 0 0 6px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.service {
+  color: #666;
+  margin: 0 0 12px 0;
+}
+
+.order-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  color: #444;
+}
+
+.order-meta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.order-actions {
+  padding: 0 24px 20px;
+}
+
+.track-btn {
+  padding: 12px 24px;
+  background: #ffc400;
+  color: black;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.2s;
+}
+
+.track-btn:hover {
+  background: #e0ad00;
+}
+
+/* Empty State */
+.empty-orders {
+  text-align: center;
+  padding: 80px 20px;
+  color: #666;
+}
+
+.empty-orders p {
+  margin: 16px 0 24px;
+  font-size: 18px;
+}
+
+.request-repair-btn {
+  padding: 14px 32px;
+  background: #ffc400;
+  color: black;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 1290px) {
+  .orders-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 900px) {
+}
+
+@media screen and (max-width: 600px) {
+  .orders-page {
+    padding: 0;
+  }
+  .orders-list {
+    grid-template-columns: 1fr;
+  }
+}
