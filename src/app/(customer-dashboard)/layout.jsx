@@ -4,6 +4,7 @@ import DashboardNav from "@/components/dashboard/DashboardNav";
 import Sidebar from "@/components/sidebar/Sidebar";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { SidebarProvider } from "../../../context/SidebarContext";
+import Chatbox from "@/components/chatbox/Chatbox";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -34,6 +35,7 @@ export default function DashboardLayout({ children }) {
             <main className="main-content">{children}</main>
           </div>
         </SidebarProvider>
+        <Chatbox />
       </body>
     </html>
   );

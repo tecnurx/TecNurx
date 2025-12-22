@@ -3,21 +3,52 @@ import React, { useState } from "react";
 import "./track.css";
 import { TrackRepairModal } from "./TrackModal";
 import Footer from "@/components/footer/Footer";
+import { Loader2 } from "lucide-react";
+import { repairService } from "../../../../services/repairs";
 
 const TrackRepair = () => {
+  const [trackingNumber, setTrackingNumber] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [trackingData, setTrackingData] = useState({
-    trackingNumber: "",
-    totalTime: "00:40:00",
-    repairTime: "00:00:00",
-  });
+  const [repairData, setRepairData] = useState(null); // Will hold real data from API
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleRequestRepair = () => {
-    if (!trackingData.trackingNumber.trim()) {
-      alert("Please enter your tracking number.");
+  const trackRepair = async () => {
+    const trimmed = trackingNumber.trim();
+
+    if (!trimmed) {
+      setError("Please enter your tracking number.");
       return;
     }
-    setIsModalOpen(true);
+
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await repairService.trackRepair(trimmed);
+
+      // Assuming API returns something like:
+      // { repair: { ... }, timeline: [...], totalTime, repairTime, ... }
+      setRepairData(response.data || response); // Adjust based on your actual response shape
+      console.log(response)
+
+      setIsModalOpen(true); // Open modal with real data
+    } catch (err) {
+      const message =
+        err.response?.data?.message ||
+        err.message ||
+        "Tracking number not found. Please check and try again.";
+
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !loading) {
+      trackRepair();
+    }
   };
 
   return (
@@ -44,27 +75,51 @@ const TrackRepair = () => {
             <input
               type="text"
               placeholder="E.g. THS4343894"
-              value={trackingData.trackingNumber}
-              onChange={(e) =>
-                setTrackingData({
-                  ...trackingData,
-                  trackingNumber: e.target.value,
-                })
-              }
+              value={trackingNumber}
+              onChange={(e) => setTrackingNumber(e.target.value.toUpperCase())} // Optional: force uppercase
+              onKeyPress={handleKeyPress}
+              disabled={loading}
             />
           </div>
-          <button onClick={handleRequestRepair}>Track Repair</button>
+
+          <button
+            onClick={trackRepair}
+            disabled={loading}
+            className="track-btn"
+          >
+            {loading ? (
+              <>
+                <Loader2 size={18} className="spin" />
+                Tracking...
+              </>
+            ) : (
+              "Track Repair"
+            )}
+          </button>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div
+            className="alertt error"
+            style={{ marginTop: "20px", textAlign: "center" }}
+          >
+            {error}
+          </div>
+        )}
       </div>
 
+      {/* Pass real repair data to modal */}
       <TrackRepairModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        trackingNumber={trackingData.trackingNumber}
-        totalTime={trackingData.totalTime}
-        repairTime={trackingData.repairTime}
+        onClose={() => {
+          setIsModalOpen(false);
+          setRepairData(null); // Optional: clean up
+        }}
+        repairData={repairData} // ← Now using real API data
       />
-      <Footer/>
+
+      <Footer />
     </div>
   );
 };

@@ -89,4 +89,15 @@ export const authService = {
     });
     return response.data;
   },
+
+  updateMe: async ({ lname, fname, email, phoneNumber, photo }) => {
+    const response = await axios.patch("/users/updateMe", {
+      lname,
+      fname,
+      email,
+      phoneNumber,
+      photo,
+    });
+    return response.data;
+  },
 };

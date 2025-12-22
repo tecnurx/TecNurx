@@ -56,6 +56,9 @@
   gap: 32px;
   max-width: 700px;
 }
+.addresses-section {
+  max-width: 700px;
+}
 
 .profile-picture-section {
   display: flex;
@@ -121,7 +124,7 @@
   font-size: 14px;
 }
 
-.form-group input {
+.form-group input, .form-group select {
   width: 100%;
   padding: 12px 14px;
   border: 1.5px solid #ddd;
@@ -147,7 +150,7 @@
   border-bottom: 1px solid #eee;
   max-width: 700px;
 }
-.privacy-tab{
+.privacy-tab {
   max-width: 700px;
 }
 .security-section h3 {
@@ -331,8 +334,12 @@ input:checked + .slider:before {
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .save-btn:disabled {
@@ -341,19 +348,18 @@ input:checked + .slider:before {
 }
 
 @media screen and (max-width: 1290px) {
-  .settings-page{
+  .settings-page {
     padding: 24px 0;
   }
 }
 @media screen and (max-width: 900px) {
-  
 }
 @media screen and (max-width: 600px) {
-  .tab{
+  .tab {
     padding: 10px 12px;
     font-size: 14px;
   }
-  .profile-form .form-row{
+  .profile-form .form-row {
     grid-template-columns: 1fr;
     gap: 12px;
   }
