@@ -30,7 +30,7 @@ const TrackRepair = () => {
       // Assuming API returns something like:
       // { repair: { ... }, timeline: [...], totalTime, repairTime, ... }
       setRepairData(response.data || response); // Adjust based on your actual response shape
-      console.log(response)
+      console.log(response);
 
       setIsModalOpen(true); // Open modal with real data
     } catch (err) {
@@ -112,11 +112,8 @@ const TrackRepair = () => {
       {/* Pass real repair data to modal */}
       <TrackRepairModal
         isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setRepairData(null); // Optional: clean up
-        }}
-        repairData={repairData} // ← Now using real API data
+        onClose={() => setIsModalOpen(false)}
+        trackData={repairData} // from trackRepair API
       />
 
       <Footer />

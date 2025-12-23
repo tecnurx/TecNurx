@@ -12,89 +12,21 @@ import {
   X,
   Plus,
   Upload,
-  Calendar,
   AlertCircle,
-  SearchX,
   MonitorSmartphone,
 } from "lucide-react";
 import { deviceService } from "../../../../../services/devices";
+import { toast } from "@/components/CustomToast"; // Import toast
 
 const MyDevices = () => {
   const [devices, setDevices] = useState([]);
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingDeviceId, setEditingDeviceId] = useState(null);
 
-  // // Sample user devices
-  // const devices = [
-  //   {
-  //     id: 1,
-  //     name: "iPhone 15 Pro",
-  //     type: "smartphone",
-  //     serial: "F2MKP123456789",
-  //     status: "active",
-  //     statusLabel: "Active",
-  //     thumbnail: "smartphone",
-  //     brand: "Apple",
-  //     model: "iPhone 15 Pro",
-  //     purchaseDate: "Oct 12, 2024",
-  //     insuredUntil: "Oct 12, 2026",
-  //     repairHistory: [
-  //       { date: "Jul 5, 2025", issue: "Screen replacement", cost: "$179" },
-  //       { date: "Mar 18, 2025", issue: "Battery replacement", cost: "$99" },
-  //     ],
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'MacBook Pro 14"',
-  //     type: "laptop",
-  //     serial: "C02ZJ9ABLVCF",
-  //     status: "repair",
-  //     statusLabel: "Under Repair",
-  //     thumbnail: "laptop",
-  //     brand: "Apple",
-  //     model: "MacBook Pro M3",
-  //     purchaseDate: "Jan 20, 2025",
-  //     insuredUntil: "Jan 20, 2027",
-  //     repairHistory: [
-  //       {
-  //         date: "Nov 18, 2025",
-  //         issue: "Keyboard replacement",
-  //         cost: "In progress",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Galaxy Fold 6",
-  //     type: "Fold",
-  //     serial: "R3X7N9012345",
-  //     status: "insured",
-  //     statusLabel: "Insured",
-  //     thumbnail: "smartphone",
-  //     brand: "Samsung",
-  //     model: "Galaxy Fold 6 Classic",
-  //     purchaseDate: "Aug 3, 2025",
-  //     insuredUntil: "Aug 3, 2026",
-  //     repairHistory: [],
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "iPad Air (5th Gen)",
-  //     type: "tablet",
-  //     serial: "MP123ABC456D",
-  //     status: "active",
-  //     statusLabel: "Active",
-  //     thumbnail: "tablet",
-  //     brand: "Apple",
-  //     model: 'iPad Air 11"',
-  //     purchaseDate: "Apr 10, 2025",
-  //     insuredUntil: null,
-  //     repairHistory: [],
-  //   },
-  // ];
-
-  // Add Device Form State
+  // Form state
   const [formData, setFormData] = useState({
     deviceType: "phone",
     brand: "",
@@ -112,23 +44,93 @@ const MyDevices = () => {
   const [submitError, setSubmitError] = useState("");
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  // Fetch devices
+  // Fetch devices on mount
   useEffect(() => {
     const fetchDevices = async () => {
       try {
         const res = await deviceService.getAllUserDevices();
-        setDevices(res?.data?.devices); // Adjust based on API response
+        setDevices(res?.data?.devices || []);
       } catch (err) {
-        console.error("Failed to load devices:", err);
+        toast.error("Failed to load devices");
+        console.error(err);
       }
     };
     fetchDevices();
-
-    // Fetch repair history for the first device
   }, []);
 
-  // Handle Add Device Submit
-  const handleAddDevice = async (e) => {
+  // Open device details + fetch extra data
+  const openDetails = async (device) => {
+    if (!device?.id) return;
+
+    setSelectedDevice(device);
+    setIsDetailsModalOpen(true);
+
+    try {
+      const [repairRes] = await Promise.all([
+        deviceService.getDeviceRepairHistory({ deviceId: device.id }),
+        deviceService
+          .getDeviceInsurance({ deviceId: device.id })
+          .catch(() => ({ data: null })),
+      ]);
+
+      setSelectedDevice((prev) => ({
+        ...prev,
+        repairHistory: repairRes?.data?.repairs || [],
+      }));
+    } catch (error) {
+      toast.error("Failed to load device details");
+      setSelectedDevice((prev) => ({ ...prev, repairHistory: [] }));
+    }
+  };
+
+  // Open edit modal (reuses add modal)
+  const openEditModal = (device) => {
+    setIsEditMode(true);
+    setEditingDeviceId(device.id);
+
+    setFormData({
+      deviceType: device.deviceType || "phone",
+      brand: device.brand || "",
+      model: device.model || "",
+      serialNumber: device.serialNumber || "",
+      purchaseDate: device.purchaseDate
+        ? device.purchaseDate.split("T")[0]
+        : "",
+      warrantyExpiry: device.warrantyExpiry
+        ? device.warrantyExpiry.split("T")[0]
+        : "",
+      condition: device.condition || "good",
+      notes: device.notes || "",
+    });
+
+    setPhotos([]);
+    setReceipt(null);
+    setIsAddModalOpen(true);
+    setIsDetailsModalOpen(false); // Close details modal
+  };
+
+  // Reset form
+  const resetForm = () => {
+    setFormData({
+      deviceType: "phone",
+      brand: "",
+      model: "",
+      serialNumber: "",
+      purchaseDate: "",
+      warrantyExpiry: "",
+      condition: "good",
+      notes: "",
+    });
+    setPhotos([]);
+    setReceipt(null);
+    setIsEditMode(false);
+    setEditingDeviceId(null);
+    setSubmitError("");
+    setSubmitSuccess(false);
+  };
+
+  // Handle Add or Update Device
+  const handleSubmitDevice = async (e) => {
     e.preventDefault();
     setSubmitError("");
     setSubmitSuccess(false);
@@ -140,68 +142,51 @@ const MyDevices = () => {
 
     setIsSubmitting(true);
 
-    const payload = new FormData();
-    payload.append("deviceType", formData.deviceType);
-    payload.append("brand", formData.brand);
-    payload.append("model", formData.model);
-    payload.append("serialNumber", formData.serialNumber);
-    payload.append("purchaseDate", formData.purchaseDate);
-    payload.append("warrantyExpiry", formData.warrantyExpiry || "");
-    payload.append("condition", formData.condition);
-    if (formData.notes) payload.append("notes", formData.notes);
-
-    photos.forEach((photo) => payload.append("photos", photo));
-    if (receipt) payload.append("purchaseReceipt", receipt);
-
     try {
-      await deviceService.addDevice(payload);
-      setSubmitSuccess(true);
-      // setTimeout(() => {
-      //   setIsAddModalOpen(false);
-      //   // Refresh devices
-      //   const res = await deviceService.getAllUserDevices();
-      //   setDevices(res.data || res);
-      // }, 1500);
+      if (isEditMode) {
+        // UPDATE DEVICE
+        await deviceService.updateDevice({ deviceId: editingDeviceId });
+        toast.success("Device updated successfully!");
+      } else {
+        // ADD NEW DEVICE
+        const payload = new FormData();
+        payload.append("deviceType", formData.deviceType);
+        payload.append("brand", formData.brand);
+        payload.append("model", formData.model);
+        payload.append("serialNumber", formData.serialNumber);
+        payload.append("purchaseDate", formData.purchaseDate);
+        payload.append("warrantyExpiry", formData.warrantyExpiry || "");
+        payload.append("condition", formData.condition);
+        if (formData.notes) payload.append("notes", formData.notes);
+
+        photos.forEach((photo) => payload.append("photos", photo));
+        if (receipt) payload.append("purchaseReceipt", receipt);
+
+        await deviceService.addDevice(payload);
+        toast.success("Device added successfully!");
+      }
+
+      // Refresh device list
+      const res = await deviceService.getAllUserDevices();
+      setDevices(res?.data?.devices || []);
+
+      // Close modal after short delay
+      setTimeout(() => {
+        setIsAddModalOpen(false);
+        resetForm();
+      }, 1000);
     } catch (err) {
-      setSubmitError(err.response?.data?.message || "Failed to add device");
-      console.log(err);
+      const msg =
+        err.response?.data?.message ||
+        (isEditMode ? "Failed to update device" : "Failed to add device");
+      setSubmitError(msg);
+      toast.error(msg);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const openDetails = async (device) => {
-    if (!device?.id) return;
-
-    setSelectedDevice(device);
-    setIsDetailsModalOpen(true);
-
-    try {
-      // Fetch both in parallel for better performance
-      const [repairRes, insuranceRes] = await Promise.all([
-        deviceService.getDeviceRepairHistory({ deviceId: device.id }),
-        deviceService
-          .getDeviceInsurance({ deviceId: device.id })
-          .catch(() => ({ data: null })),
-      ]);
-
-      setSelectedDevice((prev) => ({
-        ...prev,
-        repairHistory: repairRes?.data?.repairs || [],
-        insurance: insuranceRes?.data?.insurance || null,
-      }));
-      console.log("Fetched repair details", repairRes);
-      console.log("Fetched insurance details", insuranceRes);
-    } catch (error) {
-      console.error("Error loading device details:", error);
-      setSelectedDevice((prev) => ({
-        ...prev,
-        repairHistory: [],
-        insurance: null,
-      }));
-    }
-  };
-
+  // Close modals
   const closeModal = () => {
     setIsDetailsModalOpen(false);
     setSelectedDevice(null);
@@ -214,7 +199,7 @@ const MyDevices = () => {
       tablet: <Tablet size={42} />,
       watch: <Watch size={42} />,
     };
-    return map[type] || <Smartphone size={42} />;
+    return map[type?.toLowerCase()] || <Smartphone size={42} />;
   };
 
   return (
@@ -226,7 +211,10 @@ const MyDevices = () => {
             <p>Manage all your registered gadgets in one place</p>
           </div>
           <button
-            onClick={() => setIsAddModalOpen(true)}
+            onClick={() => {
+              resetForm();
+              setIsAddModalOpen(true);
+            }}
             className="add-device-btn"
           >
             <Plus size={18} /> Add Device
@@ -248,27 +236,30 @@ const MyDevices = () => {
               >
                 <div className="device-thumbnail">
                   <div className="thumbnail-icon" style={{ color: "#FFC400" }}>
-                    {getDeviceIcon(device.type || device.deviceType)}
+                    {getDeviceIcon(device.deviceType)}
                   </div>
                 </div>
                 <div className="device-info">
-                  <h3>{device.name || `${device.brand} ${device.model}`}</h3>
-                  <p className="serial">
-                    SN: {device.serialNumber || device.serial}
-                  </p>
+                  <h3>{`${device.brand} ${device.model}`}</h3>
+                  <p className="serial">SN: {device.serialNumber}</p>
                   <div className="device-status">
                     <span
                       className="status-badge"
-                      style={{
-                        backgroundColor: "#10b98120",
-                        color: "#10b981",
-                      }}
+                      style={{ backgroundColor: "#10b98120", color: "#10b981" }}
                     >
                       Active
                     </span>
                   </div>
                 </div>
-                <button className="view-details-btnn">View Details</button>
+                <button
+                  className="view-details-btnn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openDetails(device);
+                  }}
+                >
+                  View Details
+                </button>
               </div>
             ))
           )}
@@ -285,13 +276,11 @@ const MyDevices = () => {
 
             <div className="modal-header">
               <div className="modal-thumbnail">
-                {getDeviceIcon(selectedDevice.type)}
+                {getDeviceIcon(selectedDevice.deviceType)}
               </div>
               <div>
-                <h2>{selectedDevice.name}</h2>
-                <p className="modal-subtitle">
-                  {selectedDevice.brand} • {selectedDevice.model}
-                </p>
+                <h2>{`${selectedDevice.brand} ${selectedDevice.model}`}</h2>
+                <p className="modal-subtitle">{selectedDevice.deviceType}</p>
               </div>
             </div>
 
@@ -303,18 +292,29 @@ const MyDevices = () => {
                 </div>
                 <div>
                   <span>Purchase Date</span>
-                  <p>{selectedDevice.purchaseDate}</p>
+                  {selectedDevice.purchaseDate && (
+                    <p>
+                      {new Date(selectedDevice.purchaseDate).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        }
+                      )}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <span>Insurance Coverage</span>
                   <p>
-                    {selectedDevice.insuredUntil ? (
+                    {selectedDevice.insuranceStatus?.isInsured ? (
                       <span style={{ color: "#10b981" }}>
                         <Shield
                           size={16}
                           style={{ display: "inline", marginRight: 6 }}
                         />
-                        Active until {selectedDevice.warrantyExpiry}
+                        Insured
                       </span>
                     ) : (
                       <span style={{ color: "#ef4444" }}>Not insured</span>
@@ -327,14 +327,26 @@ const MyDevices = () => {
                 <h3>
                   <Wrench size={18} /> Repair History
                 </h3>
-                {selectedDevice?.repairHistory?.length > 0 ? (
+                {selectedDevice.repairHistory?.length > 0 ? (
                   <ul>
-                    {selectedDevice?.repairHistory?.map((repair, i) => (
+                    {selectedDevice.repairHistory.map((repair, i) => (
                       <li key={i}>
                         <div>
-                          <strong>{repair.date}</strong> – {repair.issue}
+                          <strong>
+                            {new Date(repair.assignedAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              }
+                            )}
+                          </strong>{" "}
+                          – {repair.issueDescription}
                         </div>
-                        <span className="repair-cost">{repair.cost}</span>
+                        <span className="repair-cost">
+                          {repair.paymentStatus || "Pending"}
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -348,7 +360,15 @@ const MyDevices = () => {
               <button className="action-btn primary">
                 <Wrench size={18} /> Book New Repair
               </button>
-              {selectedDevice.insuredUntil ? (
+
+              <button
+                className="action-btn secondary"
+                onClick={() => openEditModal(selectedDevice)}
+              >
+                Edit Device
+              </button>
+
+              {selectedDevice.insuranceStatus?.isInsured ? (
                 <button className="action-btn secondary">
                   <Shield size={18} /> Renew Insurance
                 </button>
@@ -357,7 +377,33 @@ const MyDevices = () => {
                   <Shield size={18} /> Add Insurance
                 </button>
               )}
-              <button className="action-btn danger">
+
+              <button
+                className="action-btn danger"
+                onClick={async () => {
+                  if (
+                    !confirm(
+                      "Are you sure you want to remove this device permanently?"
+                    )
+                  )
+                    return;
+
+                  try {
+                    await deviceService.deleteDevice({
+                      deviceId: selectedDevice.id,
+                    });
+                    setDevices(
+                      devices.filter((d) => d.id !== selectedDevice.id)
+                    );
+                    closeModal();
+                    toast.success("Device removed successfully");
+                  } catch (err) {
+                    toast.error(
+                      err.response?.data?.message || "Failed to remove device"
+                    );
+                  }
+                }}
+              >
                 <Trash2 size={18} /> Remove Device
               </button>
             </div>
@@ -365,7 +411,7 @@ const MyDevices = () => {
         </div>
       )}
 
-      {/* ADD DEVICE MODAL */}
+      {/* Add / Edit Device Modal */}
       {isAddModalOpen && (
         <div className="modal-overlay" onClick={() => setIsAddModalOpen(false)}>
           <div
@@ -380,22 +426,24 @@ const MyDevices = () => {
             </button>
 
             <div className="modal-header modal-head2">
-              <h2>Add New Device</h2>
-              <p>Register your device for repairs & insurance</p>
+              <h2>{isEditMode ? "Edit Device" : "Add New Device"}</h2>
+              <p>
+                {isEditMode
+                  ? "Update your device information"
+                  : "Register your device for repairs & insurance"}
+              </p>
             </div>
 
-            <form onSubmit={handleAddDevice} className="add-device-form">
+            <form onSubmit={handleSubmitDevice} className="add-device-form">
               {submitError && (
                 <div className="alert error">
                   <AlertCircle size={18} />
                   {submitError}
                 </div>
               )}
-              {submitSuccess && (
-                <div className="alert success">Device added successfully!</div>
-              )}
 
               <div className="form-grid">
+                {/* All your form fields remain the same */}
                 <div className="form-group">
                   <label>Device Type *</label>
                   <select
@@ -494,7 +542,7 @@ const MyDevices = () => {
                 </div>
 
                 <div className="form-group full">
-                  <label>Photos (min. of 2 required)</label>
+                  <label>Photos {!isEditMode && "(min. 2 required)"}</label>
                   <label className="file-upload">
                     <Upload size={20} />
                     Upload Photos ({photos.length})
@@ -546,7 +594,11 @@ const MyDevices = () => {
                   className="action-btn primary"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Adding..." : "Add Device"}
+                  {isSubmitting
+                    ? "Saving..."
+                    : isEditMode
+                    ? "Update Device"
+                    : "Add Device"}
                 </button>
               </div>
             </form>

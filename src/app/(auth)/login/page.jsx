@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import logimage from "@/assets/images/login.svg";
 import logo from "@/assets/images/loglogo.svg";
 import google from "@/assets/images/google.svg";
-import facebook from "@/assets/images/facebook.svg";
 import Image from "next/image";
 import "./login.css";
 import Link from "next/link";
@@ -17,6 +16,7 @@ const Login = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -46,35 +46,48 @@ const Login = () => {
         password: formData.password,
       };
 
-      console.log("Login payload →", payload);
+      await authService.login(payload);
 
-      // This hits your backend: /api/v1/users/loginUser
-      const response = await authService.login(payload);
-
-      // Success!
       toast.success("Welcome back! Redirecting...");
-
-      // Token & user already saved in authService.login()
-      setTimeout(() => {
-        router.push("/dashboard"); // Change to your protected route
-      }, 1500);
+      setTimeout(() => router.push("/dashboard"), 1500);
     } catch (err) {
       console.error("Login error:", err);
+      const message =
+        err.response?.data?.message ||
+        (err.response?.status === 401
+          ? "Invalid email or password"
+          : err.response?.status === 404
+          ? "Account not found"
+          : "Login failed. Please try again.");
 
-      // Handle common backend errors
-      if (err.response?.status === 401) {
-        toast.error("Invalid email/phone or password");
-      } else if (err.response?.status === 404) {
-        toast.error("Account not found. Please sign up first.");
-      } else if (err.response?.data?.message) {
-        toast.error(err.response.data.message);
-      } else if (err.code === "ERR_NETWORK") {
-        toast.error("Server is waking up... Try again in 30s");
-      } else {
-        toast.error("Login failed. Please try again.");
-      }
+      toast.error(message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Google OAuth Handler
+  const handleGoogleLogin = async () => {
+    setGoogleLoading(true);
+    toast.info("Redirecting to Google...");
+
+    try {
+      const response = await authService.googleOauth();
+
+      // Backend should return { url: "https://accounts.google.com/o/oauth2/auth?..." }
+      const redirectUrl = response.data?.url || response.url;
+
+      if (redirectUrl) {
+        // Redirect user to Google's consent screen
+        window.location.href = redirectUrl;
+      } else {
+        toast.error("Failed to initiate Google login");
+      }
+    } catch (err) {
+      console.error("Google OAuth error:", err);
+      toast.error("Google login unavailable. Please try again later.");
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -94,14 +107,31 @@ const Login = () => {
             </h2>
 
             <div className="auth-options">
-              <div>
+              <div
+                onClick={handleGoogleLogin}
+                style={{
+                  cursor: googleLoading ? "not-allowed" : "pointer",
+                  opacity: googleLoading ? 0.7 : 1,
+                  // display: "flex",
+                  // alignItems: "center",
+                  // gap: "12px",
+                  // padding: "12px",
+                  // border: "1px solid #ddd",
+                  // borderRadius: "8px",
+                  // background: "#fff",
+                  // transition: "all 0.2s",
+                }}
+                onMouseOver={(e) =>
+                  !googleLoading &&
+                  (e.currentTarget.style.background = "#f9f9f9")
+                }
+                onMouseOut={(e) =>
+                  !googleLoading && (e.currentTarget.style.background = "#fff")
+                }
+              >
                 <Image src={google} alt="google" />
-                <span>Google</span>
+                <span>{googleLoading ? "Connecting..." : "Google"}</span>
               </div>
-              {/* <div>
-                <Image src={facebook} alt="facebook" />
-                <span>Facebook</span>
-              </div> */}
             </div>
 
             <div className="divider">
@@ -120,6 +150,7 @@ const Login = () => {
                   onChange={handleChange}
                   placeholder="Enter email or phone number"
                   required
+                  disabled={loading}
                 />
               </div>
 
@@ -136,6 +167,7 @@ const Login = () => {
                     onChange={handleChange}
                     placeholder="Enter password"
                     required
+                    disabled={loading}
                   />
                   <span
                     className="eye"
@@ -146,6 +178,7 @@ const Login = () => {
                       top: "50%",
                       transform: "translateY(-50%)",
                       cursor: "pointer",
+                      pointerEvents: loading ? "none" : "auto",
                     }}
                   >
                     {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
@@ -155,7 +188,7 @@ const Login = () => {
 
               <div className="remember-forgot">
                 <div>
-                  <input type="checkbox" id="remember" />
+                  <input type="checkbox" id="remember" disabled={loading} />
                   <label htmlFor="remember">Remember me</label>
                 </div>
                 <Link href="/forgot-password">Forgot Password?</Link>
@@ -164,12 +197,8 @@ const Login = () => {
               <div className="sign-btn">
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || googleLoading}
                   className="sign-in-btn"
-                  style={{
-                    opacity: loading ? 0.8 : 1,
-                    cursor: loading ? "not-allowed" : "pointer",
-                  }}
                 >
                   {loading ? "Signing In..." : "Sign In"}
                 </button>

@@ -100,4 +100,14 @@ export const authService = {
     });
     return response.data;
   },
+
+  googleOauth: async () => {
+    const response = await axios.get("/auth/google");
+    return response.data;
+  },
+
+  googleOauthFallback: async () => {
+    const response = await axios.get("/auth/google/fallback");
+    return response.data;
+  },
 };
