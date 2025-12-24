@@ -102,12 +102,12 @@ export const authService = {
   },
 
   googleOauth: async () => {
-    const response = await axios.get("/auth/google");
+    const response = await axios.get("/users/auth/google");
     return response.data;
   },
 
-  googleOauthFallback: async () => {
-    const response = await axios.get("/auth/google/fallback");
+  googleOauthCallback: async () => {
+    const response = await axios.get("/users/auth/google/callback");
     return response.data;
   },
 };

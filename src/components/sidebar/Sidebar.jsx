@@ -61,12 +61,12 @@ const Sidebar = () => {
           >
             Payment & Plans
           </Link>
-          <Link
+          {/* <Link
             href="/dashboard/feedback"
             className={pathname === "/dashboard/feedback" ? "active" : ""}
           >
             Feedback & Reviews
-          </Link>
+          </Link> */}
           <Link
             href="/dashboard/my-account"
             className={pathname === "/dashboard/my-account" ? "active" : ""}

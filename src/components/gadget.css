@@ -17,3 +17,10 @@
 .active-option {
   border: 2px solid rgba(255, 194, 0, 1) !important;
 }
+
+@media screen and (max-width: 600px) {
+  .gadget-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

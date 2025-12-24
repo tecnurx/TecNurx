@@ -30,7 +30,7 @@
   letter-spacing: -3%;
   vertical-align: middle;
   color: Black;
-  margin-top: 8px;
+  margin-top: 16px;
 }
 .hero-content h1 span {
   font-style: italic;
@@ -45,9 +45,9 @@
   letter-spacing: 0%;
   vertical-align: middle;
   width: 508px;
-  margin-top: 20px;
+  margin-top: 16px;
 }
-.hero-content button {
+.hero-texts button {
   padding: 24px 48px;
   background: #000;
   color: white;
@@ -68,7 +68,7 @@
 .hero-image {
   width: 420px;
   /* height: 550px; */
-  /* margin-left: -30px; */
+  /* margin-left: -40px; */
 }
 .numbers {
   padding: 50px 0;
@@ -134,10 +134,10 @@
   width: 100%;
 }
 .numbers-wrap div p {
-  font-family: DM Sans;
+  font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 400;
   font-style: Regular;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 100%;
   letter-spacing: 0%;
   text-align: center;
@@ -978,13 +978,13 @@
   .numbers {
     padding-top: 0;
   }
-  .sgrid2 img{
+  .sgrid2 img {
     width: 200px;
     object-fit: cover;
 
     /* display: none; */
   }
-  .sgrid2{
+  .sgrid2 {
     justify-content: start !important;
   }
 }
@@ -1089,7 +1089,7 @@
     font-size: 32px;
   }
   .approx-wrap p {
-    width: 100%;
+    width: 350px;
   }
   .foot-block-addy {
     height: 100% !important;
@@ -1103,77 +1103,78 @@
   }
 }
 
-
-@media screen and (min-width: 2550px){
-  .hero-texts h1{
+@media screen and (min-width: 2550px) {
+  .hero-texts h1 {
     width: 1000px;
     font-size: 92px;
     line-height: 100px;
   }
-  .hero-image{
+  .hero-image {
     width: 700px;
     height: 100%;
   }
-  .hero-section{
+  .hero-section {
     justify-content: center;
     gap: 100px;
   }
-  .repairs-wrap{
+  .repairs-wrap {
     padding: 120px 300px;
   }
-  .repair-range input{
+  .repair-range input {
     width: 100%;
   }
-  .repair-range span{
+  .repair-range span {
     width: 100px;
   }
-  .best-box img{
+  .best-box img {
     width: 100%;
     height: 300px;
     object-fit: cover;
     border-radius: 50px;
   }
-  .home-section-wrap{
+  .home-section-wrap {
     padding: 120px 320px;
   }
-  .our-services{
+  .our-services {
     padding: 100px 320px;
   }
-  .schedule-pickup p{
+  .schedule-pickup p {
     width: 700px;
   }
-  .schedule-pickup{
+  .schedule-pickup {
     justify-content: center;
     gap: 120px;
   }
-  .hero-content p{
+  .hero-content p {
     font-size: 24px;
     width: 650px;
   }
-  .sgrid3 img{
+  .sgrid3 img {
     height: 700px;
   }
-  .services-grid div p{
+  .services-grid div p {
     font-size: 24px;
     width: 600px;
   }
-  .sgrid2 div{
+  .sgrid2 div {
     justify-content: center;
   }
-  .hero-partner{
+  .hero-partner {
     margin-top: 200px;
   }
-  .hero-content h1, .hero-content p, .hero-content button{
+  .hero-content h1,
+  .hero-content p,
+  .hero-content button {
     margin-top: 24px;
   }
-  .schedule-pickup h1{
+  .schedule-pickup h1 {
     font-size: 92px;
     width: 950px;
   }
-  .faq{
+  .faq {
     width: 1250px;
   }
-  .faq p{
+  .faq p {
     font-size: 22px;
   }
 }

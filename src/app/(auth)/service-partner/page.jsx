@@ -13,7 +13,7 @@ const ServicePartner = () => {
         <div className="service-section">
           <div className="service-content">
             <h1>
-              Become a<span> Service Partner</span>
+              Become a <br /><span> Service Partner</span>
             </h1>
             <p>
               Join TecNurx as a Service Center Engineer and be part of a growing

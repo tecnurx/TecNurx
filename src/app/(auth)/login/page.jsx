@@ -67,26 +67,20 @@ const Login = () => {
   };
 
   // Google OAuth Handler
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = () => {
     setGoogleLoading(true);
     toast.info("Redirecting to Google...");
 
     try {
-      const response = await authService.googleOauth();
+      // Construct the full OAuth URL
+      const baseURL = process.env.NEXT_PUBLIC_API_URL;
+      const oauthUrl = `${baseURL}/users/auth/google`;
 
-      // Backend should return { url: "https://accounts.google.com/o/oauth2/auth?..." }
-      const redirectUrl = response.data?.url || response.url;
-
-      if (redirectUrl) {
-        // Redirect user to Google's consent screen
-        window.location.href = redirectUrl;
-      } else {
-        toast.error("Failed to initiate Google login");
-      }
+      // Direct redirect to backend OAuth endpoint
+      window.location.href = oauthUrl;
     } catch (err) {
       console.error("Google OAuth error:", err);
       toast.error("Google login unavailable. Please try again later.");
-    } finally {
       setGoogleLoading(false);
     }
   };

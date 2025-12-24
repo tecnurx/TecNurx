@@ -33,7 +33,7 @@ const Repairs = () => {
   const adjustedMonthlyMax = Math.round((maxRepair / paybackMonths) * 1.1);
 
   return (
-    <div className="repairs-wrap">
+    <section className="repairs-wrap" id="GetQuote">
       <div className="repairs-top">
         <span>Repairs</span>
       </div>
@@ -124,7 +124,7 @@ const Repairs = () => {
         </div>
         <button>Request a repair</button>
       </div>
-    </div>
+    </section>
   );
 };
 

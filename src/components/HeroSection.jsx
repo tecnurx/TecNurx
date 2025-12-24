@@ -1,3 +1,4 @@
+'use client';
 import React from "react";
 import Image from "next/image";
 import hero from "@/assets/images/hero.svg";
@@ -20,7 +21,15 @@ const HeroSection = () => {
               Get professional repairs, protection plans, and new devices with
               free pickup and delivery
             </p>
-            <button>Get Started</button>
+            <button
+              onClick={() => {
+                document.getElementById("GetQuote")?.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }}
+            >
+              Get Quote
+            </button>
           </div>
           <Image src={hslide} alt="our partners" className="hero-partner" />
         </div>

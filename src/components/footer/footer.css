@@ -316,6 +316,9 @@
   .newsletter button {
     right: 5px;
   }
+  .foot-contact h2{
+    padding: 24px;
+  }
 }
 .shape {
   background: black;
@@ -337,6 +340,8 @@
   top: 50%;
   z-index: 1;
 }
+
+
 
 @media screen and (min-width: 2550px) {
   .shape2 {

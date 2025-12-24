@@ -424,7 +424,6 @@ const MyDevices = () => {
             >
               <X size={24} />
             </button>
-
             <div className="modal-header modal-head2">
               <h2>{isEditMode ? "Edit Device" : "Add New Device"}</h2>
               <p>

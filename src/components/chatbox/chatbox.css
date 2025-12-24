@@ -5,7 +5,7 @@
   right: 20px;
   width: 60px;
   height: 60px;
-  background: #3b82f6; /* blue-500 */
+  background: #000; /* blue-500 */
   color: white;
   border: none;
   border-radius: 50%;
@@ -20,7 +20,8 @@
 
 .chatbox-toggle:hover {
   transform: scale(1.1);
-  background: #2563eb;
+  background: #f2f2f2;
+  color: black;
 }
 
 .chat-badge {
@@ -59,7 +60,7 @@
 }
 
 .chatbox-header {
-  background: #3b82f6;
+  background: #000;
   color: white;
   padding: 16px;
   display: flex;
@@ -108,7 +109,7 @@
 
 .message.user {
   align-self: flex-end;
-  background: #3b82f6;
+  background: #000;
   color: white;
   border-radius: 18px 18px 18px 4px;
   padding: 10px 14px;
@@ -148,12 +149,12 @@
 }
 
 .chatbox-input input:focus {
-  border-color: #3b82f6;
+  border-color: #000;
 }
 
 .chatbox-input button {
   margin-left: 8px;
-  background: #3b82f6;
+  background: #000;
   color: white;
   border: none;
   width: 40px;

@@ -254,10 +254,9 @@
   vertical-align: middle;
   color: rgba(59, 63, 68, 1);
 }
-.submit-disable{
+.submit-disable {
   opacity: 0.6;
 }
-
 
 /* Optional: little pulse animation when loading */
 @keyframes pulse {
@@ -278,16 +277,26 @@
 
 @media screen and (max-width: 600px) {
   .card {
-    width: 95%;
-    padding: 24px;
+    width: 80%;
+    padding: 18px;
   }
   .register-wrap {
     /* padding: 100px 24px; */
   }
+  .user-partner button {
+    width: 100%;
+    padding: 14px;
+  }
+  .user-partner button p {
+    font-size: 12px;
+  }
+  .two-form-group {
+    grid-template-columns: 1fr;
+  }
 }
 
-@media screen and (min-width: 2550px){
-  .register-wrap{
+@media screen and (min-width: 2550px) {
+  .register-wrap {
     height: 100vh;
   }
 }

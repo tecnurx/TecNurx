@@ -24,7 +24,7 @@ export const deviceService = {
   },
 
   deleteDevice: async ({ deviceId }) => {
-    const response = await axios.delete(`/devices/${deviceId}/remove`);
+    const response = await axios.post(`/devices/${deviceId}/remove`);
     return response.data;
   },
 
