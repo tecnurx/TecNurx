@@ -271,3 +271,18 @@
     padding: 20px 320px 12px;
   }
 }
+
+@media screen and (min-width: 1450px) {
+  .navbar {
+    max-width: 1800px;
+    gap: 200px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .navbar-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background: #f4f4f4;
+  }
+}

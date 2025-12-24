@@ -47,7 +47,7 @@ const HowBest = () => {
       },
     ];
   return (
-    <div>
+    <div className="how-best-section">
       <div className="how-best-wrap">
         <div className="how-head">
           <h1>

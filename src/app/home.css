@@ -1106,11 +1106,36 @@
   }
 }
 
-@media screen and (min-width: 1440px) {
+@media screen and (min-width: 1450px) {
   .hero-section{
     justify-content: center;
   }
   .hero-content h1{
     width: 700px;
+  }
+  .schedule-pickup, .how-best-wrap{
+    max-width: 1200px;
+  }
+  .home-section-wrap{
+    align-items: center;
+  }
+  .our-services{
+    align-items: center;
+  }
+  .services-header, .faq-header, .how-head{
+    align-items: start !important;
+    justify-content: start;
+    width: 100%;
+    max-width: 1120px;
+  }
+  .faq-wrap{
+    align-items: center;
+  }
+  .how-best-wrap{
+    align-items: center;
+  }
+  .how-best-section{
+   display: flex;
+   justify-content: center; 
   }
 }

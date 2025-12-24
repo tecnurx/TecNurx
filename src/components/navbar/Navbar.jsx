@@ -12,7 +12,7 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   return (
-    <>
+    <div className="navbar-wrap">
       <nav className="navbar">
         <Link href="/">
           <Image src={logo} alt="logo" width={197} />
@@ -127,7 +127,7 @@ const Navbar = () => {
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
-    </>
+    </div>
   );
 };
 
