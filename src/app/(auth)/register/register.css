@@ -295,7 +295,7 @@
   }
 }
 
-@media screen and (min-width: 2550px) {
+@media screen and (min-width: 2000px) {
   .register-wrap {
     height: 100vh;
   }

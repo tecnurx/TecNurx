@@ -222,7 +222,7 @@
   top: 36px;
   cursor: pointer;
 }
-.password-wrapper input{
+.password-wrapper input {
   width: 100%;
 }
 
@@ -245,7 +245,6 @@
   margin: 16px 0;
   font-size: 14px;
 }
-
 
 @media screen and (max-width: 900px) {
   .login-wrap {
@@ -286,8 +285,8 @@
   }
 }
 
-@media screen and (min-width: 2550px){
-  .sideimage{
+@media screen and (min-width: 2000px) {
+  .sideimage {
     width: 100%;
   }
 }

@@ -316,7 +316,7 @@
   .newsletter button {
     right: 5px;
   }
-  .foot-contact h2{
+  .foot-contact h2 {
     padding: 24px;
   }
 }
@@ -341,23 +341,20 @@
   z-index: 1;
 }
 
-
-
-@media screen and (min-width: 2550px) {
+@media screen and (min-width: 2000px) {
   .shape2 {
     width: 782px;
   }
   .shape {
     width: 782px;
   }
-  .foot-block-img{
+  .foot-block-img {
     width: 600px;
   }
-  .foot-block-1{
+  .foot-block-1 {
     width: 450px;
   }
-  .foot-block{
+  .foot-block {
     padding: 64px 48px;
-
   }
 }

@@ -16,7 +16,7 @@
   background-size: cover;
   gap: 24px;
 }
-.partner-image{
+.partner-image {
   height: 450px;
 }
 .partner-content h1 {
@@ -117,74 +117,73 @@
 }
 
 @media screen and (max-width: 900px) {
-  .why-grid{
+  .why-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  .why-grid img{
+  .why-grid img {
     width: 300px;
     height: 300px;
   }
-  .partner-section{
+  .partner-section {
     flex-direction: column;
     padding: 42px 80px;
   }
-  .marqueee{
+  .marqueee {
     /* display: none; */
   }
-  
 }
 @media screen and (max-width: 600px) {
-.partner-image{
+  .partner-image {
     width: 100%;
     height: 400px;
   }
-  .partner-content h1{
+  .partner-content h1 {
     width: 100%;
     font-size: 42px;
     line-height: 40px;
   }
-  .partner-content p{
+  .partner-content p {
     width: 100%;
     font-size: 16px;
   }
-  .partner-content{
+  .partner-content {
     gap: 24px;
   }
-    .partner-section{
+  .partner-section {
     flex-direction: column;
     padding: 42px 32px;
   }
-  .why-section{
+  .why-section {
     padding: 100px 32px 30px;
     gap: 42px;
   }
-  .why-grid{
+  .why-grid {
     grid-template-columns: repeat(1, 1fr);
   }
-    .why-grid img{
+  .why-grid img {
     width: 100%;
     height: 300px;
   }
 }
 
-@media screen and (min-width: 2550px){
-  .marqueee{
+@media screen and (min-width: 2000px) {
+  .marqueee {
     margin-top: 180px;
   }
-  .partner-content h1{
+  .partner-content h1 {
     width: 750px;
     font-size: 92px;
     line-height: 100px;
   }
-  .partner-image{
+  .partner-image {
     width: 700px;
     height: 100%;
   }
-  .partner-section{
+  .partner-section {
     justify-content: center;
     gap: 100px;
   }
-  .partner-content p{
+  .partner-content p {
     font-size: 24px;
     width: 600px;
   }
