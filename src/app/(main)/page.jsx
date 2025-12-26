@@ -9,6 +9,7 @@ import Testimonials from "@/components/Testimonials";
 import Footer from "@/components/footer/Footer";
 
 export default function Home() {
+  
   const numberStat = [
     {
       id: 1,

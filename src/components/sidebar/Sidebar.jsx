@@ -4,7 +4,7 @@ import "./sidebar.css";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import logo from "@/assets/images/logo.svg";
+import logo from "@/assets/images/logo.png";
 import { Menu } from "lucide-react";
 import { SidebarContext } from "./../../../context/SidebarContext";
 

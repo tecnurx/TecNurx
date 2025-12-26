@@ -145,7 +145,7 @@ technurx
    │     ├─ insure.svg
    │     ├─ laptop.svg
    │     ├─ login.svg
-   │     ├─ loglogo.svg
+   │     ├─ logo.png
    │     ├─ logo.svg
    │     ├─ mail.svg
    │     ├─ part.svg

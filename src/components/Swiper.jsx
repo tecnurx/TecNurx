@@ -1,12 +1,10 @@
 import React from "react";
-import testi from "@/assets/images/testi.svg";
 import quote from "@/assets/images/quote.svg";
 import Image from "next/image";
 import "./swiper.css";
 import { CircleUser } from "lucide-react";
 
 const SwiperCard = () => {
-  // Duplicate the array so the animation never has a gap
   const testimonials = [
     {
       id: 1,
@@ -14,15 +12,13 @@ const SwiperCard = () => {
       title: "A seamless, end-to-end experience.",
       name: "Ayo O.",
       designation: "Senior Consultant, Lagos",
-      image: testi,
     },
     {
       id: 2,
       text: "What stood out was the visibility. Knowing where my device was at every stage created a high level of confidence. TecNurx has clearly built trust into its operating model.",
       title: "Clarity, accountability, and trust.",
-      name: " Halima S.",
+      name: "Halima S.",
       designation: "Operations Lead, Abuja",
-      image: testi,
     },
     {
       id: 3,
@@ -30,7 +26,6 @@ const SwiperCard = () => {
       title: "Designed for professionals who value time.",
       name: "Daniel K.",
       designation: "Product Manager",
-      image: testi,
     },
     {
       id: 4,
@@ -38,7 +33,6 @@ const SwiperCard = () => {
       title: "Consistent quality and responsible execution",
       name: "Uche M.",
       designation: "Founder & CEO",
-      image: testi,
     },
     {
       id: 5,
@@ -46,7 +40,6 @@ const SwiperCard = () => {
       title: "Flexible payments without compromising service quality.",
       name: "Sadiq A.",
       designation: "Finance Professional",
-      image: testi,
     },
     {
       id: 6,
@@ -54,30 +47,32 @@ const SwiperCard = () => {
       title: "A scalable solution for business device management.",
       name: "Zainab R.",
       designation: "Head of Operations",
-      image: testi,
     },
   ];
 
+  // Duplicate exactly once for seamless loop
+  const duplicatedTestimonials = [
+    ...testimonials,
+    ...testimonials,
+    ...testimonials,
+    ...testimonials,
+    ...testimonials,
+  ];
+
   return (
-    <div className="overflow-hidden bg-white py-12">
+    <section className="overflow-hidden bg-white py-12">
       <div className="marquee">
         <div className="marquee-track">
-          {testimonials.map((item, index) => (
+          {duplicatedTestimonials.map((item, index) => (
             <div className="swiper-card" key={`${item.id}-${index}`}>
-              <Image src={quote} alt="quote" className="quote" />
+              <Image src={quote} alt="Quote" className="quote" />
+
               <div className="stext-wrap">
                 <h4>{item.title}</h4>
                 <p>{item.text}</p>
               </div>
 
               <div className="card-details">
-                {/* <Image
-                  src={item.image}
-                  alt={item.name}
-                  width={60}
-                  height={60}
-                  className="rounded-full object-cover"
-                /> */}
                 <CircleUser size={60} color="#bdbdbd" />
                 <div>
                   <h3>{item.name}</h3>
@@ -88,7 +83,7 @@ const SwiperCard = () => {
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

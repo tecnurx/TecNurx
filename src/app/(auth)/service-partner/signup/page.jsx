@@ -1,7 +1,7 @@
 import React from "react";
 import "../service.css";
 import Navbar from "@/components/navbar/Navbar";
-import logo from "@/assets/images/logo.svg";
+import logo from "@/assets/images/logo.png";
 import Image from "next/image";
 
 const ServicePartnerSignUp = () => {

@@ -2,81 +2,39 @@
 .marquee {
   width: 100%;
   overflow: hidden;
-  white-space: nowrap;
+  position: relative;
 }
 
-/* The track that moves */
+/* The moving track */
 .marquee-track {
   display: flex;
   gap: 24px;
-  animation: scroll-left 45s linear infinite; /* Adjust speed here */
+  animation: scroll-left 150s linear infinite;
   will-change: transform;
   align-items: center;
+
+  /* Critical for seamless infinite loop */
+  padding-left: 100vw;     /* Starts the duplicate set exactly one screen away */
+  width: max-content;     /* Allows full width of all cards */
 }
 
-/* Pause on hover (nice UX) */
+/* Pause animation on hover */
 .marquee:hover .marquee-track {
   animation-play-state: paused;
 }
 
-/* Each card */
+/* Each testimonial card */
 .swiper-card {
   flex: 0 0 auto;
+  width: 520px;
   padding: 40px;
+  background-color: rgba(244, 244, 244, 1);
+  border-radius: 24px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 24px;
-  background-color: rgba(244, 244, 244, 1);
-  border-radius: 24px;
-  width: 520px;
   position: relative;
-  box-sizing: border-box;
-  height: 100%;
-}
-
-/* Text styling */
-.swiper-card p {
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-weight: 400;
-  font-size: 20.84px;
-  color: #3b3f44;
-  line-height: 1.6;
-  text-wrap: wrap;
-  width: 100%;
-}
-.swiper-card h4 {
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-weight: 800;
-  font-size: 16px;
-  color: #3b3f44;
-  line-height: 1.6;
-  text-wrap: wrap;
-  width: 100%;
-}
-
-/* Name & designation */
-.swiper-card h3 {
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-weight: 600;
-  font-size: 20px;
-  color: #3b3f44;
-  margin: 0;
-}
-
-.swiper-card span {
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-weight: 400;
-  font-size: 14px;
-  color: #3b3f44;
-  margin-top: 4px;
-  display: block;
-}
-
-/* User image */
-.card-details {
-  display: flex;
-  gap: 24px;
-  align-items: center;
 }
 
 /* Quote decoration */
@@ -89,33 +47,92 @@
   pointer-events: none;
 }
 
-/* Infinite scroll animation */
+/* Text content wrapper */
+.stext-wrap h4 {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  color: #3b3f44;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.stext-wrap p {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 400;
+  font-size: 20.84px;
+  color: #3b3f44;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* User info */
+.card-details {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin-top: auto; /* Pushes to bottom */
+}
+
+.card-details h3 {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 600;
+  font-size: 20px;
+  color: #3b3f44;
+  margin: 0;
+}
+
+.card-details span {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #3b3f44;
+  display: block;
+}
+
+/* Seamless infinite animation */
 @keyframes scroll-left {
-  0% {
+  from {
     transform: translateX(0);
   }
-  100% {
+  to {
     transform: translateX(-100%);
   }
 }
 
-/* Responsive */
+/* Responsive adjustments */
+@media screen and (max-width: 1024px) {
+  .swiper-card {
+    width: 440px;
+    padding: 36px;
+  }
+  .stext-wrap p {
+    font-size: 19px;
+  }
+}
+
 @media screen and (max-width: 768px) {
   .swiper-card {
     width: 340px;
+    padding: 32px;
   }
-  .swiper-card p {
-    width: 280px;
+  .stext-wrap p {
     font-size: 16px;
+  }
+  .marquee-track {
+    gap: 20px;
   }
 }
 
 @media screen and (max-width: 480px) {
   .swiper-card {
     width: 300px;
+    padding: 28px;
   }
-  .swiper-card p {
-    width: 240px;
-    font-size: 14px;
+  .stext-wrap p {
+    font-size: 15px;
+  }
+  .marquee-track {
+    gap: 16px;
   }
 }

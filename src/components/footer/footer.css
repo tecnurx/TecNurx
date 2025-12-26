@@ -341,12 +341,20 @@
   z-index: 1;
 }
 
-@media screen and (min-width: 2000px) {
+@media screen and (min-width: 1450px) {
+  .shape,
   .shape2 {
-    width: 782px;
+    display: none;
   }
-  .shape {
-    width: 782px;
+  .newletter-wrap-true {
+    background: linear-gradient(180deg, white 50%, rgba(8, 8, 8, 1) 50%);
+  }
+  .newletter-wrap-false {
+    background: linear-gradient(
+      180deg,
+      rgba(235, 235, 235, 1) 50%,
+      rgba(8, 8, 8, 1) 50%
+    );
   }
   .foot-block-img {
     width: 600px;

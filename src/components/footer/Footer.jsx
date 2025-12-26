@@ -50,7 +50,7 @@ const Footer = ({ newsPaperWrap }) => {
               <Link href="/insurance">Gadget Insurance</Link>
               <Link href="#">Pickup & Delivery</Link>
               <Link href="track-repair/">Track Repair</Link>
-              <Link href="#">Get a Quote</Link>
+              <Link href="/#GetQuote">Get a Quote</Link>
             </div>
           </div>
           <Link className="social-icon hide-ig" target="_blank" href="#">

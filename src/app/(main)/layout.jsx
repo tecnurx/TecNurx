@@ -1,7 +1,6 @@
 import "@/app/globals.css";
 import Navbar from "@/components/navbar/Navbar";
 import { Plus_Jakarta_Sans } from "next/font/google";
-import logo from "@/assets/images/logo.svg";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],

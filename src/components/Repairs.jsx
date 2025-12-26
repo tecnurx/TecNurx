@@ -33,96 +33,98 @@ const Repairs = () => {
   const adjustedMonthlyMax = Math.round((maxRepair / paybackMonths) * 1.1);
 
   return (
-    <section className="repairs-wrap" id="GetQuote">
-      <div className="repairs-top">
-        <span>Repairs</span>
-      </div>
-
-      <div className="repair-header">
-        <h1>
-          What does it <span>cost?</span>
-        </h1>
-        <p>
-          Get an idea of what it costs to fix your gadget using our{" "}
-          <span>fix now, pay later</span> system.
-        </p>
-      </div>
-
-      <div className="repair-details">
-        {/*  Gadget Cost */}
-        <div className="repair-grid">
-          <h1>How much does your gadget cost?</h1>
-          <div className="repair-range">
-            <span>₦</span>
-            <input
-              type="number"
-              value={gadgetCost}
-              onChange={(e) => setGadgetCost(e.target.value)}
-              placeholder="0"
-              className="gadget-cost"
-            />
-          </div>
-          <p>You can type in your exact amount in the field above</p>
+    <section id="GetQuote" className="GetQuote">
+      <div className="repairs-wrap">
+        <div className="repairs-top">
+          <span>Repairs</span>
         </div>
 
-        {/*  Device Issue */}
-        <div className="repair-grid">
-          <h1>What is wrong with the device?</h1>
-          <select
-            value={selectedIssue}
-            onChange={(e) => setSelectedIssue(e.target.value)}
-          >
-            {issues.map((issue) => (
-              <option key={issue} value={issue}>
-                {issue}
-              </option>
-            ))}
-          </select>
-          <p>Click on the drop down to select the device issue</p>
+        <div className="repair-header">
+          <h1>
+            What does it <span>cost?</span>
+          </h1>
+          <p>
+            Get an idea of what it costs to fix your gadget using our{" "}
+            <span>fix now, pay later</span> system.
+          </p>
         </div>
 
-        {/*  Payback Duration */}
-        <div className="repair-grid">
-          <h1>How long will it take to pay back</h1>
-          <div className="repair-range">
-            <input
-              type="range"
-              min="1"
-              max="12"
-              className="range"
-              value={paybackMonths}
-              onChange={handleRangeChange}
-            />
-            <span>{paybackMonths} months</span>
+        <div className="repair-details">
+          {/*  Gadget Cost */}
+          <div className="repair-grid">
+            <h1>How much does your gadget cost?</h1>
+            <div className="repair-range">
+              <span>₦</span>
+              <input
+                type="number"
+                value={gadgetCost}
+                onChange={(e) => setGadgetCost(e.target.value)}
+                placeholder="0"
+                className="gadget-cost"
+              />
+            </div>
+            <p>You can type in your exact amount in the field above</p>
           </div>
-          <p>Drag to select. maximum of 12 months</p>
-        </div>
-      </div>
 
-      <div className="approx-wrap">
-        <h1>Our Approximate</h1>
-        <div className="approx-deets">
-          <div className="approx-text">
-            <h3>
-              This is how much it will cost you to fix your{" "}
-              <span>{selectedIssue}</span>
-            </h3>
-            <p>
-              ₦{minRepair.toLocaleString()} – ₦{maxRepair.toLocaleString()}
-            </p>
+          {/*  Device Issue */}
+          <div className="repair-grid">
+            <h1>What is wrong with the device?</h1>
+            <select
+              value={selectedIssue}
+              onChange={(e) => setSelectedIssue(e.target.value)}
+            >
+              {issues.map((issue) => (
+                <option key={issue} value={issue}>
+                  {issue}
+                </option>
+              ))}
+            </select>
+            <p>Click on the drop down to select the device issue</p>
           </div>
-          <div className="approx-text">
-            <h3>
-              This is how much you’ll pay monthly for{" "}
-              <span>“{paybackMonths} months”</span>
-            </h3>
-            <p>
-              ₦{adjustedMonthlyMin.toLocaleString()} – ₦
-              {adjustedMonthlyMax.toLocaleString()}
-            </p>
+
+          {/*  Payback Duration */}
+          <div className="repair-grid">
+            <h1>How long will it take to pay back</h1>
+            <div className="repair-range">
+              <input
+                type="range"
+                min="1"
+                max="12"
+                className="range"
+                value={paybackMonths}
+                onChange={handleRangeChange}
+              />
+              <span>{paybackMonths} months</span>
+            </div>
+            <p>Drag to select. maximum of 12 months</p>
           </div>
         </div>
-        <button>Request a repair</button>
+
+        <div className="approx-wrap">
+          <h1>Our Approximate</h1>
+          <div className="approx-deets">
+            <div className="approx-text">
+              <h3>
+                This is how much it will cost you to fix your{" "}
+                <span>{selectedIssue}</span>
+              </h3>
+              <p>
+                ₦{minRepair.toLocaleString()} – ₦{maxRepair.toLocaleString()}
+              </p>
+            </div>
+            <div className="approx-text">
+              <h3>
+                This is how much you’ll pay monthly for{" "}
+                <span>“{paybackMonths} months”</span>
+              </h3>
+              <p>
+                ₦{adjustedMonthlyMin.toLocaleString()} – ₦
+                {adjustedMonthlyMax.toLocaleString()}
+              </p>
+            </div>
+          </div>
+          <button>Request a repair</button>
+        </div>
       </div>
     </section>
   );

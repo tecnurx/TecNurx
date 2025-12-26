@@ -1,7 +1,7 @@
 // app/register/page.tsx
 "use client";
 
-import logo from "@/assets/images/loglogo.svg";
+import logo from "@/assets/images/logo.png";
 import step1 from "@/assets/images/step1.svg";
 import step2 from "@/assets/images/step2.svg";
 import step3 from "@/assets/images/step3.svg";
@@ -168,7 +168,7 @@ export default function MultiStepRegister() {
       {step === 1 && (
         <div className="steps">
           <Link href="/">
-            <Image src={logo} alt="logo" />
+            <Image src={logo} alt="logo" width={120} />
           </Link>
           <Image src={step1} alt="step 1" className="my-6" />
 
@@ -217,7 +217,7 @@ export default function MultiStepRegister() {
       {/* USER FLOW */}
       {role === "user" && step === 2 && (
         <div className="steps">
-          <Image src={logo} alt="logo" />
+          <Image src={logo} alt="logo" width={120} />
           <Image src={step2} alt="step 2" className="my-6" />
           <div className="card">
             <div className="welcome">
@@ -317,7 +317,7 @@ export default function MultiStepRegister() {
       )}
       {role === "user" && step === 3 && (
         <div className="steps">
-          <Image src={logo} alt="logo" />
+          <Image src={logo} alt="logo"  width={120} />
           <Image src={step3} alt="step 3" className="my-6" />
           <div className="card">
             <div className="welcome">
@@ -394,7 +394,7 @@ export default function MultiStepRegister() {
 
       {role === "partner" && step === 2 && (
         <div className="steps">
-          <Image src={logo} alt="logo" />
+          <Image src={logo} alt="logo"  width={120} />
           <Image src={pstep2} alt="logo" />
           <div className="card">
             <div className="welcome">
@@ -444,7 +444,7 @@ export default function MultiStepRegister() {
 
       {role === "partner" && step === 3 && (
         <div className="steps">
-          <Image src={logo} alt="logo" />
+          <Image src={logo} alt="logo"  width={120} />
 
           <Image src={pstep3} alt="logo" />
 
@@ -502,7 +502,7 @@ export default function MultiStepRegister() {
 
       {role === "partner" && step === 4 && (
         <div className="steps">
-          <Image src={logo} alt="logo" />
+          <Image src={logo} alt="logo"  width={120} />
 
           <Image src={pstep4} alt="logo" />
 

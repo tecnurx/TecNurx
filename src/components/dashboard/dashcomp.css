@@ -135,21 +135,21 @@
   /* justify-content: space-between; */
   /* padding-left: 12px; */
 }
-.navonelogo img{
-  width: 150px;
+.navonelogo img {
+  /* width: 120px; */
 }
-.log-out-item{
-                  display: "flex";
-                  align-items: "center";
-                  gap: "8px";
-                  background: "none";
-                  border: "none";
-                  width: "100%";
-                  text-align: "left";
-                  padding: "12px 16px";
-                  /* cursor: isLoggingOut ? "not-allowed" : "pointer"; */
-                  color: "#e74c3c";
-                }
+.log-out-item {
+  display: "flex";
+  align-items: "center";
+  gap: "8px";
+  background: "none";
+  border: "none";
+  width: "100%";
+  text-align: "left";
+  padding: "12px 16px";
+  /* cursor: isLoggingOut ? "not-allowed" : "pointer"; */
+  color: "#e74c3c";
+}
 
 @media screen and (max-width: 900px) {
   .navonelogo {

@@ -2,7 +2,7 @@
 
 import { Bell, Search, CircleUserRound, LogOut, Menu, X } from "lucide-react";
 import React, { useContext, useState, useRef, useEffect } from "react";
-import logo from "@/assets/images/logo.svg";
+import logo from "@/assets/images/logo.png";
 import "./dashcomp.css";
 import Image from "next/image";
 import Link from "next/link";
@@ -91,7 +91,7 @@ const DashboardNav = () => {
     <div className="dashNav">
       {/* Desktop Logo */}
       <Link href="/dashboard" className="navonelogo">
-        <Image src={logo} alt="logo" height={40} />
+        <Image src={logo} alt="logo" width={120} />
       </Link>
 
       {/* Mobile Logo + Menu Toggle */}
@@ -99,7 +99,7 @@ const DashboardNav = () => {
         <button className="menu-toggle-btn">
           {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
-        <Image src={logo} alt="logo" height={40} />
+        <Image src={logo} alt="logo" width={120} />
       </div>
 
       <div className="nav-items">

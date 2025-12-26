@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import logimage from "@/assets/images/login.svg";
-import logo from "@/assets/images/loglogo.svg";
+import logo from "@/assets/images/logo.png";
 import google from "@/assets/images/google.svg";
 import Image from "next/image";
 import "./login.css";
@@ -93,7 +93,7 @@ const Login = () => {
         <div className="card-wrap">
           <div className="card">
             <Link href="/" className="logi-logo">
-              <Image src={logo} alt="logo" />
+              <Image src={logo} alt="logo" width={120} />
             </Link>
 
             <h2>

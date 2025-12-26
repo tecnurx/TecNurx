@@ -30,7 +30,7 @@
   letter-spacing: -3%;
   vertical-align: middle;
   color: Black;
-  margin-top: 16px;
+  margin-top: 20px;
 }
 .hero-content h1 span {
   font-style: italic;
@@ -45,7 +45,7 @@
   letter-spacing: 0%;
   vertical-align: middle;
   width: 508px;
-  margin-top: 16px;
+  margin-top: 20px;
 }
 .hero-texts button {
   padding: 24px 48px;
@@ -61,8 +61,8 @@
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
-  margin-top: 16px;
-  margin-bottom: 40px;
+  margin-top: 24px;
+  margin-bottom: 24px;
   border: none;
 }
 .hero-image {
@@ -598,6 +598,11 @@
   padding: 120px 100px;
   padding-bottom: 0;
 }
+.GetQuote {
+  display: flex;
+  background: #000;
+  justify-content: center;
+}
 .repairs-wrap {
   display: flex;
   flex-direction: column;
@@ -679,6 +684,7 @@
   padding: 24px;
   border-radius: 24px;
   background: rgba(28, 28, 28, 1);
+  width: 400px;
 }
 .repair-grid h1 {
   font-family: Plus Jakarta Sans;
@@ -1107,35 +1113,51 @@
 }
 
 @media screen and (min-width: 1450px) {
-  .hero-section{
+  .hero-section {
     justify-content: center;
   }
-  .hero-content h1{
+  .hero-content h1 {
     width: 700px;
   }
-  .schedule-pickup, .how-best-wrap{
+  .schedule-pickup,
+  .how-best-wrap,
+  .repairs-wrap {
     max-width: 1200px;
   }
-  .home-section-wrap{
+  .home-section-wrap {
     align-items: center;
   }
-  .our-services{
+  .our-services {
     align-items: center;
   }
-  .services-header, .faq-header, .how-head{
+  .services-header,
+  .how-head {
     align-items: start !important;
     justify-content: start;
     width: 100%;
     max-width: 1120px;
   }
-  .faq-wrap{
+  .faq-wrap {
     align-items: center;
   }
-  .how-best-wrap{
+  .how-best-wrap {
     align-items: center;
   }
-  .how-best-section{
-   display: flex;
-   justify-content: center; 
+  .how-best-section {
+    display: flex;
+    justify-content: center;
+  }
+  .repairs-wrap {
+    padding: 120px 0;
+  }
+  .testimonial-wrap {
+    align-items: center;
+  }
+  .faq-header {
+    justify-content: start;
+    width: 100%;
+    max-width: 1120px;
+    align-items: start !important;
+    padding: 120px 0 0;
   }
 }

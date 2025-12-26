@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import logimage from "@/assets/images/login.svg";
-import logo from "@/assets/images/loglogo.svg";
+import logo from "@/assets/images/logo.png";
 import Image from "next/image";
 import "../login/login.css";
 import Link from "next/link";
@@ -44,7 +44,7 @@ const ForgotPassword = () => {
         <form className="card-wrap" onSubmit={handleForgot}>
           <div className="card">
             <Link href="/" className="logi-logo">
-              <Image src={logo} alt="Logo" />
+              <Image src={logo} alt="Logo" width={120} />
             </Link>
 
             <div className="text-content">

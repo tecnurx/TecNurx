@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import logimage from "@/assets/images/login.svg";
-import logo from "@/assets/images/loglogo.svg";
+import logo from "@/assets/images/logo.png";
 import Image from "next/image";
 import "../../login/login.css";
 import { Eye, EyeOff } from "lucide-react";
@@ -115,7 +115,7 @@ const CreatePassword = () => {
         <div className="card-wrap">
           <div className="card">
             <Link href="/" className="logi-logo">
-              <Image src={logo} alt="logo" />
+              <Image src={logo} alt="logo" width={120} />
             </Link>
             <div>
               <h2>

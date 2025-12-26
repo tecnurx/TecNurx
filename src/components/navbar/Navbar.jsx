@@ -3,7 +3,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import "./navbar.css";
 import { ChevronDown, Menu, X } from "lucide-react";
-import logo from "@/assets/images/logo.svg";
+import logo from "@/assets/images/logo.png";
 import book from "@/assets/images/book.svg";
 import track from "@/assets/images/track.svg";
 import Image from "next/image";
@@ -15,7 +15,7 @@ const Navbar = () => {
     <div className="navbar-wrap">
       <nav className="navbar">
         <Link href="/">
-          <Image src={logo} alt="logo" width={197} />
+          <Image src={logo} alt="logo" width={120} />
         </Link>
         <nav className="nav-links">
           <Link href="#">About us</Link>
