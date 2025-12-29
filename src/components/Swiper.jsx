@@ -54,13 +54,10 @@ const SwiperCard = () => {
   const duplicatedTestimonials = [
     ...testimonials,
     ...testimonials,
-    ...testimonials,
-    ...testimonials,
-    ...testimonials,
   ];
 
   return (
-    <section className="overflow-hidden bg-white py-12">
+    <section className="marquee-wrap">
       <div className="marquee">
         <div className="marquee-track">
           {duplicatedTestimonials.map((item, index) => (

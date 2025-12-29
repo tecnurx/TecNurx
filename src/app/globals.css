@@ -94,9 +94,9 @@ html {
   background: transparent;
   /* display: none; */
 }
-.side-logo-menu img {
+/* .side-logo-menu img {
   width: 150px;
-}
+} */
 /* Mobile First - Default closed on small screens */
 @media (max-width: 1024px) {
   .dashboard-sidebar {
@@ -115,9 +115,9 @@ html {
   .main-content {
     padding: 32px 24px;
   }
-  .side-logo-menu img {
+  /* .side-logo-menu img {
     width: 120px;
-  }
+  } */
   .nav-search {
     display: none;
   }

@@ -357,12 +357,38 @@
     );
   }
   .foot-block-img {
-    width: 600px;
+    width: 250px;
   }
   .foot-block-1 {
-    width: 450px;
+    width: 250px;
   }
   .foot-block {
     padding: 64px 48px;
+  }
+  footer {
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(180deg, white 10.5%, rgba(8, 8, 8, 1) 10.5%);
+  }
+  .footer-center-wrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .foot-block-addy,
+  .addy-block2 {
+    width: 500px;
+  }
+
+  .newsletter-wrap {
+    max-width: 1200px;
+    width: 100%;
+  }
+  .footer-main {
+    max-width: 1200px;
+  }
+  .foot-contact {
+    width: 500px;
   }
 }

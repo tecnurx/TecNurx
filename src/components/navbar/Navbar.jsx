@@ -69,7 +69,7 @@ const Navbar = () => {
       {/* Mobile Side Drawer */}
       <div className={`mobile-drawer ${mobileMenuOpen ? "open" : ""}`}>
         <div className="drawer-header">
-          <Image src={logo} alt="logo" width={160} height={34} />
+          <Image src={logo} alt="logo" width={140} />
           <button onClick={() => setMobileMenuOpen(false)}>
             <X size={28} color="black" />
           </button>

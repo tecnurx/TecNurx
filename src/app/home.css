@@ -48,7 +48,7 @@
   margin-top: 20px;
 }
 .hero-texts button {
-  padding: 24px 48px;
+  padding: 20px 48px;
   background: #000;
   color: white;
   border-radius: 60px;
@@ -61,9 +61,30 @@
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
-  margin-top: 24px;
-  margin-bottom: 24px;
   border: none;
+}
+.hero-texts a {
+  padding: 20px 48px;
+  background: rgba(255, 204, 42, 1);
+  background-color: white;
+  color: #000;
+  border-radius: 60px;
+  font-family: Plus Jakarta Sans;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  border: none;
+}
+.hero-btns{
+  padding: 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 .hero-image {
   width: 420px;
@@ -310,7 +331,7 @@
   flex-direction: column;
   justify-content: center;
   width: 100%;
-  max-width: 1120px;
+  max-width: 1200px;
   position: relative;
 }
 .services-grid div h2 {
@@ -684,7 +705,7 @@
   padding: 24px;
   border-radius: 24px;
   background: rgba(28, 28, 28, 1);
-  width: 400px;
+  width: 388px;
 }
 .repair-grid h1 {
   font-family: Plus Jakarta Sans;
@@ -1009,7 +1030,7 @@
   }
   .hero-content h1 {
     font-size: 32px;
-    line-height: 40px;
+    line-height: 36px;
     width: 100%;
   }
   .hero-image {
@@ -1110,6 +1131,10 @@
   .sgrid2 {
     flex-direction: column !important;
   }
+  .hero-btns button, .hero-btns a{
+    font-size: 12px;
+    padding: 18px 34px;
+  }
 }
 
 @media screen and (min-width: 1450px) {
@@ -1135,7 +1160,7 @@
     align-items: start !important;
     justify-content: start;
     width: 100%;
-    max-width: 1120px;
+    max-width: 1200px;
   }
   .faq-wrap {
     align-items: center;
@@ -1156,8 +1181,15 @@
   .faq-header {
     justify-content: start;
     width: 100%;
-    max-width: 1120px;
+    max-width: 1200px;
     align-items: start !important;
     padding: 120px 0 0;
   }
+  .schedule-pickup {
+    gap: 70px;
+  }
+  .faq {
+    width: 1200px;
+  }
+
 }

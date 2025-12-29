@@ -9,13 +9,10 @@
 .marquee-track {
   display: flex;
   gap: 24px;
-  animation: scroll-left 150s linear infinite;
+  animation: scroll-left 20s linear infinite;
   will-change: transform;
   align-items: center;
-
-  /* Critical for seamless infinite loop */
-  padding-left: 100vw;     /* Starts the duplicate set exactly one screen away */
-  width: max-content;     /* Allows full width of all cards */
+  width: max-content; /* Allows full width of all cards */
 }
 
 /* Pause animation on hover */
@@ -96,7 +93,7 @@
     transform: translateX(0);
   }
   to {
-    transform: translateX(-100%);
+    transform: translateX(-50%);
   }
 }
 
@@ -134,5 +131,15 @@
   }
   .marquee-track {
     gap: 16px;
+  }
+}
+@media screen and (min-width: 1450px) {
+  .marquee-wrap {
+    display: flex;
+    justify-content: center;
+  }
+  .marquee {
+    max-width: 1200px;
+    overflow: hidden;
   }
 }

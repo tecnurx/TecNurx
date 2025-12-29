@@ -295,7 +295,13 @@
   .sideimage {
     width: 100%;
   }
-  .card{
+  .login-wrap{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 100px;
+  }
+  .sideimage{
     width: 700px;
   }
 }

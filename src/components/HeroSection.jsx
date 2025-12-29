@@ -1,10 +1,11 @@
-'use client';
+"use client";
 import React from "react";
 import Image from "next/image";
 import hero from "@/assets/images/hero.svg";
 import rate from "@/assets/images/rate.svg";
 import hslide from "@/assets/images/hslide.svg";
 import "@/app/home.css";
+import Link from "next/link";
 
 const HeroSection = () => {
   return (
@@ -21,15 +22,18 @@ const HeroSection = () => {
               Get professional repairs, protection plans, and new devices with
               free pickup and delivery
             </p>
-            <button
-              onClick={() => {
-                document.getElementById("GetQuote")?.scrollIntoView({
-                  behavior: "smooth",
-                });
-              }}
-            >
-              Get Quote
-            </button>
+            <div className="hero-btns">
+              <button
+                onClick={() => {
+                  document.getElementById("GetQuote")?.scrollIntoView({
+                    behavior: "smooth",
+                  });
+                }}
+              >
+                Get Quote
+              </button>
+              <Link href="/login">Sign In</Link>
+            </div>
           </div>
           <Image src={hslide} alt="our partners" className="hero-partner" />
         </div>

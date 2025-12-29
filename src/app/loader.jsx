@@ -1,5 +1,5 @@
 import Image from "next/image";
-import logo from "@/assets/images/logo.svg"; // Change to your actual logo path (e.g., tecnurx.svg or logo.png)
+import logo from "@/assets/images/logo.png";
 
 export default function GlobalLoading() {
   return (
