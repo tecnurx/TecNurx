@@ -422,7 +422,7 @@ const MyDevices = () => {
               className="modal-close"
               onClick={() => setIsAddModalOpen(false)}
             >
-              <X size={24} />
+              <X size={24} color="black" />
             </button>
             <div className="modal-header modal-head2">
               <h2>{isEditMode ? "Edit Device" : "Add New Device"}</h2>

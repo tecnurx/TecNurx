@@ -19,7 +19,7 @@ export function middleware(request) {
   if (isProtected && !token) {
     // Smart redirect: if trying engineer dashboard → service partner flow
     if (pathname.startsWith("/engineer-dashboard")) {
-      return NextResponse.redirect(new URL("/service-partner", request.url));
+      return NextResponse.redirect(new URL("/", request.url));
     }
     // Default to customer login
     const loginUrl = new URL("/login", request.url);

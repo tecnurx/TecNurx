@@ -1,7 +1,7 @@
 .book-page {
   font-family: "Plus Jakarta Sans", sans-serif;
 }
-.book-header{
+.book-header {
   padding: 24px;
 }
 .book-header h1 {
@@ -589,7 +589,7 @@
   }
   .repair-form-wrap {
     width: 100%;
-    padding: 16px;
+    padding: 0;
   }
   .section-wrap {
     padding: 60px 28px;
@@ -600,14 +600,27 @@
   .repair-head img {
     width: 80%;
   }
+  .book-header{
+    padding: 0;
+    margin-bottom: 24px;
+  }
   .repair-btn {
     flex-direction: column-reverse;
     gap: 12px;
   }
   .book-header h1 {
-  font-size: 24px;
-}
-.book-header p {
-  font-size: 14px;
-}
+    font-size: 24px;
+  }
+  .book-header p {
+    font-size: 14px;
+  }
+  .bookform-grid2 {
+    grid-template-columns: 1fr;
+  }
+  .repair-details{
+    flex-direction: column;
+  }
+  .brand-model{
+    width: 100%;
+  }
 }

@@ -122,13 +122,6 @@ const AdminLogin = () => {
                 </div>
               </div>
 
-              <div className="remember-forgot">
-                <div>
-                  <input type="checkbox" id="remember" disabled={loading} />
-                  <label htmlFor="remember">Remember me</label>
-                </div>
-              </div>
-
               <div className="sign-btn">
                 <button
                   type="submit"
