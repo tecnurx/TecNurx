@@ -19,9 +19,9 @@ export const metadata = {
 
 export default function AuthLayout({ children }) {
   return (
-    <html lang="en" className={plusJakartaSans.className}>
-      <body>{children}</body>
+    <div>
+      <main>{children}</main>
       <CustomToast />
-    </html>
+    </div>
   );
 }

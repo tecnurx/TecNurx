@@ -347,7 +347,6 @@ const Settings = () => {
                     <label>First Name</label>
                     <input
                       type="text"
-                      defaultValue="John"
                       value={userUpdateData?.fname}
                       onChange={(e) =>
                         setUserUpdateData({
@@ -361,7 +360,6 @@ const Settings = () => {
                     <label>Last Name</label>
                     <input
                       type="text"
-                      defaultValue="Doe"
                       value={userUpdateData?.lname}
                       onChange={(e) =>
                         setUserUpdateData({
@@ -375,7 +373,6 @@ const Settings = () => {
                     <label>Email</label>
                     <input
                       type="email"
-                      defaultValue="john.doe@example.com"
                       value={userUpdateData?.email}
                       onChange={(e) =>
                         setUserUpdateData({
@@ -388,8 +385,7 @@ const Settings = () => {
                   <div className="form-group">
                     <label>Phone Number</label>
                     <input
-                      type="number"
-                      defaultValue="+1 (555) 123-4567"
+                      type="text"
                       value={userUpdateData?.phoneNumber}
                       onChange={(e) =>
                         setUserUpdateData({
@@ -461,19 +457,12 @@ const Settings = () => {
                     padding: "20px",
                     background: "#f9f9f9",
                     borderRadius: "8px",
-                    display: 'flex',
+                    display: "flex",
                     flexDirection: "column",
-                    gap: '12px',
+                    gap: "12px",
                   }}
                 >
-                  <div
-                    className="form-row"
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "1fr 1fr",
-                      gap: "16px",
-                    }}
-                  >
+                  <div className="form-row">
                     <div className="form-group">
                       <label>
                         Address Label <span style={{ color: "red" }}>*</span>
@@ -527,14 +516,7 @@ const Settings = () => {
                     />
                   </div>
 
-                  <div
-                    className="form-row"
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "1fr 1fr 1fr",
-                      gap: "16px",
-                    }}
-                  >
+                  <div className="form-row-three">
                     <div className="form-group">
                       <label>
                         City <span style={{ color: "red" }}>*</span>

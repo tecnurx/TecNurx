@@ -111,7 +111,9 @@
 .modal-content::-webkit-scrollbar {
   display: none;               /* Chrome, Safari, Opera, newer Edge */
 }
-
+.add-device-btn{
+  color: #000;
+}
 .modal-close {
   position: absolute;
   top: 16px;
@@ -286,25 +288,25 @@
   margin-bottom: 20px;
 }
 
-.form-group {
+.form-grouup {
   display: flex;
   flex-direction: column;
 }
 
-.form-group.full {
+.form-grouup.full {
   grid-column: 1 / -1;
 }
 
-.form-group label {
+.form-grouup label {
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 6px;
   color: #000;
 }
 
-.form-group input,
-.form-group select,
-.form-group textarea {
+.form-grouup input,
+.form-grouup select,
+.form-grouup textarea {
   padding: 10px 12px;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -373,4 +375,13 @@
 @media screen and (max-width: 900px) {
 }
 @media screen and (max-width: 600px) {
+  .page-header h1{
+    font-size: 24px;
+  }
+  .page-header p{
+    font-size: 14px;
+  }
+  .device-header button{
+    font-size: 12px;
+  }
 }

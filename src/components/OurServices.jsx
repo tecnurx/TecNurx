@@ -27,7 +27,7 @@ const OurServices = () => {
                 Get your devices repaired and pay later. We fix everything from
                 cracked screens to software issues and more
               </p>
-              <Link href="/book-repair">
+              <Link href="/dashboard/book-repair">
                 <span>Start a repair</span>
                 <ArrowRight size={18} />
               </Link>

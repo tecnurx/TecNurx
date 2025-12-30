@@ -7,13 +7,12 @@ import { useRouter } from "next/navigation";
 
 import pickup from "@/assets/images/pickupg.svg";
 import upload from "@/assets/images/upload.svg";
-import Footer from "@/components/footer/Footer";
 
 const Step2 = () => {
   const router = useRouter();
 
   const onProceed = () => {
-    router.push("/book-repair/step3");
+    router.push("/dashboard/book-repair/step3");
   };
   const onBack = () => {
     router.back();
@@ -21,15 +20,10 @@ const Step2 = () => {
 
   return (
     <>
-      <div className="section-wrap">
-        <div className="header">
-          <h1>
-            Fix your <span>gadget</span>
-          </h1>
-          <p>
-            We make gadget repair simple. Get an upfront quote, expert service,
-            and real-time updates for a hassle-free fix
-          </p>
+      <div className="book-page">
+        <div className="book-header">
+          <h1>Book Repair</h1>
+          <p>Fix your gadgets</p>
         </div>
         <div className="repair-form-wrap">
           <div className="repair-head">
@@ -39,7 +33,7 @@ const Step2 = () => {
           <div className="repair-form">
             <div className="form-wrap">
               <label htmlFor="">Business Address</label>
-              <div className="form-grid">
+              <div className="bookform-grid">
                 <select name="" id="">
                   <option value="">Select State</option>
                 </select>
@@ -52,7 +46,7 @@ const Step2 = () => {
             <div className="form-wrap">
               <input type="text" placeholder="Street" className="form-street" />
             </div>
-            <div className="form-grid2">
+            <div className="bookform-grid2">
               <div className="form-wrap">
                 <label htmlFor="">Phone Number</label>
                 <input type="phone" placeholder="Street" />
@@ -66,7 +60,7 @@ const Step2 = () => {
             </div>
             <div className="form-wrap">
               <label htmlFor="">Pickup Date & Time</label>
-              <div className="form-grid2">
+              <div className="bookform-grid2">
                 <div className="form-wrap">
                   <input type="date" />
                 </div>
@@ -86,7 +80,6 @@ const Step2 = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 };

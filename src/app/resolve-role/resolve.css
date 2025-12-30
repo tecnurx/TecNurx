@@ -1,0 +1,26 @@
+.resolve-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.resolve-wrap p {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+.respinner {
+  width: 40px; /* same as h-10 (2.5rem = 40px) */
+  height: 40px; /* same as w-10 */
+  border-radius: 50%; /* rounded-full */
+  border: 4px solid #e5e7eb; /* light gray base (you can change) */
+  border-top-color: #ffc400; /* blue-600 */
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

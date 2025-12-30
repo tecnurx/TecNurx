@@ -157,4 +157,10 @@
   .orders-list {
     grid-template-columns: 1fr;
   }
+  .orders-header h1{
+    font-size: 24px;
+  }
+  .orders-header p{
+    font-size: 14px;
+  }
 }

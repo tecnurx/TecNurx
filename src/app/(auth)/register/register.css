@@ -160,7 +160,7 @@
   text-decoration: underline;
   text-decoration-style: solid;
 }
-.active {
+.activeselect {
   border: 2px solid rgba(255, 194, 0, 1) !important;
 }
 .crt-p {

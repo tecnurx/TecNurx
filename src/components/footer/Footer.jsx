@@ -46,7 +46,7 @@ const Footer = ({ newsPaperWrap }) => {
               </div>
               <div className="foot-block  foot-block-1">
                 <h3>our services</h3>
-                <Link href="/book-repair">Gadget Repair</Link>
+                <Link href="/dashboard/book-repair">Gadget Repair</Link>
                 <Link href="#">Flexible Payment</Link>
                 <Link href="/insurance">Gadget Insurance</Link>
                 <Link href="#">Pickup & Delivery</Link>

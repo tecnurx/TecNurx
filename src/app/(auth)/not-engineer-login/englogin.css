@@ -1,0 +1,302 @@
+.englogin-wrap {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  background: rgba(244, 244, 244, 1);
+  padding: 24px;
+  justify-content: center;
+}
+.engcard-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.engcard {
+  background: rgba(255, 255, 255, 1);
+  width: 500px;
+  padding: 40px;
+  border-radius: 32px;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(221, 221, 228, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  /* gap: 40px; */
+}
+.engcard h2 {
+  font-family: Plus Jakarta Sans;
+  font-weight: 800;
+  font-style: ExtraBold;
+  font-size: 24px;
+  line-height: 100%;
+  letter-spacing: -3%;
+  vertical-align: middle;
+  color: black;
+}
+.engcard h2 span {
+  color: rgba(144, 152, 162, 1);
+}
+.engcard p {
+  font-family: Plus Jakarta Sans;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 16px;
+  color: rgba(59, 63, 68, 1);
+  line-height: 100%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+  margin-top: 8px;
+}
+.divider {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+}
+.divider h4 {
+  font-family: Plus Jakarta Sans;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 14px;
+  color: rgba(144, 152, 162, 1);
+  line-height: 16px;
+  letter-spacing: 0%;
+}
+.divider h6 {
+  width: 187.0000000000007;
+  height: 1px;
+  background: rgba(221, 221, 228, 1);
+  margin-top: 4px;
+}
+.auth-options {
+  display: flex;
+  gap: 8px;
+}
+.auth-options div {
+  display: flex;
+  align-items: center;
+  width: 206;
+  height: 54.13470458984375;
+  gap: 16px;
+  border: 1px solid rgba(221, 221, 228, 1);
+  padding-top: 8px;
+  padding-right: 24px;
+  padding-bottom: 8px;
+  padding-left: 8px;
+  border-radius: 60px;
+  cursor: pointer;
+}
+.auth-options span {
+  color: rgba(221, 221, 228, 1);
+  font-family: Plus Jakarta Sans;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: center;
+  vertical-align: middle;
+  color: rgba(59, 63, 68, 1);
+  width: 119px;
+  font-style: italic;
+}
+.sign-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.sign-in-btn {
+  width: 100%;
+  background: #000;
+  padding: 18px;
+  border-radius: 60px;
+  font-family: Plus Jakarta Sans;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: center;
+  vertical-align: middle;
+  color: rgba(255, 255, 255, 1);
+  cursor: pointer;
+}
+.sign-btn div {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+.sign-btn h6 {
+  font-family: Plus Jakarta Sans;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 14px;
+  line-height: 14px;
+  letter-spacing: 0%;
+  text-align: center;
+  color: rgba(59, 63, 68, 1);
+}
+.sign-btn a {
+  font-family: Plus Jakarta Sans;
+  font-weight: 700;
+  font-style: Bold;
+  font-size: 14px;
+  line-height: 14px;
+  letter-spacing: 0%;
+  text-align: center;
+  text-decoration: underline;
+  text-decoration-style: solid;
+  text-decoration-thickness: 0%;
+  color: rgba(59, 63, 68, 1);
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+.form-group label {
+  font-family: Plus Jakarta Sans;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 16px;
+  color: rgba(59, 63, 68, 1);
+  line-height: 100%;
+  letter-spacing: 0%;
+  vertical-align: middle;
+}
+.form-group input {
+  border: 1px rgba(221, 221, 228, 1) solid;
+  padding: 12px 16px;
+  border-radius: 8px;
+}
+.form-group input::placeholder,
+.form-group input {
+  font-family: Plus Jakarta Sans;
+  font-weight: 400;
+  font-style: Regular;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0%;
+  color: rgba(144, 152, 162, 1);
+}
+.form-group input {
+  color: #000;
+}
+.remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: Plus Jakarta Sans;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 14px;
+  line-height: 14px;
+  letter-spacing: 0%;
+}
+.remember-forgot div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.remember-forgot div input {
+  cursor: pointer;
+}
+.remember-forgot a {
+  text-decoration: underline;
+  text-decoration-style: solid;
+}
+.eye {
+  position: absolute;
+  right: 16px;
+  top: 36px;
+  cursor: pointer;
+}
+.password-wrapper input {
+  width: 100%;
+}
+
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #c3e6cb;
+  margin: 16px 0;
+  font-size: 14px;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #f5c6cb;
+  margin: 16px 0;
+  font-size: 14px;
+}
+  .logi-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+@media screen and (max-width: 900px) {
+  .englogin-wrap {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 32px;
+    height: 100%;
+  }
+  .sideimage {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .engcard {
+    width: 100%;
+    padding: 24px;
+  }
+  .auth-options span {
+    width: 100%;
+  }
+  .auth-options div {
+    gap: 10px;
+    padding: 8px 11px;
+  }
+  .sideimage {
+    display: none;
+  }
+  .englogin-wrap {
+    height: 100vh;
+    justify-content: center;
+  }
+  .logi-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 1450px) {
+  .sideimage {
+    width: 100%;
+  }
+  .englogin-wrap{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 100px;
+  }
+  .sideimage{
+    width: 700px;
+  }
+}

@@ -17,13 +17,15 @@ export const metadata = {
   description: "Fast, reliable device repair and insurance",
   icons: {
     icon: "/favicon.png",
+    apple: "/favicon.png",
+    shortcut: "/favicon.png",
   },
 };
 
 export default function DashboardLayout({ children }) {
   return (
-    <html lang="en" className={plusJakartaSans.className}>
-      <body>
+    <div>
+      <main>
         <SidebarProvider>
           {/* Navbar - Fixed Top */}
           <header className="dashboard-nav-fixed">
@@ -38,7 +40,7 @@ export default function DashboardLayout({ children }) {
         </SidebarProvider>
         <Chatbox />
         <CustomToast />
-      </body>
-    </html>
+      </main>
+    </div>
   );
 }

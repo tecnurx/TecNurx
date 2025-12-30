@@ -300,4 +300,10 @@
     .claim-history{
     grid-template-columns: 1fr;
   }
+  .insurance-header h1{
+    font-size: 24px;
+  }
+  .insurance-header p{
+    font-size: 14px;
+  }
 }

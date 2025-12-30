@@ -3,8 +3,67 @@ import "../service.css";
 import Navbar from "@/components/navbar/Navbar";
 import logo from "@/assets/images/logo.png";
 import Image from "next/image";
+import { toast } from "@/components/CustomToast";
 
 const ServicePartnerSignUp = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (loading) return;
+
+    setLoading(true);
+
+    // Validate passwords match
+    if (formData.password !== formData.passwordConfirm) {
+      toast.error("Passwords do not match!");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      let payload = {
+        photo: formData.photo,
+      };
+
+      payload = {
+        ...payload,
+        fname: formData.fname.trim(),
+        lname: formData.lname.trim(),
+        email: formData.email.trim(),
+        phoneNumber: formData.phoneNumber,
+        dateOfBirth: formData.dateOfBirth,
+        gender: formData.gender.toLowerCase(),
+        password: formData.password,
+        passwordConfirm: formData.passwordConfirm,
+      };
+
+      // This is the real signup
+      await authService.signup(payload);
+
+      // Only show success and proceed if NO error
+      toast.success(
+        "Engineer account creater!"
+      );
+    } catch (err) {
+      // This block runs ONLY on actual error
+      console.error("Signup error:", err);
+
+      if (err.response?.data?.code === 11000) {
+        const field = Object.keys(err.response.data.keyPattern)[0];
+        const value = err.response.data.keyValue[field];
+        toast.error(
+          field === "email"
+            ? `Email "${value}" is already registered!`
+            : `Phone "${value}" is already in use!`
+        );
+      } else if (err.response?.data?.message) {
+        toast.error(err.response.data.message);
+      } else {
+        toast.error("Signup failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
       <Navbar />

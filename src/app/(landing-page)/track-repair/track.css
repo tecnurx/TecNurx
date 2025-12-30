@@ -41,18 +41,18 @@
   color: rgba(8, 8, 8, 1);
   width: 500px;
 }
-.form-wrap {
+.form-wrapp {
   display: flex;
   flex-direction: column;
   gap: 16px;
   margin-top: 76px;
 }
-.form-wrap div {
+.form-wrapp .tracking {
   display: flex;
   justify-content: space-between;
   align-items: start;
 }
-.form-wrap label {
+.form-wrapp label {
   font-family: Plus Jakarta Sans;
   font-weight: 700;
   font-style: Bold;
@@ -62,7 +62,7 @@
   vertical-align: middle;
   color: rgba(59, 63, 68, 1);
 }
-.form-wrap p {
+.form-wrapp p {
   font-family: Plus Jakarta Sans;
   font-weight: 400;
   font-style: Italic;
@@ -72,7 +72,7 @@
   vertical-align: middle;
   color: rgba(144, 152, 162, 1);
 }
-.form-wrap input {
+.form-wrapp input {
   width: 760;
   height: 79;
   padding: 32px;
@@ -80,8 +80,8 @@
   border: 2px solid rgba(221, 221, 228, 1);
   background-color: rgba(255, 255, 255, 1);
 }
-.form-wrap input::placeholder,
-.form-wrap input {
+.form-wrapp input::placeholder,
+.form-wrapp input {
   font-family: Plus Jakarta Sans;
   font-weight: 400;
   font-style: Regular;
@@ -90,7 +90,7 @@
   letter-spacing: 0%;
   color: rgba(144, 152, 162, 1);
 }
-.form-wrap input {
+.form-wrapp input {
   color: rgba(8, 8, 8, 1);
 }
 .track-form {
@@ -334,18 +334,18 @@
 }
 
 @media screen and (max-width: 600px) {
-  .form-wrap div {
+  .form-wrapp .tracking {
     flex-direction: column;
     gap: 6px;
   }
-  .form-wrap input {
+  .form-wrapp input {
     width: 100%;
   }
   .track-form {
     width: 100%;
     align-items: stretch;
   }
-  .form-wrap {
+  .form-wrapp {
     width: 100%;
     align-items: stretch;
   }

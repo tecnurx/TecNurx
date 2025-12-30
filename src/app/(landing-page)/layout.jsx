@@ -19,11 +19,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={plusJakartaSans.className}>
-      <body>
+    <div>
+      <main>
         <Navbar />
         {children}
-      </body>
-    </html>
+      </main>
+    </div>
   );
 }

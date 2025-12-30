@@ -18,7 +18,7 @@ const Step3 = () => {
   const router = useRouter();
 
   const onProceed = () => {
-    router.push("/book-repair");
+    router.push("/dashboard/book-repair");
   };
   const onBack = () => {
     router.back();
@@ -47,15 +47,10 @@ const Step3 = () => {
 
   return (
     <>
-      <div className="section-wrap">
-        <div className="header">
-          <h1>
-            Fix your <span>gadget</span>
-          </h1>
-          <p>
-            We make gadget repair simple. Get an upfront quote, expert service,
-            and real-time updates for a hassle-free fix
-          </p>
+      <div className="book-page">
+        <div className="book-header">
+          <h1>Book Repair</h1>
+          <p>Fix your gadgets</p>
         </div>
         <div className="repair-form-wrap">
           <div className="repair-head">
@@ -115,7 +110,6 @@ const Step3 = () => {
           repairTime={trackingData.repairTime}
         />
       </div>
-      <Footer />
     </>
   );
 };

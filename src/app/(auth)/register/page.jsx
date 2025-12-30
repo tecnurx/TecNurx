@@ -183,7 +183,7 @@ export default function MultiStepRegister() {
               <button
                 type="button"
                 onClick={() => setRole("user")}
-                className={role === "user" ? "active" : ""}
+                className={role === "user" ? "activeselect" : ""}
               >
                 <Image src={useImg} alt="user" />
                 <h3>Regular User</h3>
@@ -193,7 +193,7 @@ export default function MultiStepRegister() {
               <button
                 type="button"
                 onClick={() => setRole("partner")}
-                className={role === "partner" ? "active" : ""}
+                className={role === "partner" ? "activeselect" : ""}
               >
                 <Image src={partImg} alt="partner" />
                 <h3>Partner</h3>

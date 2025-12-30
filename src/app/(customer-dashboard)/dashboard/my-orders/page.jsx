@@ -1,9 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import "./orders.css";
-import { TrackRepairModal } from "@/app/(main)/track-repair/TrackModal";
 import { Calendar, Wrench, Package, Clock, MapPin, User } from "lucide-react";
 import { repairService } from "../../../../../services/repairs";
+import { TrackRepairModal } from './../../../(landing-page)/track-repair/TrackModal';
+import Link from "next/link";
 
 const MyOrders = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -87,7 +88,7 @@ const MyOrders = () => {
           <div className="empty-orders">
             <Wrench size={64} color="#9ca3af" />
             <p>No repair orders yet.</p>
-            <button className="request-repair-btn">Request a Repair</button>
+            <Link href='/dashboard/book-repair' className="request-repair-btn">Request a Repair</Link>
           </div>
         ) : (
           <div className="orders-list">

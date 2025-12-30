@@ -271,7 +271,7 @@ const MyDevices = () => {
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={closeModal}>
-              <X size={24} />
+              <X size={24} color="black" />
             </button>
 
             <div className="modal-header">
@@ -443,7 +443,7 @@ const MyDevices = () => {
 
               <div className="form-grid">
                 {/* All your form fields remain the same */}
-                <div className="form-group">
+                <div className="form-grouup">
                   <label>Device Type *</label>
                   <select
                     value={formData.deviceType}
@@ -460,7 +460,7 @@ const MyDevices = () => {
                   </select>
                 </div>
 
-                <div className="form-group">
+                <div className="form-grouup">
                   <label>Brand *</label>
                   <input
                     type="text"
@@ -473,7 +473,7 @@ const MyDevices = () => {
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="form-grouup">
                   <label>Model *</label>
                   <input
                     type="text"
@@ -486,7 +486,7 @@ const MyDevices = () => {
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="form-grouup">
                   <label>Serial Number *</label>
                   <input
                     type="text"
@@ -499,7 +499,7 @@ const MyDevices = () => {
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="form-grouup">
                   <label>Purchase Date</label>
                   <input
                     type="date"
@@ -510,7 +510,7 @@ const MyDevices = () => {
                   />
                 </div>
 
-                <div className="form-group">
+                <div className="form-grouup">
                   <label>Warranty Expiry</label>
                   <input
                     type="date"
@@ -524,7 +524,7 @@ const MyDevices = () => {
                   />
                 </div>
 
-                <div className="form-group full">
+                <div className="form-grouup full">
                   <label>Condition</label>
                   <select
                     value={formData.condition}
@@ -540,7 +540,7 @@ const MyDevices = () => {
                   </select>
                 </div>
 
-                <div className="form-group full">
+                <div className="form-grouup full">
                   <label>Photos {!isEditMode && "(min. 2 required)"}</label>
                   <label className="file-upload">
                     <Upload size={20} />
@@ -554,7 +554,7 @@ const MyDevices = () => {
                   </label>
                 </div>
 
-                <div className="form-group full">
+                <div className="form-grouup full">
                   <label>Purchase Receipt (Optional)</label>
                   <label className="file-upload">
                     <Upload size={20} />
@@ -567,7 +567,7 @@ const MyDevices = () => {
                   </label>
                 </div>
 
-                <div className="form-group full">
+                <div className="form-grouup full">
                   <label>Notes (Optional)</label>
                   <textarea
                     rows={3}

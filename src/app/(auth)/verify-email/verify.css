@@ -46,7 +46,7 @@
   flex-direction: column;
   gap: 16px;
 }
-.form-wrap div {
+.form-wrap .input-group {
   display: flex;
   justify-content: space-between;
   align-items: start;
@@ -221,7 +221,7 @@
 }
 
 @media screen and (max-width: 600px) {
-  .form-wrap div {
+  .form-wrap .input-group {
     flex-direction: column;
     gap: 6px;
   }

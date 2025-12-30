@@ -103,6 +103,9 @@
   max-height: 300px;
   overflow-y: auto;
 }
+.notifications-list .loading{
+  padding: 12px;
+}
 .notification-item {
   padding: 12px 16px;
   border-bottom: 1px solid rgba(221, 221, 228, 1);
@@ -139,16 +142,16 @@
   /* width: 120px; */
 }
 .log-out-item {
-  display: "flex";
-  align-items: "center";
-  gap: "8px";
-  background: "none";
-  border: "none";
-  width: "100%";
-  text-align: "left";
-  padding: "12px 16px";
-  /* cursor: isLoggingOut ? "not-allowed" : "pointer"; */
-  color: "#e74c3c";
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  /* cursor: isLoggingOut ? "not-allowed" : pointer; */
+  color: #e74c3c;
 }
 .notification-badge {
   position: absolute;
@@ -194,8 +197,10 @@
 @media screen and (max-width: 600px) {
   .dashNav {
     padding: 16px 24px;
+    height: 80px;
   }
   .side-menu-logo img {
     width: 120px !important;
   }
+
 }

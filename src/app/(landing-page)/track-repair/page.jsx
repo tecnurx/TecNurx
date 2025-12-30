@@ -65,8 +65,8 @@ const TrackRepair = () => {
         </div>
 
         <div className="track-form">
-          <div className="form-wrap">
-            <div>
+          <div className="form-wrapp">
+            <div className="tracking">
               <label>Tracking Number</label>
               <p>
                 Enter your tracking number below to see your repair progress

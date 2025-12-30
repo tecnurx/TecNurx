@@ -1,45 +1,17 @@
-.section-wrap {
-  padding: 60px 120px;
-  display: flex;
-  gap: 42px;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: rgba(235, 235, 235, 1);
+.book-page {
+  font-family: "Plus Jakarta Sans", sans-serif;
 }
-.header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
+.book-header{
+  padding: 24px;
 }
-.header h1 {
-  font-family: Plus Jakarta Sans;
-  font-weight: 800;
-  font-style: ExtraBold;
-  font-size: 64px;
-  line-height: 64px;
-  letter-spacing: -3%;
-  text-align: center;
-  vertical-align: middle;
-  color: rgba(8, 8, 8, 1);
+.book-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
 }
-.header h1 span {
-  font-style: Italic;
-  color: rgba(255, 194, 0, 1);
-}
-.header p {
-  font-family: Plus Jakarta Sans;
-  font-weight: 400;
-  font-style: Regular;
-  font-size: 20px;
-  line-height: 100%;
-  letter-spacing: 0%;
-  text-align: center;
-  vertical-align: middle;
-  color: rgba(8, 8, 8, 1);
-  width: 760px;
+.book-header p {
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 16px;
 }
 .repair-form-wrap {
   display: flex;
@@ -142,7 +114,7 @@
   resize: none;
   height: 80px;
 }
-.form-grid {
+.bookform-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
@@ -182,7 +154,7 @@
   justify-content: center;
   align-items: center;
 }
-.form-grid2 {
+.bookform-grid2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
@@ -549,7 +521,7 @@
   align-items: start;
   padding-left: 32px;
 }
-.boxtwo{
+.boxtwo {
   height: 74px !important;
 }
 .box-wrap h1 {
@@ -600,43 +572,42 @@
   border: 1px solid rgba(221, 221, 228, 1);
   border-right: none;
 }
-.btop{
+.btop {
   border-top: none;
 }
-.bbtm{
+.bbtm {
   border-bottom: none;
 }
 
 @media screen and (max-width: 600px) {
-  .gadget-options{
+  .gadget-options {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr);
   }
-  .form-grid{
+  .bookform-grid {
     grid-template-columns: 1fr;
   }
-  .repair-form-wrap{
+  .repair-form-wrap {
     width: 100%;
     padding: 16px;
   }
-  .section-wrap{
+  .section-wrap {
     padding: 60px 28px;
   }
-  .form-wrap p{
+  .form-wrap p {
     font-size: 8px;
   }
-  .repair-head img{
+  .repair-head img {
     width: 80%;
   }
-  .repair-btn{
+  .repair-btn {
     flex-direction: column-reverse;
     gap: 12px;
   }
-  .header h1{
-    font-size: 38px;
-  }
-  .header p{
-    width: 100%;
-    font-size: 15px;
-  }
+  .book-header h1 {
+  font-size: 24px;
+}
+.book-header p {
+  font-size: 14px;
+}
 }

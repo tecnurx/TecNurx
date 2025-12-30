@@ -44,8 +44,9 @@ const Sidebar = () => {
             My Devices
           </Link>
           <Link
-            href="/book-repair"
-            className={pathname === "/dashboard/book-repair" ? "active" : ""}
+            href="/dashboard/book-repair"
+            className={
+              pathname === "/dashboard/book-repair" ? "active" : ""}
             onClick={closeSidebar}
           >
             Book a Repair

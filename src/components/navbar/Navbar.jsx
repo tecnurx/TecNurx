@@ -25,7 +25,7 @@ const Navbar = () => {
               <ChevronDown size={18} color="black" />
             </button>
             <div className="dropdown-list">
-              <Link href="/book-repair">
+              <Link href="/dashboard/book-repair">
                 <Image src={book} alt="book" />{" "}
                 <div>
                   <h4>Book Repair</h4>
@@ -90,7 +90,7 @@ const Navbar = () => {
           <div className="mobile-repairs-section">
             <span>Repairs</span>
             <Link
-              href="/book-repair"
+              href="/dashboard/book-repair"
               className="mobile-repair-item"
               onClick={() => setMobileMenuOpen(false)}
             >

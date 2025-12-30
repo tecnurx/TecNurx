@@ -6,14 +6,13 @@ import upload from "@/assets/images/upload.svg";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import SelectGadgets from "@/components/SelectGadgets";
-import Footer from "@/components/footer/Footer";
-import { repairService } from "../../../../services/repairs";
+import { repairService } from "./../../../../../services/repairs";
 
 const BookRepair = () => {
   const router = useRouter();
 
   const onProceed = () => {
-    router.push("/book-repair/step2");
+    router.push("/dashboard/book-repair/step2");
   };
 
   const [selectedGadgets, setSelectedGadgets] = useState([]);
@@ -22,7 +21,7 @@ const BookRepair = () => {
     const fetchIssues = async () => {
       try {
         const res = await repairService.getIssues();
-        console.log(res)
+        console.log(res);
       } catch (err) {
         console.error("Failed to load devices:", err);
       }
@@ -32,15 +31,10 @@ const BookRepair = () => {
 
   return (
     <>
-      <div className="section-wrap">
-        <div className="header">
-          <h1>
-            Fix your <span>gadget</span>
-          </h1>
-          <p>
-            We make gadget repair simple. Get an upfront quote, expert service,
-            and real-time updates for a hassle-free fix
-          </p>
+      <div className="book-page">
+        <div className="book-header">
+          <h1>Book Repair</h1>
+          <p>Fix your gadgets</p>
         </div>
         <div className="repair-form-wrap">
           <div className="repair-head">
@@ -55,7 +49,7 @@ const BookRepair = () => {
                 setSelectedOptions={setSelectedGadgets}
               />
             </div>
-            <div className="form-grid">
+            <div className="bookform-grid">
               <div className="form-wrap">
                 <label htmlFor="">Device Brand</label>
                 <select name="" id="">
@@ -132,7 +126,6 @@ const BookRepair = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 };

@@ -193,7 +193,7 @@ const DashboardNav = () => {
                 ) : error ? (
                   <p className="error">{error}</p>
                 ) : notifications.length === 0 ? (
-                  <p className="no-notifications">No notifications</p>
+                  <p className="loading">No notifications</p>
                 ) : (
                   notifications.map((n) => (
                     <div
@@ -234,7 +234,7 @@ const DashboardNav = () => {
               <button
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="dropdown-item logout-item"
+                className="dropdown-item log-out-item"
               >
                 <LogOut size={16} />
                 {isLoggingOut ? "Logging out..." : "Logout"}

@@ -37,8 +37,14 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ```
 technurx
+├─ .env
+├─ context
+│  └─ SidebarContext.jsx
 ├─ eslint.config.mjs
 ├─ jsconfig.json
+├─ lib
+│  └─ axios.js
+├─ middleware.js
 ├─ next.config.mjs
 ├─ package-lock.json
 ├─ package.json
@@ -50,11 +56,18 @@ technurx
 │  ├─ vercel.svg
 │  └─ window.svg
 ├─ README.md
+├─ services
+│  ├─ address.js
+│  ├─ auth.js
+│  ├─ devices.js
+│  ├─ notification.js
+│  └─ repairs.js
 └─ src
    ├─ app
    │  ├─ (auth)
    │  │  ├─ create-password
-   │  │  │  └─ page.jsx
+   │  │  │  └─ [token]
+   │  │  │     └─ page.jsx
    │  │  ├─ forgot-password
    │  │  │  └─ page.jsx
    │  │  ├─ layout.jsx
@@ -64,11 +77,14 @@ technurx
    │  │  ├─ register
    │  │  │  ├─ page.jsx
    │  │  │  └─ register.css
-   │  │  └─ service-partner
+   │  │  ├─ service-partner
+   │  │  │  ├─ page.jsx
+   │  │  │  ├─ service.css
+   │  │  │  └─ signup
+   │  │  │     └─ page.jsx
+   │  │  └─ verify-email
    │  │     ├─ page.jsx
-   │  │     ├─ service.css
-   │  │     └─ signup
-   │  │        └─ page.jsx
+   │  │     └─ verify.css
    │  ├─ (customer-dashboard)
    │  │  ├─ dashboard
    │  │  │  ├─ dashboard.css
@@ -81,13 +97,21 @@ technurx
    │  │  │  ├─ insurance
    │  │  │  │  ├─ dashinsure.css
    │  │  │  │  └─ page.jsx
-   │  │  │  ├─ page.jsx
-   │  │  │  ├─ payments
+   │  │  │  ├─ my-account
    │  │  │  │  ├─ page.jsx
-   │  │  │  │  └─ payment.css
-   │  │  │  └─ settings
+   │  │  │  │  └─ settings.css
+   │  │  │  ├─ my-orders
+   │  │  │  │  ├─ orders.css
+   │  │  │  │  └─ page.jsx
+   │  │  │  ├─ page.jsx
+   │  │  │  └─ payments
    │  │  │     ├─ page.jsx
-   │  │  │     └─ settings.css
+   │  │  │     └─ payment.css
+   │  │  ├─ layout.jsx
+   │  │  └─ test
+   │  ├─ (engineer-dashboard)
+   │  │  ├─ engineer-dashboard
+   │  │  │  └─ page.jsx
    │  │  ├─ layout.jsx
    │  │  └─ test
    │  ├─ (main)
@@ -119,70 +143,16 @@ technurx
    │  ├─ favicon.ico
    │  ├─ globals.css
    │  ├─ home.css
+   │  ├─ loader.jsx
    │  └─ page.module.css
    ├─ assets
    │  ├─ fonts
    │  └─ images
-   │     ├─ book.svg
-   │     ├─ call.svg
-   │     ├─ cam.svg
-   │     ├─ cracked.svg
-   │     ├─ desk.svg
-   │     ├─ facebook.svg
-   │     ├─ fb.svg
-   │     ├─ foot-logo.svg
-   │     ├─ gadg.svg
-   │     ├─ google.svg
-   │     ├─ hero-bg.svg
-   │     ├─ hero.svg
-   │     ├─ how1.svg
-   │     ├─ how2.svg
-   │     ├─ how3.svg
-   │     ├─ how4.svg
-   │     ├─ how5.svg
-   │     ├─ hslide.svg
-   │     ├─ ig.svg
-   │     ├─ insure.svg
-   │     ├─ laptop.svg
-   │     ├─ login.svg
-   │     ├─ logo.png
-   │     ├─ logo.svg
-   │     ├─ mail.svg
-   │     ├─ part.svg
-   │     ├─ partner.svg
-   │     ├─ partnerwith.svg
-   │     ├─ phone.svg
-   │     ├─ pickup.svg
-   │     ├─ pickupg.svg
-   │     ├─ pin.svg
-   │     ├─ point.svg
-   │     ├─ pslide.svg
-   │     ├─ pstep2.svg
-   │     ├─ pstep3.svg
-   │     ├─ pstep4.svg
-   │     ├─ quote.svg
-   │     ├─ rate.svg
-   │     ├─ repair.svg
-   │     ├─ sale.svg
-   │     ├─ save.svg
-   │     ├─ servpartner.svg
-   │     ├─ shield.svg
-   │     ├─ step1.svg
-   │     ├─ step2.svg
-   │     ├─ step3.svg
-   │     ├─ tecnurx.png
-   │     ├─ tecnurx.svg
-   │     ├─ testi.svg
-   │     ├─ track.svg
-   │     ├─ upload.svg
-   │     ├─ use.svg
-   │     ├─ why1.svg
-   │     ├─ why2.svg
-   │     ├─ why3.svg
-   │     ├─ why4.svg
-   │     ├─ why5.svg
-   │     └─ why6.svg
    └─ components
+      ├─ chatbox
+      │  ├─ chatbox.css
+      │  └─ Chatbox.jsx
+      ├─ CustomToast.jsx
       ├─ dashboard
       │  ├─ DashboardNav.jsx
       │  └─ dashcomp.css
@@ -205,6 +175,7 @@ technurx
       │  └─ Sidebar.jsx
       ├─ swiper.css
       ├─ Swiper.jsx
-      └─ Testimonials.jsx
+      ├─ Testimonials.jsx
+      └─ toast.css
 
 ```
