@@ -1,0 +1,104 @@
+/* engsidebar.css – Collapsible & Responsive */
+
+.engsidebar {
+  position: fixed;
+  top: 80px; /* Below fixed navbar */
+  left: 0;
+  width: 250px;
+  height: calc(100vh - 80px); /* Full height minus navbar */
+  background: black;
+  padding: 50px 24px; /* Your original padding */
+  display: flex;
+  flex-direction: column;
+  z-index: 40;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Closed state – slides out completely */
+.engsidebar.closed {
+  transform: translateX(-100%);
+}
+
+/* Open state – default on desktop */
+.engsidebar.open {
+  transform: translateX(0);
+}
+
+/* engSidebar Links */
+.engsidebar-links {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 80vh;
+  gap: 8px;
+  margin-top: 20px; /* Extra spacing after logo if needed */
+}
+
+.engsidebar-links a {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f2f2f2;
+  text-decoration: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Space for future icons */
+}
+
+.eng-divider{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.engsidebar-links a:hover {
+  background: #f2f2f2;
+  color: #111;
+}
+
+.engsidebar-links a.active {
+  background: #f2f2f2;
+  color: #111;
+  font-weight: 700;
+}
+
+/* Optional: Add subtle active indicator */
+.engsidebar-links a.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 4px;
+  height: 40px;
+  background: #ffc400; /* Your brand color */
+  border-radius: 0 4px 4px 0;
+}
+
+/* Mobile: engSidebar starts closed */
+@media (max-width: 1024px) {
+  .engsidebar {
+    transform: translateX(-100%);
+  }
+  .engsidebar.open {
+    transform: translateX(0);
+  }
+  /* Optional: Overlay when engsidebar is open on mobile */
+  .engsidebar-open-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 30;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .engsidebar-open-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+

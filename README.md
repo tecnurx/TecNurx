@@ -58,12 +58,21 @@ technurx
 ├─ README.md
 ├─ services
 │  ├─ address.js
+│  ├─ admin
+│  │  └─ adminlogin.js
 │  ├─ auth.js
 │  ├─ devices.js
+│  ├─ engineerAuth.js
 │  ├─ notification.js
 │  └─ repairs.js
 └─ src
    ├─ app
+   │  ├─ (admin-dashboard)
+   │  │  ├─ admin-dashboard
+   │  │  │  ├─ admin.css
+   │  │  │  └─ page.jsx
+   │  │  ├─ layout.jsx
+   │  │  └─ test
    │  ├─ (auth)
    │  │  ├─ create-password
    │  │  │  └─ [token]
@@ -73,6 +82,12 @@ technurx
    │  │  ├─ layout.jsx
    │  │  ├─ login
    │  │  │  ├─ login.css
+   │  │  │  └─ page.jsx
+   │  │  ├─ not-engineer-login
+   │  │  │  ├─ englogin.css
+   │  │  │  └─ page.jsx
+   │  │  ├─ not-even-admin-login
+   │  │  │  ├─ adminlogin.css
    │  │  │  └─ page.jsx
    │  │  ├─ register
    │  │  │  ├─ page.jsx
@@ -87,6 +102,14 @@ technurx
    │  │     └─ verify.css
    │  ├─ (customer-dashboard)
    │  │  ├─ dashboard
+   │  │  │  ├─ book-repair
+   │  │  │  │  ├─ book.css
+   │  │  │  │  ├─ page.jsx
+   │  │  │  │  ├─ step2
+   │  │  │  │  │  └─ page.jsx
+   │  │  │  │  └─ step3
+   │  │  │  │     ├─ BookModal.jsx
+   │  │  │  │     └─ page.jsx
    │  │  │  ├─ dashboard.css
    │  │  │  ├─ devices
    │  │  │  │  ├─ devices.css
@@ -110,19 +133,20 @@ technurx
    │  │  ├─ layout.jsx
    │  │  └─ test
    │  ├─ (engineer-dashboard)
+   │  │  ├─ components
+   │  │  │  ├─ engnavbar
+   │  │  │  └─ engsidebar
+   │  │  │     ├─ sidebar.css
+   │  │  │     └─ Sidebar.jsx
    │  │  ├─ engineer-dashboard
+   │  │  │  ├─ account-setup
+   │  │  │  │  ├─ page.jsx
+   │  │  │  │  └─ setup.css
+   │  │  │  ├─ engineer.css
    │  │  │  └─ page.jsx
    │  │  ├─ layout.jsx
    │  │  └─ test
-   │  ├─ (main)
-   │  │  ├─ book-repair
-   │  │  │  ├─ book.css
-   │  │  │  ├─ page.jsx
-   │  │  │  ├─ step2
-   │  │  │  │  └─ page.jsx
-   │  │  │  └─ step3
-   │  │  │     ├─ BookModal.jsx
-   │  │  │     └─ page.jsx
+   │  ├─ (landing-page)
    │  │  ├─ insurance
    │  │  │  ├─ insurance.css
    │  │  │  └─ page.jsx
@@ -143,8 +167,14 @@ technurx
    │  ├─ favicon.ico
    │  ├─ globals.css
    │  ├─ home.css
+   │  ├─ layout.jsx
    │  ├─ loader.jsx
-   │  └─ page.module.css
+   │  ├─ not-found.css
+   │  ├─ not-found.jsx
+   │  ├─ page.module.css
+   │  └─ resolve-role
+   │     ├─ page.jsx
+   │     └─ resolve.css
    ├─ assets
    │  ├─ fonts
    │  └─ images

@@ -235,5 +235,38 @@ html {
   }
 }
 
+/* ENG HEADER */
+.engheader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 38px;
+  border-bottom: rgba(221, 221, 228, 1) 2px solid;
+  background: rgba(244, 244, 244, 1);
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+  height: 75px;
+}
+.engside-logo-menu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  display: none;
+}
+.eng-head-icon{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
 
-
+@media screen and (max-width: 900px) {
+  .engnavonelogo {
+    display: none;
+  }
+  .engside-logo-menu{
+    display: flex;
+  }
+}
