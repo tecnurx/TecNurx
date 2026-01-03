@@ -49,8 +49,8 @@
 }
 .hero-texts button {
   padding: 20px 48px;
-  background: #000;
-  color: white;
+  /* background: #000; */
+  color: #000;
   border-radius: 60px;
   font-family: Plus Jakarta Sans;
   font-weight: 500;
@@ -62,12 +62,12 @@
   vertical-align: middle;
   cursor: pointer;
   border: none;
+  background: rgba(255, 204, 42, 1);
 }
 .hero-texts a {
   padding: 20px 48px;
-  background: rgba(255, 204, 42, 1);
-  background-color: white;
-  color: #000;
+  background-color: #000;
+  color: #fff;
   border-radius: 60px;
   font-family: Plus Jakarta Sans;
   font-weight: 500;
