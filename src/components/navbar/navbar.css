@@ -137,6 +137,7 @@
   display: flex;
   flex-direction: column;
   padding: 24px;
+  padding-bottom: 80px;
 }
 
 .mobile-drawer.open {
@@ -160,7 +161,7 @@
   flex: 1;
 }
 
-.drawer-links a {
+.drawer-links a, .mobile-repairs-section span {
   display: block;
   padding: 16px 0;
   font-family: "Plus Jakarta Sans";
@@ -170,17 +171,6 @@
   border-bottom: 1px solid #eee;
 }
 
-.mobile-repairs-section {
-  margin-top: 32px;
-}
-
-.mobile-repairs-section span {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 16px;
-  color: #807878;
-  border-bottom: 1px solid #000;
-}
 
 .mobile-repair-item {
   display: flex;
@@ -190,7 +180,7 @@
   text-decoration: none;
 }
 
-.mobile-repair-item h4 {
+.mobile-repair-item h4, .mobile-repairs-section span {
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 4px;
@@ -248,6 +238,76 @@
   font-weight: 700;
   display: none;
   color: #000;
+}
+
+/* Mobile Repairs Toggle Button */
+.mobile-repairs-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #eee;
+  font-family: "Plus Jakarta Sans";
+  font-size: 18px;
+  font-weight: 500;
+  color: #080808;
+  cursor: pointer;
+}
+
+.chevron {
+  transition: transform 0.3s ease;
+}
+
+.chevron.rotated {
+  transform: rotate(180deg);
+}
+
+/* Mobile Dropdown Content */
+.mobile-dropdown-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.4s ease;
+  padding: 0 0;
+}
+
+.mobile-dropdown-content.open {
+  max-height: 400px; /* enough for both items */
+  /* padding: 16px 0 24px; */
+}
+
+/* Mobile Repair Items */
+.mobile-repair-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 20px 0;
+  text-decoration: none;
+  border-bottom: 1px solid #eee;
+  transition: background 0.2s;
+}
+
+.mobile-repair-item:hover {
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 20px 12px;
+  margin: 0 -12px;
+}
+
+.mobile-repair-item h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #080808;
+  margin-bottom: 6px;
+}
+
+.mobile-repair-item p {
+  font-size: 10px;
+  color: #9098a2;
+  line-height: 1.5;
+  margin: 0;
 }
 
 @media screen and (max-width: 900px) {

@@ -5,6 +5,7 @@ import "./engineer.css";
 
 const EngineerDashboard = () => {
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState('John');
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 2000);
@@ -22,6 +23,9 @@ const EngineerDashboard = () => {
 
   return (
     <div className="dashboard-overview">
+      <div className="engdashboard-header">
+        <h1>Welcome, {currentUser}!</h1>
+      </div>
       {/* Wallet Balance Card */}
       <div className="balance-card">
         <h2>Wallet Balance</h2>

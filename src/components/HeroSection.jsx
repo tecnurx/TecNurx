@@ -23,7 +23,7 @@ const HeroSection = () => {
               free pickup and delivery
             </p>
             <div className="hero-btns">
-              <button
+              {/* <button
                 onClick={() => {
                   document.getElementById("GetQuote")?.scrollIntoView({
                     behavior: "smooth",
@@ -31,7 +31,7 @@ const HeroSection = () => {
                 }}
               >
                 Get Quote
-              </button>
+              </button> */}
               <Link href="/login">Sign In</Link>
             </div>
           </div>

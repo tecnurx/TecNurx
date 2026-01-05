@@ -9,7 +9,7 @@
 .marquee-track {
   display: flex;
   gap: 24px;
-  animation: scroll-left 20s linear infinite;
+  animation: scroll-left 80s linear infinite;
   will-change: transform;
   align-items: center;
   width: max-content; /* Allows full width of all cards */

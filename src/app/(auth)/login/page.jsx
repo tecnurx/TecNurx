@@ -100,7 +100,7 @@ const Login = () => {
               Welcome <span>back</span>
             </h2>
 
-            <div className="auth-options">
+            {/* <div className="auth-options">
               <div
                 onClick={handleGoogleLogin}
                 style={{
@@ -126,7 +126,7 @@ const Login = () => {
                 <Image src={google} alt="google" />
                 <span>{googleLoading ? "Connecting..." : "Google"}</span>
               </div>
-            </div>
+            </div> */}
 
             <div className="divider">
               <h6></h6>

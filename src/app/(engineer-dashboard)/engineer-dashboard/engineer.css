@@ -25,18 +25,25 @@
   }
 }
 
-
 /* Dashboard Overview */
-.dashboard-overview {
+/* .dashboard-overview {
   padding: 24px;
   max-width: 1280px;
   margin: 0 auto;
+} */
+
+.engdashboard-header h1 {
+  color: #000;
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 32px;
+  margin-top: 10px;
 }
 
 .balance-card {
   background: linear-gradient(135deg, #ffffff, #f8f8f8);
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   padding: 32px;
   text-align: center;
   margin-bottom: 32px;
@@ -56,7 +63,7 @@
 }
 
 .btn-primary {
-  background: #FFD60A;
+  background: #ffd60a;
   color: #000;
   border: none;
   padding: 14px 32px;
@@ -88,7 +95,7 @@
 }
 
 .btn-search {
-  background: #FFD60A;
+  background: #ffd60a;
   border: none;
   padding: 0 24px;
   border-radius: 12px;
@@ -109,7 +116,7 @@
 .card {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   padding: 24px;
 }
 
@@ -218,7 +225,14 @@
   .transactions-card {
     grid-column: span 1;
   }
-  .search-bar {
-    flex-direction: column;
+}
+
+@media screen and (max-width: 600px) {
+  .transaction-item .date{
+    font-size: 10px;
+    min-width: 0;
+  }
+  .amount{
+    font-size: 16px;
   }
 }

@@ -24,18 +24,19 @@
     transform: rotate(360deg);
   }
 }
-
+/* 
 .account-settings {
   padding: 24px;
   max-width: 900px;
   margin: 0 auto;
-}
+} */
 
 .account-settings .card {
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
   padding: 32px;
+  margin-top: 10px;
 }
 
 .account-settings h2 {
