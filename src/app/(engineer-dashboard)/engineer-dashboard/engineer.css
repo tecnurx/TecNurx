@@ -233,6 +233,31 @@
     min-width: 0;
   }
   .amount{
-    font-size: 16px;
+    font-size: 14px;
+    min-width: 100px;
+  }
+  .balance-amount{
+    font-size: 38px;
+    text-align: center;
+  }
+  .balance-card{
+    padding: 24px 32px;
+  }
+  .btn-primary{
+    font-size: 15px;
+    padding: 12px 24px;
+  }
+  .search-bar{
+    flex-direction: column;
+  }
+  .btn-search{
+    padding: 12px;
+  }
+  .icon{
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+  .ref{
+    font-size: 12px;
   }
 }

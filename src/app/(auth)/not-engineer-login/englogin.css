@@ -240,12 +240,12 @@
   margin: 16px 0;
   font-size: 14px;
 }
-  .logi-logo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
+.logi-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
 
 @media screen and (max-width: 900px) {
   .englogin-wrap {
@@ -290,13 +290,13 @@
   .sideimage {
     width: 100%;
   }
-  .englogin-wrap{
+  .englogin-wrap {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 100px;
   }
-  .sideimage{
+  .sideimage {
     width: 700px;
   }
 }
