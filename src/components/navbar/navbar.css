@@ -334,7 +334,7 @@
 
 @media screen and (min-width: 1450px) {
   .navbar {
-    max-width: 1800px;
+    width: 1200px;
     gap: 200px;
     padding-left: 10px;
     padding-right: 10px;

@@ -26,11 +26,12 @@
 }
 
 /* Dashboard Overview */
-/* .dashboard-overview {
+.dashboard-overview {
   padding: 24px;
-  max-width: 1280px;
-  margin: 0 auto;
-} */
+  padding-top: 0;
+  max-width: 1200px;
+  /* margin: 0 auto; */
+}
 
 .engdashboard-header h1 {
   color: #000;
@@ -56,7 +57,7 @@
 }
 
 .balance-amount {
-  font-size: 3.5rem;
+  font-size: 42px;
   font-weight: 800;
   color: #000;
   margin: 24px 0;

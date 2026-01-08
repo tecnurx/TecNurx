@@ -128,12 +128,6 @@ const Login = () => {
               </div>
             </div> */}
 
-            <div className="divider">
-              <h6></h6>
-              <h4>or</h4>
-              <h6></h6>
-            </div>
-
             <form onSubmit={handleSubmit} className="form">
               <div className="form-group">
                 <label>Email Address</label>
@@ -178,6 +172,12 @@ const Login = () => {
                     {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
                   </span>
                 </div>
+              </div>
+
+              <div className="divider">
+                <h6></h6>
+                <h4>or</h4>
+                <h6></h6>
               </div>
 
               <div className="remember-forgot">

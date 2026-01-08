@@ -302,6 +302,11 @@
     gap: 100px;
   }
   .sideimage{
-    width: 700px;
+    width: 1400px;
+    flex: 1;
+  }
+  .login-wrap
+  .card-wrap{
+    flex: 1;
   }
 }

@@ -24,12 +24,12 @@
     transform: rotate(360deg);
   }
 }
-/* 
+
 .account-settings {
   padding: 24px;
-  max-width: 900px;
-  margin: 0 auto;
-} */
+  max-width: 1200px;
+  /* margin: 0 auto; */
+}
 
 .account-settings .card {
   background: #fff;
