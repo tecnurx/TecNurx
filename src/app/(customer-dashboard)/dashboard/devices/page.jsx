@@ -43,6 +43,7 @@ const MyDevices = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Fetch devices on mount
   useEffect(() => {
@@ -53,6 +54,8 @@ const MyDevices = () => {
       } catch (err) {
         toast.error("Failed to load devices");
         console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchDevices();
@@ -201,6 +204,15 @@ const MyDevices = () => {
     };
     return map[type?.toLowerCase()] || <Smartphone size={42} />;
   };
+
+  if (loading) {
+    return (
+      <div className="resolve-wrap">
+        <p>Loading...</p>
+        <div className="respinner"></div>
+      </div>
+    );
+  }
 
   return (
     <>

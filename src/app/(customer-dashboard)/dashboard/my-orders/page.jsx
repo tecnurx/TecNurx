@@ -11,7 +11,8 @@ const MyOrders = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [trackData, setTrackData] = useState(null); // Real timeline from API
   const [loadingTrack, setLoadingTrack] = useState(false);
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState([]);  
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserRepairs = async () => {
@@ -20,6 +21,8 @@ const MyOrders = () => {
         setOrders(res.data.repairs || []);
       } catch (err) {
         console.error("Failed to fetch user repairs:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchUserRepairs();
@@ -75,6 +78,15 @@ const MyOrders = () => {
         return { color: "#6b7280", label: "Pending" };
     }
   };
+
+  if (loading) {
+    return (
+      <div className="resolve-wrap">
+        <p>Loading...</p>
+        <div className="respinner"></div>
+      </div>
+    );
+  }
 
   return (
     <>

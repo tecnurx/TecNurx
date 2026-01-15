@@ -26,6 +26,7 @@ const Settings = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const [profilePic, setProfilePic] = useState(null);
   const [twoFA, setTwoFA] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState({
     email: true,
     sms: false,
@@ -48,6 +49,7 @@ const Settings = () => {
   useEffect(() => {
     const response = authService.getCurrentUser();
     setCurrentUser(response);
+    setLoading(false);
   }, []);
 
   // Password Form State
@@ -248,6 +250,15 @@ const Settings = () => {
       setSavingAddress(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="resolve-wrap">
+        <p>Loading...</p>
+        <div className="respinner"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="settings-page">

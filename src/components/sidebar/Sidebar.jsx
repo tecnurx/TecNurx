@@ -5,7 +5,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import logo from "@/assets/images/logo.png";
-import { Menu } from "lucide-react";
+import {
+  BookCopy,
+  CreditCard,
+  LayoutGridIcon,
+  UserPen,
+  Shield,
+  Smartphone,
+  ToolCase,
+} from "lucide-react";
 import { SidebarContext } from "./../../../context/SidebarContext";
 
 const Sidebar = () => {
@@ -34,43 +42,42 @@ const Sidebar = () => {
             className={pathname === "/dashboard" ? "active" : ""}
             onClick={closeSidebar}
           >
-            Dashboard Overview
+            <LayoutGridIcon size={14} /> Dashboard Overview
           </Link>
           <Link
             href="/dashboard/devices"
             className={pathname === "/dashboard/devices" ? "active" : ""}
             onClick={closeSidebar}
           >
-            My Devices
+            <Smartphone size={14} /> My Devices
           </Link>
           <Link
             href="/dashboard/book-repair"
-            className={
-              pathname === "/dashboard/book-repair" ? "active" : ""}
+            className={pathname === "/dashboard/book-repair" ? "active" : ""}
             onClick={closeSidebar}
           >
-            Book a Repair
+            <ToolCase size={14} /> Book a Repair
           </Link>
           <Link
             href="/dashboard/my-orders"
             className={pathname === "/dashboard/my-orders" ? "active" : ""}
             onClick={closeSidebar}
           >
-            My Orders / Tracking
+            <BookCopy size={14} /> My Orders / Tracking
           </Link>
           <Link
             href="/dashboard/insurance"
             className={pathname === "/dashboard/insurance" ? "active" : ""}
             onClick={closeSidebar}
           >
-            Insurance
+            <Shield size={14} /> Insurance
           </Link>
           <Link
             href="/dashboard/payments"
             className={pathname === "/dashboard/payments" ? "active" : ""}
             onClick={closeSidebar}
           >
-            Payment & Plans
+            <CreditCard size={14} /> Payment & Plans
           </Link>
           {/* <Link
             href="/dashboard/feedback"
@@ -84,7 +91,7 @@ const Sidebar = () => {
             className={pathname === "/dashboard/my-account" ? "active" : ""}
             onClick={closeSidebar}
           >
-            My Account{" "}
+            <UserPen size={14} /> My Account{" "}
           </Link>
         </div>
       </div>

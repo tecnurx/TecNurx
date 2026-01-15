@@ -13,14 +13,35 @@ import {
 } from "lucide-react";
 import { SidebarContext } from "../../../../../context/SidebarContext";
 import "./sidebar.css";
+import { useRouter } from "next/navigation";
+import { engineerAuthService } from "../../../../../services/engineerAuth";
 
 const Sidebar = () => {
   const { isSidebarOpen, closeSidebar } = useContext(SidebarContext);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   // useEffect(() => {
   //   closeSidebar();
   // }, [pathname, closeSidebar]);
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      await engineerAuthService.logout();
+      router.push("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      localStorage.clear();
+      document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+      router.push("/");
+    } finally {
+      setIsLoggingOut(false);
+      setIsDropdownOpen(false);
+    }
+  };
 
   return (
     <div>
@@ -64,9 +85,10 @@ const Sidebar = () => {
             >
               <UserPen size={14} /> Account Setup
             </Link>
-            <Link href="/" onClick={closeSidebar}>
-              <LogOut size={14} /> Logout
-            </Link>
+            <button href="/" onClick={handleLogout} disabled={isLoggingOut}>
+              <LogOut size={14} />
+              {isLoggingOut ? "Logging out..." : "Logout"}
+            </button>
           </div>
         </div>
       </div>

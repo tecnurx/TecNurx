@@ -36,7 +36,7 @@
   /* margin-top: 20px; */
 }
 
-.engsidebar-links a {
+.engsidebar-links a, .eng-divider button {
   font-size: 14px;
   font-weight: 600;
   color: #f2f2f2;
@@ -47,6 +47,8 @@
   display: flex;
   align-items: center;
   gap: 12px; /* Space for future icons */
+  background: transparent;
+  border: none;
 }
 
 .eng-divider{
