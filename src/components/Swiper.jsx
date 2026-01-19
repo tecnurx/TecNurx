@@ -65,7 +65,7 @@ const SwiperCard = () => {
               <Image src={quote} alt="Quote" className="quote" />
 
               <div className="stext-wrap">
-                <h4>{item.title}</h4>
+                <h2>{item.title}</h2>
                 <p>{item.text}</p>
               </div>
 

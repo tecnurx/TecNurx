@@ -72,6 +72,7 @@ const Repairs = () => {
             <select
               value={selectedIssue}
               onChange={(e) => setSelectedIssue(e.target.value)}
+              aria-label="issue"
             >
               {issues.map((issue) => (
                 <option key={issue} value={issue}>
@@ -88,6 +89,7 @@ const Repairs = () => {
             <div className="repair-range">
               <input
                 type="range"
+                aria-label="range"
                 min="1"
                 max="12"
                 className="range"
@@ -104,10 +106,10 @@ const Repairs = () => {
           <h1>Our Approximate</h1>
           <div className="approx-deets">
             <div className="approx-text">
-              <h3>
+              <h2>
                 This is how much it will cost you to fix your{" "}
                 <span>{selectedIssue}</span>
-              </h3>
+              </h2>
               <p>
                 ₦{minRepair.toLocaleString()} – ₦{maxRepair.toLocaleString()}
               </p>

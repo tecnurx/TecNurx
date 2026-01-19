@@ -89,7 +89,7 @@
 }
 .hero-image {
   width: 420px;
-  /* height: 550px; */
+  height: 540px;
   /* margin-left: -40px; */
 }
 
@@ -801,7 +801,7 @@
   vertical-align: middle;
   cursor: pointer;
 }
-.approx-wrap h3 {
+.approx-wrap h3, .approx-wrap h2 {
   font-family: Plus Jakarta Sans;
   font-weight: 200;
   font-style: ExtraLight;
@@ -813,7 +813,7 @@
   vertical-align: middle;
   width: 300px;
 }
-.approx-wrap h3 span {
+.approx-wrap h3 span, .approx-wrap h2 span {
   font-weight: 700;
   font-style: bold;
   color: rgba(227, 229, 232, 1);

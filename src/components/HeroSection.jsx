@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import hero from "@/assets/images/hero.svg";
+import hero from "@/assets/images/hero.png";
 import rate from "@/assets/images/rate.svg";
 import "@/app/home.css";
 import Link from "next/link";

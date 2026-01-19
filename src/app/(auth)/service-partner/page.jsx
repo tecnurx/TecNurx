@@ -1,6 +1,6 @@
 import React from "react";
 import "./service.css";
-import service from "@/assets/images/servpartner.svg";
+import service from "@/assets/images/servpartner.png";
 import Image from "next/image";
 import Navbar from "@/components/navbar/Navbar";
 import Link from "next/link";

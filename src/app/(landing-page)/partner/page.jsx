@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import partner from "@/assets/images/partnerwith.svg";
+import partner from "@/assets/images/partnerwith.png";
 import pslide from "@/assets/images/pslide.svg";
 import why1 from "@/assets/images/why1.svg";
 import why2 from "@/assets/images/why2.svg";

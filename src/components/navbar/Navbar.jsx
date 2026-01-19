@@ -83,7 +83,7 @@ const Navbar = () => {
       <div className={`mobile-drawer ${mobileMenuOpen ? "open" : ""}`}>
         <div className="drawer-header">
           <Image src={logo} alt="logo" width={140} />
-          <button onClick={closeMobileMenu}>
+          <button onClick={closeMobileMenu} aria-label="close menu">
             <X size={28} color="black" />
           </button>
         </div>
