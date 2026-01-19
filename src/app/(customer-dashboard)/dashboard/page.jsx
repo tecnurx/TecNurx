@@ -62,7 +62,7 @@ const Dashboard = () => {
         if (repairsData.length > 0) {
           // Sort by newest first
           const sorted = [...repairsData].sort(
-            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
           );
           const newest = sorted[0];
           setLatestRepair(newest);
@@ -109,8 +109,8 @@ const Dashboard = () => {
         !repairStages.find(
           (next) =>
             next.completed === false &&
-            repairStages.indexOf(next) > repairStages.indexOf(s)
-        )
+            repairStages.indexOf(next) > repairStages.indexOf(s),
+        ),
     )?.label || "Processing";
 
   // Correct: active stage = first non-completed stage
@@ -184,7 +184,7 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="resolve-wrap">
-        <p>Loading your dashboard...</p>
+        <p>Loading...</p>
         <div className="respinner"></div>
       </div>
     );

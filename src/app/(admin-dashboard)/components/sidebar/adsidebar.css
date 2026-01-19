@@ -56,8 +56,11 @@
   flex-direction: column;
   gap: 8px;
 }
+.ad-divider button{
+  cursor: pointer;
+}
 
-.adsidebar-links a:hover {
+.adsidebar-links a:hover, .adsidebar-links button:hover {
   background: #f2f2f2;
   color: #111;
 }

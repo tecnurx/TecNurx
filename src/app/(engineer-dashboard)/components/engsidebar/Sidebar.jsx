@@ -14,7 +14,6 @@ import {
 import { SidebarContext } from "../../../../../context/SidebarContext";
 import "./sidebar.css";
 import { useRouter } from "next/navigation";
-import { engineerAuthService } from "../../../../../services/engineerAuth";
 
 const Sidebar = () => {
   const { isSidebarOpen, closeSidebar } = useContext(SidebarContext);

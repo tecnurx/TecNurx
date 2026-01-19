@@ -3,7 +3,7 @@
   align-items: start;
   width: 100%;
   padding: 42px 120px;
-  padding-right: 100px;
+  /* padding-right: 100px; */
   background: #f4f4f4;
   gap: 18px;
   /* background: linear-gradient(rgba(235, 235, 235, 1), rgba(235, 235, 235, 1)), url(../assets/images/hero-bg.svg); */
@@ -14,10 +14,11 @@
   align-items: start;
   background-position: center;
   background-size: cover;
+  justify-content: start;
 }
 .hero-texts {
-  background-image: linear-gradient(#f4f4f4ae, #f4f4f4ae),
-    url(../assets/images/hero-bg.svg);
+  background-image:
+    linear-gradient(#f4f4f474, #f4f4f474), url(../assets/images/hero-bg.svg);
   background-size: cover;
   background-position: center;
 }
@@ -80,7 +81,7 @@
   cursor: pointer;
   border: none;
 }
-.hero-btns{
+.hero-btns {
   padding: 24px 0;
   display: flex;
   align-items: center;
@@ -91,102 +92,42 @@
   /* height: 550px; */
   /* margin-left: -40px; */
 }
-.numbers {
-  padding: 50px 0;
-  background: rgba(244, 244, 244, 1);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.numbers-top {
-  border-top: 1px dashed rgba(221, 221, 228, 1);
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 92px;
-  width: 1000px;
-}
-.numbers-top span {
-  font-family: Plus Jakarta Sans;
-  font-weight: 600;
-  font-style: SemiBold;
-  font-size: 16px;
-  line-height: 24px;
-  letter-spacing: -0.3px;
-  vertical-align: middle;
-  color: rgba(144, 152, 162, 1);
-  padding: 14px 24px;
-  border-radius: 43px;
-  border: 1px dashed rgba(221, 221, 228, 1);
-  margin-top: -28px;
-  background: rgba(244, 244, 244, 1);
-}
+
 .numbers-wrap {
-  width: 1000px;
-  display: flex;
-  justify-content: space-between;
   border-radius: 24px;
   border: 1px solid rgba(221, 221, 228, 1);
-  padding: 24px 32px;
   background: rgba(244, 244, 244, 1);
-  margin-top: -65px;
+  display: flex;
+  padding: 24px;
+  width: 90%;
+  margin-top: 30px;
+  /* max-width: 600px; */
 }
 .numbers-wrap div {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  justify-content: center;
-  align-items: center;
+  gap: 8px;
 }
-.numbers-wrap div h2 {
+
+.numbers-wrap h2 {
   font-family: Plus Jakarta Sans;
   font-weight: 800;
   font-style: ExtraBold;
-  font-size: 48px;
+  font-size: 28px;
   color: rgba(23, 28, 34, 1);
   line-height: 100%;
   letter-spacing: -3%;
   text-align: center;
-  vertical-align: middle;
 }
-.numbers h3 {
-  border-top: 1px solid rgba(221, 221, 228, 1);
-  width: 100%;
-}
-.numbers-wrap div p {
+.numbers-wrap h3 {
   font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 400;
   font-style: Regular;
-  font-size: 18px;
+  font-size: 12px;
   line-height: 100%;
-  letter-spacing: 0%;
+  color: rgba(144, 152, 162, 1);
   text-align: center;
-  vertical-align: middle;
-  color: rgba(144, 152, 162, 1);
-}
-.take-numbers {
-  width: 184px;
-  opacity: 1;
-  border-radius: 43px;
-  border-width: 1px;
-  padding-top: 14px;
-  padding-right: 24px;
-  padding-bottom: 14px;
-  padding-left: 24px;
-  border-style: dashed;
-  border-color: rgba(221, 221, 228, 1);
-  font-family: Plus Jakarta Sans;
-  font-weight: 600;
-  font-style: semi-bold;
-  font-size: 16px;
-  line-height: 24px;
-  letter-spacing: -0.3px;
-  vertical-align: middle;
-  color: rgba(144, 152, 162, 1);
-  /* position: absolute;
-  top: 0px;
-  left: 50%; */
 }
 .home-section-wrap {
   padding: 120px 120px;
@@ -215,7 +156,7 @@
   letter-spacing: -2%;
   vertical-align: middle;
   color: rgba(255, 194, 0, 1);
-  width: 567px;
+  /* width: 567px; */
 }
 .schedule-pickup h1 span {
   font-style: normal !important;
@@ -948,11 +889,11 @@
     font-size: 16px;
     margin-top: 20px;
   }
-  .hero-partner {
-    width: 90%;
-  }
   .hero-image {
     margin-left: 0;
+  }
+  .numbers-wrap {
+    padding: 20px;
   }
 }
 
@@ -960,21 +901,8 @@
   .hero-section {
     flex-direction: column;
   }
-  .hero-partner {
-    display: none;
-  }
   .hero-content button {
     margin-bottom: 0;
-  }
-  .numbers-wrap {
-    width: 650px;
-    margin-top: -50px;
-  }
-  .numbers-wrap div h2 {
-    font-size: 28px;
-  }
-  .numbers-wrap div p {
-    font-size: 14px;
   }
   .services-grid {
     grid-template-columns: repeat(1, 1fr);
@@ -1004,9 +932,6 @@
   }
   .faq {
     width: 100%;
-  }
-  .numbers {
-    padding-top: 0;
   }
   .sgrid2 img {
     width: 200px;
@@ -1042,18 +967,6 @@
   }
   .services-grid div a span {
     font-size: 16px;
-  }
-  .numbers-wrap {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-    width: 300px;
-  }
-  .numbers-wrap div p {
-    font-size: 12px;
-  }
-  .numbers-wrap div h2 {
-    font-size: 24px;
   }
   .our-services {
     padding: 100px 32px;
@@ -1131,9 +1044,19 @@
   .sgrid2 {
     flex-direction: column !important;
   }
-  .hero-btns button, .hero-btns a{
+  .hero-btns button,
+  .hero-btns a {
     font-size: 12px;
     padding: 18px 34px;
+  }
+  .numbers-wrap {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    width: 100%;
+  }
+  .numbers-wrap h2 {
+    font-size: 20px;
   }
 }
 
@@ -1191,5 +1114,7 @@
   .faq {
     width: 1200px;
   }
-
+  .numbers-wrap {
+    max-width: 800px;
+  }
 }

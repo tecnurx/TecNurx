@@ -69,7 +69,7 @@
   background: #fff;
   position: absolute;
   top: 100%;
-  left: -15%;
+  left: -100%;
   transform: translateY(15px);
   transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
   z-index: 10;

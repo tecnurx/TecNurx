@@ -2,14 +2,27 @@
 
 import React, { useState, useEffect } from "react";
 import "./engineer.css";
+import { engService } from "../../../../services/eng/eng";
 
 const EngineerDashboard = () => {
   const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState('John');
+  const [currentUser, setCurrentUser] = useState("John");
 
+  // Fetch  data
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000);
-    return () => clearTimeout(timer);
+    const fetchData = async () => {
+      try {
+        // Fetch transactions
+        const res = await engService.getAllEngineers();
+        console.log("Engineers:", res);
+      } catch (err) {
+        console.error("Failed to load data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   if (loading) {

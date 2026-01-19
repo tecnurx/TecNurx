@@ -138,8 +138,4 @@
     display: flex;
     justify-content: center;
   }
-  .marquee {
-    max-width: 1200px;
-    overflow: hidden;
-  }
 }

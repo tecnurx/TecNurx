@@ -36,21 +36,6 @@ export default function Home() {
     <div>
       <HeroSection />
 
-      <div className="numbers">
-        <div className="numbers-top">
-          <span>Taking numbers...</span>
-        </div>
-        <h3></h3>
-        <div className="numbers-wrap">
-          {numberStat.map((stat) => (
-            <div key={stat.id}>
-              <h2>{stat.number}</h2>
-              <p>{stat.title}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Our services */}
       <OurServices />
 

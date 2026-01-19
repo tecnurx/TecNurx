@@ -31,7 +31,7 @@ const Navbar = () => {
         </Link>
 
         <nav className="nav-links">
-          <Link href="#">About us</Link>
+          {/* <Link href="#">About us</Link> */}
 
           <div className="test">
             <button className="dropdown">
@@ -89,9 +89,9 @@ const Navbar = () => {
         </div>
 
         <div className="drawer-links">
-          <Link href="#" onClick={closeMobileMenu}>
+          {/* <Link href="#" onClick={closeMobileMenu}>
             About us
-          </Link>
+          </Link> */}
 
           {/* Repairs Dropdown in Mobile */}
           <div className="mobile-repairs-section">

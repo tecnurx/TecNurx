@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { SidebarProvider } from "../../../context/SidebarContext";
 import AdNav from "./components/AdNav";
 import AdSidebar from "./components/sidebar/AdSidebar";
+import './adminall.css'
 
 export default function AdminDashboardLayout({ children }) {
   const router = useRouter();

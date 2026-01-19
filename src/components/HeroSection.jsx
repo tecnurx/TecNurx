@@ -3,9 +3,37 @@ import React from "react";
 import Image from "next/image";
 import hero from "@/assets/images/hero.svg";
 import rate from "@/assets/images/rate.svg";
-import hslide from "@/assets/images/hslide.svg";
+import hslide from "@/assets/images/hslide.svg"; // if still used elsewhere
 import "@/app/home.css";
 import Link from "next/link";
+import CountUp from "react-countup";
+
+const numberStat = [
+  {
+    id: 1,
+    end: 2000,
+    suffix: "+",
+    title: "Successful Repairs",
+  },
+  {
+    id: 2,
+    end: 24,
+    title: "Repair Time",
+    suffix: " Hrs", // space before Hrs looks better
+  },
+  {
+    id: 3,
+    end: 10,
+    suffix: "x",
+    title: "Response Rate",
+  },
+  {
+    id: 4,
+    end: 20,
+    suffix: "+",
+    title: "Tech Partner Companies",
+  },
+];
 
 const HeroSection = () => {
   return (
@@ -23,20 +51,32 @@ const HeroSection = () => {
               free pickup and delivery
             </p>
             <div className="hero-btns">
-              {/* <button
-                onClick={() => {
-                  document.getElementById("GetQuote")?.scrollIntoView({
-                    behavior: "smooth",
-                  });
-                }}
-              >
-                Get Quote
-              </button> */}
               <Link href="/login">Sign In</Link>
             </div>
           </div>
-          <Image src={hslide} alt="our partners" className="hero-partner" />
+
+          {/* NUMBERS */}
+          <div className="numbers-wrap">
+            {numberStat.map((stat) => (
+              <div key={stat.id}>
+                <h2>
+                  <CountUp
+                    start={0}
+                    end={stat.end}
+                    duration={2} // animation time in seconds
+                    suffix={stat.suffix || ""} // "+" or "x" or " Hrs"
+                    enableScrollSpy // only start when in view
+                    scrollSpyOnce // animate only the first time
+                    scrollSpyDelay={100} // small delay after entering view
+                    useEasing // smooth easing
+                  />
+                </h2>
+                <h3>{stat.title}</h3>
+              </div>
+            ))}
+          </div>
         </div>
+
         <Image src={hero} alt="Hero Image" className="hero-image" />
       </main>
     </>

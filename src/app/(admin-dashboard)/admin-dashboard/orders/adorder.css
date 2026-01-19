@@ -1,0 +1,17 @@
+.status-engineer_assigned {
+  color: #f59e0b;
+  font-weight: 500;
+} /* pending/assigned */
+.status-completed,
+.status-delivered {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.payment-pending {
+  color: #f59e0b;
+}
+.payment-paid,
+.payment-completed {
+  color: #10b981;
+}
