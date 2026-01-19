@@ -36,7 +36,8 @@
   /* margin-top: 20px; */
 }
 
-.engsidebar-links a, .eng-divider button {
+.engsidebar-links a,
+.eng-divider button {
   font-size: 14px;
   font-weight: 600;
   color: #f2f2f2;
@@ -51,13 +52,17 @@
   border: none;
 }
 
-.eng-divider{
+.eng-divider {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
+.eng-divider button {
+  cursor: pointer;
+}
 
-.engsidebar-links a:hover {
+.engsidebar-links a:hover,
+.eng-divider button:hover {
   background: #f2f2f2;
   color: #111;
 }
@@ -103,4 +108,3 @@
     visibility: visible;
   }
 }
-
