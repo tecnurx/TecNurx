@@ -34,7 +34,7 @@
 .account-settings .card {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   padding: 32px;
   margin-top: 10px;
 }
@@ -45,39 +45,35 @@
   color: #333;
 }
 
-.settings-form .form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 24px;
-  margin-bottom: 40px;
-}
-
+.settings-form .form-grid,
 .password-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  /* grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); */
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
   margin-bottom: 40px;
 }
 
-.form-group label {
+.engform-group label {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
   color: #444;
 }
 
-.form-group input {
+.engform-group input {
   width: 100%;
   padding: 14px;
   border: 1px solid #ddd;
   border-radius: 12px;
   font-size: 1rem;
   transition: border 0.2s;
+  width: 100%;
 }
 
-.form-group input:focus {
+.engform-group input:focus {
   outline: none;
-  border-color: #FFD60A;
+  border-color: #ffd60a;
   box-shadow: 0 0 0 3px rgba(255, 214, 10, 0.2);
 }
 
@@ -88,7 +84,7 @@
 }
 
 .btn-primary {
-  background: #FFD60A;
+  background: #ffd60a;
   color: #000;
   border: none;
   padding: 16px 40px;
@@ -101,4 +97,32 @@
 
 .btn-primary:hover {
   background: #e6c000;
+}
+
+@media screen and (max-width: 900px) {
+  .settings-form .form-grid,
+  .password-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .account-settings {
+    padding: 0;
+  }
+  .account-settings .card {
+    padding: 16px;
+  }
+  .account-settings h2 {
+    font-size: 20px;
+    margin-bottom: 24px;
+  }
+  .account-settings h3 {
+    font-size: 20px;
+    margin: 24px 0;
+  }
+  .settings-form .form-grid,
+  .password-grid {
+    grid-template-columns: 1fr;
+  }
 }

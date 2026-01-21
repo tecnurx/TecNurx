@@ -9,11 +9,11 @@ import SelectGadgets from "@/components/SelectGadgets";
 import { repairService } from "./../../../../../services/repairs";
 import step2 from "@/assets/images/step2.svg";
 import step3 from "@/assets/images/step3.svg";
-import { BookRepairModal } from "./step3/BookModal";
 import phone from "@/assets/images/phone.svg";
 import cam from "@/assets/images/cam.svg";
 import desk from "@/assets/images/desk.svg";
 import laptop from "@/assets/images/laptop.svg";
+import { BookRepairModal } from "./BookModal";
 
 const BookRepair = () => {
   const [step, setStep] = useState(1);

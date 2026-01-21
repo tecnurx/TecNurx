@@ -32,7 +32,7 @@
   justify-content: space-between;
   gap: 24px;
   padding: 20px;
-  background: rgb(255, 196, 0);
+  background: #ffc400;
   background-color: #000;
   background-color: #f2f2f2;
   border-radius: 12px;
@@ -93,4 +93,18 @@
 
 .addata-table tbody tr:hover {
   background: #fffbe6;
+}
+
+@media screen and (max-width: 1290px) {
+  .dashboard-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media screen and (max-width: 600px) {
+  .dashboard-cards {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  .admin-dashboard{
+    padding: 0;
+  }
 }

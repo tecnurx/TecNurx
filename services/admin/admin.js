@@ -11,6 +11,11 @@ export const adminService = {
     return response.data;
   },
 
+  getAllUsers: async () => {
+    const response = await axios.get("/users");
+    return response.data;
+  },
+
   getEngineerbyId: async ({ id }) => {
     const response = await axios.get(`/service-providers/${id}`);
     return response.data;

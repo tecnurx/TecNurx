@@ -18,6 +18,38 @@
   border-top-color: #ffc400; /* blue-600 */
   animation: spin 1s linear infinite;
 }
+.dashboard-cards {
+  display: grid;
+  /* grid-template-columns: repeat(2, 1fr); */
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+.stat-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px;
+  background: rgb(255, 196, 0);
+  background-color: #000;
+  background-color: #f2f2f2;
+  border-radius: 12px;
+  color: white;
+  color: black;
+  width: 100%;
+}
+.stat-card div {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.dashboard-cards h3 {
+  font-size: 32px;
+  font-weight: 700;
+}
+.dashboard-cards span {
+  font-size: 15px;
+  font-weight: 500;
+}
 
 @keyframes spin {
   to {
@@ -47,7 +79,7 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   padding: 32px;
   text-align: center;
-  margin-bottom: 32px;
+  margin: 32px 0;
 }
 
 .balance-card h2 {
@@ -114,14 +146,14 @@
   grid-column: span 2;
 }
 
-.card {
+.engcardd {
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   padding: 24px;
 }
 
-.card h3 {
+.engcardd h3 {
   font-size: 1.5rem;
   margin-bottom: 20px;
   color: #333;
@@ -219,6 +251,11 @@
 }
 
 /* Responsive */
+@media screen and (max-width: 1290px) {
+  .dashboard-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 @media (max-width: 968px) {
   .sections-grid {
     grid-template-columns: 1fr;
@@ -229,36 +266,42 @@
 }
 
 @media screen and (max-width: 600px) {
-  .transaction-item .date{
+  .transaction-item .date {
     font-size: 10px;
     min-width: 0;
   }
-  .amount{
+  .amount {
     font-size: 14px;
     min-width: 100px;
   }
-  .balance-amount{
+  .balance-amount {
     font-size: 38px;
     text-align: center;
   }
-  .balance-card{
+  .balance-card {
     padding: 24px 32px;
   }
-  .btn-primary{
+  .btn-primary {
     font-size: 15px;
     padding: 12px 24px;
   }
-  .search-bar{
+  .search-bar {
     flex-direction: column;
   }
-  .btn-search{
+  .btn-search {
     padding: 12px;
   }
-  .icon{
+  .icon {
     font-size: 10px;
     padding: 4px 8px;
   }
-  .ref{
+  .ref {
     font-size: 12px;
+  }
+  .dashboard-overview {
+    padding: 0;
+  }
+  .dashboard-cards {
+    grid-template-columns: 1fr;
   }
 }

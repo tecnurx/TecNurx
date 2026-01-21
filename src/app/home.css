@@ -1055,6 +1055,7 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
     width: 100%;
+    margin-top: 0;
   }
   .numbers-wrap h2 {
     font-size: 20px;

@@ -17,6 +17,11 @@ export const engineerAuthService = {
 
     return response.data;
   },
+  getCurrentUser: () => {
+    if (typeof window === "undefined") return null;
+    const user = localStorage.getItem("user");
+    return user ? JSON.parse(user) : null;
+  },
   signup: async (payload) => {
     const response = await axios.post("/service-providers", payload);
     return response.data;

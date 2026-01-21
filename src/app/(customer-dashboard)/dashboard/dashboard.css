@@ -452,6 +452,9 @@
   .dashboard-wrap {
     padding: 24px 0;
   }
+    .dashboard-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 @media screen and (max-width: 900px) {
   .stage{

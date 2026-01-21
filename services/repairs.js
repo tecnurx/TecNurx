@@ -2,7 +2,7 @@ import axios from "../lib/axios";
 
 export const repairService = {
   getIssues: async () => {
-    const response = await axios.get("/repairs/issues");
+    const response = await axios.get("/service-offerings/issues");
     return response.data;
   },
 

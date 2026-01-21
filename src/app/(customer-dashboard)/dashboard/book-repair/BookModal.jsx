@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import "../book.css";
+import "./book.css";
 
 export function BookRepairModal({
   isOpen,

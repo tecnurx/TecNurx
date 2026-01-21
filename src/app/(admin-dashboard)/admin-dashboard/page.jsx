@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import "./admin.css";
 import { UserCog, User, CircleCheck, CreditCard } from "lucide-react";
 import { adminService } from "../../../../services/admin/admin";
+import AdminGraph from "../components/Graph";
 
 const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -15,7 +16,6 @@ const AdminDashboard = () => {
         // Fetch transactions
         const res = await adminService.getEngineerStatistics();
         console.log("Engineer Statistics:", res);
-
       } catch (err) {
         console.error("Failed to load data:", err);
       } finally {
@@ -163,6 +163,8 @@ const AdminDashboard = () => {
           </div>
         ))}
       </div>
+
+      <AdminGraph />
 
       {/* Recent Transactions */}
       <div className="adcard">

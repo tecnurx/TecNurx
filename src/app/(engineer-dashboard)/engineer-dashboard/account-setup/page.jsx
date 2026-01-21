@@ -26,23 +26,23 @@ const EngineerAccount = () => {
         <h2>Account Information</h2>
         <form className="settings-form">
           <div className="form-grid">
-            <div className="form-group">
+            <div className="engform-group">
               <label>First Name</label>
               <input type="text" defaultValue="Israel" />
             </div>
-            <div className="form-group">
+            <div className="engform-group">
               <label>Last Name</label>
               <input type="text" defaultValue="Olayiwola" />
             </div>
-            <div className="form-group">
+            <div className="engform-group">
               <label>Email Address</label>
               <input type="email" defaultValue="israelolayiwola@gmail.com" />
             </div>
-            <div className="form-group">
+            <div className="engform-group">
               <label>Contact Number</label>
               <input type="tel" defaultValue="09098339187" />
             </div>
-            <div className="form-group">
+            <div className="engform-group">
               <label>Office Address</label>
               <input
                 type="text"
@@ -50,15 +50,15 @@ const EngineerAccount = () => {
                 placeholder="Enter office address"
               />
             </div>
-            <div className="form-group">
+            <div className="engform-group">
               <label>Account Name</label>
               <input type="text" defaultValue="Israel Olayiwola" />
             </div>
-            <div className="form-group">
+            <div className="engform-group">
               <label>Account Number</label>
               <input type="text" defaultValue="09098339187" />
             </div>
-            <div className="form-group">
+            <div className="engform-group">
               <label>Bank Name</label>
               <input type="text" defaultValue="GTBank" />
             </div>
@@ -66,11 +66,11 @@ const EngineerAccount = () => {
 
           <h3>Create a New Password</h3>
           <div className="password-grid">
-            <div className="form-group">
+            <div className="engform-group">
               <label>New Password</label>
               <input type="password" placeholder="Enter new password" />
             </div>
-            <div className="form-group">
+            <div className="engform-group">
               <label>Confirm Password</label>
               <input type="password" placeholder="Confirm new password" />
             </div>

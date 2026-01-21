@@ -3,16 +3,26 @@
 import React, { useState, useEffect } from "react";
 import { UserCog, User, CircleCheck, CreditCard } from "lucide-react";
 import "./aduser.css";
+import { adminService } from "../../../../../services/admin/admin";
 
 const AdminUsers = () => {
   const [loading, setLoading] = useState(true);
 
+  // Fetch  data
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    const fetchData = async () => {
+      try {
+        // Fetch users
+        const res = await adminService.getAllUsers();
+        console.log("Users:", res);
+      } catch (err) {
+        console.error("Failed to load data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    return () => clearTimeout(timer);
+    fetchData();
   }, []);
 
   const stats = [
