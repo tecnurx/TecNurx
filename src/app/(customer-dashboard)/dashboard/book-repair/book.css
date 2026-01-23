@@ -77,6 +77,22 @@
   flex-direction: column;
   gap: 12px;
 }
+
+.upload-texts {
+  font-family: Plus Jakarta Sans;
+  font-weight: 600;
+  font-style: SemiBold;
+  color: #3b3f44;
+  letter-spacing: 0%;
+  vertical-align: middle;
+  font-size: 16px;
+  line-height: 100%;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .form-wrap label {
   font-family: Plus Jakarta Sans;
   font-weight: 600;
@@ -600,7 +616,7 @@
   .repair-head img {
     width: 80%;
   }
-  .book-header{
+  .book-header {
     padding: 0;
     margin-bottom: 24px;
   }
@@ -617,10 +633,83 @@
   .bookform-grid2 {
     grid-template-columns: 1fr;
   }
-  .repair-details{
+  .repair-details {
     flex-direction: column;
   }
-  .brand-model{
+  .brand-model {
     width: 100%;
   }
+}
+
+.gadget-options {
+  display: flex;
+  gap: 8px;
+}
+.gadget-options button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid rgba(221, 221, 228, 1);
+  background-color: rgba(255, 255, 255, 1);
+  cursor: pointer;
+  color: black;
+}
+.active-option {
+  border: 2px solid rgba(255, 194, 0, 1) !important;
+}
+
+@media screen and (max-width: 600px) {
+  .gadget-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.address-options {
+  display: flex;
+  /* flex-direction: column; */
+  gap: 12px;
+}
+
+.address-btn {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  text-align: left;
+  width: 100%;
+}
+
+.address-btn.active-option {
+  border-color: #007bff;
+  background: #e7f1ff;
+}
+
+.address-info strong {
+  font-size: 1.1rem;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.address-info p {
+  margin: 2px 0;
+  color: #555;
+}
+
+.address-icon {
+  font-size: 2rem;
+  min-width: 50px;
+  text-align: center;
+}
+
+.selected-address-summary {
+  border: 1px solid #007bff;
+  background: #f0f8ff;
 }

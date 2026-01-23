@@ -2,12 +2,16 @@ import axios from "../lib/axios";
 
 export const repairService = {
   getIssues: async () => {
-    const response = await axios.get("/service-offerings/issues");
+    const response = await axios.get("/repairs/issues");
     return response.data;
   },
 
   bookRepair: async (payload) => {
-    const response = await axios.post("/repairs/book", payload);
+    const response = await axios.post("/repairs/book", payload, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   },
 
