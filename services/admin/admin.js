@@ -7,7 +7,7 @@ export const adminService = {
   },
 
   getAllEngineers: async () => {
-    const response = await axios.get("/service-providers");
+    const response = await axios.get("/users/admin/engineers");
     return response.data;
   },
 
