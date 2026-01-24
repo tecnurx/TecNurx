@@ -12,7 +12,7 @@ export const adminService = {
   },
 
   getAllUsers: async () => {
-    const response = await axios.get("/users");
+    const response = await axios.get("/users/admin/all");
     return response.data;
   },
 
