@@ -1,0 +1,338 @@
+.resolve-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.resolve-wrap p {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+.respinner {
+  width: 40px; /* same as h-10 (2.5rem = 40px) */
+  height: 40px; /* same as w-10 */
+  border-radius: 50%; /* rounded-full */
+  border: 4px solid #e5e7eb; /* light gray base (you can change) */
+  border-top-color: #ffc400; /* blue-600 */
+  animation: spin 1s linear infinite;
+}
+
+.repair-details-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.repair-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.btn-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1f1f1;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-back:hover {
+  background: #e0e0e0;
+}
+
+.repair-header h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #000;
+}
+
+/* Status Card */
+.status-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 32px;
+}
+
+.status-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.status-badge {
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.status-engineer_assigned {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* Grid */
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 1024px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card */
+.detail-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.detail-row span {
+  color: #666;
+  font-weight: 500;
+}
+
+.detail-row.description {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.detail-row p {
+  margin-top: 4px;
+  color: #444;
+}
+
+/* Photos */
+.photo-section {
+  margin-top: 24px;
+}
+
+.photo-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.photo-item {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #eee;
+}
+
+.photo-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.photo-img:hover {
+  transform: scale(1.05);
+}
+
+/* Customer */
+.customer-profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.customer-avatar {
+  border-radius: 50%;
+  border: 3px solid #ffc400;
+}
+
+.customer-profile h3 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.customer-email {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* Address */
+.address-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.flex-start {
+  display: flex;
+  gap: 12px;
+}
+
+.flex-start strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.formatted-address {
+  color: #777;
+  font-size: 0.95rem;
+  margin-top: 4px;
+}
+
+/* Cost Card */
+.cost-card {
+  margin-top: 0;
+}
+
+.cost-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.cost-item {
+  background: #f8f8f8;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.cost-item span {
+  display: block;
+  color: #666;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+
+.cost-item strong {
+  font-size: 1.6rem;
+}
+
+.total {
+  background: #fff9e6;
+  border: 2px solid #ffc400;
+}
+
+.total-amount {
+  font-size: 2rem;
+  color: #000;
+}
+
+.warranty-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #e6ffe6;
+  border-radius: 12px;
+  margin-top: 24px;
+}
+
+.warranty-info strong {
+  display: block;
+}
+
+.warranty-info p {
+  color: #444;
+  margin-top: 4px;
+}
+
+.payment-status {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1rem;
+}
+
+.status-paid {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+/* Loading & Error */
+.repair-loading,
+.repair-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+}
+
+.repair-error h2 {
+  margin: 16px 0;
+  font-size: 1.8rem;
+}
+
+.repair-error button {
+  margin-top: 24px;
+  padding: 12px 32px;
+  background: #000;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 600px) {
+  .cost-grid {
+    grid-template-columns: 1fr;
+  }
+  .repair-details-container{
+    padding: 0;
+  }
+}

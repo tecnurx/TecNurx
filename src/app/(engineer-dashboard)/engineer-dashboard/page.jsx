@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import "./engineer.css";
 import { engService } from "../../../../services/eng/eng";
 import {
-  DollarSign,
+  Banknote,
   CheckCircle2,
   Clock,
   Wrench,
@@ -15,12 +15,15 @@ import {
   Wallet,
 } from "lucide-react";
 import { engineerAuthService } from "../../../../services/eng/engineerAuth";
+import Link from "next/link";
 
 const EngineerDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [repairs, setRepairs] = useState([]);
-  const [currentUser, setCurrentUser] = useState({});
+  const [currentUser, setCurrentUser] = useState([]);
+  const [payments, setPayments] = useState({});
+  const [paymentStats, setPaymentStats] = useState({});
 
   // Fetch  data
   useEffect(() => {
@@ -32,10 +35,15 @@ const EngineerDashboard = () => {
         // Get current user
         const user = engineerAuthService.getCurrentUser();
         setCurrentUser(user);
-        console.log(currentUser)
+        console.log(currentUser);
 
         //fetch repairs
         const res = await engService.getEngineerRepairs();
+
+        const paymentResponse = await engService.getEngineerPayments();
+        setPayments(paymentResponse.data.payments);
+        setPaymentStats(paymentResponse.stats);
+        // console.log(paymentResponse);
 
         // Adjust based on your actual response structure
         const data = res.data?.repairs || res.repairs || [];
@@ -52,40 +60,33 @@ const EngineerDashboard = () => {
   }, []);
 
   // Dynamic stats from real data
-  const totalEarnings = repairs.reduce(
-    (sum, r) => sum + (r.estimatedCost?.totalCost || 0),
-    0,
-  );
-  const completedRepairs = repairs.filter(
-    (r) => r.status === "completed" || r.status === "delivered",
-  ).length;
-  const pendingRepairs = repairs.filter(
-    (r) => r.status === "engineer_assigned" || r.status === "pending",
-  ).length;
+  const totalEarnings = paymentStats.completedAmount;
+  const completedRepairs = paymentStats.completed;
+  const pendingRepairs = paymentStats.pending;
 
   const stats = [
     {
       id: 1,
       title: "Total Earnings",
-      value: `₦${totalEarnings.toLocaleString()}`,
-      icon: <DollarSign size={24} />,
+      value: `₦${totalEarnings?.toLocaleString()}`,
+      icon: <Banknote size={24} />,
     },
     {
       id: 2,
       title: "Completed Repairs",
-      value: completedRepairs.toString(),
+      value: completedRepairs,
       icon: <CheckCircle2 size={24} />,
     },
     {
       id: 3,
       title: "Pending Repairs",
-      value: pendingRepairs.toString(),
+      value: pendingRepairs,
       icon: <Clock size={24} />,
     },
     {
       id: 4,
       title: "Assigned Repairs",
-      value: repairs.length.toString(),
+      value: repairs.length,
       icon: <Wrench size={24} />,
     },
   ];
@@ -147,6 +148,7 @@ const EngineerDashboard = () => {
                     <th>Fault Fixed</th>
                     <th>Repair Status</th>
                     <th>Amount</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -163,14 +165,20 @@ const EngineerDashboard = () => {
                         {repair.device.model} -{" "}
                         {repair.issueCategory.replace(/_/g, " ")}
                       </td>
-                      <td className={`status-${repair.status}`}>
-                        {repair.status.replace(/_/g, " ")}
-                      </td>
+                      <td>{repair.status.replace(/_/g, " ")}</td>
                       <td>
                         ₦
                         {(
                           repair.estimatedCost?.totalCost || 0
                         ).toLocaleString()}
+                      </td>
+                      <td>
+                        <Link
+                          href={`/engineer-dashboard/${repair._id}`}
+                          className="view-repair"
+                        >
+                          View
+                        </Link>
                       </td>
                     </tr>
                   ))}
@@ -182,35 +190,47 @@ const EngineerDashboard = () => {
 
         {/* My Payments (placeholder - expand later) */}
         <div className="engcardd">
-          <h3>My Payments</h3>
+          <h3>My Payments ({payments.length}) </h3>
           <div className="table-container">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Order No.</th>
-                  <th>Fault Fixed</th>
-                  <th>Payment Status</th>
-                  <th>Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {repairs.map((repair) => (
-                  <tr key={repair._id}>
-                    <td>#{repair._id.slice(-8)}</td>
-                    <td>
-                      {repair.device.brand} {repair.device.model} -{" "}
-                      {repair.issueCategory.replace(/_/g, " ")}
-                    </td>
-                    <td className={`payment-${repair.paymentStatus}`}>
-                      {repair.paymentStatus}
-                    </td>
-                    <td>
-                      ₦{(repair.estimatedCost?.totalCost || 0).toLocaleString()}
-                    </td>
+            {payments.length === 0 ? (
+              <p className="empty-state">No payments yet.</p>
+            ) : (
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Order No.</th>
+                    <th>Fault Fixed</th>
+                    <th>Date Initiated</th>
+                    <th>Payment Status</th>
+                    <th>Amount</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {payments.map((payment) => (
+                    <tr key={payment.transactionId}>
+                      <td>#{payment.transactionId}</td>
+                      <td>
+                        {payment.repairId.device.brand}{" "}
+                        {payment.repairId.device.model} -{" "}
+                        {payment.repairId.issueCategory.replace(/_/g, " ")}
+                      </td>
+                      <td>
+                        {new Date(payment.dateInitiated).toLocaleString()}
+                      </td>
+                      <td className={`payment-${payment.status}`}>
+                        {payment.status}
+                      </td>
+                      <td>
+                        ₦
+                        {(
+                          payment.repairId?.estimatedCost?.totalCost || 0
+                        ).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
 

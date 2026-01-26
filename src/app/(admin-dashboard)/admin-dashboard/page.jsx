@@ -8,14 +8,26 @@ import AdminGraph from "../components/Graph";
 
 const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
+  const [payments, setPayments] = useState([]);
+  const [payStats, setPayStats] = useState({});
+  const [userStats, setUserStats] = useState({});
+  const [engStats, setEngStats] = useState({});
 
   // Fetch  data
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch transactions
-        const res = await adminService.getEngineerStatistics();
-        console.log("Engineer Statistics:", res);
+        const res = await adminService.getAllPayments();
+        const engRes = await await adminService.getAllEngineers();
+        const userRes = await adminService.getAllUsers();
+
+        setPayments(res.data.payments);
+        setPayStats(res.stats);
+        setEngStats(engRes.stats);
+        setUserStats(userRes.stats)
+
+        console.log("Payments :", res.data.payments);
       } catch (err) {
         console.error("Failed to load data:", err);
       } finally {
@@ -30,7 +42,7 @@ const AdminDashboard = () => {
     {
       id: 1,
       title: "Total Transaction",
-      value: "₦900,000",
+      value: "₦" + payStats?.totalRevenue?.toLocaleString(),
       icon: <CreditCard size={24} />,
     },
     {
@@ -42,97 +54,14 @@ const AdminDashboard = () => {
     {
       id: 3,
       title: "Users",
-      value: "1000",
+      value: userStats?.byRole?.user,
       icon: <User size={24} />,
     },
     {
       id: 4,
       title: "Engineers",
-      value: "10",
+      value: engStats?.total,
       icon: <UserCog size={24} />,
-    },
-  ];
-
-  const recentTransactions = [
-    {
-      orderNo: "#ORDER12345",
-      reference: "100004250321004101294447195544",
-      type: "Credit",
-      amount: "₦15,000",
-      date: "23/05/2025, 11:59:05",
-      status: "Completed",
-    },
-    {
-      orderNo: "#ORDER12348",
-      reference: "REF2025052418302254639012",
-      type: "Debit",
-      amount: "₦8,450",
-      date: "24/05/2025, 18:32:14",
-      status: "Completed",
-    },
-    {
-      orderNo: "#ORDER12352",
-      reference: "FT258964123202505250942",
-      type: "Credit",
-      amount: "₦45,000",
-      date: "25/05/2025, 09:42:33",
-      status: "Completed",
-    },
-    {
-      orderNo: "#ORDER12357",
-      reference: "100009876543210987654321",
-      type: "Debit",
-      amount: "₦3,200",
-      date: "25/05/2025, 14:17:09",
-      status: "Completed",
-    },
-    {
-      orderNo: "#ORDER12361",
-      reference: "100009876543210987654321",
-      type: "Debit",
-      amount: "₦133,500",
-      date: "26/05/2025, 08:13:22",
-      status: "Completed",
-    },
-    {
-      orderNo: "#ORDER12364",
-      reference: "100009876543210987654321",
-      type: "Debit",
-      amount: "₦24,780",
-      date: "26/05/2025, 11:42:55",
-      status: "Completed",
-    },
-    {
-      orderNo: "#ORDER12368",
-      reference: "100009876543210987654321",
-      type: "Credit",
-      amount: "₦205,500",
-      date: "27/05/2025, 17:45:19",
-      status: "Completed",
-    },
-    {
-      orderNo: "#ORDER12371",
-      reference: "1000042505280098765432198765",
-      type: "Debit",
-      amount: "₦125,000",
-      date: "28/05/2025, 10:08:44",
-      status: "Completed",
-    },
-    {
-      orderNo: "#ORDER12374",
-      reference: "100009876543210987654321",
-      type: "Debit",
-      amount: "₦56,900",
-      date: "29/05/2025, 13:04:30",
-      status: "Completed",
-    },
-    {
-      orderNo: "#ORDER12379",
-      reference: "REFUND_ORD12345_PARTIAL",
-      type: "Credit",
-      amount: "₦93,200",
-      date: "30/05/2025, 09:15:12",
-      status: "Completed",
     },
   ];
 
@@ -174,7 +103,6 @@ const AdminDashboard = () => {
             <thead>
               <tr>
                 <th>Order No.</th>
-                <th>Reference</th>
                 <th>Type</th>
                 <th>Amount</th>
                 <th>Date</th>
@@ -182,13 +110,14 @@ const AdminDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {recentTransactions.map((transaction, index) => (
+              {payments.slice(0,5).map((transaction, index) => (
                 <tr key={index}>
-                  <td>{transaction.orderNo}</td>
-                  <td>{transaction.reference}</td>
-                  <td>{transaction.type}</td>
-                  <td>{transaction.amount}</td>
-                  <td>{transaction.date}</td>
+                  <td>{transaction._id}</td>
+                  <td>
+                    {transaction.repairId?.issueCategory.replace(/_/g, " ")}
+                  </td>
+                  <td>{transaction?.amount.toLocaleString()}</td>
+                  <td>{new Date(transaction.dateInitiated).toLocaleString()}</td>
                   <td>{transaction.status}</td>
                 </tr>
               ))}

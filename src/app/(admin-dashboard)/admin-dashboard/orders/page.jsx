@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import {
-  DollarSign,
+  Banknote,
   CheckCircle2,
   Users,
   Wrench,
@@ -51,7 +51,7 @@ const AdminOrders = () => {
       id: 1,
       title: "Total Revenue",
       value: `₦${totalRevenue.toLocaleString()}`,
-      icon: <DollarSign size={24} />,           // Best for money/revenue
+      icon: <Banknote size={24} />,           // Best for money/revenue
     },
     {
       id: 2,

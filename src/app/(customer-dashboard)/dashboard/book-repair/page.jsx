@@ -207,7 +207,7 @@ const BookRepair = () => {
                 <label>Device</label>
                 <div className="gadget-options">
                   {devices.length === 0 ? (
-                    <p>Loading devices...</p>
+                    <p>No Device found, Kindly add a device to continue...</p>
                   ) : (
                     devices.map((device) => (
                       <button

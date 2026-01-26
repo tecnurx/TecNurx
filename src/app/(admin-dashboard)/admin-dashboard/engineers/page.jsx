@@ -7,6 +7,9 @@ import {
   AlertCircle,
   Building2,
   Smartphone,
+  CircleCheck,
+  BadgeCheck,
+  ShieldAlert,
 } from "lucide-react";
 import "./admineng.css";
 import { adminService } from "../../../../../services/admin/admin";
@@ -15,6 +18,7 @@ const AdminEngineers = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [engineers, setEngineers] = useState([]);
+  const [engStats, setEngStats] = useState({});
 
   useEffect(() => {
     const fetchEngineers = async () => {
@@ -22,10 +26,11 @@ const AdminEngineers = () => {
         setLoading(true);
         setError(null);
         const res = await adminService.getAllEngineers();
-        
+
         // Adjust according to your actual response shape
-        const data = res.data?.servicePartners || res.servicePartners || [];
+        const data = res.data?.engineers;
         setEngineers(data);
+        setEngStats(res.stats);
       } catch (err) {
         console.error("Failed to load engineers:", err);
         setError(err.message || "Failed to load engineers. Please try again.");
@@ -42,28 +47,20 @@ const AdminEngineers = () => {
     {
       id: 1,
       title: "Total Engineers",
-      value: engineers.length.toString(),
+      value: engStats?.total,
       icon: <UserCog size={24} />,
     },
     {
       id: 2,
-      title: "Service Centers",
-      value: engineers.filter((e) => e.serviceCenter).length.toString(),
-      icon: <Building2 size={24} />,
+      title: "Verified Engineers",
+      value: engStats?.verified,
+      icon: <BadgeCheck size={24} />,
     },
     {
       id: 3,
-      title: "Avg Experience",
-      value: engineers.length
-        ? (engineers.reduce((sum, e) => sum + e.experienceYears, 0) / engineers.length).toFixed(1) + " yrs"
-        : "0 yrs",
-      icon: <Award size={24} />,
-    },
-    {
-      id: 4,
-      title: "Phone Repairs",
-      value: engineers.filter((e) => e.gadgetTypes.includes("Phones")).length.toString(),
-      icon: <Smartphone size={24} />,
+      title: "Unverified Engineers",
+      value: engStats?.unverified,
+      icon: <ShieldAlert size={24} />,
     },
   ];
 
@@ -121,22 +118,22 @@ const AdminEngineers = () => {
                   <th>Name</th>
                   <th>Phone</th>
                   <th>Email</th>
-                  <th>Experience</th>
-                  <th>Gadgets</th>
-                  <th>Service Center?</th>
-                  <th>Location</th>
+                  <th>Created At</th>
+                  <th>Verified on</th>
+                  <th>Total Repairs</th>
                 </tr>
               </thead>
               <tbody>
                 {engineers.map((eng) => (
                   <tr key={eng._id}>
-                    <td>{eng.fullName}</td>
+                    <td>
+                      {eng.fname} {eng.lname}
+                    </td>
                     <td>{eng.phoneNumber}</td>
                     <td>{eng.email}</td>
-                    <td>{eng.experienceYears} yrs</td>
-                    <td>{eng.gadgetTypes.join(", ")}</td>
-                    <td>{eng.serviceCenter ? "Yes" : "No"}</td>
-                    <td>{eng.address}</td>
+                    <td>{eng.createdAt}</td>
+                    <td>{eng.verified}</td>
+                    <td>{eng.stats?.totalRepairs}</td>
                   </tr>
                 ))}
               </tbody>
