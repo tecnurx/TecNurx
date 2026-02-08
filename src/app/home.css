@@ -782,7 +782,7 @@
   text-align: center;
   vertical-align: middle;
 }
-.approx-wrap button {
+.approx-wrap button, .approx-wrap a {
   width: 220;
   height: 68;
   opacity: 1;
@@ -846,6 +846,9 @@
   justify-content: center;
   gap: 24px;
 }
+.numbers-mobile{
+    display: none !important;
+  }
 
 @media screen and (max-width: 1290px) {
   .hero-section {
@@ -1059,6 +1062,13 @@
   }
   .numbers-wrap h2 {
     font-size: 20px;
+  }
+  .numbers-pc{
+    display: none;
+  }
+  .numbers-mobile{
+    display: grid !important;
+    margin-top: 24px;
   }
 }
 

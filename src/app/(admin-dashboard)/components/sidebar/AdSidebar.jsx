@@ -74,7 +74,10 @@ const AdSidebar = () => {
             <Link
               href="/admin-dashboard/engineers"
               className={
-                pathname === "/admin-dashboard/engineers" ? "active" : ""
+                pathname === "/admin-dashboard/engineers" ||
+                pathname.startsWith("/admin-dashboard/engineers")
+                  ? "active"
+                  : ""
               }
               onClick={closeSidebar}
             >
@@ -82,7 +85,12 @@ const AdSidebar = () => {
             </Link>
             <Link
               href="/admin-dashboard/users"
-              className={pathname === "/admin-dashboard/users" ? "active" : ""}
+              className={
+                pathname === "/admin-dashboard/users" ||
+                pathname.startsWith("/admin-dashboard/users")
+                  ? "active"
+                  : ""
+              }
               onClick={closeSidebar}
             >
               <UserCircle size={14} /> Users
@@ -92,7 +100,7 @@ const AdSidebar = () => {
               className={pathname === "/admin-dashboard/orders" ? "active" : ""}
               onClick={closeSidebar}
             >
-              <File size={14} /> Orders
+              <File size={14} /> Repairs (Orders)
             </Link>
             <Link
               href="/admin-dashboard/logistics"
@@ -115,7 +123,10 @@ const AdSidebar = () => {
             <Link
               href="/admin-dashboard/gadgets"
               className={
-                pathname === "/admin-dashboard/gadgets" ? "active" : ""
+                pathname === "/admin-dashboard/gadgets" ||
+                pathname.startsWith("/admin-dashboard/gadgets")
+                  ? "active"
+                  : ""
               }
               onClick={closeSidebar}
             >

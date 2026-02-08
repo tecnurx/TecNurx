@@ -26,6 +26,8 @@ const AdminOrders = () => {
         setLoading(true);
         setError(null);
         const res = await adminService.getAllRepairs();
+        const repairStat = await adminService.getRepairStats()
+        console.log(repairStat);
 
         // Adjust path based on your actual response structure
         const data = res.data?.repairs || res.repairs || [];

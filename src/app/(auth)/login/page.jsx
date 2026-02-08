@@ -57,8 +57,8 @@ const Login = () => {
         (err.response?.status === 401
           ? "Invalid email or password"
           : err.response?.status === 404
-          ? "Account not found"
-          : "Login failed. Please try again.");
+            ? "Account not found"
+            : "Login failed. Please try again.");
 
       toast.error(message);
     } finally {
@@ -74,7 +74,7 @@ const Login = () => {
     try {
       // Construct the full OAuth URL
       const baseURL = process.env.NEXT_PUBLIC_API_URL;
-      const oauthUrl = `${baseURL}/users/auth/google`;
+      const oauthUrl = `${baseURL}/users/auth/google/callback`;
 
       // Direct redirect to backend OAuth endpoint
       window.location.href = oauthUrl;
@@ -126,7 +126,13 @@ const Login = () => {
                 <Image src={google} alt="google" />
                 <span>{googleLoading ? "Connecting..." : "Google"}</span>
               </div>
-            </div> */}
+            </div>
+
+            <div className="divider">
+                <h6></h6>
+                <h4>or</h4>
+                <h6></h6>
+              </div> */}
 
             <form onSubmit={handleSubmit} className="form">
               <div className="form-group">
@@ -172,12 +178,6 @@ const Login = () => {
                     {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
                   </span>
                 </div>
-              </div>
-
-              <div className="divider">
-                <h6></h6>
-                <h4>or</h4>
-                <h6></h6>
               </div>
 
               <div className="remember-forgot">

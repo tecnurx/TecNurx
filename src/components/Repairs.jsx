@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import React, { useState } from "react";
 
 const Repairs = () => {
@@ -125,7 +126,7 @@ const Repairs = () => {
               </p>
             </div>
           </div>
-          <button>Request a repair</button>
+          <Link href='/dashboard/book-repair'>Request a repair</Link>
         </div>
       </div>
     </section>

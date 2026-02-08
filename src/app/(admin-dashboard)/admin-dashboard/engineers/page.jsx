@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import "./admineng.css";
 import { adminService } from "../../../../../services/admin/admin";
+import Link from "next/link";
 
 const AdminEngineers = () => {
   const [loading, setLoading] = useState(true);
@@ -119,8 +120,8 @@ const AdminEngineers = () => {
                   <th>Phone</th>
                   <th>Email</th>
                   <th>Created At</th>
-                  <th>Verified on</th>
                   <th>Total Repairs</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -132,8 +133,15 @@ const AdminEngineers = () => {
                     <td>{eng.phoneNumber}</td>
                     <td>{eng.email}</td>
                     <td>{eng.createdAt}</td>
-                    <td>{eng.verified}</td>
-                    <td>{eng.stats?.totalRepairs}</td>
+                      <td>{eng.stats?.totalRepairs}</td>
+                    <td>
+                      <Link
+                        href={`/admin-dashboard/engineers/${eng._id}`}
+                        className="view-repair"
+                      >
+                        View
+                      </Link>
+                    </td>
                   </tr>
                 ))}
               </tbody>

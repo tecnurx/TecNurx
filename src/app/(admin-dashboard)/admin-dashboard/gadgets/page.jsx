@@ -10,9 +10,11 @@ import {
   AlertCircle,
   Cpu,
   Tag,
+  PlusIcon,
 } from "lucide-react";
 import "./adgad.css";
 import { adminService } from "../../../../../services/admin/admin";
+import Link from "next/link";
 
 const AdminGadgets = () => {
   const [loading, setLoading] = useState(true);
@@ -101,8 +103,9 @@ const AdminGadgets = () => {
 
   return (
     <div className="admin-dashboard">
-      <div className="dashboard-header">
+      <div className="dashboard-header gadget-header">
         <h1>Gadget Service Catalog</h1>
+        <Link href={'/admin-dashboard/gadgets/service-offering'}>Create Service  <PlusIcon size={24} /></Link>
       </div>
 
       {/* Stats */}

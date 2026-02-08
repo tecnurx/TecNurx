@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import "./aduser.css";
 import { adminService } from "../../../../../services/admin/admin";
+import Link from "next/link";
 
 const AdminUsers = () => {
   const [loading, setLoading] = useState(true);
@@ -101,20 +102,27 @@ const AdminUsers = () => {
                 <th>Phone</th>
                 <th>Gender</th>
                 <th>Created At</th>
-                <th>Verfied?</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {users.map((transaction, index) => (
+              {users.map((user, index) => (
                 <tr key={index}>
                   <td>
-                    {transaction.fname} {transaction.lname}
+                    {user.fname} {user.lname}
                   </td>
-                  <td>{transaction.email}</td>
-                  <td>{transaction.phoneNumber}</td>
-                  <td>{transaction.gender}</td>
-                  <td>{transaction.createdAt}</td>
-                  <td>{transaction.isVerified === true ? "Yes" : "No"}</td>
+                  <td>{user.email}</td>
+                  <td>{user.phoneNumber}</td>
+                  <td>{user.gender}</td>
+                  <td>{user.createdAt}</td>
+                  <td>
+                    <Link
+                      href={`/admin-dashboard/users/${user._id}`}
+                      className="view-repair"
+                    >
+                      View
+                    </Link>
+                  </td>
                 </tr>
               ))}
             </tbody>

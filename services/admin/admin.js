@@ -8,7 +8,6 @@ export const adminService = {
 
   getAllEngineers: async () => {
     const response = await axios.get("/users/admin/engineers");
-    //todo: test again!
     return response.data;
   },
 
@@ -17,12 +16,22 @@ export const adminService = {
     return response.data;
   },
 
-  getEngineerbyId: async ({ id }) => {
-    const response = await axios.get(`/service-providers/${id}`);
+  getUserbyId: async (userId) => {
+    const response = await axios.get(`/users/admin/${userId}`);
     return response.data;
   },
 
-  getEngineerStatistics: async () => {
+  getEngineerbyId: async (engineerId) => {
+    const response = await axios.get(`/service-providers/${engineerId}`);
+    return response.data;
+  },
+
+  deleteEngineerbyId: async (engineerId) => {
+    const response = await axios.delete(`/service-providers/${engineerId}`);
+    return response.data;
+  },
+
+  getRepairStats: async () => {
     const response = await axios.get("/repairs/admin/engineers/statistics");
     return response.data;
   },
@@ -42,13 +51,27 @@ export const adminService = {
     return response.data;
   },
 
+  getIssues: async () => {
+    const response = await axios.get("/repairs/issues");
+    return response.data;
+  },
+
   createService: async () => {
     const response = await axios.post("/service-offerings/admin/create");
     return response.data;
   },
 
-  updateServicePrice: async () => {
-    const response = await axios.post(`/service-offerings/admin/{offeringId}/services/{serviceId}/price");
+  updateService: async (serviceOfferingId) => {
+    const response = await axios.patch(
+      `/service-offerings/admin/${serviceOfferingId}`,
+    );
+    return response.data;
+  },
+
+  updateServicePrice: async ({ offeringId, serviceId }) => {
+    const response = await axios.pacth(
+      `/service-offerings/admin/${offeringId}/services/${serviceId}/price`,
+    );
     return response.data;
   },
 };

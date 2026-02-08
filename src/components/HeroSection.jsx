@@ -73,14 +73,17 @@ const HeroSection = () => {
             free pickup and delivery
           </p>
           <div className="hero-btns">
-            <Link href="/login" className="btn-primary">
+            {/* <Link href="/login" className="btn-primary">
               Sign In
+            </Link> */}
+            <Link href="#GetQuote">
+              Get Quote
             </Link>
           </div>
         </div>
 
         {/* Numbers */}
-        <div className="numbers-wrap">
+        <div className="numbers-wrap numbers-pc">
           {numberStat.map((stat) => (
             <div key={stat.id} className="stat-item">
               <h2 className="stat-value">
@@ -102,6 +105,22 @@ const HeroSection = () => {
         className="hero-image"
         priority
       />
+
+      {/* Numbers mobile */}
+      <div className="numbers-wrap numbers-mobile">
+        {numberStat.map((stat) => (
+          <div key={stat.id} className="stat-item">
+            <h2 className="stat-value">
+              <AnimatedNumber
+                end={stat.end}
+                suffix={stat.suffix}
+                duration={1800} // 1.8 seconds – feels nice
+              />
+            </h2>
+            <h3>{stat.title}</h3>
+          </div>
+        ))}
+      </div>
     </main>
   );
 };

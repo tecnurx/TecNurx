@@ -27,6 +27,7 @@ export default function ResolveRole() {
       user: "/dashboard", // Customer
       customer: "/dashboard",
       engineer: "/engineer-dashboard",
+      eng: "/engineer-dashboard", // if backend uses this
       "service partner": "/engineer-dashboard", // if backend uses this
       admin: "/admin-dashboard",
     };
