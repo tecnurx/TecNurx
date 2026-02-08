@@ -15,13 +15,13 @@ export default function ResolveRole() {
       return;
     }
 
-    // try {
-    //   const user = JSON.parse(userJson);
-    //   role = user.role?.toLowerCase(); // e.g., "user", "engineer", "admin"
-    // } catch {
-    //   router.replace("/login");
-    //   return;
-    // }
+    try {
+      const user = JSON.parse(userJson);
+      role = user.role?.toLowerCase(); // e.g., "user", "engineer", "admin"
+    } catch (err) {
+      router.replace("/");
+      return;
+    }
 
     const roleMap = {
       user: "/dashboard", // Customer
