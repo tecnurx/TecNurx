@@ -19,7 +19,7 @@ export default function ResolveRole() {
       const user = JSON.parse(userJson);
       role = user.role?.toLowerCase(); // e.g., "user", "engineer", "admin"
     } catch {
-      // router.replace("/");
+      router.replace("/login");
       return;
     }
 
