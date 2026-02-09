@@ -7,15 +7,15 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   weight: ["200", "300", "400", "500", "600", "700", "800"],
 });
 
-export const metadata = {
-  title: "Auth | TecNurx",
-  description: "Fast, reliable device repair and insurance",
-  icons: {
-    icon: "/favicon.png",
-    apple: "/favicon.png",
-    shortcut: "/favicon.png",
-  },
-};
+// export const metadata = {
+//   title: "Auth | TecNurx",
+//   description: "Fast, reliable device repair and insurance",
+//   icons: {
+//     icon: "/favicon.png",
+//     apple: "/favicon.png",
+//     shortcut: "/favicon.png",
+//   },
+// };
 
 export default function AuthLayout({ children }) {
   return (

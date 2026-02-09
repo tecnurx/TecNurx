@@ -168,13 +168,14 @@
   font-weight: 500;
   font-style: Medium;
   font-size: 14px;
-  line-height: 100%;
+  line-height: 140%;
   letter-spacing: 0%;
   text-align: center;
   color: rgba(59, 63, 68, 1);
   margin-bottom: 16px;
 }
-.crt-p span {
+.crt-p span,
+.crt-p a {
   font-family: Plus Jakarta Sans;
   font-weight: 700;
   font-style: Bold;
@@ -185,6 +186,7 @@
   text-decoration: underline;
   text-decoration-style: solid;
   color: rgba(255, 194, 0, 1);
+  cursor: pointer;
 }
 .form {
   display: flex;
@@ -299,10 +301,10 @@
   .register-wrap {
     height: 100vh;
   }
-  .user-partner button{
+  .user-partner button {
     width: 100%;
   }
-  .btns{
+  .btns {
     width: 100%;
     justify-content: center;
   }

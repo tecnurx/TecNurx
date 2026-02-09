@@ -2,7 +2,7 @@
   padding: 24px;
   max-width: 1200px;
   /* margin: 0 auto; */
- font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
 }
 
 .payments-header h1 {
@@ -20,7 +20,7 @@
 .current-plan-section,
 .payment-history-section,
 .add-method-section,
-.plans-section {
+.plans-section{
   margin-top: 48px;
 }
 
@@ -30,6 +30,20 @@
 .plans-section h2 {
   font-size: 22px;
   margin-bottom: 20px;
+}
+.no-payment {
+  margin-top: 52px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+}
+.no-payment h2{
+  font-size: 18px;
+}
+.no-payment p {
+  color: #666;
+  font-size: 14px;
 }
 
 .plan-summary-card {
@@ -66,7 +80,7 @@
 
 .manage-plan-btn {
   padding: 12px 24px;
-  background: #FFC400;
+  background: #ffc400;
   color: black;
   border: none;
   border-radius: 12px;
@@ -134,7 +148,7 @@
 
 .method-selector button.active {
   background: #fffbe6;
-  border-color: #FFC400;
+  border-color: #ffc400;
   color: #c47b00;
 }
 
@@ -185,7 +199,7 @@
 
 .add-method-btn {
   padding: 14px;
-  background: #FFC400;
+  background: #ffc400;
   color: black;
   border: none;
   border-radius: 12px;
@@ -214,9 +228,9 @@
 }
 
 .plan-cardd:hover {
-  border-color: #FFC400;
+  border-color: #ffc400;
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
 .recommended-badge {
@@ -224,7 +238,7 @@
   top: -12px;
   left: 50%;
   transform: translateX(-50%);
-  background: #FFC400;
+  background: #ffc400;
   color: black;
   padding: 6px 20px;
   border-radius: 20px;
@@ -294,7 +308,7 @@
 }
 
 .select-plan-btn.primary {
-  background: #FFC400;
+  background: #ffc400;
   color: black;
 }
 

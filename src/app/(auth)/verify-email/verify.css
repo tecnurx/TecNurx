@@ -41,6 +41,14 @@
   color: rgba(8, 8, 8, 1);
   width: 500px;
 }
+.resend-token{
+  text-align: left !important;
+  width: 100%;
+  font-size: 15px;
+  cursor: pointer;
+  text-decoration: underline rgba(8, 8, 8, 1);
+  font-weight: 600;
+}
 .form-wrap {
   display: flex;
   flex-direction: column;

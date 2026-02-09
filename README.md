@@ -35,6 +35,7 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+
 ```
 technurx
 ├─ .env
@@ -59,10 +60,13 @@ technurx
 ├─ services
 │  ├─ address.js
 │  ├─ admin
+│  │  ├─ admin.js
 │  │  └─ adminlogin.js
 │  ├─ auth.js
 │  ├─ devices.js
-│  ├─ engineerAuth.js
+│  ├─ eng
+│  │  ├─ eng.js
+│  │  └─ engineerAuth.js
 │  ├─ notification.js
 │  └─ repairs.js
 └─ src
@@ -70,9 +74,46 @@ technurx
    │  ├─ (admin-dashboard)
    │  │  ├─ admin-dashboard
    │  │  │  ├─ admin.css
-   │  │  │  └─ page.jsx
-   │  │  ├─ layout.jsx
-   │  │  └─ test
+   │  │  │  ├─ engineers
+   │  │  │  │  ├─ admineng.css
+   │  │  │  │  ├─ page.jsx
+   │  │  │  │  └─ [engineerId]
+   │  │  │  │     ├─ engid.css
+   │  │  │  │     └─ page.jsx
+   │  │  │  ├─ gadgets
+   │  │  │  │  ├─ adgad.css
+   │  │  │  │  ├─ page.jsx
+   │  │  │  │  ├─ service-offering
+   │  │  │  │  │  ├─ page.jsx
+   │  │  │  │  │  └─ service.css
+   │  │  │  │  └─ [serviceId]
+   │  │  │  │     ├─ page.jsx
+   │  │  │  │     └─ servid.css
+   │  │  │  ├─ logistics
+   │  │  │  │  ├─ adlogic.css
+   │  │  │  │  └─ page.jsx
+   │  │  │  ├─ orders
+   │  │  │  │  ├─ adorder.css
+   │  │  │  │  └─ page.jsx
+   │  │  │  ├─ page.jsx
+   │  │  │  ├─ transactions
+   │  │  │  │  ├─ adtran.css
+   │  │  │  │  └─ page.jsx
+   │  │  │  └─ users
+   │  │  │     ├─ aduser.css
+   │  │  │     ├─ page.jsx
+   │  │  │     └─ [userId]
+   │  │  │        ├─ page.jsx
+   │  │  │        └─ userid.css
+   │  │  ├─ adminall.css
+   │  │  ├─ components
+   │  │  │  ├─ AdNav.jsx
+   │  │  │  ├─ graph.css
+   │  │  │  ├─ Graph.jsx
+   │  │  │  └─ sidebar
+   │  │  │     ├─ adsidebar.css
+   │  │  │     └─ AdSidebar.jsx
+   │  │  └─ layout.jsx
    │  ├─ (auth)
    │  │  ├─ create-password
    │  │  │  └─ [token]
@@ -104,12 +145,8 @@ technurx
    │  │  ├─ dashboard
    │  │  │  ├─ book-repair
    │  │  │  │  ├─ book.css
-   │  │  │  │  ├─ page.jsx
-   │  │  │  │  ├─ step2
-   │  │  │  │  │  └─ page.jsx
-   │  │  │  │  └─ step3
-   │  │  │  │     ├─ BookModal.jsx
-   │  │  │  │     └─ page.jsx
+   │  │  │  │  ├─ BookModal.jsx
+   │  │  │  │  └─ page.jsx
    │  │  │  ├─ dashboard.css
    │  │  │  ├─ devices
    │  │  │  │  ├─ devices.css
@@ -134,7 +171,7 @@ technurx
    │  │  └─ test
    │  ├─ (engineer-dashboard)
    │  │  ├─ components
-   │  │  │  ├─ engnavbar
+   │  │  │  ├─ EngNav.jsx
    │  │  │  └─ engsidebar
    │  │  │     ├─ sidebar.css
    │  │  │     └─ Sidebar.jsx
@@ -143,7 +180,10 @@ technurx
    │  │  │  │  ├─ page.jsx
    │  │  │  │  └─ setup.css
    │  │  │  ├─ engineer.css
-   │  │  │  └─ page.jsx
+   │  │  │  ├─ page.jsx
+   │  │  │  └─ [repairId]
+   │  │  │     ├─ page.jsx
+   │  │  │     └─ repair.css
    │  │  ├─ layout.jsx
    │  │  └─ test
    │  ├─ (landing-page)
@@ -164,7 +204,6 @@ technurx
    │  │     ├─ page.jsx
    │  │     ├─ track.css
    │  │     └─ TrackModal.jsx
-   │  ├─ favicon.ico
    │  ├─ globals.css
    │  ├─ home.css
    │  ├─ layout.jsx
@@ -178,6 +217,66 @@ technurx
    ├─ assets
    │  ├─ fonts
    │  └─ images
+   │     ├─ book.svg
+   │     ├─ call.svg
+   │     ├─ cam.svg
+   │     ├─ cracked.svg
+   │     ├─ desk.svg
+   │     ├─ facebook.svg
+   │     ├─ fb.svg
+   │     ├─ foot-logo.svg
+   │     ├─ gadg.svg
+   │     ├─ google.svg
+   │     ├─ hero-bg.svg
+   │     ├─ hero.png
+   │     ├─ how1.svg
+   │     ├─ how2.svg
+   │     ├─ how3.svg
+   │     ├─ how4.svg
+   │     ├─ how5.svg
+   │     ├─ hslide.svg
+   │     ├─ ig.svg
+   │     ├─ insure.svg
+   │     ├─ laptop.svg
+   │     ├─ login.svg
+   │     ├─ loglogo.svg
+   │     ├─ logo.png
+   │     ├─ logo.svg
+   │     ├─ mail.svg
+   │     ├─ part.svg
+   │     ├─ partner.svg
+   │     ├─ partnerwith.png
+   │     ├─ phone.svg
+   │     ├─ pickup.svg
+   │     ├─ pickupg.svg
+   │     ├─ pin.svg
+   │     ├─ point.svg
+   │     ├─ pslide.svg
+   │     ├─ pstep2.svg
+   │     ├─ pstep3.svg
+   │     ├─ pstep4.svg
+   │     ├─ quote.svg
+   │     ├─ rate.svg
+   │     ├─ repair.svg
+   │     ├─ sale.svg
+   │     ├─ save.svg
+   │     ├─ servpartner.png
+   │     ├─ shield.svg
+   │     ├─ step1.svg
+   │     ├─ step2.svg
+   │     ├─ step3.svg
+   │     ├─ tecnurx.png
+   │     ├─ tecnurx.svg
+   │     ├─ testi.svg
+   │     ├─ track.svg
+   │     ├─ upload.svg
+   │     ├─ use.svg
+   │     ├─ why1.svg
+   │     ├─ why2.svg
+   │     ├─ why3.svg
+   │     ├─ why4.svg
+   │     ├─ why5.svg
+   │     └─ why6.svg
    └─ components
       ├─ chatbox
       │  ├─ chatbox.css
@@ -199,6 +298,7 @@ technurx
       │  └─ Navbar.jsx
       ├─ OurServices.jsx
       ├─ Repairs.jsx
+      ├─ ScrollToTopButton.jsx
       ├─ SelectGadgets.jsx
       ├─ sidebar
       │  ├─ sidebar.css

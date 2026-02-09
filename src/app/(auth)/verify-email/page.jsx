@@ -67,6 +67,20 @@ const VerifyEmail = () => {
     typeof window !== "undefined" &&
     !!localStorage.getItem("pendingVerificationEmail");
 
+  const resendToken = async () => {
+    try {
+      const payload = {
+        email: email,
+      };
+
+      await authService.resendToken(payload);
+
+      toast.success("Verification email resent successfully!");
+    } catch (err) {
+      toast.error("Failed to resend verification email. Please try again.");
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -109,6 +123,7 @@ const VerifyEmail = () => {
               />
             </div>
           </div>
+          <p onClick={resendToken} className="resend-token">Resend Token</p>
 
           {error && <p className="error-text">{error}</p>}
 
@@ -123,7 +138,9 @@ const VerifyEmail = () => {
         <div className="modal-overlay">
           <div className="modal">
             <div className="modal-content">
-              <div className="success-icon"><Check /></div>
+              <div className="success-icon">
+                <Check />
+              </div>
               <h2>Email Verified Successfully!</h2>
               <p>Your email has been confirmed. You can now log in.</p>
               <button onClick={closeModalAndRedirect} className="modal-btn">

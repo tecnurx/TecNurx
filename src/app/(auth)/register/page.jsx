@@ -115,11 +115,12 @@ export default function MultiStepRegister() {
 
         // Only show success and proceed if NO error
         toast.success(
-          "Account created! Please check your email for verification code."
+          "Account created! Please check your email for verification code.",
         );
 
         // Save email for verification page
         localStorage.setItem("pendingVerificationEmail", formData.email.trim());
+        setLoading(false);
 
         // Redirect after a short delay so user sees the toast
         setTimeout(() => {
@@ -150,7 +151,7 @@ export default function MultiStepRegister() {
         toast.error(
           field === "email"
             ? `Email "${value}" is already registered!`
-            : `Phone "${value}" is already in use!`
+            : `Phone "${value}" is already in use!`,
         );
       } else if (err.response?.data?.message) {
         toast.error(err.response.data.message);
@@ -279,12 +280,13 @@ export default function MultiStepRegister() {
 
               <div className="two-form-group">
                 <div className="form-group">
-                  <label>Date of Birth</label>
+                  <label>Birth Day</label>
                   <input
-                    type="date"
+                    type="text"
                     name="dateOfBirth"
                     value={formData.dateOfBirth}
                     onChange={handleChange}
+                    placeholder="MM-DD"
                     required
                   />
                 </div>
@@ -317,7 +319,7 @@ export default function MultiStepRegister() {
       )}
       {role === "user" && step === 3 && (
         <div className="steps">
-          <Image src={logo} alt="logo"  width={120} />
+          <Image src={logo} alt="logo" width={120} />
           <Image src={step3} alt="step 3" className="my-6" />
           <div className="card">
             <div className="welcome">
@@ -370,8 +372,13 @@ export default function MultiStepRegister() {
 
               <p className="crt-p text-center text-sm">
                 By creating an account you agree to our <br />
-                <span className="text-blue-500">Terms of Service</span> and{" "}
-                <span className="text-blue-500">Privacy Policy</span>
+                <Link href="terms-conditions" target="_blank">
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link href="privacy-policy" target="_blank">
+                  Privacy Policy
+                </Link>
               </p>
 
               <div className="btns">
@@ -394,7 +401,7 @@ export default function MultiStepRegister() {
 
       {role === "partner" && step === 2 && (
         <div className="steps">
-          <Image src={logo} alt="logo"  width={120} />
+          <Image src={logo} alt="logo" width={120} />
           <Image src={pstep2} alt="logo" />
           <div className="card">
             <div className="welcome">
@@ -444,7 +451,7 @@ export default function MultiStepRegister() {
 
       {role === "partner" && step === 3 && (
         <div className="steps">
-          <Image src={logo} alt="logo"  width={120} />
+          <Image src={logo} alt="logo" width={120} />
 
           <Image src={pstep3} alt="logo" />
 
@@ -502,7 +509,7 @@ export default function MultiStepRegister() {
 
       {role === "partner" && step === 4 && (
         <div className="steps">
-          <Image src={logo} alt="logo"  width={120} />
+          <Image src={logo} alt="logo" width={120} />
 
           <Image src={pstep4} alt="logo" />
 

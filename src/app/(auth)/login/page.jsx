@@ -52,20 +52,41 @@ const Login = () => {
       setTimeout(() => router.push("/dashboard"), 1500);
     } catch (err) {
       console.error("Login error:", err);
-      const message =
-        err.response?.data?.message ||
-        (err.response?.status === 401
-          ? "Invalid email or password"
-          : err.response?.status === 404
-            ? "Account not found"
-            : "Login failed. Please try again.");
+
+      const response = err.response?.data;
+
+      // ────────────────────────────────────────────────
+      //    Check for unverified account specifically
+      // ────────────────────────────────────────────────
+      if (
+        response?.status === "error" &&
+        response?.message?.toLowerCase().includes("not verified") &&
+        (response?.error?.statusCode === 401 || err.response?.status === 401)
+      ) {
+        toast.error("Please verify your email first");
+        localStorage.setItem("pendingVerificationEmail", formData.email.trim());
+        // Immediate redirect — no delay needed
+        router.push("/verify-email");
+        setLoading(false);
+        return; // stop further execution
+      }
+
+      // Fallback error messages for other cases
+      let message = "Login failed. Please try again.";
+
+      if (err.response?.status === 401) {
+        message = "Invalid email or password";
+      } else if (err.response?.status === 404) {
+        message = "Account not found";
+      } else if (response?.message) {
+        message = response.message;
+      }
 
       toast.error(message);
     } finally {
       setLoading(false);
     }
   };
-
   // Google OAuth Handler
   const handleGoogleLogin = () => {
     setGoogleLoading(true);
@@ -100,7 +121,7 @@ const Login = () => {
               Welcome <span>back</span>
             </h2>
 
-            {/* <div className="auth-options">
+            <div className="auth-options">
               <div
                 onClick={handleGoogleLogin}
                 style={{
@@ -129,10 +150,10 @@ const Login = () => {
             </div>
 
             <div className="divider">
-                <h6></h6>
-                <h4>or</h4>
-                <h6></h6>
-              </div> */}
+              <h6></h6>
+              <h4>or</h4>
+              <h6></h6>
+            </div>
 
             <form onSubmit={handleSubmit} className="form">
               <div className="form-group">

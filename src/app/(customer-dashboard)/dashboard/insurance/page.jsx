@@ -21,48 +21,48 @@ const DashboardInsurance = () => {
 
   // Sample data
   const activePlans = [
-    {
-      id: "POL-2025-001",
-      device: "iPhone 15 Pro",
-      coverage: "Accidental Damage + Liquid",
-      expires: "Oct 12, 2026",
-      premium: "$89/year",
-    },
-    {
-      id: "POL-2025-008",
-      device: 'MacBook Pro 14"',
-      coverage: "Full Protection + Theft",
-      expires: "Jan 20, 2027",
-      premium: "$149/year",
-    },
+    // {
+    //   id: "POL-2025-001",
+    //   device: "iPhone 15 Pro",
+    //   coverage: "Accidental Damage + Liquid",
+    //   expires: "Oct 12, 2026",
+    //   premium: "$89/year",
+    // },
+    // {
+    //   id: "POL-2025-008",
+    //   device: 'MacBook Pro 14"',
+    //   coverage: "Full Protection + Theft",
+    //   expires: "Jan 20, 2027",
+    //   premium: "$149/year",
+    // },
   ];
 
   const claimHistory = [
-    {
-      id: "CLM-1001",
-      date: "Jul 5, 2025",
-      device: "iPhone 13",
-      issue: "Screen cracked",
-      status: "approved",
-      payout: "179",
-    },
-    {
-      id: "CLM-0994",
-      date: "Mar 18, 2025",
-      device: "Galaxy S23",
-      issue: "Battery swelling",
-      status: "rejected",
-      payout: "—",
-      reason: "Wear & tear",
-    },
-    {
-      id: "CLM-1012",
-      date: "Nov 10, 2025",
-      device: "MacBook Pro",
-      issue: "Keyboard failure",
-      status: "pending",
-      payout: "Pending",
-    },
+    // {
+    //   id: "CLM-1001",
+    //   date: "Jul 5, 2025",
+    //   device: "iPhone 13",
+    //   issue: "Screen cracked",
+    //   status: "approved",
+    //   payout: "179",
+    // },
+    // {
+    //   id: "CLM-0994",
+    //   date: "Mar 18, 2025",
+    //   device: "Galaxy S23",
+    //   issue: "Battery swelling",
+    //   status: "rejected",
+    //   payout: "—",
+    //   reason: "Wear & tear",
+    // },
+    // {
+    //   id: "CLM-1012",
+    //   date: "Nov 10, 2025",
+    //   device: "MacBook Pro",
+    //   issue: "Keyboard failure",
+    //   status: "pending",
+    //   payout: "Pending",
+    // },
   ];
 
   const devicesForClaim = [
@@ -113,27 +113,35 @@ const DashboardInsurance = () => {
         {/* 1. Active Plans */}
         {activeTab === "active" && (
           <div className="active-plans">
-            {activePlans.map((plan) => (
-              <div key={plan.id} className="plan-card">
-                <div className="plan-info">
-                  <div className="plan-id">{plan.id}</div>
-                  <h3>{plan.device}</h3>
-                  <p className="coverage">{plan.coverage}</p>
-                  <div className="plan-meta">
-                    <span>
-                      Expires: <strong>{plan.expires}</strong>
-                    </span>
-                    <span>• {plan.premium}</span>
+            {activePlans.length === 0 ? (
+              <div className="no-plans">
+                <AlertCircle size={48} />
+                <h2>No Active Plans</h2>
+                <p>You currently have no active insurance plans.</p>
+              </div>
+            ) : (
+              activePlans.map((plan) => (
+                <div key={plan.id} className="plan-card">
+                  <div className="plan-info">
+                    <div className="plan-id">{plan.id}</div>
+                    <h3>{plan.device}</h3>
+                    <p className="coverage">{plan.coverage}</p>
+                    <div className="plan-meta">
+                      <span>
+                        Expires: <strong>{plan.expires}</strong>
+                      </span>
+                      <span>• {plan.premium}</span>
+                    </div>
+                  </div>
+                  <div className="plan-actions">
+                    <button className="renew-btn">Renew Plan</button>
+                    <a href="#" className="view-policy">
+                      View Policy →
+                    </a>
                   </div>
                 </div>
-                <div className="plan-actions">
-                  <button className="renew-btn">Renew Plan</button>
-                  <a href="#" className="view-policy">
-                    View Policy →
-                  </a>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         )}
 
@@ -205,33 +213,41 @@ const DashboardInsurance = () => {
         {/* 3. Claim History */}
         {activeTab === "history" && (
           <div className="claim-history">
-            {claimHistory.map((claim) => (
-              <div key={claim.id} className="claim-item">
-                <div className="claim-main">
-                  <div className="claim-id-date">
-                    <strong>{claim.id}</strong> • {claim.date}
-                  </div>
-                  <div className="claim-device-issue">
-                    <h4>{claim.device}</h4>
-                    <p>{claim.issue}</p>
-                  </div>
-                </div>
-                <div className="claim-status">
-                  <div className={`status-badgee ${claim.status}`}>
-                    {claim.status === "approved" && <CheckCircle size={16} />}
-                    {claim.status === "rejected" && <XCircle size={16} />}
-                    {claim.status === "pending" && <Clock size={16} />}
-                    {claim.status.charAt(0).toUpperCase() +
-                      claim.status.slice(1)}
-                  </div>
-                  <div className="payout">
-                    {claim.payout !== "Pending"
-                      ? `$${claim.payout}`
-                      : claim.payout}
-                  </div>
-                </div>
+            {claimHistory.length === 0 ? (
+              <div className="no-plans">
+                <AlertCircle size={48} />
+                <h2>No Claims Filed</h2>
+                <p>You have not filed any insurance claims yet.</p>
               </div>
-            ))}
+            ) : (
+              claimHistory.map((claim) => (
+                <div key={claim.id} className="claim-item">
+                  <div className="claim-main">
+                    <div className="claim-id-date">
+                      <strong>{claim.id}</strong> • {claim.date}
+                    </div>
+                    <div className="claim-device-issue">
+                      <h4>{claim.device}</h4>
+                      <p>{claim.issue}</p>
+                    </div>
+                  </div>
+                  <div className="claim-status">
+                    <div className={`status-badgee ${claim.status}`}>
+                      {claim.status === "approved" && <CheckCircle size={16} />}
+                      {claim.status === "rejected" && <XCircle size={16} />}
+                      {claim.status === "pending" && <Clock size={16} />}
+                      {claim.status.charAt(0).toUpperCase() +
+                        claim.status.slice(1)}
+                    </div>
+                    <div className="payout">
+                      {claim.payout !== "Pending"
+                        ? `$${claim.payout}`
+                        : claim.payout}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         )}
       </div>

@@ -1,3 +1,4 @@
+//(engineer-dashboard)/layout.jsx
 "use client";
 
 import { useContext, useEffect } from "react";
@@ -13,7 +14,7 @@ export default function EngineerDashboardLayout({ children }) {
     const userJson = localStorage.getItem("user");
 
     if (!userJson) {
-      router.replace("/not-engineer-login");
+      router.replace("/login");
       return;
     }
 

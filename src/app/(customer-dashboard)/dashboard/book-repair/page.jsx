@@ -16,6 +16,8 @@ import { deviceService } from "../../../../../services/devices";
 import { addressService } from "../../../../../services/address";
 import { BookRepairModal } from "./BookModal";
 import { toast } from "@/components/CustomToast";
+import Link from "next/link";
+import { AlertCircle, Upload, X } from "lucide-react";
 
 const BookRepair = () => {
   const router = useRouter();
@@ -31,6 +33,26 @@ const BookRepair = () => {
   const [selectedIssueCategory, setSelectedIssueCategory] = useState("");
   const [issueDescription, setIssueDescription] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingDevices, setLoadingDevices] = useState(false);
+
+  // Add device modal states
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    deviceType: "phone",
+    brand: "",
+    model: "",
+    serialNumber: "",
+    purchaseDate: "",
+    warrantyExpiry: "",
+    condition: "good",
+    notes: "",
+  });
+  const [photos, setPhotos] = useState([]);
+  const [receipt, setReceipt] = useState(null);
+  const [submitError, setSubmitError] = useState("");
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  // const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Step 2 states
   const [selectedAddress, setSelectedAddress] = useState(null);
@@ -88,6 +110,24 @@ const BookRepair = () => {
     fetchData();
   }, []);
 
+  const refetchDevices = async () => {
+    try {
+      setLoadingDevices(true);
+      const res = await deviceService.getAllUserDevices();
+      setDevices(res?.data?.devices || []);
+
+      // Optional: auto-select the newest device (last one)
+      if (res?.data?.devices?.length > 0) {
+        setSelectedDevice(res.data.devices[res.data.devices.length - 1]);
+      }
+    } catch (err) {
+      console.error("Failed to refetch devices:", err);
+      toast.error("Failed to refresh device list");
+    } finally {
+      setLoadingDevices(false);
+    }
+  };
+
   const handleFileChange = (files) => {
     const validFiles = Array.from(files).filter((file) => {
       const validTypes = [
@@ -96,7 +136,7 @@ const BookRepair = () => {
         "image/jpg",
         "application/pdf",
       ];
-      return validTypes.includes(file.type) && file.size <= 10 * 1024 * 1024; // 10MB
+      return validTypes.includes(file.type) && file.size <= 10 * 1024 * 1024;
     });
     setUploadedFiles((prev) => [...prev, ...validFiles]);
   };
@@ -185,6 +225,63 @@ const BookRepair = () => {
     }
   };
 
+  // Handle Add Device
+  const handleSubmitDevice = async (e) => {
+    e.preventDefault();
+    setSubmitError("");
+    setIsSubmitting(true);
+
+    if (!formData.brand || !formData.model || !formData.serialNumber) {
+      setSubmitError("Please fill in all required fields");
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const payload = new FormData();
+      payload.append("deviceType", formData.deviceType);
+      payload.append("brand", formData.brand);
+      payload.append("model", formData.model);
+      payload.append("serialNumber", formData.serialNumber);
+      payload.append("purchaseDate", formData.purchaseDate);
+      payload.append("warrantyExpiry", formData.warrantyExpiry || "");
+      payload.append("condition", formData.condition);
+      if (formData.notes) payload.append("notes", formData.notes);
+
+      photos.forEach((photo) => payload.append("photos", photo));
+      if (receipt) payload.append("purchaseReceipt", receipt);
+
+      await deviceService.addDevice(payload);
+      toast.success("Device added successfully!");
+
+      // Close modal
+      setIsAddModalOpen(false);
+
+      // Refetch devices (this is the key part)
+      await refetchDevices();
+
+      // Reset form
+      setFormData({
+        deviceType: "phone",
+        brand: "",
+        model: "",
+        serialNumber: "",
+        purchaseDate: "",
+        warrantyExpiry: "",
+        condition: "good",
+        notes: "",
+      });
+      setPhotos([]);
+      setReceipt(null);
+    } catch (err) {
+      const msg = err.response?.data?.message || "Failed to add device";
+      setSubmitError(msg);
+      toast.error(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <>
       <div className="book-page">
@@ -207,7 +304,16 @@ const BookRepair = () => {
                 <label>Device</label>
                 <div className="gadget-options">
                   {devices.length === 0 ? (
-                    <p>No Device found, Kindly add a device to continue...</p>
+                    <div className="no-added-devices">
+                      <p>No Device found, Kindly add a device to continue...</p>
+                      <button
+                        onClick={() => {
+                          setIsAddModalOpen(true);
+                        }}
+                      >
+                        Add Device
+                      </button>
+                    </div>
                   ) : (
                     devices.map((device) => (
                       <button
@@ -482,6 +588,191 @@ const BookRepair = () => {
           </div>
         )}
       </div>
+
+      {isAddModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsAddModalOpen(false)}>
+          <div
+            className="modal-content add-device-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="modal-close"
+              onClick={() => setIsAddModalOpen(false)}
+            >
+              <X size={24} color="black" />
+            </button>
+            <div className="modal-header modal-head2">
+              <h2>Add New Device</h2>
+              <p>Register your device for repairs & insurance</p>
+            </div>
+
+            <form onSubmit={handleSubmitDevice} className="add-device-form">
+              {submitError && (
+                <div className="alert error">
+                  <AlertCircle size={18} />
+                  {submitError}
+                </div>
+              )}
+
+              <div className="form-grid">
+                {/* All your form fields remain the same */}
+                <div className="form-grouup">
+                  <label>Device Type *</label>
+                  <select
+                    value={formData.deviceType}
+                    onChange={(e) =>
+                      setFormData({ ...formData, deviceType: e.target.value })
+                    }
+                    required
+                  >
+                    <option value="phone">Phone</option>
+                    <option value="laptop">Laptop</option>
+                    <option value="tablet">Tablet</option>
+                    <option value="camera">Camera</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div className="form-grouup">
+                  <label>Brand *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Apple, Samsung"
+                    value={formData.brand}
+                    onChange={(e) =>
+                      setFormData({ ...formData, brand: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="form-grouup">
+                  <label>Model *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. iPhone 15 Pro"
+                    value={formData.model}
+                    onChange={(e) =>
+                      setFormData({ ...formData, model: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="form-grouup">
+                  <label>Serial Number *</label>
+                  <input
+                    type="text"
+                    placeholder="ABC123XYZ"
+                    value={formData.serialNumber}
+                    onChange={(e) =>
+                      setFormData({ ...formData, serialNumber: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="form-grouup">
+                  <label>Purchase Date</label>
+                  <input
+                    type="date"
+                    value={formData.purchaseDate}
+                    onChange={(e) =>
+                      setFormData({ ...formData, purchaseDate: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div className="form-grouup">
+                  <label>Warranty Expiry</label>
+                  <input
+                    type="date"
+                    value={formData.warrantyExpiry}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        warrantyExpiry: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="form-grouup full">
+                  <label>Condition</label>
+                  <select
+                    value={formData.condition}
+                    onChange={(e) =>
+                      setFormData({ ...formData, condition: e.target.value })
+                    }
+                  >
+                    <option value="excellent">Excellent</option>
+                    <option value="good">Good</option>
+                    <option value="fair">Fair</option>
+                    <option value="poor">Poor</option>
+                    <option value="not_working">Not Working</option>
+                  </select>
+                </div>
+
+                <div className="form-grouup full">
+                  <label>Photos "(min. 2 required)"</label>
+                  <label className="file-upload">
+                    <Upload size={20} />
+                    Upload Photos ({photos.length})
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => setPhotos(Array.from(e.target.files))}
+                    />
+                  </label>
+                </div>
+
+                <div className="form-grouup full">
+                  <label>Purchase Receipt (Optional)</label>
+                  <label className="file-upload">
+                    <Upload size={20} />
+                    {receipt ? receipt.name : "Upload Receipt"}
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={(e) => setReceipt(e.target.files[0])}
+                    />
+                  </label>
+                </div>
+
+                <div className="form-grouup full">
+                  <label>Notes (Optional)</label>
+                  <textarea
+                    rows={3}
+                    placeholder="Any additional info..."
+                    value={formData.notes}
+                    onChange={(e) =>
+                      setFormData({ ...formData, notes: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="modal-actions">
+                <button
+                  type="button"
+                  className="action-btn secondary"
+                  onClick={() => setIsAddModalOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="action-btn primary"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Saving..." : "Add Device"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <BookRepairModal
         isOpen={isModalOpen}

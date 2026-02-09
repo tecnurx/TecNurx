@@ -6,6 +6,11 @@ export const authService = {
     return response.data;
   },
 
+  resendToken: async (payload) => {
+    const response = await axios.post("/users/resend-token", payload);
+    return response.data;
+  },
+
   partnerSignup: async (userData) => {
     const response = await axios.post("/users/signupUser", userData);
     return response.data;

@@ -22,7 +22,7 @@ const EngineerDashboard = () => {
   const [error, setError] = useState(null);
   const [repairs, setRepairs] = useState([]);
   const [currentUser, setCurrentUser] = useState([]);
-  const [payments, setPayments] = useState({});
+  const [payments, setPayments] = useState([]);
   const [paymentStats, setPaymentStats] = useState({});
 
   // Fetch  data

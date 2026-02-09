@@ -1,3 +1,4 @@
+// src/app/(admin-dashboard)/layout.jsx
 "use client";
 
 import { useEffect } from "react";
@@ -14,7 +15,7 @@ export default function AdminDashboardLayout({ children }) {
     const userJson = localStorage.getItem("user");
 
     if (!userJson) {
-      router.replace("/");
+      router.replace("/login");
       return;
     }
 
