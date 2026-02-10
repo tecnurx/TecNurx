@@ -48,8 +48,9 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         // Get current user
-        const user = await authService.UpdateCurrentUser();
+        const user = await authService.getCurrentUser();
         setCurrentUser(user);
+        // console.log("Current user:", user.data.user); 
 
         // Fetch all repairs
         const res = await repairService.getUserRepairs();

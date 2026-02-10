@@ -1,3 +1,4 @@
+// app/(customer-dashboard)/layout.jsx
 "use client";
 import "@/app/globals.css";
 import DashboardNav from "@/components/dashboard/DashboardNav";
@@ -6,18 +7,26 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import { SidebarProvider } from "../../../context/SidebarContext";
 import Chatbox from "@/components/chatbox/Chatbox";
 import CustomToast from "@/components/CustomToast";
-import AuthHandler from "@/components/auth/AuthHandler";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useEffect, Suspense } from "react";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800"],
 });
 
+// export const metadata = {
+//   title: "Dashboard | TecNurx",
+//   description: "Fast, reliable device repair and insurance",
+//   icons: {
+//     icon: "/favicon.png",
+//     apple: "/favicon.png",
+//     shortcut: "/favicon.png",
+//   },
+// };
+
 export default function DashboardLayout({ children }) {
   const router = useRouter();
-
   useEffect(() => {
     const userJson = localStorage.getItem("user");
 
@@ -38,25 +47,22 @@ export default function DashboardLayout({ children }) {
       router.replace("/");
     }
   }, [router]);
+
   return (
-    <div className={plusJakartaSans.className}>
+    <div>
       <main>
-        {/* Add this → only renders on client, handles token when present */}
-        {/* This is the only part that uses useSearchParams → wrap in Suspense */}
-        <Suspense fallback={null}>
-          <AuthHandler />
-        </Suspense>
         <SidebarProvider>
+          {/* Navbar - Fixed Top */}
           <header className="dashboard-nav-fixed">
             <DashboardNav />
           </header>
 
+          {/* Sidebar + Main Content */}
           <div className="dashboard-body">
             <Sidebar />
             <main className="main-content">{children}</main>
           </div>
         </SidebarProvider>
-
         <Chatbox />
         <CustomToast />
       </main>

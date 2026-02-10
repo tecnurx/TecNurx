@@ -51,7 +51,7 @@ export const authService = {
 
   UpdateCurrentUser: async () => {
     const response = await axios.get("/users/me");
-    const { user } = response.data?.data;
+    const user = response?.data?.user;
     localStorage.setItem("user", JSON.stringify(user));
     return response.data;
   },
