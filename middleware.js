@@ -178,74 +178,71 @@ const AUTH_PAGES = [
 ];
 
 export function middleware(request) {
-  const { pathname } = request.nextUrl;
-  let token = request.cookies.get("token")?.value;
+  const { pathname, searchParams } = request.nextUrl;
+  const tokenFromCookie = request.cookies.get("token")?.value;
 
-  const isProtected = PROTECTED_DASHBOARDS.some((prefix) =>
-    pathname.startsWith(prefix),
-  );
-
-  const isAuthPage = AUTH_PAGES.some((authPath) =>
-    pathname.startsWith(authPath),
-  );
-
+  const isProtected = PROTECTED_DASHBOARDS.some((p) => pathname.startsWith(p));
+  const isAuthPage = AUTH_PAGES.some((p) => pathname.startsWith(p));
   const isResolvePage = pathname.startsWith("/resolve-role");
 
   // ────────────────────────────────────────────────
-  // Handle Google OAuth callback (token in URL)
+  //  Handle OAuth callback: token is in URL query
   // ────────────────────────────────────────────────
-  const urlToken = request.nextUrl.searchParams.get("token");
+  const tokenFromQuery = searchParams.get("token");
 
-  if (urlToken) {
-    // Set the cookie immediately
-    const response = NextResponse.next(); // or redirect later
+  if (tokenFromQuery) {
+    console.log("[Middleware] Found token in query — setting cookie");
 
-    // Set cookie — adjust maxAge, path, secure as needed
-    response.cookies.set("token", urlToken, {
-      httpOnly: true, // more secure
+    const response = NextResponse.next();
+
+    // IMPORTANT: set the cookie here
+    response.cookies.set("token", tokenFromQuery, {
+      httpOnly: true, // recommended for security
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24, // 24 hours
+      maxAge: 60 * 60 * 24 * 7, // 7 days — adjust to match your token lifetime
       path: "/",
     });
 
-    // Clean the URL (remove ?token=...)
+    // Clean URL (remove ?token=...)
     const cleanUrl = request.nextUrl.clone();
     cleanUrl.searchParams.delete("token");
 
-    // Redirect to clean URL — now with cookie set
+    // Redirect to the clean URL — now with cookie set
     return NextResponse.redirect(cleanUrl);
   }
 
   // ────────────────────────────────────────────────
   // Normal protection logic
   // ────────────────────────────────────────────────
-  if (isProtected && !token) {
+  if (isProtected && !tokenFromCookie) {
+    console.log(
+      "[Middleware] Protected route, no token cookie → redirect to login",
+    );
+
     if (pathname.startsWith("/engineer-dashboard")) {
       return NextResponse.redirect(new URL("/not-engineer-login", request.url));
     }
-
     if (pathname.startsWith("/admin-dashboard")) {
       return NextResponse.redirect(
         new URL("/not-even-admin-login", request.url),
       );
     }
 
-    // Customer default
+    // Default customer login
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("redirect", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
   // Redirect logged-in users away from auth pages
-  if (isAuthPage && token && !isResolvePage) {
+  if (isAuthPage && tokenFromCookie && !isResolvePage) {
     console.log(
-      `User with token visited ${pathname} → redirecting to /resolve-role`,
+      `[Middleware] Logged in user on auth page ${pathname} → /resolve-role`,
     );
     return NextResponse.redirect(new URL("/resolve-role", request.url));
   }
 
-  // Allow everything else
   return NextResponse.next();
 }
 
