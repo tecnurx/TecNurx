@@ -161,9 +161,9 @@
 import { NextResponse } from "next/server";
 
 const PROTECTED_DASHBOARDS = [
-  "/dashboard",
-  "/engineer-dashboard",
-  "/admin-dashboard",
+  "/dashboard", // regular users
+  "/engineer-dashboard", // engineers / service partners
+  "/admin-dashboard", // admins
 ];
 
 const AUTH_PAGES = [
@@ -178,48 +178,45 @@ const AUTH_PAGES = [
 ];
 
 export function middleware(request) {
-  const { pathname, searchParams } = request.nextUrl;
-  const tokenFromCookie = request.cookies.get("token")?.value;
+  const url = request.nextUrl;
+  const pathname = url.pathname;
+  const searchParams = url.searchParams;
+
+  const tokenCookie = request.cookies.get("token")?.value;
 
   const isProtected = PROTECTED_DASHBOARDS.some((p) => pathname.startsWith(p));
   const isAuthPage = AUTH_PAGES.some((p) => pathname.startsWith(p));
   const isResolvePage = pathname.startsWith("/resolve-role");
 
-  // ────────────────────────────────────────────────
-  //  Handle OAuth callback: token is in URL query
-  // ────────────────────────────────────────────────
-  const tokenFromQuery = searchParams.get("token");
+  // ─── Handle Google OAuth callback ────────────────────────────────
+  const tokenFromUrl = searchParams.get("token");
 
-  if (tokenFromQuery) {
-    console.log("[Middleware] Found token in query — setting cookie");
+  if (tokenFromUrl) {
+    // This is the Google auth callback for regular users
+    console.log("[middleware] Google callback detected — setting token cookie");
 
-    const response = NextResponse.next();
+    const response = NextResponse.redirect(
+      new URL("/dashboard", request.url), // force redirect to /dashboard
+    );
 
-    // IMPORTANT: set the cookie here
-    response.cookies.set("token", tokenFromQuery, {
-      httpOnly: true, // recommended for security
+    response.cookies.set("token", tokenFromUrl, {
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days — adjust to match your token lifetime
+      maxAge: 60 * 60 * 24 * 14, // 14 days — adjust to your JWT lifetime
       path: "/",
     });
 
-    // Clean URL (remove ?token=...)
-    const cleanUrl = request.nextUrl.clone();
-    cleanUrl.searchParams.delete("token");
-
-    // Redirect to the clean URL — now with cookie set
-    return NextResponse.redirect(cleanUrl);
+    return response;
   }
 
-  // ────────────────────────────────────────────────
-  // Normal protection logic
-  // ────────────────────────────────────────────────
-  if (isProtected && !tokenFromCookie) {
+  // ─── Normal protection ───────────────────────────────────────────
+  if (isProtected && !tokenCookie) {
     console.log(
-      "[Middleware] Protected route, no token cookie → redirect to login",
+      "[middleware] Protected route without token → redirect to login",
     );
 
+    // Different login pages for different roles
     if (pathname.startsWith("/engineer-dashboard")) {
       return NextResponse.redirect(new URL("/not-engineer-login", request.url));
     }
@@ -229,17 +226,14 @@ export function middleware(request) {
       );
     }
 
-    // Default customer login
+    // Default = customer
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("redirect", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // Redirect logged-in users away from auth pages
-  if (isAuthPage && tokenFromCookie && !isResolvePage) {
-    console.log(
-      `[Middleware] Logged in user on auth page ${pathname} → /resolve-role`,
-    );
+  // Redirect logged-in users away from login pages
+  if (isAuthPage && tokenCookie && !isResolvePage) {
     return NextResponse.redirect(new URL("/resolve-role", request.url));
   }
 
