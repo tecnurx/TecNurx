@@ -171,9 +171,9 @@ export default function MultiStepRegister() {
           <Link href="/">
             <Image src={logo} alt="logo" width={120} />
           </Link>
-          <Image src={step1} alt="step 1" className="my-6" />
+          <Image src={step1} alt="step 1" className="my-6-img" />
 
-          <div className="card">
+          <div className="regcard">
             <div className="welcome">
               <h1>Welcome!</h1>
               <h2>First things first...</h2>
@@ -219,8 +219,8 @@ export default function MultiStepRegister() {
       {role === "user" && step === 2 && (
         <div className="steps">
           <Image src={logo} alt="logo" width={120} />
-          <Image src={step2} alt="step 2" className="my-6" />
-          <div className="card">
+          <Image src={step2} alt="step 2" className="my-6-img" />
+          <div className="regcard">
             <div className="welcome">
               <h1>
                 Let’s <span>set up</span> your account
@@ -320,8 +320,8 @@ export default function MultiStepRegister() {
       {role === "user" && step === 3 && (
         <div className="steps">
           <Image src={logo} alt="logo" width={120} />
-          <Image src={step3} alt="step 3" className="my-6" />
-          <div className="card">
+          <Image src={step3} alt="step 3" className="my-6-img" />
+          <div className="regcard">
             <div className="welcome">
               <h1>
                 Protect your <span>account</span>
@@ -403,7 +403,7 @@ export default function MultiStepRegister() {
         <div className="steps">
           <Image src={logo} alt="logo" width={120} />
           <Image src={pstep2} alt="logo" />
-          <div className="card">
+          <div className="regcard">
             <div className="welcome">
               <h1>
                 Become a <span> partner</span>
@@ -455,7 +455,7 @@ export default function MultiStepRegister() {
 
           <Image src={pstep3} alt="logo" />
 
-          <div className="card">
+          <div className="regcard">
             <div className="welcome">
               <h1>
                 Become a <span> partner</span>
@@ -513,7 +513,7 @@ export default function MultiStepRegister() {
 
           <Image src={pstep4} alt="logo" />
 
-          <div className="card">
+          <div className="regcard">
             <div className="welcome">
               <h1>
                 Become a <span> partner</span>

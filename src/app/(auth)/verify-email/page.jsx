@@ -8,6 +8,7 @@ import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
 import { authService } from "../../../../services/auth";
 import { Check } from "lucide-react";
+import { toast } from "@/components/CustomToast";
 
 // This forces the page to be dynamic (no static rendering → no localStorage error at build time)
 export const dynamic = "force-dynamic";

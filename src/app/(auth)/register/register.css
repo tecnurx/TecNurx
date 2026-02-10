@@ -13,7 +13,7 @@
   align-items: center;
   gap: 42px;
 }
-.card {
+.regcard {
   background: rgba(255, 255, 255, 1);
   width: 500px;
   padding: 40px;
@@ -278,19 +278,26 @@
 }
 
 @media screen and (max-width: 600px) {
-  .card {
+  .regcard {
     width: 80%;
     padding: 18px;
+    gap: 24px;
   }
-  .register-wrap {
-    /* padding: 100px 24px; */
+  .welcome p{
+    font-size: 14px;
+  }
+  .my-6-img {
+    width: 280px;
+  }
+  .steps {
+    padding: 0 24px;
   }
   .user-partner button {
-    width: 100%;
+    width: 80%;
     padding: 14px;
   }
   .user-partner button p {
-    font-size: 12px;
+    font-size: 11px;
   }
   .two-form-group {
     grid-template-columns: 1fr;

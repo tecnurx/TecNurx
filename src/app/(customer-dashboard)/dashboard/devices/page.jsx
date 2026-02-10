@@ -33,7 +33,6 @@ const MyDevices = () => {
     model: "",
     serialNumber: "",
     purchaseDate: "",
-    warrantyExpiry: "",
     condition: "good",
     notes: "",
   });
@@ -99,9 +98,6 @@ const MyDevices = () => {
       purchaseDate: device.purchaseDate
         ? device.purchaseDate.split("T")[0]
         : "",
-      warrantyExpiry: device.warrantyExpiry
-        ? device.warrantyExpiry.split("T")[0]
-        : "",
       condition: device.condition || "good",
       notes: device.notes || "",
     });
@@ -120,7 +116,6 @@ const MyDevices = () => {
       model: "",
       serialNumber: "",
       purchaseDate: "",
-      warrantyExpiry: "",
       condition: "good",
       notes: "",
     });
@@ -158,7 +153,6 @@ const MyDevices = () => {
         payload.append("model", formData.model);
         payload.append("serialNumber", formData.serialNumber);
         payload.append("purchaseDate", formData.purchaseDate);
-        payload.append("warrantyExpiry", formData.warrantyExpiry || "");
         payload.append("condition", formData.condition);
         if (formData.notes) payload.append("notes", formData.notes);
 
@@ -518,20 +512,6 @@ const MyDevices = () => {
                     value={formData.purchaseDate}
                     onChange={(e) =>
                       setFormData({ ...formData, purchaseDate: e.target.value })
-                    }
-                  />
-                </div>
-
-                <div className="form-grouup">
-                  <label>Warranty Expiry</label>
-                  <input
-                    type="date"
-                    value={formData.warrantyExpiry}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        warrantyExpiry: e.target.value,
-                      })
                     }
                   />
                 </div>

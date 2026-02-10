@@ -44,7 +44,6 @@ const BookRepair = () => {
     model: "",
     serialNumber: "",
     purchaseDate: "",
-    warrantyExpiry: "",
     condition: "good",
     notes: "",
   });
@@ -244,7 +243,6 @@ const BookRepair = () => {
       payload.append("model", formData.model);
       payload.append("serialNumber", formData.serialNumber);
       payload.append("purchaseDate", formData.purchaseDate);
-      payload.append("warrantyExpiry", formData.warrantyExpiry || "");
       payload.append("condition", formData.condition);
       if (formData.notes) payload.append("notes", formData.notes);
 
@@ -267,7 +265,6 @@ const BookRepair = () => {
         model: "",
         serialNumber: "",
         purchaseDate: "",
-        warrantyExpiry: "",
         condition: "good",
         notes: "",
       });
@@ -437,9 +434,12 @@ const BookRepair = () => {
                 {loadingAddresses ? (
                   <p>Loading addresses...</p>
                 ) : addresses.length === 0 ? (
-                  <p style={{ color: "#888" }}>
-                    No saved addresses found. Please add one in your profile.
-                  </p>
+                  <div className="no-added-devices">
+                    <p style={{ color: "#888" }}>
+                      No saved addresses found. Please add one in your profile.
+                    </p>
+                    <Link href='/dashboard/my-account'>Add Address.</Link>
+                  </div>
                 ) : (
                   <div className="gadget-options address-options">
                     {addresses.map((address) => (
@@ -679,20 +679,6 @@ const BookRepair = () => {
                     value={formData.purchaseDate}
                     onChange={(e) =>
                       setFormData({ ...formData, purchaseDate: e.target.value })
-                    }
-                  />
-                </div>
-
-                <div className="form-grouup">
-                  <label>Warranty Expiry</label>
-                  <input
-                    type="date"
-                    value={formData.warrantyExpiry}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        warrantyExpiry: e.target.value,
-                      })
                     }
                   />
                 </div>

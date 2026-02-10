@@ -112,7 +112,7 @@ const Login = () => {
         <Image className="sideimage" src={logimage} alt="Login" />
 
         <div className="card-wrap">
-          <div className="card">
+          <div className="card login-card">
             <Link href="/" className="logi-logo">
               <Image src={logo} alt="logo" width={120} />
             </Link>
@@ -120,40 +120,6 @@ const Login = () => {
             <h2>
               Welcome <span>back</span>
             </h2>
-
-            <div className="auth-options">
-              <div
-                onClick={handleGoogleLogin}
-                style={{
-                  cursor: googleLoading ? "not-allowed" : "pointer",
-                  opacity: googleLoading ? 0.7 : 1,
-                  // display: "flex",
-                  // alignItems: "center",
-                  // gap: "12px",
-                  // padding: "12px",
-                  // border: "1px solid #ddd",
-                  // borderRadius: "8px",
-                  // background: "#fff",
-                  // transition: "all 0.2s",
-                }}
-                onMouseOver={(e) =>
-                  !googleLoading &&
-                  (e.currentTarget.style.background = "#f9f9f9")
-                }
-                onMouseOut={(e) =>
-                  !googleLoading && (e.currentTarget.style.background = "#fff")
-                }
-              >
-                <Image src={google} alt="google" />
-                <span>{googleLoading ? "Connecting..." : "Google"}</span>
-              </div>
-            </div>
-
-            <div className="divider">
-              <h6></h6>
-              <h4>or</h4>
-              <h6></h6>
-            </div>
 
             <form onSubmit={handleSubmit} className="form">
               <div className="form-group">
@@ -207,6 +173,41 @@ const Login = () => {
                   <label htmlFor="remember">Remember me</label>
                 </div>
                 <Link href="/forgot-password">Forgot Password?</Link>
+              </div>
+
+              <div className="divider">
+                <h6></h6>
+                <h4>or</h4>
+                <h6></h6>
+              </div>
+
+              <div className="auth-options">
+                <div
+                  onClick={handleGoogleLogin}
+                  style={{
+                    cursor: googleLoading ? "not-allowed" : "pointer",
+                    opacity: googleLoading ? 0.7 : 1,
+                    // display: "flex",
+                    // alignItems: "center",
+                    // gap: "12px",
+                    // padding: "12px",
+                    // border: "1px solid #ddd",
+                    // borderRadius: "8px",
+                    // background: "#fff",
+                    // transition: "all 0.2s",
+                  }}
+                  onMouseOver={(e) =>
+                    !googleLoading &&
+                    (e.currentTarget.style.background = "#f9f9f9")
+                  }
+                  onMouseOut={(e) =>
+                    !googleLoading &&
+                    (e.currentTarget.style.background = "#fff")
+                  }
+                >
+                  <Image src={google} alt="google" />
+                  <span>{googleLoading ? "Connecting..." : "Google"}</span>
+                </div>
               </div>
 
               <div className="sign-btn">

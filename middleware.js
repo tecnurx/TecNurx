@@ -58,9 +58,6 @@
 //   ],
 // };
 
-
-
-
 //TODO: NEW ONE---------------------------------------------
 
 // middleware.js
@@ -89,20 +86,27 @@ export function middleware(request) {
   const token = request.cookies.get("token")?.value;
 
   const isProtected = PROTECTED_DASHBOARDS.some((prefix) =>
-    pathname.startsWith(prefix)
+    pathname.startsWith(prefix),
   );
 
   // 1. Protect all dashboards: no token → redirect to appropriate login
   if (isProtected && !token) {
+    //for google auth callback with token in URL, clean it immediately and set cookie/localStorage
+    if (request.nextUrl.searchParams.has("token")) {
+      const cleanUrl = request.nextUrl.clone();
+      cleanUrl.searchParams.delete("token");
+      return NextResponse.redirect(cleanUrl);
+    }
+
     // Smart redirect based on which dashboard they're trying to access
     if (pathname.startsWith("/engineer-dashboard")) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
-    
+
     if (pathname.startsWith("/admin-dashboard")) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
-    
+
     // Default to customer login with redirect parameter
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("redirect", pathname);
@@ -111,14 +115,16 @@ export function middleware(request) {
 
   // 2. If already logged in and visiting ANY login/auth page → go to resolver
   const isAuthPage = AUTH_PAGES.some((authPath) =>
-    pathname.startsWith(authPath)
+    pathname.startsWith(authPath),
   );
 
   // CRITICAL: Don't redirect if already on resolve-role (prevents infinite loop)
   const isResolvePage = pathname.startsWith("/resolve-role");
 
   if (isAuthPage && token && !isResolvePage) {
-    console.log(`User with token visited ${pathname}, redirecting to resolve-role`);
+    console.log(
+      `User with token visited ${pathname}, redirecting to resolve-role`,
+    );
     return NextResponse.redirect(new URL("/resolve-role", request.url));
   }
 
@@ -132,19 +138,19 @@ export const config = {
     "/dashboard/:path*",
     "/engineer-dashboard/:path*",
     "/admin-dashboard/:path*",
-    
+
     // All login pages
     "/login",
     "/not-engineer-login",
     "/not-even-admin-login",
-    
+
     // Other auth pages
     "/register",
     "/service-partner/:path*",
     "/forgot-password",
     "/create-password/:path*",
     "/verify-email",
-    
+
     // CRITICAL: Include resolve-role in matcher
     "/resolve-role",
   ],

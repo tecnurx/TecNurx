@@ -679,7 +679,7 @@
   flex-direction: column;
   gap: 12px;
 }
-.no-added-devices button {
+.no-added-devices button, .no-added-devices a {
   color: #007bff;
   text-decoration: underline;
   font-family: Plus Jakarta Sans;

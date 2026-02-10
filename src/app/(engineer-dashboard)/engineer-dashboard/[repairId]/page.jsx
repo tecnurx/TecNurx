@@ -214,7 +214,7 @@ const RepairDetailsPage = () => {
           </div>
         </div>
 
-        {repair.warranty?.hasWarranty && (
+        {/* {repair.warranty?.hasWarranty && (
           <div className="warranty-info">
             <Battery size={20} />
             <div>
@@ -222,7 +222,7 @@ const RepairDetailsPage = () => {
               <p>Repair is covered under warranty for 90 days</p>
             </div>
           </div>
-        )}
+        )} */}
 
         <div className="payment-status">
           <span>Payment Status:</span>
