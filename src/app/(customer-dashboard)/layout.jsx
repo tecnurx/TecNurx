@@ -9,6 +9,7 @@ import Chatbox from "@/components/chatbox/Chatbox";
 import CustomToast from "@/components/CustomToast";
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { authService } from "../../../services/auth";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -44,18 +45,12 @@ export default function DashboardLayout({ children }) {
       // Optional but strongly recommended: fetch user data
       const fetchAndStoreUser = async () => {
         try {
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/users/me`,
-            {
-              headers: { Authorization: `Bearer ${urlToken}` },
-              credentials: "include",
-            },
-          );
+          const res = await authService.UpdateCurrentUser();
 
           if (!res.ok) throw new Error();
 
-          const user = await res.json();
-          localStorage.setItem("user", JSON.stringify(user));
+          // const user = await res.json();
+          // localStorage.setItem("user", JSON.stringify(user));
 
           // Now let normal logic run (or force resolve-role)
           router.replace("/resolve-role");
