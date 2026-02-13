@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, Suspense } from "react";
 import "./dashboard.css";
 import Link from "next/link";
 import {
@@ -17,7 +17,8 @@ import { authService } from "../../../../services/auth";
 import { repairService } from "../../../../services/repairs";
 import { useSearchParams, useRouter } from "next/navigation";
 
-const Dashboard = () => {
+// Separate component that uses useSearchParams
+const DashboardContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [isQuickOptionsOpen, setIsQuickOptionsOpen] = useState(false);
@@ -26,7 +27,7 @@ const Dashboard = () => {
   const [repairs, setRepairs] = useState([]);
   const [repairCount, setRepairCount] = useState(0);
   const [latestRepair, setLatestRepair] = useState(null);
-  const [trackingData, setTrackingData] = useState(null); // From /track endpoint
+  const [trackingData, setTrackingData] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -46,9 +47,7 @@ const Dashboard = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ────────────────────────────────────────────────
   // Handle ?token=xxx from Google redirect
-  // ────────────────────────────────────────────────
   useEffect(() => {
     const googleToken = searchParams.get("token");
 
@@ -56,46 +55,32 @@ const Dashboard = () => {
 
     const initializeFromGoogleToken = async () => {
       try {
-        // 1. Save as the expected token name
         localStorage.setItem("token", googleToken);
 
-        // 2. Also set cookie with the name the middleware expects
         document.cookie = `token=${googleToken}; path=/; max-age=604800; SameSite=Lax; ${
           process.env.NODE_ENV === "production" ? "Secure;" : ""
         }`;
 
-        // 3. Immediately fetch and save user
-        const userResponse = await authService.updateCurrentUser();
+        await authService.updateCurrentUser();
 
-        // Optional: clean up the old key
-        // localStorage.removeItem("googleToken");
-
-        // 4. Clean URL
         router.replace("/dashboard", { scroll: false });
       } catch (err) {
         console.error("Failed to initialize user from google token", err);
         alert("Login failed. Please try again.");
-        // Optional: clear invalid token and redirect to login
-        // localStorage.removeItem("token");
-        // localStorage.removeItem("googleToken");
-        // document.cookie =
-        //   "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         router.replace("/login");
       }
     };
 
     initializeFromGoogleToken();
   }, [searchParams, router]);
+
   // Fetch dashboard data
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Get current user
         const user = await authService.getCurrentUser();
         setCurrentUser(user);
-        // console.log("Current user:", user.data.user);
 
-        // Fetch all repairs
         const res = await repairService.getUserRepairs();
         const repairsData = res.data.repairs || [];
 
@@ -103,20 +88,17 @@ const Dashboard = () => {
         setRepairCount(repairsData.length);
 
         if (repairsData.length > 0) {
-          // Sort by newest first
           const sorted = [...repairsData].sort(
             (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
           );
           const newest = sorted[0];
           setLatestRepair(newest);
 
-          // Fetch detailed tracking for the latest repair
           try {
             const trackRes = await repairService.trackRepair(newest._id);
             setTrackingData(trackRes.data);
           } catch (trackErr) {
             console.error("Failed to fetch tracking data:", trackErr);
-            // Fallback: use basic info from repairs list
           }
         }
       } catch (err) {
@@ -129,7 +111,6 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  // Format date helper
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -142,7 +123,6 @@ const Dashboard = () => {
     });
   };
 
-  // Use tracking timeline if available, otherwise fallback
   const repairStages = trackingData?.timeline || [];
 
   const currentStatusLabel =
@@ -156,7 +136,6 @@ const Dashboard = () => {
         ),
     )?.label || "Processing";
 
-  // Correct: active stage = first non-completed stage
   const activeStageIndex = repairStages.findIndex((stage) => !stage.completed);
 
   const stats = [
@@ -169,7 +148,7 @@ const Dashboard = () => {
     {
       id: 2,
       title: "Completed Repairs",
-      value: "0", // Enhance later with status filter
+      value: "0",
       icon: <CircleCheck size={24} />,
     },
     {
@@ -186,7 +165,6 @@ const Dashboard = () => {
     },
   ];
 
-  // Recent Activity Feed Data
   const recentActivity = [
     {
       id: 1,
@@ -224,6 +202,7 @@ const Dashboard = () => {
       time: "Nov 15, 2025",
     },
   ];
+
   if (loading) {
     return (
       <div className="resolve-wrap">
@@ -239,7 +218,7 @@ const Dashboard = () => {
       <div className="head-quick">
         <div className="dashboard-header">
           <h1>Welcome, {currentUser?.fname || "User"}!</h1>
-          <p>Here’s a quick summary of your device activity.</p>
+          <p>Here's a quick summary of your device activity.</p>
         </div>
 
         <div className="quick-options" ref={dropdownRef}>
@@ -385,6 +364,22 @@ const Dashboard = () => {
       </div>
     </div>
   );
-};;
+};
+
+// Main component with Suspense wrapper
+const Dashboard = () => {
+  return (
+    <Suspense
+      fallback={
+        <div className="resolve-wrap">
+          <p>Loading...</p>
+          <div className="respinner"></div>
+        </div>
+      }
+    >
+      <DashboardContent />
+    </Suspense>
+  );
+};
 
 export default Dashboard;

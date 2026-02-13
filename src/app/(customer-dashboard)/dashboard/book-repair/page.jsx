@@ -683,7 +683,7 @@ const BookRepair = () => {
                   />
                 </div>
 
-                <div className="form-grouup full">
+                <div className="form-grouup">
                   <label>Condition</label>
                   <select
                     value={formData.condition}
