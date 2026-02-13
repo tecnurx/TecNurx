@@ -15,8 +15,11 @@ import {
 } from "lucide-react";
 import { authService } from "../../../../services/auth";
 import { repairService } from "../../../../services/repairs";
+import { useSearchParams, useRouter } from "next/navigation";
 
 const Dashboard = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [isQuickOptionsOpen, setIsQuickOptionsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -43,6 +46,46 @@ const Dashboard = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // ────────────────────────────────────────────────
+  // Handle ?token=xxx from Google redirect
+  // ────────────────────────────────────────────────
+  useEffect(() => {
+    const googleToken = searchParams.get("token");
+
+    if (!googleToken) return;
+
+    const initializeFromGoogleToken = async () => {
+      try {
+        // 1. Save as the expected token name
+        localStorage.setItem("token", googleToken);
+
+        // 2. Also set cookie with the name the middleware expects
+        document.cookie = `token=${googleToken}; path=/; max-age=604800; SameSite=Lax; ${
+          process.env.NODE_ENV === "production" ? "Secure;" : ""
+        }`;
+
+        // 3. Immediately fetch and save user
+        const userResponse = await authService.updateCurrentUser();
+
+        // Optional: clean up the old key
+        // localStorage.removeItem("googleToken");
+
+        // 4. Clean URL
+        router.replace("/dashboard", { scroll: false });
+      } catch (err) {
+        console.error("Failed to initialize user from google token", err);
+        alert("Login failed. Please try again.");
+        // Optional: clear invalid token and redirect to login
+        // localStorage.removeItem("token");
+        // localStorage.removeItem("googleToken");
+        // document.cookie =
+        //   "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        router.replace("/login");
+      }
+    };
+
+    initializeFromGoogleToken();
+  }, [searchParams, router]);
   // Fetch dashboard data
   useEffect(() => {
     const fetchData = async () => {
@@ -50,7 +93,7 @@ const Dashboard = () => {
         // Get current user
         const user = await authService.getCurrentUser();
         setCurrentUser(user);
-        // console.log("Current user:", user.data.user); 
+        // console.log("Current user:", user.data.user);
 
         // Fetch all repairs
         const res = await repairService.getUserRepairs();
@@ -342,6 +385,6 @@ const Dashboard = () => {
       </div>
     </div>
   );
-};
+};;
 
 export default Dashboard;

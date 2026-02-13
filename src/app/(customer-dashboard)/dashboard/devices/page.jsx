@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { deviceService } from "../../../../../services/devices";
 import { toast } from "@/components/CustomToast"; // Import toast
+import Link from "next/link";
 
 const MyDevices = () => {
   const [devices, setDevices] = useState([]);
@@ -363,9 +364,9 @@ const MyDevices = () => {
             </div>
 
             <div className="modal-actions">
-              <button className="action-btn primary">
+              <Link href='/dashboard/book-repair' className="action-btn primary">
                 <Wrench size={18} /> Book New Repair
-              </button>
+              </Link>
 
               <button
                 className="action-btn secondary"

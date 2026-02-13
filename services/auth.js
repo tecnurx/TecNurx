@@ -49,10 +49,11 @@ export const authService = {
     }
   },
 
-  UpdateCurrentUser: async () => {
+  updateCurrentUser: async () => {
     const response = await axios.get("/users/me");
-    const user = response?.data?.user;
+    const user = response?.data?.data?.user;
     localStorage.setItem("user", JSON.stringify(user));
+    console.log("Updated current user data:", user);
     return response.data;
   },
 
