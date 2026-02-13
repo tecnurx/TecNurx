@@ -7,27 +7,29 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import { SidebarProvider } from "../../../context/SidebarContext";
 import Chatbox from "@/components/chatbox/Chatbox";
 import CustomToast from "@/components/CustomToast";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, React, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800"],
 });
 
-// export const metadata = {
-//   title: "Dashboard | TecNurx",
-//   description: "Fast, reliable device repair and insurance",
-//   icons: {
-//     icon: "/favicon.png",
-//     apple: "/favicon.png",
-//     shortcut: "/favicon.png",
-//   },
-// };
-
-export default function DashboardLayout({ children }) {
+function LayoutContent({ children }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isValidating, setIsValidating] = useState(true);
+
   useEffect(() => {
+    // Check if there's a token in the URL (Google OAuth redirect)
+    const urlToken = searchParams.get("token");
+
+    if (urlToken) {
+      // Allow the page to load - the Dashboard component will handle token storage
+      setIsValidating(false);
+      return;
+    }
+
     const userJson = localStorage.getItem("user");
 
     if (!userJson) {
@@ -39,14 +41,25 @@ export default function DashboardLayout({ children }) {
       const user = JSON.parse(userJson);
       const role = user.role?.toLowerCase();
 
-      if (!["user"].includes(role)) {
+      if (!["user", "customer"].includes(role)) {
         router.replace("/resolve-role");
+      } else {
+        setIsValidating(false);
       }
     } catch (error) {
       console.log("Invalid user data in localStorage");
-      router.replace("/");
+      router.replace("/login");
     }
-  }, [router]);
+  }, [router, searchParams]);
+
+  if (isValidating) {
+    return (
+      <div className="resolve-wrap">
+        <p>Loading...</p>
+        <div className="respinner"></div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -67,5 +80,20 @@ export default function DashboardLayout({ children }) {
         <CustomToast />
       </main>
     </div>
+  );
+}
+
+export default function DashboardLayout({ children }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="resolve-wrap">
+          <p>Loading...</p>
+          <div className="respinner"></div>
+        </div>
+      }
+    >
+      <LayoutContent>{children}</LayoutContent>
+    </Suspense>
   );
 }

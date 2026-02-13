@@ -17,10 +17,66 @@ import { authService } from "../../../../services/auth";
 import { repairService } from "../../../../services/repairs";
 import { useSearchParams, useRouter } from "next/navigation";
 
-// Separate component that uses useSearchParams
-const DashboardContent = () => {
+// Component that handles token initialization
+const TokenHandler = ({ onTokenProcessed }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [isProcessing, setIsProcessing] = useState(true);
+
+  useEffect(() => {
+    const googleToken = searchParams.get("token");
+
+    if (!googleToken) {
+      setIsProcessing(false);
+      onTokenProcessed();
+      return;
+    }
+
+    const initializeFromGoogleToken = async () => {
+      try {
+        // 1. Save token
+        localStorage.setItem("token", googleToken);
+
+        // 2. Set cookie
+        document.cookie = `token=${googleToken}; path=/; max-age=604800; SameSite=Lax; ${
+          process.env.NODE_ENV === "production" ? "Secure;" : ""
+        }`;
+
+        // 3. Fetch and save user
+        const userResponse = await authService.updateCurrentUser();
+        console.log("User fetched and saved:", userResponse);
+
+        // 4. Clean URL
+        router.replace("/dashboard", { scroll: false });
+
+        // 5. Notify parent
+        onTokenProcessed();
+      } catch (err) {
+        console.error("Failed to initialize user from google token", err);
+        alert("Login failed. Please try again.");
+        router.replace("/login");
+      } finally {
+        setIsProcessing(false);
+      }
+    };
+
+    initializeFromGoogleToken();
+  }, [searchParams, router, onTokenProcessed]);
+
+  if (isProcessing) {
+    return (
+      <div className="resolve-wrap">
+        <p>Setting up your account...</p>
+        <div className="respinner"></div>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+// Main dashboard content component
+const DashboardContent = () => {
   const [isQuickOptionsOpen, setIsQuickOptionsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -30,6 +86,7 @@ const DashboardContent = () => {
   const [trackingData, setTrackingData] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [tokenProcessed, setTokenProcessed] = useState(false);
 
   // Toggle dropdown
   const toggleQuickOptions = () => {
@@ -47,40 +104,17 @@ const DashboardContent = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Handle ?token=xxx from Google redirect
+  // Fetch dashboard data - only after token is processed
   useEffect(() => {
-    const googleToken = searchParams.get("token");
+    if (!tokenProcessed) return;
 
-    if (!googleToken) return;
-
-    const initializeFromGoogleToken = async () => {
-      try {
-        localStorage.setItem("token", googleToken);
-
-        document.cookie = `token=${googleToken}; path=/; max-age=604800; SameSite=Lax; ${
-          process.env.NODE_ENV === "production" ? "Secure;" : ""
-        }`;
-
-        await authService.updateCurrentUser();
-
-        router.replace("/dashboard", { scroll: false });
-      } catch (err) {
-        console.error("Failed to initialize user from google token", err);
-        alert("Login failed. Please try again.");
-        router.replace("/login");
-      }
-    };
-
-    initializeFromGoogleToken();
-  }, [searchParams, router]);
-
-  // Fetch dashboard data
-  useEffect(() => {
     const fetchData = async () => {
       try {
+        // Get current user
         const user = await authService.getCurrentUser();
         setCurrentUser(user);
 
+        // Fetch all repairs
         const res = await repairService.getUserRepairs();
         const repairsData = res.data.repairs || [];
 
@@ -88,12 +122,14 @@ const DashboardContent = () => {
         setRepairCount(repairsData.length);
 
         if (repairsData.length > 0) {
+          // Sort by newest first
           const sorted = [...repairsData].sort(
             (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
           );
           const newest = sorted[0];
           setLatestRepair(newest);
 
+          // Fetch detailed tracking for the latest repair
           try {
             const trackRes = await repairService.trackRepair(newest._id);
             setTrackingData(trackRes.data);
@@ -109,7 +145,7 @@ const DashboardContent = () => {
     };
 
     fetchData();
-  }, []);
+  }, [tokenProcessed]);
 
   const formatDate = (dateString) => {
     if (!dateString) return "";
@@ -203,183 +239,184 @@ const DashboardContent = () => {
     },
   ];
 
-  if (loading) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading...</p>
-        <div className="respinner"></div>
-      </div>
-    );
-  }
-
+  // Show token handler first
   return (
-    <div className="dashboard-wrap">
-      {/* Header */}
-      <div className="head-quick">
-        <div className="dashboard-header">
-          <h1>Welcome, {currentUser?.fname || "User"}!</h1>
-          <p>Here's a quick summary of your device activity.</p>
-        </div>
+    <>
+      <Suspense fallback={null}>
+        <TokenHandler onTokenProcessed={() => setTokenProcessed(true)} />
+      </Suspense>
 
-        <div className="quick-options" ref={dropdownRef}>
-          <button onClick={toggleQuickOptions} className="quick-actions-btn">
-            Quick actions <ChevronDown size={14} />
-          </button>
-
-          {isQuickOptionsOpen && (
-            <div className="quick-options-dropdown">
-              <Link href="/dashboard/book-repair" className="dropdown-item">
-                Book Repair
-              </Link>
-              <Link href="/dashboard/devices" className="dropdown-item">
-                Add New Device
-              </Link>
-              <Link href="/dashboard/insurance" className="dropdown-item">
-                Claim Insurance
-              </Link>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="dashboard-cards">
-        {stats.map((item) => (
-          <div key={item.id} className="stat-card">
-            <div>
-              <span>{item.title}</span>
-              <h3>{item.value}</h3>
-            </div>
-            {item.icon}
-          </div>
-        ))}
-      </div>
-
-      {/* Active Repair Tracker */}
-      {latestRepair ? (
-        <div className="repair-tracker-section">
-          <div className="repair-tracker-header">
-            <h2 className="repair-tracker-title">Active Repair Tracker</h2>
-            <Link href="/dashboard/my-orders" className="view-details-btn">
-              View Details →
-            </Link>
-          </div>
-
-          <div className="repair-progress-container">
-            {repairStages.map((stage, index) => {
-              const isActive = index === activeStageIndex;
-              const isCompleted = stage.completed;
-
-              return (
-                <div key={index} className="stage-wrapper">
-                  <div
-                    className={`stage ${
-                      isCompleted ? "completed" : isActive ? "active" : ""
-                    }`}
-                  >
-                    <div className="stage-icon">
-                      {isCompleted ? (
-                        <svg
-                          width="20"
-                          height="20"
-                          viewBox="0 0 20 20"
-                          fill="none"
-                        >
-                          <circle cx="10" cy="10" r="10" fill="#FFC400" />
-                          <path
-                            d="M5 10L8.5 13.5L15 6.5"
-                            stroke="white"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      ) : isActive ? (
-                        <div className="pulse-dot"></div>
-                      ) : (
-                        <div className="inactive-dot"></div>
-                      )}
-                    </div>
-                    <div className="stage-label">
-                      <p className="stage-name">{stage.label || stage.name}</p>
-                    </div>
-                  </div>
-
-                  {index < repairStages.length - 1 && (
-                    <div
-                      className={`connector ${isCompleted ? "completed" : ""}`}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="current-status-summary">
-            <p>
-              <strong>Current Status:</strong> {currentStatusLabel}
-            </p>
-            <p>
-              <strong>Device:</strong> {latestRepair.device.brand}{" "}
-              {latestRepair.device.model} (
-              {latestRepair.issueCategory.replace(/_/g, " ")})
-            </p>
-          </div>
-        </div>
-      ) : (
-        <div className="repair-tracker-section repair-tracker-none">
-          <h2 className="repair-tracker-title">No Active Repairs</h2>
-          <p>You haven't booked any repairs yet. Start by booking one!</p>
-          <Link href="/dashboard/book-repair" className="view-details-btn">
-            Book a Repair →
-          </Link>
-        </div>
-      )}
-
-      {/* Recent Activity */}
-      <div className="activity-section">
-        <h2 className="activity-title">Recent Activity</h2>
-        {recentActivity.length > 0 ? (
-          <div className="activity-list">
-            {recentActivity.map((activity) => (
-              <div key={activity.id} className="activity-item">
-                <div className="activity-icon">{activity.icon}</div>
-                <div className="activity-content">
-                  <div className="activity-main">
-                    <p className="activity-title-text">{activity.title}</p>
-                    <span className="activity-time">{activity.time}</span>
-                  </div>
-                  {activity.description && (
-                    <p className="activity-description">
-                      {activity.description}
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>No recent activity.</p>
-        )}
-      </div>
-    </div>
-  );
-};
-
-// Main component with Suspense wrapper
-const Dashboard = () => {
-  return (
-    <Suspense
-      fallback={
+      {loading && tokenProcessed && (
         <div className="resolve-wrap">
           <p>Loading...</p>
           <div className="respinner"></div>
         </div>
-      }
-    >
-      <DashboardContent />
-    </Suspense>
+      )}
+
+      {!loading && tokenProcessed && (
+        <div className="dashboard-wrap">
+          {/* Header */}
+          <div className="head-quick">
+            <div className="dashboard-header">
+              <h1>Welcome, {currentUser?.fname || "User"}!</h1>
+              <p>Here's a quick summary of your device activity.</p>
+            </div>
+
+            <div className="quick-options" ref={dropdownRef}>
+              <button
+                onClick={toggleQuickOptions}
+                className="quick-actions-btn"
+              >
+                Quick actions <ChevronDown size={14} />
+              </button>
+
+              {isQuickOptionsOpen && (
+                <div className="quick-options-dropdown">
+                  <Link href="/dashboard/book-repair" className="dropdown-item">
+                    Book Repair
+                  </Link>
+                  <Link href="/dashboard/devices" className="dropdown-item">
+                    Add New Device
+                  </Link>
+                  <Link href="/dashboard/insurance" className="dropdown-item">
+                    Claim Insurance
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="dashboard-cards">
+            {stats.map((item) => (
+              <div key={item.id} className="stat-card">
+                <div>
+                  <span>{item.title}</span>
+                  <h3>{item.value}</h3>
+                </div>
+                {item.icon}
+              </div>
+            ))}
+          </div>
+
+          {/* Active Repair Tracker */}
+          {latestRepair ? (
+            <div className="repair-tracker-section">
+              <div className="repair-tracker-header">
+                <h2 className="repair-tracker-title">Active Repair Tracker</h2>
+                <Link href="/dashboard/my-orders" className="view-details-btn">
+                  View Details →
+                </Link>
+              </div>
+
+              <div className="repair-progress-container">
+                {repairStages.map((stage, index) => {
+                  const isActive = index === activeStageIndex;
+                  const isCompleted = stage.completed;
+
+                  return (
+                    <div key={index} className="stage-wrapper">
+                      <div
+                        className={`stage ${
+                          isCompleted ? "completed" : isActive ? "active" : ""
+                        }`}
+                      >
+                        <div className="stage-icon">
+                          {isCompleted ? (
+                            <svg
+                              width="20"
+                              height="20"
+                              viewBox="0 0 20 20"
+                              fill="none"
+                            >
+                              <circle cx="10" cy="10" r="10" fill="#FFC400" />
+                              <path
+                                d="M5 10L8.5 13.5L15 6.5"
+                                stroke="white"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                          ) : isActive ? (
+                            <div className="pulse-dot"></div>
+                          ) : (
+                            <div className="inactive-dot"></div>
+                          )}
+                        </div>
+                        <div className="stage-label">
+                          <p className="stage-name">
+                            {stage.label || stage.name}
+                          </p>
+                        </div>
+                      </div>
+
+                      {index < repairStages.length - 1 && (
+                        <div
+                          className={`connector ${isCompleted ? "completed" : ""}`}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="current-status-summary">
+                <p>
+                  <strong>Current Status:</strong> {currentStatusLabel}
+                </p>
+                <p>
+                  <strong>Device:</strong> {latestRepair.device.brand}{" "}
+                  {latestRepair.device.model} (
+                  {latestRepair.issueCategory.replace(/_/g, " ")})
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="repair-tracker-section repair-tracker-none">
+              <h2 className="repair-tracker-title">No Active Repairs</h2>
+              <p>You haven't booked any repairs yet. Start by booking one!</p>
+              <Link href="/dashboard/book-repair" className="view-details-btn">
+                Book a Repair →
+              </Link>
+            </div>
+          )}
+
+          {/* Recent Activity */}
+          <div className="activity-section">
+            <h2 className="activity-title">Recent Activity</h2>
+            {recentActivity.length > 0 ? (
+              <div className="activity-list">
+                {recentActivity.map((activity) => (
+                  <div key={activity.id} className="activity-item">
+                    <div className="activity-icon">{activity.icon}</div>
+                    <div className="activity-content">
+                      <div className="activity-main">
+                        <p className="activity-title-text">{activity.title}</p>
+                        <span className="activity-time">{activity.time}</span>
+                      </div>
+                      {activity.description && (
+                        <p className="activity-description">
+                          {activity.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No recent activity.</p>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
+};
+
+// Main export
+const Dashboard = () => {
+  return <DashboardContent />;
 };
 
 export default Dashboard;
