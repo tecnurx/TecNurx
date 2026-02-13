@@ -50,19 +50,19 @@ export function middleware(request) {
   }
 
   // 2. If already logged in and visiting ANY login/auth page → go to resolver
-  const isAuthPage = AUTH_PAGES.some((authPath) =>
-    pathname.startsWith(authPath),
-  );
+  // const isAuthPage = AUTH_PAGES.some((authPath) =>
+  //   pathname.startsWith(authPath),
+  // );
 
-  // CRITICAL: Don't redirect if already on resolve-role (prevents infinite loop)
-  const isResolvePage = pathname.startsWith("/resolve-role");
+  // // CRITICAL: Don't redirect if already on resolve-role (prevents infinite loop)
+  // const isResolvePage = pathname.startsWith("/resolve-role");
 
-  if (isAuthPage && token && !isResolvePage) {
-    console.log(
-      `User with token visited ${pathname}, redirecting to resolve-role`,
-    );
-    return NextResponse.redirect(new URL("/resolve-role", request.url));
-  }
+  // if (isAuthPage && token && !isResolvePage) {
+  //   console.log(
+  //     `User with token visited ${pathname}, redirecting to resolve-role`,
+  //   );
+  //   return NextResponse.redirect(new URL("/resolve-role", request.url));
+  // }
 
   // 3. Allow everything else (including resolve-role itself)
   return NextResponse.next();
