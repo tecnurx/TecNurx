@@ -11,8 +11,32 @@ export const engService = {
     return response.data;
   },
 
-  updateRepairStatus: async (repairId) => {
-    const response = await axios.patch(`/repairs/engineer/${repairId}`);
+  updateRepairStatus: async (repairId, status) => {
+    const response = await axios.patch(`/engineer/repairs/${repairId}/status`, {
+      status,
+    });
+    return response.data;
+  },
+
+  addorUpdateRepairNote: async (repairId, notes) => {
+    const response = await axios.patch(`/engineer/repairs/${repairId}/notes`, {
+      notes,
+    });
+    return response.data;
+  },
+
+  addPartsUsedInRepair: async (repairId, parts) => {
+    const response = await axios.post(`/engineer/repairs/${repairId}/parts`, {
+      parts,
+    });
+    return response.data;
+  },
+
+  updateRepairCost: async (repairId, cost) => {
+    const response = await axios.post(
+      `/engineer/repairs/${repairId}/cost`,
+      cost,
+    );
     return response.data;
   },
 

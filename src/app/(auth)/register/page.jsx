@@ -187,7 +187,7 @@ export default function MultiStepRegister() {
                 className={role === "user" ? "activeselect" : ""}
               >
                 <Image src={useImg} alt="user" />
-                <h3>Regular User</h3>
+                <h3>Individual</h3>
                 <p>Repair and protect your devices</p>
               </button>
 
@@ -197,7 +197,7 @@ export default function MultiStepRegister() {
                 className={role === "partner" ? "activeselect" : ""}
               >
                 <Image src={partImg} alt="partner" />
-                <h3>Partner</h3>
+                <h3>Business</h3>
                 <p>Join as a business</p>
               </button>
             </div>
@@ -496,6 +496,45 @@ export default function MultiStepRegister() {
                 <label htmlFor="">Phone Number</label>
 
                 <input type="number" placeholder="Enter phone number" />
+              </div>
+              <div className="form-group relative">
+                <label>Create Password</label>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  required
+                />
+                <span
+                  className="eye"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                </span>
+              </div>
+
+              <div className="form-group relative">
+                <label>Confirm Password</label>
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="passwordConfirm"
+                  value={formData.passwordConfirm}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  required
+                />
+                <span
+                  className="eye"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? (
+                    <Eye size={20} />
+                  ) : (
+                    <EyeOff size={20} />
+                  )}
+                </span>
               </div>
             </div>
 

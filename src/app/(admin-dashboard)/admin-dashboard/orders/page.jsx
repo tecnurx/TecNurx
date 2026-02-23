@@ -19,6 +19,7 @@ const AdminOrders = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [repairs, setRepairs] = useState([]);
+  const [repairStats, setRepairStats] = useState({});
 
   useEffect(() => {
     const fetchRepairs = async () => {
@@ -26,11 +27,12 @@ const AdminOrders = () => {
         setLoading(true);
         setError(null);
         const res = await adminService.getAllRepairs();
-        const repairStat = await adminService.getRepairStats()
-        console.log(repairStat);
+        // const repairStat = await adminService.getRepairStats()
+        // console.log(repairStat);
 
         // Adjust path based on your actual response structure
         const data = res.data?.repairs || res.repairs || [];
+        setRepairStats(res.stats);
         setRepairs(data);
       } catch (err) {
         console.error("Failed to load repairs:", err);
@@ -44,34 +46,31 @@ const AdminOrders = () => {
   }, []);
 
   // Dynamic stats based on real data
-  const totalRevenue = repairs
-    .filter((r) => r.paymentStatus === "paid" || r.paymentStatus === "completed")
-    .reduce((sum, r) => sum + (r.estimatedCost?.totalCost || 0), 0);
-
+  const totalRevenue = repairStats?.totalRevenue || 0;
   const stats = [
     {
       id: 1,
       title: "Total Revenue",
       value: `₦${totalRevenue.toLocaleString()}`,
-      icon: <Banknote size={24} />,           // Best for money/revenue
+      icon: <Banknote size={24} />, // Best for money/revenue
     },
     {
       id: 2,
       title: "Completed Repairs",
-      value: repairs.filter((r) => r.status === "completed" || r.status === "delivered").length.toString(),
-      icon: <CheckCircle2 size={24} />,         // Clear "done" / completed icon
+      value: repairStats?.completedRepairs,
+      icon: <CheckCircle2 size={24} />, // Clear "done" / completed icon
     },
     {
       id: 3,
       title: "Total Customers",
-      value: new Set(repairs.map((r) => r.user?._id)).size.toString() || "0",
-      icon: <Users size={24} />,                // Multiple people = customers
+      value: repairStats?.totalCustomers || "0",
+      icon: <Users size={24} />, // Multiple people = customers
     },
     {
       id: 4,
       title: "Assigned Engineers",
-      value: new Set(repairs.map((r) => r.engineer?._id)).size.toString() || "0",
-      icon: <Wrench size={24} />,               // Technician/repair tool feel
+      value: repairStats?.assignedEngineers || "0",
+      icon: <Wrench size={24} />, // Technician/repair tool feel
     },
   ];
 
@@ -145,11 +144,13 @@ const AdminOrders = () => {
                       {repair.user?.fname} {repair.user?.lname?.[0] || ""}
                     </td>
                     <td>
-                      {repair.device?.brand?.toUpperCase()} {repair.device?.model}
+                      {repair.device?.brand?.toUpperCase()}{" "}
+                      {repair.device?.model}
                     </td>
                     <td>{repair.issueCategory.replace(/_/g, " ")}</td>
                     <td>
-                      {repair.engineer?.fname} {repair.engineer?.lname?.[0] || ""}
+                      {repair.engineer?.fname}{" "}
+                      {repair.engineer?.lname?.[0] || ""}
                     </td>
                     <td className={`status-${repair.status}`}>
                       {repair.status.replace(/_/g, " ")}
@@ -157,7 +158,9 @@ const AdminOrders = () => {
                     <td className={`payment-${repair.paymentStatus}`}>
                       {repair.paymentStatus}
                     </td>
-                    <td>₦{(repair.estimatedCost?.totalCost || 0).toLocaleString()}</td>
+                    <td>
+                      ₦{(repair.estimatedCost?.totalCost || 0).toLocaleString()}
+                    </td>
                     <td>{new Date(repair.createdAt).toLocaleDateString()}</td>
                   </tr>
                 ))}

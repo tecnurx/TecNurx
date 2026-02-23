@@ -234,16 +234,26 @@
 
 .cost-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
   margin-bottom: 24px;
 }
 
 .cost-item {
-  background: #f8f8f8;
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 8px;
+  /* background: #f8f8f8; */
+  /* padding: 20px; */
   border-radius: 12px;
   text-align: center;
+}
+.cost-item input {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 4px;
 }
 
 .cost-item span {
@@ -328,11 +338,116 @@
   cursor: pointer;
 }
 
+/* ========================================== */
+.engineer-section-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.engineer-card {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.engineer-actions {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.status-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.status-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  cursor: pointer;
+}
+
+.status-btn.active {
+  background: #ffc400;
+  color: white;
+  border-color: #ffc400;
+}
+
+.repair-note-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  margin: 12px 0;
+  font-family: inherit;
+}
+
+.part-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+
+.part-row input {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+.part-qty {
+  width: 20px !important;
+}
+
+.btn-add,
+.btn-save,
+.btn-remove {
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-add {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #7dd3fc;
+  margin-right: 8px;
+}
+
+.btn-save {
+  background: #10b981;
+  color: white;
+  border: none;
+}
+
+.btn-remove {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px;
+}
+
+.mt-3 {
+  margin-top: 12px;
+}
+.mt-4 {
+  margin-top: 16px;
+}
+
 @media screen and (max-width: 600px) {
   .cost-grid {
     grid-template-columns: 1fr;
   }
-  .repair-details-container{
+  .repair-details-container {
     padding: 0;
+  }
+  .part-row {
+    flex-wrap: wrap;
   }
 }

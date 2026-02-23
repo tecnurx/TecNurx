@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Sidebar from "./components/engsidebar/Sidebar";
 import EngNav from "./components/EngNav";
 import { SidebarProvider } from "../../../context/SidebarContext";
+import CustomToast from "@/components/CustomToast";
 
 export default function EngineerDashboardLayout({ children }) {
   const router = useRouter();
@@ -45,6 +46,7 @@ export default function EngineerDashboardLayout({ children }) {
             <main className="main-content">{children}</main>
           </div>
         </SidebarProvider>
+         <CustomToast />
       </main>
     </div>
   );

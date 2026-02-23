@@ -14,9 +14,16 @@ import {
   Loader2,
   Banknote,
   AlertCircle,
+  Edit,
+  Plus,
+  Save,
+  X,
+  Wrench,
+  FileText,
 } from "lucide-react";
-import "./repair.css"; // plain CSS file
+import "./repair.css";
 import { engService } from "../../../../../services/eng/eng";
+import { toast } from "@/components/CustomToast";
 
 const RepairDetailsPage = () => {
   const params = useParams();
@@ -27,12 +34,60 @@ const RepairDetailsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Engineer action states
+  const [statusLoading, setStatusLoading] = useState(false);
+  const [notes, setNotes] = useState("");
+  const [noteSaving, setNoteSaving] = useState(false);
+  const [parts, setParts] = useState([{ partName: "", quantity: 1, cost: "" }]);
+  const [costData, setCostData] = useState({
+    laborCost: "",
+    partsCost: "",
+    additionalCosts: "",
+  });
+  const [costSaving, setCostSaving] = useState(false);
+
+  // Available statuses (filtered to likely engineer actions)
+  const engineerStatuses = [
+    "engineer_assigned",
+    "in_progress",
+    "awaiting_parts",
+    "completed",
+    "cancelled",
+  ];
+
   useEffect(() => {
     const fetchRepair = async () => {
       try {
         setLoading(true);
         const response = await engService.getRepairbyId(repairId);
-        setRepair(response.data?.repair || response.repair || response.data);
+        const repairData =
+          response.data?.repair || response.repair || response.data;
+        setRepair(repairData);
+
+        // Pre-fill costs if already set
+        if (repairData?.actualCost || repairData?.estimatedCost) {
+          const costs = repairData.actualCost || repairData.estimatedCost;
+          setCostData({
+            laborCost: costs?.laborCost || "",
+            partsCost: costs?.partsCost || "",
+            additionalCosts: costs?.additionalCosts || "",
+          });
+        }
+
+        // Pre-fill latest note if exists
+        if (repairData?.engineerNotes) {
+          setNotes(repairData.engineerNotes || "");
+        }
+
+        if (repairData.partsUsed?.length > 0) {
+        setParts(
+          repairData.partsUsed.map((p) => ({
+            _id: p._id,
+            partName: p.partName || "",
+            quantity: p.quantity || 1,
+            cost: p.cost || 0,
+          }))
+        );}
       } catch (err) {
         setError("Failed to load repair details");
         console.error(err);
@@ -44,10 +99,121 @@ const RepairDetailsPage = () => {
     fetchRepair();
   }, [repairId]);
 
+  const handleStatusChange = async (newStatus) => {
+    // Optional: prevent changing to the same status
+    if (repair?.status === newStatus) {
+      toast.info("Repair is already in this status");
+      return;
+    }
+
+    if (!confirm(`Change status to "${newStatus.replace(/_/g, " ")}"?`)) {
+      return;
+    }
+
+    try {
+      setStatusLoading(true);
+
+      const updatedRepair = await engService.updateRepairStatus(
+        repairId,
+        newStatus,
+      );
+
+      setRepair(updatedRepair);
+
+      toast.success(`Status updated to ${newStatus.replace(/_/g, " ")}`);
+    } catch (err) {
+      console.error("Status update failed:", err);
+
+      const errorMessage =
+        err.response?.data?.message ||
+        err.message ||
+        "Failed to update repair status";
+
+      toast.error(errorMessage);
+    } finally {
+      setStatusLoading(false);
+    }
+  };
+
+  const handleSaveNote = async () => {
+    if (!notes.trim()) return toast.error("Please enter a note");
+
+    try {
+      setNoteSaving(true);
+      const updated = await engService.addorUpdateRepairNote(repairId, notes);
+      setRepair((prev) => ({ ...prev, ...updated }));
+      toast.success("Note saved successfully");
+    } catch (err) {
+      toast.error("Failed to save note");
+      console.error(err);
+    } finally {
+      setNoteSaving(false);
+    }
+  };
+
+  const handleAddPart = () => {
+    setParts([...parts, { partName: "", quantity: 1, cost: "" }]);
+  };
+
+  const handlePartChange = (index, field, value) => {
+    const newParts = [...parts];
+    newParts[index][field] = value;
+    setParts(newParts);
+  };
+
+  const handleRemovePart = (index) => {
+    setParts(parts.filter((_, i) => i !== index));
+  };
+
+  const handleSaveParts = async () => {
+    const validParts = parts.filter(
+      (p) => p.partName.trim() && p.quantity > 0 && p.cost !== "",
+    );
+
+    if (validParts.length === 0)
+      return toast.error("Add at least one valid part");
+
+    try {
+      const response = await engService.addPartsUsedInRepair(
+        repairId,
+        validParts,
+      );
+      setRepair((prev) => ({ ...prev, ...response }));
+      toast.success("Parts added successfully");
+    } catch (err) {
+      toast.error("Failed to add parts");
+      console.error(err);
+    }
+  };
+
+  const handleCostChange = (field, value) => {
+    setCostData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSaveCosts = async () => {
+    const payload = {
+      laborCost: Number(costData.laborCost) || 0,
+      partsCost: Number(costData.partsCost) || 0,
+      additionalCosts: Number(costData.additionalCosts) || 0,
+    };
+
+    try {
+      setCostSaving(true);
+      const updated = await engService.updateRepairCost(repairId, payload);
+      setRepair((prev) => ({ ...prev, ...updated }));
+      toast.success("Costs updated successfully");
+    } catch (err) {
+      toast.error("Failed to update costs");
+      console.error(err);
+    } finally {
+      setCostSaving(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="resolve-wrap">
-        <p>Loading...</p>
+        <p>Loading repair details...</p>
         <div className="respinner"></div>
       </div>
     );
@@ -75,15 +241,36 @@ const RepairDetailsPage = () => {
         <h1>Repair #{repair._id?.slice(-8)}</h1>
       </div>
 
-      {/* Status Bar */}
+      {/* Status Section with Engineer Controls */}
       <div className="status-card">
         <div className="status-info">
-          <span className="status-badge status-engineer_assigned">
+          <span className={`status-badge status-${repair.status}`}>
             {repair.status?.replace(/_/g, " ").toUpperCase()}
           </span>
           <div className="status-date">
             <Clock size={16} />
             Assigned: {new Date(repair.assignedAt).toLocaleString()}
+          </div>
+        </div>
+
+        {/* Engineer status update controls */}
+        <div className="engineer-actions">
+          <h3>Update Status</h3>
+          <div className="status-buttons">
+            {engineerStatuses.map((status) => (
+              <button
+                key={status}
+                onClick={() => handleStatusChange(status)}
+                disabled={statusLoading || repair.status === status}
+                className={`status-btn ${repair.status === status ? "active" : ""}`}
+              >
+                {statusLoading ? (
+                  <Loader2 className="animate-spin" size={16} />
+                ) : (
+                  status.replace(/_/g, " ")
+                )}
+              </button>
+            ))}
           </div>
         </div>
       </div>
@@ -94,7 +281,6 @@ const RepairDetailsPage = () => {
           <h2 className="card-title">
             <Smartphone size={22} /> Device & Issue
           </h2>
-
           <div className="detail-row">
             <span>Device:</span>
             <strong>
@@ -191,42 +377,168 @@ const RepairDetailsPage = () => {
         </div>
       </div>
 
-      {/* Cost & Warranty */}
-      <div className="detail-card cost-card">
-        <h2 className="card-title">
-          <Banknote size={22} /> Cost & Warranty
-        </h2>
+      {/* Engineer Action Sections */}
+      <div className="engineer-section-grid">
+        {/* Notes */}
+        <div className="detail-card engineer-card">
+          <h2 className="card-title">
+            <FileText size={22} /> Repair Notes
+          </h2>
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Enter repair notes, findings, resolution steps..."
+            rows={5}
+            className="repair-note-textarea"
+          />
+          <button
+            onClick={handleSaveNote}
+            disabled={noteSaving || !notes.trim()}
+            className="btn-save"
+          >
+            {noteSaving ? (
+              <>
+                <Loader2 className="animate-spin" size={16} /> Saving...
+              </>
+            ) : (
+              <>
+                <Save size={16} /> Save Note
+              </>
+            )}
+          </button>
+        </div>
 
-        <div className="cost-grid">
-          <div className="cost-item">
-            <span>Parts Cost</span>
-            <strong>₦{repair.estimatedCost?.partsCost?.toLocaleString() || "0"}</strong>
-          </div>
-          <div className="cost-item">
-            <span>Labor Cost</span>
-            <strong>₦{repair.estimatedCost?.laborCost?.toLocaleString() || "0"}</strong>
-          </div>
-          <div className="cost-item total">
-            <span>Total Cost</span>
-            <strong className="total-amount">
-              ₦{repair.estimatedCost?.totalCost?.toLocaleString() || "0"}
-            </strong>
+        {/* Parts Used */}
+        <div className="detail-card engineer-card">
+          <h2 className="card-title">
+            <Wrench size={22} /> Parts Used
+          </h2>
+
+          {parts.length === 0 ? (
+            <p className="text-gray-500 italic">No parts recorded yet</p>
+          ) : (
+            parts.map((part, index) => (
+              <div
+                key={index}
+                className="part-row flex gap-3 items-center mb-3"
+              >
+                <input
+                  type="text"
+                  placeholder="Part name (e.g. LCD Screen)"
+                  value={part.partName}
+                  onChange={(e) =>
+                    handlePartChange(index, "partName", e.target.value)
+                  }
+                  className="flex-1"
+                />
+                <input
+                  type="number"
+                  placeholder="Qty"
+                  min="1"
+                  value={part.quantity}
+                  onChange={(e) =>
+                    handlePartChange(index, "quantity", e.target.value)
+                  }
+                  className="part-qty"
+                />
+                <input
+                  type="number"
+                  placeholder="₦ Cost"
+                  min="0"
+                  step="100"
+                  value={part.cost}
+                  onChange={(e) =>
+                    handlePartChange(index, "cost", e.target.value)
+                  }
+                  className="w-28"
+                />
+                <button
+                  onClick={() => handleRemovePart(index)}
+                  className="btn-remove p-2"
+                  title="Remove part"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+            ))
+          )}
+
+          <div className="flex gap-4 mt-4">
+            <button
+              onClick={handleAddPart}
+              className="btn-add flex items-center gap-1"
+            >
+              <Plus size={16} /> Add Part
+            </button>
+
+            <button
+              onClick={handleSaveParts}
+              className="btn-save flex items-center gap-1"
+              // disabled={/* optional: add loading state if needed */}
+            >
+              <Save size={16} /> Save Parts
+            </button>
           </div>
         </div>
 
-        {/* {repair.warranty?.hasWarranty && (
-          <div className="warranty-info">
-            <Battery size={20} />
-            <div>
-              <strong>90-Day Warranty Included</strong>
-              <p>Repair is covered under warranty for 90 days</p>
+        {/* Final Cost */}
+        <div className="detail-card cost-card engineer-card">
+          <h2 className="card-title">
+            <Banknote size={22} /> Final Cost
+          </h2>
+
+          <div className="cost-grid">
+            <div className="cost-item">
+              <label>Parts Cost</label>
+              <input
+                type="number"
+                value={costData.partsCost}
+                onChange={(e) => handleCostChange("partsCost", e.target.value)}
+                placeholder="0"
+              />
+            </div>
+            <div className="cost-item">
+              <label>Labor Cost</label>
+              <input
+                type="number"
+                value={costData.laborCost}
+                onChange={(e) => handleCostChange("laborCost", e.target.value)}
+                placeholder="0"
+              />
+            </div>
+            <div className="cost-item">
+              <label>Additional Costs</label>
+              <input
+                type="number"
+                value={costData.additionalCosts}
+                onChange={(e) =>
+                  handleCostChange("additionalCosts", e.target.value)
+                }
+                placeholder="0"
+              />
             </div>
           </div>
-        )} */}
 
-        <div className="payment-status">
-          <span>Payment Status:</span>
-          <strong className="status-paid">{repair.paymentStatus.toUpperCase()}</strong>
+          <button
+            onClick={handleSaveCosts}
+            disabled={costSaving}
+            className="btn-save mt-4"
+          >
+            {costSaving ? (
+              <>
+                <Loader2 className="animate-spin" size={16} /> Saving...
+              </>
+            ) : (
+              "Update Final Costs"
+            )}
+          </button>
+
+          <div className="payment-status mt-4">
+            <span>Payment Status:</span>
+            <strong className="status-paid">
+              {repair.paymentStatus?.toUpperCase()}
+            </strong>
+          </div>
         </div>
       </div>
     </div>
