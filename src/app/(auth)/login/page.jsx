@@ -175,7 +175,6 @@ const Login = () => {
                 <Link href="/forgot-password">Forgot Password?</Link>
               </div>
 
-
               <div className="sign-btn">
                 <button
                   type="submit"
@@ -184,33 +183,38 @@ const Login = () => {
                 >
                   {loading ? "Signing In..." : "Sign In"}
                 </button>
-                <div className="auth-options">
-                <div
-                  onClick={handleGoogleLogin}
-                  style={{
-                    cursor: googleLoading ? "not-allowed" : "pointer",
-                    opacity: googleLoading ? 0.7 : 1,
-                    // display: "flex",
-                    // alignItems: "center",
-                    // gap: "12px",
-                    // padding: "12px",
-                    // border: "1px solid #ddd",
-                    // borderRadius: "8px",
-                    // background: "#fff",
-                    // transition: "all 0.2s",
-                  }}
-                  onMouseOver={(e) =>
-                    !googleLoading &&
-                    (e.currentTarget.style.background = "#f9f9f9")
-                  }
-                  onMouseOut={(e) =>
-                    !googleLoading &&
-                    (e.currentTarget.style.background = "#fff")
-                  }
-                >
-                  <Image src={google} alt="google" />
-                  <span>{googleLoading ? "Connecting..." : "Google"}</span>
+                <div className="divider">
+                  <h6></h6>
+                  <h4>or</h4>
+                  <h6></h6>
                 </div>
+                <div className="auth-options">
+                  <div
+                    onClick={handleGoogleLogin}
+                    style={{
+                      cursor: googleLoading ? "not-allowed" : "pointer",
+                      opacity: googleLoading ? 0.7 : 1,
+                      // display: "flex",
+                      // alignItems: "center",
+                      // gap: "12px",
+                      // padding: "12px",
+                      // border: "1px solid #ddd",
+                      // borderRadius: "8px",
+                      // background: "#fff",
+                      // transition: "all 0.2s",
+                    }}
+                    onMouseOver={(e) =>
+                      !googleLoading &&
+                      (e.currentTarget.style.background = "#f9f9f9")
+                    }
+                    onMouseOut={(e) =>
+                      !googleLoading &&
+                      (e.currentTarget.style.background = "#fff")
+                    }
+                  >
+                    <Image src={google} alt="google" />
+                    <span>{googleLoading ? "Connecting..." : "Google"}</span>
+                  </div>
                 </div>
                 <div>
                   <h6>Don't have an account?</h6>
