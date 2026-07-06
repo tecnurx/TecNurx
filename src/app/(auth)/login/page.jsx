@@ -175,13 +175,21 @@ const Login = () => {
                 <Link href="/forgot-password">Forgot Password?</Link>
               </div>
 
-              <div className="divider">
+              {/* <div className="divider">
                 <h6></h6>
                 <h4>or</h4>
                 <h6></h6>
-              </div>
+              </div> */}
 
-              <div className="auth-options">
+              <div className="sign-btn">
+                <button
+                  type="submit"
+                  disabled={loading || googleLoading}
+                  className="sign-in-btn"
+                >
+                  {loading ? "Signing In..." : "Sign In"}
+                </button>
+                <div className="auth-options">
                 <div
                   onClick={handleGoogleLogin}
                   style={{
@@ -208,17 +216,7 @@ const Login = () => {
                   <Image src={google} alt="google" />
                   <span>{googleLoading ? "Connecting..." : "Google"}</span>
                 </div>
-              </div>
-
-              <div className="sign-btn">
-                <button
-                  type="submit"
-                  disabled={loading || googleLoading}
-                  className="sign-in-btn"
-                >
-                  {loading ? "Signing In..." : "Sign In"}
-                </button>
-
+                </div>
                 <div>
                   <h6>Don't have an account?</h6>
                   <Link href="/register">Sign Up</Link>

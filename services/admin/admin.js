@@ -51,6 +51,11 @@ export const adminService = {
     return response.data;
   },
 
+  getServicesbyId: async (serviceId) => {
+    const response = await axios.get(`/service-offerings/${serviceId}`);
+    return response.data;
+  },
+
   getIssues: async () => {
     const response = await axios.get("/repairs/issues");
     return response.data;

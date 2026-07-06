@@ -105,7 +105,9 @@ const AdminGadgets = () => {
     <div className="admin-dashboard">
       <div className="dashboard-header gadget-header">
         <h1>Gadget Service Catalog</h1>
-        <Link href={'/admin-dashboard/gadgets/service-offering'}>Create Service  <PlusIcon size={24} /></Link>
+        <Link href={"/admin-dashboard/gadgets/service-offering"}>
+          Create Service <PlusIcon size={24} />
+        </Link>
       </div>
 
       {/* Stats */}
@@ -142,6 +144,7 @@ const AdminGadgets = () => {
                   <th>Services</th>
                   <th>Active</th>
                   <th>Status</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -169,6 +172,14 @@ const AdminGadgets = () => {
                       >
                         {offering.isActive ? "Active" : "Inactive"}
                       </span>
+                    </td>
+                    <td>
+                      <Link
+                        style={{ cursor: "pointer", color: "#28a745" }}
+                        href={`/admin-dashboard/gadgets/${offering._id}`}
+                      >
+                        Edit
+                      </Link>
                     </td>
                   </tr>
                 ))}

@@ -1,8 +1,13 @@
 import axios from "../../lib/axios";
 
 export const engService = {
+  getEngineerStats: async () => {
+    const response = await axios.get("/engineer/dashboard");
+    return response.data;
+  },
+
   getEngineerRepairs: async () => {
-    const response = await axios.get("/repairs/engineer/assigned");
+    const response = await axios.get("/engineer/repairs");
     return response.data;
   },
 

@@ -13,6 +13,7 @@ import {
   Smartphone,
   User,
   Wallet,
+  XCircleIcon,
 } from "lucide-react";
 import { engineerAuthService } from "../../../../services/eng/engineerAuth";
 import Link from "next/link";
@@ -23,7 +24,8 @@ const EngineerDashboard = () => {
   const [repairs, setRepairs] = useState([]);
   const [currentUser, setCurrentUser] = useState([]);
   const [payments, setPayments] = useState([]);
-  const [paymentStats, setPaymentStats] = useState({});
+  const [engStats, setEngStats] = useState({});
+  const [paymentStats, setPaymentStats] = useState({})
 
   // Fetch  data
   useEffect(() => {
@@ -39,6 +41,10 @@ const EngineerDashboard = () => {
 
         //fetch repairs
         const res = await engService.getEngineerRepairs();
+
+        const stats = await engService.getEngineerStats();
+        setEngStats(stats?.data?.stats);
+        console.log(stats?.data)
 
         const paymentResponse = await engService.getEngineerPayments();
         setPayments(paymentResponse.data.payments);
@@ -60,9 +66,7 @@ const EngineerDashboard = () => {
   }, []);
 
   // Dynamic stats from real data
-  const totalEarnings = paymentStats.completedAmount;
-  const completedRepairs = paymentStats.completed;
-  const pendingRepairs = paymentStats.pending;
+  const totalEarnings = paymentStats?.completedAmount;
 
   const stats = [
     {
@@ -73,21 +77,21 @@ const EngineerDashboard = () => {
     },
     {
       id: 2,
-      title: "Completed Repairs",
-      value: completedRepairs,
-      icon: <CheckCircle2 size={24} />,
+      title: "Active Repairs",
+      value: engStats?.activeRepairs,
+      icon: <Wrench size={24} />,
     },
     {
       id: 3,
-      title: "Pending Repairs",
-      value: pendingRepairs,
-      icon: <Clock size={24} />,
+      title: "Completed Repairs",
+      value: engStats?.completedRepairs,
+      icon: <XCircleIcon size={24} />,
     },
     {
       id: 4,
-      title: "Assigned Repairs",
-      value: repairs.length,
-      icon: <Wrench size={24} />,
+      title: "Cancelled Repairs",
+      value: engStats?.cancelledRepairs,
+      icon: <CheckCircle2 size={24} />,
     },
   ];
 
