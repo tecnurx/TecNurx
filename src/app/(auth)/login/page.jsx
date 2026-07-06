@@ -175,11 +175,6 @@ const Login = () => {
                 <Link href="/forgot-password">Forgot Password?</Link>
               </div>
 
-              {/* <div className="divider">
-                <h6></h6>
-                <h4>or</h4>
-                <h6></h6>
-              </div> */}
 
               <div className="sign-btn">
                 <button
