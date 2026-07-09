@@ -97,7 +97,9 @@ const AdSidebar = () => {
             </Link>
             <Link
               href="/admin-dashboard/orders"
-              className={pathname === "/admin-dashboard/orders" ? "active" : ""}
+              className={
+                pathname?.startsWith("/admin-dashboard/orders") ? "active" : ""
+              }
               onClick={closeSidebar}
             >
               <File size={14} /> Repairs (Orders)
@@ -105,7 +107,7 @@ const AdSidebar = () => {
             <Link
               href="/admin-dashboard/logistics"
               className={
-                pathname === "/admin-dashboard/logistics" ? "active" : ""
+                pathname?.startsWith("/admin-dashboard/logistics") ? "active" : ""
               }
               onClick={closeSidebar}
             >
@@ -114,7 +116,7 @@ const AdSidebar = () => {
             <Link
               href="/admin-dashboard/transactions"
               className={
-                pathname === "/admin-dashboard/transactions" ? "active" : ""
+                pathname?.startsWith("/admin-dashboard/transactions") ? "active" : ""
               }
               onClick={closeSidebar}
             >

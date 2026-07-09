@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import "./adtran.css";
 import { adminService } from "../../../../../services/admin/admin";
 import { RotateCcw, CreditCard, CircleCheck } from "lucide-react";
+import Link from 'next/link'
 
 const AdminTransactions = () => {
   const [loading, setLoading] = useState(true);
@@ -95,6 +96,7 @@ const AdminTransactions = () => {
                 <th>Amount</th>
                 <th>Date</th>
                 <th>Status</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -109,6 +111,14 @@ const AdminTransactions = () => {
                     {new Date(transaction.dateInitiated).toLocaleString()}
                   </td>
                   <td>{transaction.status}</td>
+                  <td>
+                    <Link
+                      href={`/admin-dashboard/transactions/${transaction._id}`}
+                      className="view-transaction"
+                    >
+                      View
+                    </Link>  
+                    </td>
                 </tr>
               ))}
             </tbody>

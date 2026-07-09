@@ -41,7 +41,7 @@ const ServicePartnerSignUp = () => {
 
       // Only show success and proceed if NO error
       toast.success(
-        "Engineer account creater!"
+        "Engineer account created!"
       );
     } catch (err) {
       // This block runs ONLY on actual error

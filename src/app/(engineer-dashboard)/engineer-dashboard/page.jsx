@@ -25,7 +25,7 @@ const EngineerDashboard = () => {
   const [currentUser, setCurrentUser] = useState([]);
   const [payments, setPayments] = useState([]);
   const [engStats, setEngStats] = useState({});
-  const [paymentStats, setPaymentStats] = useState({})
+  const [paymentStats, setPaymentStats] = useState({});
 
   // Fetch  data
   useEffect(() => {
@@ -44,7 +44,7 @@ const EngineerDashboard = () => {
 
         const stats = await engService.getEngineerStats();
         setEngStats(stats?.data?.stats);
-        console.log(stats?.data)
+        console.log(stats?.data);
 
         const paymentResponse = await engService.getEngineerPayments();
         setPayments(paymentResponse.data.payments);
@@ -139,7 +139,10 @@ const EngineerDashboard = () => {
       <div className="sections-grid">
         {/* My Repairs */}
         <div className="engcardd">
-          <h3>My Repairs ({repairs.length})</h3>
+          <div className="table-split">
+            <h3>Recent Repairs ({repairs.length})</h3>
+            <Link href="/engineer-dashboard/repairs">View all</Link>
+          </div>
           <div className="table-container">
             {repairs.length === 0 ? (
               <p className="empty-state">No repairs assigned yet.</p>
@@ -156,7 +159,7 @@ const EngineerDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {repairs.map((repair) => (
+                  {repairs.splice(0, 4).map((repair) => (
                     <tr key={repair._id}>
                       <td>#{repair._id.slice(-8)}</td>
                       <td>
@@ -194,7 +197,10 @@ const EngineerDashboard = () => {
 
         {/* My Payments (placeholder - expand later) */}
         <div className="engcardd">
-          <h3>My Payments ({payments.length}) </h3>
+          <div className="table-split">
+            <h3>Recent Payments ({payments.length}) </h3>
+            <Link href="/engineer-dashboard/payments">View all</Link>
+          </div>
           <div className="table-container">
             {payments.length === 0 ? (
               <p className="empty-state">No payments yet.</p>
@@ -210,7 +216,7 @@ const EngineerDashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {payments.map((payment) => (
+                  {payments.splice(0, 4).map((payment) => (
                     <tr key={payment.transactionId}>
                       <td>#{payment.transactionId}</td>
                       <td>
@@ -239,7 +245,7 @@ const EngineerDashboard = () => {
         </div>
 
         {/* My Transactions - Full Width */}
-        <div className="engcardd transactions-card">
+        {/* <div className="engcardd transactions-card">
           <h3>My Transactions</h3>
           <div className="transaction-list">
             <div className="transaction-item">
@@ -267,7 +273,7 @@ const EngineerDashboard = () => {
               <span className="amount withdrawal">-₦100,000</span>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -22,8 +22,8 @@ import {
   FileText,
 } from "lucide-react";
 import "./repair.css";
-import { engService } from "../../../../../services/eng/eng";
 import { toast } from "@/components/CustomToast";
+import { engService } from './../../../../../../services/eng/eng';
 
 const RepairDetailsPage = () => {
   const params = useParams();
@@ -236,7 +236,7 @@ const RepairDetailsPage = () => {
       {/* Header */}
       <div className="repair-header">
         <button onClick={() => router.back()} className="btn-back">
-          <ArrowLeft size={20} /> Back to Dashboard
+          <ArrowLeft size={20} /> Back to Repairs
         </button>
         <h1>Repair #{repair._id?.slice(-8)}</h1>
       </div>

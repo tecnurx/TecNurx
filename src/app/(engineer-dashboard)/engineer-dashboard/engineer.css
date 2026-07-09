@@ -249,6 +249,20 @@
 .amount.topup {
   color: #00b894;
 }
+.table-split{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.table-split a {
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.table-split a:hover{
+  border-bottom: 1px solid black;
+  transition: ease-in .3s all;
+}
 
 /* Responsive */
 @media screen and (max-width: 1290px) {

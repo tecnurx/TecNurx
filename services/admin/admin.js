@@ -41,6 +41,11 @@ export const adminService = {
     return response.data;
   },
 
+  getAdminPaymentbyId: async (paymentId) => {
+    const response = await axios.get(`/payment/admin/${paymentId}`);
+    return response.data;
+  },
+
   getPaymentAnalytics: async () => {
     const response = await axios.get("/payment/admin/analytics");
     return response.data;

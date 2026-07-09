@@ -10,6 +10,7 @@ import {
   Menu,
   ShoppingCart,
   UserPen,
+  Wallet,
 } from "lucide-react";
 import { SidebarContext } from "../../../../../context/SidebarContext";
 import "./sidebar.css";
@@ -63,15 +64,24 @@ const Sidebar = () => {
             >
               <LayoutGridIcon size={14} /> Overview
             </Link>
-            {/* <Link
-              href="/engineer-dashboard/my-orders"
+            <Link
+              href="/engineer-dashboard/repairs"
               className={
-                pathname === "/engineer-dashboard/my-orders" ? "active" : ""
+                pathname?.startsWith("/engineer-dashboard/repairs") ? "active" : ""
               }
               onClick={closeSidebar}
             >
-              <ShoppingCart size={14} /> My Orders / Tracking
-            </Link> */}
+              <ShoppingCart size={14} /> My Repairs
+            </Link>
+            <Link
+              href="/engineer-dashboard/payments"
+              className={
+                pathname?.startsWith("/engineer-dashboard/payments") ? "active" : ""
+              }
+              onClick={closeSidebar}
+            >
+              <Wallet size={14} /> My Payments
+            </Link>
           </div>
 
           <div className="eng-divider">

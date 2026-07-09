@@ -49,4 +49,9 @@ export const engService = {
     const response = await axios.get("/payment/engineer/payments");
     return response.data;
   },
+
+  getEngineerPaymentsbyId: async (paymentId) => {
+    const response = await axios.get(`/payment/engineer/${paymentId}`);
+    return response.data;
+  },
 };
