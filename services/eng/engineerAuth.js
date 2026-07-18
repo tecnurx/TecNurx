@@ -4,7 +4,11 @@ export const engineerAuthService = {
   login: async (credentials) => {
     const response = await axios.post("/users/loginEng", credentials);
     const { token } = response.data;
-    const { user } = response.data?.data;
+    const { user, hasServicePartnerProfile } = response.data?.data || {};
+
+    if (user && hasServicePartnerProfile !== undefined) {
+      user.hasServicePartnerProfile = hasServicePartnerProfile;
+    }
 
     if (token) {
       localStorage.setItem("token", token);

@@ -213,6 +213,8 @@
   border: none;
   padding: 24px;
   cursor: pointer;
+  margin-top: 12px;
+  width: 100%;
 }
 .service-logo {
   display: flex;

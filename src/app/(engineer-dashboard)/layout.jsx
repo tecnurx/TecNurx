@@ -2,7 +2,7 @@
 "use client";
 
 import { useContext, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Sidebar from "./components/engsidebar/Sidebar";
 import EngNav from "./components/EngNav";
 import { SidebarProvider } from "../../../context/SidebarContext";
@@ -10,6 +10,7 @@ import CustomToast from "@/components/CustomToast";
 
 export default function EngineerDashboardLayout({ children }) {
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const userJson = localStorage.getItem("user");
@@ -25,12 +26,17 @@ export default function EngineerDashboardLayout({ children }) {
 
       if (!["engineer", "service partner", "service-partner", "eng"].includes(role)) {
         router.replace("/resolve-role");
+        return;
+      }
+
+      if (user.hasServicePartnerProfile === false && !pathname.includes("/complete-profile")) {
+        router.replace("/engineer-dashboard/complete-profile");
       }
     } catch (error) {
       console.log("Invalid user data in localStorage");
       router.replace("/");
     }
-  }, [router]);
+  }, [router, pathname]);
 
   return (
     <div>

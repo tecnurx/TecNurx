@@ -21,8 +21,23 @@ export const adminService = {
     return response.data;
   },
 
+  createEngineer: async (data) => {
+    const response = await axios.post("/admin/engineers", data);
+    return response.data;
+  },
+
+  createServiceProvider: async (payload) => {
+    const response = await axios.post("/service-providers", payload);
+    return response.data;
+  },
+
   getEngineerbyId: async (engineerId) => {
-    const response = await axios.get(`/service-providers/${engineerId}`);
+    const response = await axios.get(`/admin/engineers/${engineerId}`);
+    return response.data;
+  },
+
+  verifyEngineer: async (engineerId) => {
+    const response = await axios.patch(`/admin/engineers/${engineerId}/verify`);
     return response.data;
   },
 

@@ -43,10 +43,17 @@ const EngineerLogin = () => {
         password: formData.password,
       };
 
-      await engineerAuthService.login(payload);
+      const response = await engineerAuthService.login(payload);
 
-      toast.success("Welcome back! Redirecting...");
-      setTimeout(() => router.push("/engineer-dashboard"), 1500);
+      const hasProfile = response.data?.hasServicePartnerProfile;
+
+      if (hasProfile === false) {
+        toast.info("Please complete your professional profile to access the dashboard.");
+        setTimeout(() => router.push("/engineer-dashboard/complete-profile"), 1500);
+      } else {
+        toast.success("Welcome back! Redirecting...");
+        setTimeout(() => router.push("/engineer-dashboard"), 1500);
+      }
     } catch (err) {
       console.error("Login error:", err);
       const message =

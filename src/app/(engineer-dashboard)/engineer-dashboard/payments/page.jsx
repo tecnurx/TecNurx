@@ -82,7 +82,7 @@ const PaymentPage = () => {
                     </td>
                     <td>
                       <Link
-                        href={`/engineer-dashboard/payments/${payment.repairId._id}`}
+                        href={`/engineer-dashboard/payments/${payment._id}`}
                         className="view-repair"
                       >
                         View

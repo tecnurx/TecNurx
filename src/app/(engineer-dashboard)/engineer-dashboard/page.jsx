@@ -72,25 +72,25 @@ const EngineerDashboard = () => {
     {
       id: 1,
       title: "Total Earnings",
-      value: `₦${totalEarnings?.toLocaleString()}`,
+      value: `₦${(totalEarnings || 0).toLocaleString()}`,
       icon: <Banknote size={24} />,
     },
     {
       id: 2,
       title: "Active Repairs",
-      value: engStats?.activeRepairs,
+      value: engStats?.activeRepairs || "0",
       icon: <Wrench size={24} />,
     },
     {
       id: 3,
       title: "Completed Repairs",
-      value: engStats?.completedRepairs,
+      value: engStats?.completedRepairs || "0",
       icon: <XCircleIcon size={24} />,
     },
     {
       id: 4,
       title: "Cancelled Repairs",
-      value: engStats?.cancelledRepairs,
+      value: engStats?.cancelledRepairs || "0",
       icon: <CheckCircle2 size={24} />,
     },
   ];

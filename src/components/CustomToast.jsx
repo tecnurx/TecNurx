@@ -1,4 +1,4 @@
-// components/CustomToast.tsx
+// components/CustomToast.jsx
 "use client";
 
 import { useEffect, useState } from "react";
