@@ -7,6 +7,7 @@ import Sidebar from "./components/engsidebar/Sidebar";
 import EngNav from "./components/EngNav";
 import { SidebarProvider } from "../../../context/SidebarContext";
 import CustomToast from "@/components/CustomToast";
+import SessionExpiry from "@/components/SessionExpiry";
 
 export default function EngineerDashboardLayout({ children }) {
   const router = useRouter();
@@ -53,6 +54,7 @@ export default function EngineerDashboardLayout({ children }) {
           </div>
         </SidebarProvider>
          <CustomToast />
+         <SessionExpiry />
       </main>
     </div>
   );

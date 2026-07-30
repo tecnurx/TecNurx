@@ -2,6 +2,9 @@ import Image from "next/image";
 import React from "react";
 import logo from "@/assets/images/foot-logo.svg";
 import ig from "@/assets/images/ig.svg";
+import linkedin from "@/assets/images/linkedin.png";
+import whatsapp from "@/assets/images/whatsapp.png";
+import x from "@/assets/images/x.png";
 import fb from "@/assets/images/fb.svg";
 import call from "@/assets/images/call.svg";
 import mail from "@/assets/images/mail.svg";
@@ -54,10 +57,10 @@ const Footer = ({ newsPaperWrap }) => {
                 <Link href="/#GetQuote">Get a Quote</Link>
               </div>
             </div>
-            <Link className="social-icon hide-ig" target="_blank" href="#">
+            {/* <Link className="social-icon hide-ig" target="_blank" href="#">
               <Image src={ig} alt="Instagram" />
               Instagram
-            </Link>
+            </Link> */}
           </div>
           <div className="foot-contact">
             <div>
@@ -95,18 +98,46 @@ const Footer = ({ newsPaperWrap }) => {
                   </p>
                 </div>
               </div>
-              <div className="social-wrap">
-                <Link className="social-icon" target="_blank" href="#">
-                  <Image src={fb} alt="Instagram" />
-                  Facebook
-                </Link>
-                <Link className="social-icon show-ig" target="_blank" href="#">
-                  <Image src={ig} alt="Instagram" />
-                  Instagram
-                </Link>
-              </div>
             </div>
           </div>
+        </div>
+        <div className="social-wrap">
+          <a
+            className="social-icon"
+            target="_blank"
+            href="https://www.facebook.com/share/1YogVQf4Wf/?mibextid=wwXIfr"
+          >
+            <Image src={fb} alt="Facebook" />
+            Facebook
+          </a>
+          <a
+            className="social-icon"
+            target="_blank"
+            href="https://www.instagram.com/tecnurx/"
+          >
+            <Image src={ig} alt="Instagram" />
+            Instagram
+          </a>
+          <a
+            className="social-icon"
+            target="_blank"
+            href="https://x.com/TecNurx"
+          >
+            <Image src={x} alt="X" className="x-icon" />
+            Twitter
+          </a>
+          <a
+            className="social-icon"
+            target="_blank"
+            href="https://www.linkedin.com/company/tecnurx/"
+          >
+            <Image src={linkedin} alt="LinkedIn" />
+            LinkedIn
+          </a>
+          <a className="social-icon" target="_blank" href="https://wa.me/2349132367306">
+            <Image src={whatsapp} alt="Whatsapp" />
+            Whatsapp
+          </a>
         </div>
         <div className="copyright">
           <p>© TecNurx All rights reserved, 2025 </p>

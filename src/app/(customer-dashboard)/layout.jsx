@@ -7,6 +7,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import { SidebarProvider } from "../../../context/SidebarContext";
 import Chatbox from "@/components/chatbox/Chatbox";
 import CustomToast from "@/components/CustomToast";
+import SessionExpiry from "@/components/SessionExpiry";
 import { useEffect, useState, React, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -78,6 +79,7 @@ function LayoutContent({ children }) {
         </SidebarProvider>
         <Chatbox />
         <CustomToast />
+        <SessionExpiry />
       </main>
     </div>
   );

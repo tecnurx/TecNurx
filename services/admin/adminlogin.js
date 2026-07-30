@@ -9,6 +9,7 @@ export const adminAuthService = {
     if (token) {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("loginTime", Date.now().toString());
     }
 
     document.cookie = `token=${token}; path=/; max-age=604800; SameSite=Lax; ${
