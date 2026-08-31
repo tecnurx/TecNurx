@@ -383,7 +383,7 @@ const DashboardContent = () => {
           )}
 
           {/* Recent Activity */}
-          <div className="activity-section">
+          {/* <div className="activity-section">
             <h2 className="activity-title">Recent Activity</h2>
             {recentActivity.length > 0 ? (
               <div className="activity-list">
@@ -407,7 +407,7 @@ const DashboardContent = () => {
             ) : (
               <p>No recent activity.</p>
             )}
-          </div>
+          </div> */}
         </div>
       )}
     </>
