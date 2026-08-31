@@ -99,4 +99,14 @@ export const adminService = {
     );
     return response.data;
   },
+
+  getAvailableEngineersForRepair: async (repairId) => {
+    const response = await axios.get(`/repairs/admin/${repairId}/available-engineers`);
+    return response.data;
+  },
+
+  reassignRepair: async (repairId, engineerId) => {
+    const response = await axios.patch(`/repairs/admin/${repairId}/reassign`, { engineerId });
+    return response.data;
+  },
 };

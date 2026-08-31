@@ -134,6 +134,7 @@ const AdminOrders = () => {
                   <th>Payment</th>
                   <th>Cost</th>
                   <th>Created</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -162,6 +163,14 @@ const AdminOrders = () => {
                       ₦{(repair.estimatedCost?.totalCost || 0).toLocaleString()}
                     </td>
                     <td>{new Date(repair.createdAt).toLocaleDateString()}</td>
+                    <td>
+                      <button
+                        onClick={() => window.location.href = `/admin-dashboard/orders/${repair._id}`}
+                        style={{ padding: "6px 12px", background: "#f1f5f9", border: "1px solid #cbd5e1", borderRadius: "6px", cursor: "pointer", fontSize: "13px" }}
+                      >
+                        View
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

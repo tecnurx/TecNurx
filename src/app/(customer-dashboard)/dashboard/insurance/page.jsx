@@ -148,6 +148,12 @@ const DashboardInsurance = () => {
         {/* 2. Claim Insurance */}
         {activeTab === "claim" && (
           <div className="claim-form-container">
+            <div className="no-plans">
+              <Clock size={48} style={{ opacity: 0.5 }} />
+              <h2 >Feature Coming Soon</h2>
+              <p>We are working hard to bring you a seamless insurance claim experience. Stay tuned!</p>
+            </div>
+            {/*
             <form className="claim-form">
               <h2>File a New Claim</h2>
               <p>Fill in the details below to start your insurance claim.</p>
@@ -207,6 +213,7 @@ const DashboardInsurance = () => {
                 Submit Claim
               </button>
             </form>
+            */}
           </div>
         )}
 

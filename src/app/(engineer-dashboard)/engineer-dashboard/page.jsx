@@ -27,6 +27,14 @@ const EngineerDashboard = () => {
   const [engStats, setEngStats] = useState({});
   const [paymentStats, setPaymentStats] = useState({});
 
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [accountName, setAccountName] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [bankName, setBankName] = useState("");
+  
+  const walletBalance = 0;
+
   // Fetch  data
   useEffect(() => {
     const fetchRepairs = async () => {
@@ -126,9 +134,9 @@ const EngineerDashboard = () => {
       {/* Wallet Balance Card */}
       <div className="balance-card">
         <h2>Wallet Balance</h2>
-        <div className="balance-amount">₦300,000</div>{" "}
+        <div className="balance-amount">₦{walletBalance.toLocaleString()}</div>{" "}
         {/* Fetch this in real app */}
-        <button className="btn-primary">Withdraw</button>
+        <button className="btn-primary" onClick={() => setShowWithdrawModal(true)}>Withdraw</button>
         <div className="search-bar">
           <input type="text" placeholder="Search by order number" />
           <button className="btn-search">Search</button>
@@ -275,6 +283,90 @@ const EngineerDashboard = () => {
           </div>
         </div> */}
       </div>
+
+      {/* Withdraw Modal */}
+      {showWithdrawModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+          <div style={{ background: '#fff', padding: '32px', borderRadius: '16px', width: '100%', maxWidth: '450px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: 'bold' }}>Withdraw Funds</h2>
+            <p style={{ color: '#666', fontSize: '14px', marginBottom: '8px' }}>Available Balance: <strong>₦{walletBalance.toLocaleString()}</strong></p>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '14px', fontWeight: '500' }}>Amount to Withdraw</label>
+              <input 
+                type="number" 
+                value={withdrawAmount} 
+                onChange={(e) => setWithdrawAmount(e.target.value)}
+                placeholder="Enter amount" 
+                style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }}
+              />
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '14px', fontWeight: '500' }}>Bank Name</label>
+              <input 
+                type="text" 
+                value={bankName} 
+                onChange={(e) => setBankName(e.target.value)}
+                placeholder="e.g. Access Bank" 
+                style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '14px', fontWeight: '500' }}>Account Number</label>
+              <input 
+                type="text" 
+                value={accountNumber} 
+                onChange={(e) => setAccountNumber(e.target.value)}
+                placeholder="0123456789" 
+                style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '14px', fontWeight: '500' }}>Account Name</label>
+              <input 
+                type="text" 
+                value={accountName} 
+                onChange={(e) => setAccountName(e.target.value)}
+                placeholder="John Doe" 
+                style={{ padding: '12px', border: '1px solid #ddd', borderRadius: '8px' }}
+              />
+            </div>
+
+            {Number(withdrawAmount) > walletBalance && (
+              <p style={{ color: '#ef4444', fontSize: '13px', fontWeight: '500' }}>
+                Error: Insufficient funds. You cannot withdraw more than your current balance.
+              </p>
+            )}
+
+            <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
+              <button 
+                onClick={() => setShowWithdrawModal(false)}
+                style={{ flex: 1, padding: '12px', background: '#f1f5f9', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600' }}
+              >
+                Cancel
+              </button>
+              <button 
+                disabled={Number(withdrawAmount) > walletBalance || !withdrawAmount || !accountName || !accountNumber || !bankName}
+                style={{ 
+                  flex: 1, 
+                  padding: '12px', 
+                  background: (Number(withdrawAmount) > walletBalance || !withdrawAmount || !accountName || !accountNumber || !bankName) ? '#e2e8f0' : '#000', 
+                  color: (Number(withdrawAmount) > walletBalance || !withdrawAmount || !accountName || !accountNumber || !bankName) ? '#94a3b8' : '#fff', 
+                  border: 'none', 
+                  borderRadius: '8px', 
+                  cursor: (Number(withdrawAmount) > walletBalance || !withdrawAmount || !accountName || !accountNumber || !bankName) ? 'not-allowed' : 'pointer',
+                  fontWeight: '600'
+                }}
+              >
+                Submit Request
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
