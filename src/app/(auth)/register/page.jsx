@@ -20,6 +20,7 @@ import { toast } from "@/components/CustomToast";
 import "./register.css";
 import { authService } from "./../../../../services/auth";
 import SelectGadgets from "@/components/SelectGadgets";
+import DayMonthPicker from "./DayMonthPicker";
 
 export default function MultiStepRegister() {
   const router = useRouter();
@@ -281,12 +282,10 @@ export default function MultiStepRegister() {
               <div className="two-form-group">
                 <div className="form-group">
                   <label>Birth Day</label>
-                  <input
-                    type="text"
+                  <DayMonthPicker
                     name="dateOfBirth"
                     value={formData.dateOfBirth}
                     onChange={handleChange}
-                    placeholder="MM-DD"
                     required
                   />
                 </div>

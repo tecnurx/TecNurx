@@ -18,6 +18,7 @@ import {
   Trash2,
   Download,
   Loader2,
+  RefreshCw,
 } from "lucide-react";
 import { authService } from "../../../../../services/auth";
 import { addressService } from "../../../../../services/address";
@@ -189,19 +190,19 @@ const Settings = () => {
   const [addressSuccess, setAddressSuccess] = useState("");
   const [savingAddress, setSavingAddress] = useState(false);
 
-  useEffect(() => {
-    const fetchAddresses = async () => {
-      try {
-        setLoadingAddresses(true);
-        const response = await addressService.getUserAddresses();
-        setAddresses(response.data?.addresses);
-      } catch (err) {
-        console.error("Failed to load addresses", err);
-      } finally {
-        setLoadingAddresses(false);
-      }
-    };
+  const fetchAddresses = async () => {
+    try {
+      setLoadingAddresses(true);
+      const response = await addressService.getUserAddresses();
+      setAddresses(response.data?.addresses || []);
+    } catch (err) {
+      console.error("Failed to load addresses", err);
+    } finally {
+      setLoadingAddresses(false);
+    }
+  };
 
+  useEffect(() => {
     fetchAddresses();
   }, []);
 
@@ -229,7 +230,7 @@ const Settings = () => {
         isDefault: addressForm.isDefault,
       });
 
-      setAddresses([...addresses, newAddress]);
+      await fetchAddresses();
       setAddressSuccess("Address added successfully!");
 
       // Reset form
@@ -434,14 +435,37 @@ const Settings = () => {
                 }}
               >
                 <h3>Saved Addresses</h3>
-                <button
-                  type="button"
-                  onClick={() => setShowAddAddress(!showAddAddress)}
-                  className="save-btn"
-                  style={{ padding: "8px 16px", fontSize: "14px" }}
+                <div
+                  style={{ display: "flex", gap: "12px", alignItems: "center" }}
                 >
-                  {showAddAddress ? "Cancel" : "+ Add New Address"}
-                </button>
+                  <button
+                    type="button"
+                    onClick={fetchAddresses}
+                    className="save-btn"
+                    style={{
+                      padding: "8px 12px",
+                      fontSize: "14px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                    title="Refresh Addresses"
+                    disabled={loadingAddresses}
+                  >
+                    <RefreshCw
+                      size={18}
+                      className={loadingAddresses ? "spin-animation" : ""}
+                    />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddAddress(!showAddAddress)}
+                    className="save-btn"
+                    style={{ padding: "8px 16px", fontSize: "14px" }}
+                  >
+                    {showAddAddress ? "Cancel" : "Add New Address"}
+                  </button>
+                </div>
               </div>
 
               {/* Success/Error Messages */}
@@ -786,6 +810,7 @@ const Settings = () => {
             </div>
 
             {/* Recent Login Activity */}
+            {/*
             <div className="security-section">
               <h3>Recent Login Activity</h3>
               <div className="login-history">
@@ -806,6 +831,7 @@ const Settings = () => {
                 </div>
               </div>
             </div>
+            */}
           </div>
         )}
 
