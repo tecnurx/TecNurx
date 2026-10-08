@@ -1,17 +1,17 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import logimage from "@/assets/images/login.svg";
 import logo from "@/assets/images/logo.png";
 import Image from "next/image";
 import "../../login/login.css";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation"; // For App Router
+import { useRouter, useSearchParams } from "next/navigation";
 import { authService } from "../../../../../services/auth";
 
-const CreatePassword = () => {
+const CreatePasswordContent = () => {
   const router = useRouter();
-  const searchParams = useSearchParams(); // To get query params (if using ?token=)
+  const searchParams = useSearchParams();
 
   const [showpassword, setShowpassword] = useState(false);
   const [showpasswordConfirm, setShowpasswordConfirm] = useState(false);
@@ -20,21 +20,19 @@ const CreatePassword = () => {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   // Extract token from URL
   useEffect(() => {
-    // Option 1: Token in path like /reset-password/abc123
     const path = window.location.pathname;
     const pathParts = path.split("/");
     const tokenFromPath = pathParts[pathParts.length - 1];
 
-    // Option 2: Token in query param like ?token=abc123
     const tokenFromQuery = searchParams.get("token");
 
     const extractedToken =
-      tokenFromPath && tokenFromPath.length > 10
+      tokenFromPath && tokenFromPath.length > 10 && tokenFromPath !== "create-password"
         ? tokenFromPath
         : tokenFromQuery || "";
 
@@ -47,22 +45,19 @@ const CreatePassword = () => {
     }
   }, [searchParams]);
 
-  // Password match validation
+  // Password match & strength validation
   const isPasswordMatch =
     password && passwordConfirm && password === passwordConfirm;
   const isPasswordStrong =
     password.length >= 8 &&
-    // /[A-Z]/.test(password) &&
     /[a-z]/.test(password) &&
     /[0-9]/.test(password) &&
     /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
   const handleReset = async (e) => {
     e.preventDefault();
-    setMessage("");
     setError("");
 
-    // Validation
     if (!password || !passwordConfirm) {
       setError("Please fill in both password fields.");
       return;
@@ -75,7 +70,7 @@ const CreatePassword = () => {
 
     if (!isPasswordStrong) {
       setError(
-        "Password must be 8+ chars with uppercase, lowercase, number, and special character."
+        "Password must be 8+ chars with lowercase, number, and special character."
       );
       return;
     }
@@ -88,15 +83,8 @@ const CreatePassword = () => {
     setLoading(true);
 
     try {
-      await authService.resetPassword({ password, passwordConfirm, token }); // Make sure this matches your service
-
-      setMessage(
-        "Your password has been successfully reset! Redirecting to login..."
-      );
-
-      setTimeout(() => {
-        router.push("/login");
-      }, 3000);
+      await authService.resetPassword({ password, passwordConfirm, token });
+      setShowModal(true);
     } catch (err) {
       const errMsg =
         err.response?.data?.message ||
@@ -124,13 +112,6 @@ const CreatePassword = () => {
               <p>Create a strong password to protect your account</p>
             </div>
 
-            {/* Success Message */}
-            {message && (
-              <div className="success-message">
-                <p>{message}</p>
-              </div>
-            )}
-
             {/* Error Message */}
             {error && (
               <div className="error-message">
@@ -142,17 +123,14 @@ const CreatePassword = () => {
               {/* New Password */}
               <div className="form-group">
                 <label>New Password</label>
-                <div
-                  className="password-wrapper"
-                  // style={{ position: "relative" }}
-                >
+                <div className="password-wrapper">
                   <input
                     type={showpassword ? "text" : "password"}
                     placeholder="Enter strong password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    disabled={loading}
+                    disabled={loading || showModal}
                   />
                   <span
                     className="eye"
@@ -167,17 +145,14 @@ const CreatePassword = () => {
               {/* Confirm Password */}
               <div className="form-group">
                 <label>Confirm Password</label>
-                <div
-                  className="password-wrapper"
-                  // style={{ position: "relative" }}
-                >
+                <div className="password-wrapper">
                   <input
                     type={showpasswordConfirm ? "text" : "password"}
                     placeholder="Re-enter password"
                     value={passwordConfirm}
                     onChange={(e) => setPasswordConfirm(e.target.value)}
                     required
-                    disabled={loading}
+                    disabled={loading || showModal}
                     style={{
                       borderColor:
                         passwordConfirm && password !== passwordConfirm
@@ -205,7 +180,7 @@ const CreatePassword = () => {
               <button
                 type="submit"
                 className="sign-in-btn"
-                disabled={loading || !isPasswordMatch || !isPasswordStrong}
+                disabled={loading || !isPasswordMatch || !isPasswordStrong || showModal}
               >
                 {loading ? "Saving..." : "Save Password"}
               </button>
@@ -213,8 +188,140 @@ const CreatePassword = () => {
           </div>
         </div>
       </div>
+
+      {/* Role Selection Modal on Successful Password Reset */}
+      {showModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.6)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+            padding: "20px",
+          }}
+        >
+          <div
+            style={{
+              background: "#ffffff",
+              borderRadius: "24px",
+              padding: "36px 32px",
+              maxWidth: "440px",
+              width: "100%",
+              textAlign: "center",
+              boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "20px",
+            }}
+          >
+            <div
+              style={{
+                width: "60px",
+                height: "60px",
+                borderRadius: "50%",
+                backgroundColor: "#e6f4ea",
+                color: "#1e8e3e",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CheckCircle2 size={36} />
+            </div>
+
+            <div>
+              <h3
+                style={{
+                  fontSize: "22px",
+                  fontWeight: "700",
+                  color: "#111",
+                  marginBottom: "8px",
+                  fontFamily: "Plus Jakarta Sans, sans-serif",
+                }}
+              >
+                Password Reset Successful!
+              </h3>
+              <p
+                style={{
+                  fontSize: "14px",
+                  color: "#666",
+                  lineHeight: "1.5",
+                  fontFamily: "Plus Jakarta Sans, sans-serif",
+                }}
+              >
+                Your password has been updated. Please select your account portal to sign in:
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "12px",
+                width: "100%",
+              }}
+            >
+              <button
+                onClick={() => router.push("/login")}
+                style={{
+                  width: "100%",
+                  padding: "16px",
+                  borderRadius: "60px",
+                  backgroundColor: "#000",
+                  color: "#fff",
+                  fontWeight: "600",
+                  fontSize: "15px",
+                  border: "none",
+                  cursor: "pointer",
+                  fontFamily: "Plus Jakarta Sans, sans-serif",
+                  transition: "all 0.2s ease-in-out",
+                }}
+                onMouseOver={(e) => (e.currentTarget.style.opacity = "0.9")}
+                onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
+              >
+                Login as Customer
+              </button>
+
+              <button
+                onClick={() => router.push("/not-engineer-login")}
+                style={{
+                  width: "100%",
+                  padding: "16px",
+                  borderRadius: "60px",
+                  backgroundColor: "#fff",
+                  color: "#000",
+                  fontWeight: "600",
+                  fontSize: "15px",
+                  border: "1.5px solid #000",
+                  cursor: "pointer",
+                  fontFamily: "Plus Jakarta Sans, sans-serif",
+                  transition: "all 0.2s ease-in-out",
+                }}
+                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#f9f9f9")}
+                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#fff")}
+              >
+                Login as Engineer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default CreatePassword;
+export default function CreatePassword() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CreatePasswordContent />
+    </Suspense>
+  );
+}

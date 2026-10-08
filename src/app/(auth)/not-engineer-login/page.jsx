@@ -134,6 +134,7 @@ const EngineerLogin = () => {
                   <input type="checkbox" id="remember" disabled={loading} />
                   <label htmlFor="remember">Remember me</label>
                 </div>
+                <Link href="/not-engineer-login/forgot-password">Forgot Password?</Link>
               </div>
 
               <div className="sign-btn">

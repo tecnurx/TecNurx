@@ -82,6 +82,15 @@ const Sidebar = () => {
             >
               <Wallet size={14} /> My Payments
             </Link>
+            <Link
+              href="/engineer-dashboard/wallet"
+              className={
+                pathname?.startsWith("/engineer-dashboard/wallet") ? "active" : ""
+              }
+              onClick={closeSidebar}
+            >
+              <Wallet size={14} /> My Wallet
+            </Link>
           </div>
 
           <div className="eng-divider">

@@ -77,7 +77,7 @@ export const config = {
 
     // All login pages
     "/login",
-    "/not-engineer-login",
+    "/not-engineer-login/:path*",
     "/not-even-admin-login",
 
     // Other auth pages

@@ -94,7 +94,7 @@ export const adminService = {
   },
 
   updateServicePrice: async ({ offeringId, serviceId }) => {
-    const response = await axios.pacth(
+    const response = await axios.patch(
       `/service-offerings/admin/${offeringId}/services/${serviceId}/price`,
     );
     return response.data;
