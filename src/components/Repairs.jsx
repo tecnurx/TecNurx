@@ -14,7 +14,7 @@ const DEFAULT_ISSUES = [
 
 const Repairs = () => {
   const [gadgetCost, setGadgetCost] = useState("");
-  const [selectedIssueCategory, setSelectedIssueCategory] = useState("cracked_screen");
+  const [selectedIssueCategory, setSelectedIssueCategory] = useState("");
   const [paybackMonths, setPaybackMonths] = useState(6);
   const [issueOptions, setIssueOptions] = useState(DEFAULT_ISSUES);
 
