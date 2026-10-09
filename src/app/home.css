@@ -2,7 +2,7 @@
   display: flex;
   align-items: start;
   width: 100%;
-  padding: 42px 120px;
+  padding: 42px 0 0 120px;
   /* padding-right: 100px; */
   background: #f4f4f4;
   gap: 18px;
@@ -88,8 +88,8 @@
   gap: 12px;
 }
 .hero-image {
-  width: 420px;
-  height: 540px;
+  width: 600px;
+  height: 620px;
   /* margin-left: -40px; */
 }
 
@@ -101,6 +101,7 @@
   padding: 24px;
   width: 90%;
   margin-top: 30px;
+  margin-bottom: 30px;
   /* max-width: 600px; */
 }
 .numbers-wrap div {
@@ -109,7 +110,6 @@
   flex-direction: column;
   gap: 8px;
 }
-
 
 .numbers-wrap h2 {
   font-family: Plus Jakarta Sans;
@@ -782,7 +782,8 @@
   text-align: center;
   vertical-align: middle;
 }
-.approx-wrap button, .approx-wrap a {
+.approx-wrap button,
+.approx-wrap a {
   width: 220;
   height: 68;
   opacity: 1;
@@ -801,7 +802,8 @@
   vertical-align: middle;
   cursor: pointer;
 }
-.approx-wrap h3, .approx-wrap h2 {
+.approx-wrap h3,
+.approx-wrap h2 {
   font-family: Plus Jakarta Sans;
   font-weight: 200;
   font-style: ExtraLight;
@@ -813,7 +815,8 @@
   vertical-align: middle;
   width: 300px;
 }
-.approx-wrap h3 span, .approx-wrap h2 span {
+.approx-wrap h3 span,
+.approx-wrap h2 span {
   font-weight: 700;
   font-style: bold;
   color: rgba(227, 229, 232, 1);
@@ -846,13 +849,13 @@
   justify-content: center;
   gap: 24px;
 }
-.numbers-mobile{
-    display: none !important;
-  }
+.numbers-mobile {
+  display: none !important;
+}
 
 @media screen and (max-width: 1290px) {
   .hero-section {
-    padding: 42px 100px;
+    padding: 42px 0 0 100px;
   }
   .our-services {
     padding: 100px 80px;
@@ -894,7 +897,8 @@
     margin-top: 20px;
   }
   .hero-image {
-    margin-left: 0;
+    width: 550px;
+    /* height: 500px; */
   }
   .numbers-wrap {
     padding: 20px;
@@ -945,6 +949,10 @@
   }
   .sgrid2 {
     justify-content: start !important;
+  }
+  .hero-image {
+    width: 100%;
+    height: 100%;
   }
 }
 
@@ -1063,10 +1071,10 @@
   .numbers-wrap h2 {
     font-size: 20px;
   }
-  .numbers-pc{
+  .numbers-pc {
     display: none;
   }
-  .numbers-mobile{
+  .numbers-mobile {
     display: grid !important;
     margin-top: 24px;
   }
@@ -1128,5 +1136,9 @@
   }
   .numbers-wrap {
     max-width: 800px;
+  }
+  .approx-deet, .repair-details{
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
   }
 }
