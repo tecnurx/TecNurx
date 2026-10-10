@@ -8,6 +8,7 @@ import EngNav from "./components/EngNav";
 import { SidebarProvider } from "../../../context/SidebarContext";
 import CustomToast from "@/components/CustomToast";
 import SessionExpiry from "@/components/SessionExpiry";
+import { extractUserRole } from "@/lib/roleUtils";
 
 export default function EngineerDashboardLayout({ children }) {
   const router = useRouter();
@@ -15,26 +16,42 @@ export default function EngineerDashboardLayout({ children }) {
 
   useEffect(() => {
     const userJson = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
 
-    if (!userJson) {
-      router.replace("/login");
+    if (!userJson || !token) {
+      router.replace("/not-engineer-login");
       return;
+    }
+
+    // Keep cookie in sync with localStorage token
+    if (!document.cookie.includes("token=")) {
+      document.cookie = `token=${token}; path=/; max-age=604800; SameSite=Lax; ${
+        process.env.NODE_ENV === "production" ? "Secure;" : ""
+      }`;
+    }
+
+    // Ensure loginTime is initialized if missing
+    if (!localStorage.getItem("loginTime")) {
+      localStorage.setItem("loginTime", Date.now().toString());
     }
 
     try {
       const user = JSON.parse(userJson);
-      const role = user.role?.toLowerCase();
+      const userRole = extractUserRole(user);
 
-      if (!["engineer", "service partner", "service-partner", "eng"].includes(role)) {
+      if (userRole !== "engineer") {
         router.replace("/resolve-role");
         return;
       }
 
-      if (user.hasServicePartnerProfile === false && !pathname.includes("/complete-profile")) {
+      if (
+        user.hasServicePartnerProfile === false &&
+        !pathname.includes("/complete-profile")
+      ) {
         router.replace("/engineer-dashboard/complete-profile");
       }
     } catch (error) {
-      console.log("Invalid user data in localStorage");
+      console.log("Invalid user data in localStorage", error);
       router.replace("/");
     }
   }, [router, pathname]);
@@ -53,8 +70,8 @@ export default function EngineerDashboardLayout({ children }) {
             <main className="main-content">{children}</main>
           </div>
         </SidebarProvider>
-         <CustomToast />
-         <SessionExpiry />
+        <CustomToast />
+        <SessionExpiry />
       </main>
     </div>
   );

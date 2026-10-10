@@ -12,6 +12,7 @@ import {
   hasAdminAccess,
   getAdminType,
 } from "../../../config/adminPermissions";
+import { extractUserRole } from "@/lib/roleUtils";
 import { ShieldAlert } from "lucide-react";
 
 export default function AdminDashboardLayout({ children }) {
@@ -22,17 +23,30 @@ export default function AdminDashboardLayout({ children }) {
 
   useEffect(() => {
     const userJson = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
 
-    if (!userJson) {
-      router.replace("/login");
+    if (!userJson || !token) {
+      router.replace("/not-even-admin-login");
       return;
+    }
+
+    // Keep cookie in sync with localStorage token
+    if (!document.cookie.includes("token=")) {
+      document.cookie = `token=${token}; path=/; max-age=604800; SameSite=Lax; ${
+        process.env.NODE_ENV === "production" ? "Secure;" : ""
+      }`;
+    }
+
+    // Ensure loginTime is initialized if missing
+    if (!localStorage.getItem("loginTime")) {
+      localStorage.setItem("loginTime", Date.now().toString());
     }
 
     try {
       const parsedUser = JSON.parse(userJson);
-      const role = parsedUser.role?.toLowerCase();
+      const userRole = extractUserRole(parsedUser);
 
-      if (!["admin"].includes(role)) {
+      if (userRole !== "admin") {
         router.replace("/resolve-role");
         return;
       }

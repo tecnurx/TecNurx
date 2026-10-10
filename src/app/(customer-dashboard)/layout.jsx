@@ -10,6 +10,7 @@ import CustomToast from "@/components/CustomToast";
 import SessionExpiry from "@/components/SessionExpiry";
 import { useEffect, useState, React, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { extractUserRole } from "@/lib/roleUtils";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -22,33 +23,50 @@ function LayoutContent({ children }) {
   const [isValidating, setIsValidating] = useState(true);
 
   useEffect(() => {
-    // Check if there's a token in the URL (Google OAuth redirect)
+    // Check if there's a token in the URL (e.g. Google OAuth redirect)
     const urlToken = searchParams.get("token");
 
     if (urlToken) {
-      // Allow the page to load - the Dashboard component will handle token storage
+      localStorage.setItem("token", urlToken);
+      localStorage.setItem("loginTime", Date.now().toString());
+      document.cookie = `token=${urlToken}; path=/; max-age=604800; SameSite=Lax; ${
+        process.env.NODE_ENV === "production" ? "Secure;" : ""
+      }`;
       setIsValidating(false);
       return;
     }
 
     const userJson = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
 
-    if (!userJson) {
+    if (!userJson || !token) {
       router.replace("/login");
       return;
     }
 
+    // Keep document.cookie in sync with localStorage token so middleware doesn't redirect
+    if (!document.cookie.includes("token=")) {
+      document.cookie = `token=${token}; path=/; max-age=604800; SameSite=Lax; ${
+        process.env.NODE_ENV === "production" ? "Secure;" : ""
+      }`;
+    }
+
+    // Ensure loginTime is initialized if missing
+    if (!localStorage.getItem("loginTime")) {
+      localStorage.setItem("loginTime", Date.now().toString());
+    }
+
     try {
       const user = JSON.parse(userJson);
-      const role = user.role?.toLowerCase();
+      const userRole = extractUserRole(user);
 
-      if (!["user", "customer"].includes(role)) {
+      if (userRole !== "customer") {
         router.replace("/resolve-role");
       } else {
         setIsValidating(false);
       }
     } catch (error) {
-      console.log("Invalid user data in localStorage");
+      console.log("Invalid user data in localStorage", error);
       router.replace("/login");
     }
   }, [router, searchParams]);

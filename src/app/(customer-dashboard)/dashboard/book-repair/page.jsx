@@ -82,22 +82,36 @@ const BookRepair = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [devicesRes, issuesRes, addressesRes] = await Promise.all([
+        const [devicesRes, issuesRes, addressesRes] = await Promise.allSettled([
           deviceService.getAllUserDevices(),
           repairService.getIssues(),
           addressService.getUserAddresses(),
         ]);
 
-        setDevices(devicesRes.data?.devices || []);
-        setIssues(issuesRes.data?.issues || []);
-        setAddresses(addressesRes.data?.addresses || []);
+        if (devicesRes.status === "fulfilled") {
+          const devList =
+            devicesRes.value?.data?.devices || devicesRes.value?.devices || [];
+          setDevices(devList);
+        }
 
-        // Auto-select default address if exists
-        const defaultAddr = addressesRes.data?.addresses?.find(
-          (a) => a.isDefault,
-        );
-        if (defaultAddr) {
-          setSelectedAddress(defaultAddr);
+        if (issuesRes.status === "fulfilled") {
+          const issueList =
+            issuesRes.value?.data?.issues || issuesRes.value?.issues || [];
+          setIssues(issueList);
+        }
+
+        if (addressesRes.status === "fulfilled") {
+          const addrList =
+            addressesRes.value?.data?.addresses ||
+            addressesRes.value?.addresses ||
+            [];
+          setAddresses(addrList);
+
+          // Auto-select default address if exists
+          const defaultAddr = addrList.find((a) => a.isDefault);
+          if (defaultAddr) {
+            setSelectedAddress(defaultAddr);
+          }
         }
       } catch (err) {
         console.error("Failed to load data:", err);
