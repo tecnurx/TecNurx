@@ -90,6 +90,16 @@ const AdminEngineers = () => {
     }
   };
 
+  const toggleGadgetType = (val) => {
+    setFormData((prev) => {
+      const current = Array.isArray(prev.gadgetType) ? prev.gadgetType : [];
+      const updated = current.includes(val)
+        ? current.filter((item) => item !== val)
+        : [...current, val];
+      return { ...prev, gadgetType: updated };
+    });
+  };
+
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     if (files && files[0]) {
@@ -166,6 +176,11 @@ const AdminEngineers = () => {
   const handleStep2Submit = async (e) => {
     e.preventDefault();
     setModalError(null);
+
+    if (!formData.gadgetType || formData.gadgetType.length === 0) {
+      setModalError("Please select at least one gadget type.");
+      return;
+    }
 
     try {
       setIsSubmitting(true);
@@ -852,29 +867,60 @@ const AdminEngineers = () => {
                         color: "#374151",
                       }}
                     >
-                      Gadget Type <span style={{ fontSize: "12px", color: "#6b7280", fontWeight: "normal", marginLeft: "4px" }}>(Ctrl/Cmd+click to select multiple)</span>
+                      Gadget Type <span style={{ fontSize: "12px", color: "#6b7280", fontWeight: "normal", marginLeft: "4px" }}>(Select all that apply)</span>
                     </label>
-                    <select
-                      multiple
-                      name="gadgetType"
-                      value={formData.gadgetType}
-                      onChange={handleInputChange}
-                      required
+                    <div
                       style={{
-                        width: "100%",
-                        padding: "10px 12px",
-                        border: "1px solid #d1d5db",
-                        borderRadius: "8px",
-                        outline: "none",
-                        backgroundColor: "white",
-                        minHeight: "100px",
+                        display: "grid",
+                        gridTemplateColumns: "repeat(2, 1fr)",
+                        gap: "10px",
+                        marginTop: "4px",
                       }}
                     >
-                      <option value="phones">Phones</option>
-                      <option value="laptops">Laptops</option>
-                      <option value="tablets">Tablets</option>
-                      <option value="other">Other</option>
-                    </select>
+                      {[
+                        { id: "phones", label: "Phones" },
+                        { id: "laptops", label: "Laptops" },
+                        { id: "tablets", label: "Tablets" },
+                        { id: "other", label: "Other" },
+                      ].map((item) => {
+                        const isChecked = Array.isArray(formData.gadgetType) && formData.gadgetType.includes(item.id);
+                        return (
+                          <label
+                            key={item.id}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "8px",
+                              padding: "10px 12px",
+                              border: `1.5px solid ${isChecked ? "#2563eb" : "#d1d5db"}`,
+                              borderRadius: "8px",
+                              backgroundColor: isChecked ? "#eff6ff" : "#fff",
+                              cursor: "pointer",
+                              transition: "all 0.15s ease",
+                              userSelect: "none",
+                              fontWeight: isChecked ? 600 : 500,
+                              color: isChecked ? "#1d4ed8" : "#374151",
+                              fontSize: "13px",
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              name="gadgetType"
+                              value={item.id}
+                              checked={isChecked}
+                              onChange={() => toggleGadgetType(item.id)}
+                              style={{
+                                accentColor: "#2563eb",
+                                width: "15px",
+                                height: "15px",
+                                cursor: "pointer",
+                              }}
+                            />
+                            <span style={{ cursor: "pointer", flex: 1 }}>{item.label}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
 

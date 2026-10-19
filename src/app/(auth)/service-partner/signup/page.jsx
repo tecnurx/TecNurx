@@ -54,6 +54,16 @@ const ServicePartnerSignUp = () => {
     }
   };
 
+  const toggleGadgetType = (val) => {
+    setFormData((prev) => {
+      const current = Array.isArray(prev.gadgetType) ? prev.gadgetType : [];
+      const updated = current.includes(val)
+        ? current.filter((item) => item !== val)
+        : [...current, val];
+      return { ...prev, gadgetType: updated };
+    });
+  };
+
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     if (files && files[0]) {
@@ -167,6 +177,11 @@ const ServicePartnerSignUp = () => {
     e.preventDefault();
     if (loading) return;
 
+    if (!formData.gadgetType || formData.gadgetType.length === 0) {
+      toast.error("Please select at least one gadget type.");
+      return;
+    }
+
     setLoading(true);
     try {
       const payload = new FormData();
@@ -201,6 +216,7 @@ const ServicePartnerSignUp = () => {
       console.error("Service provider profile error:", err);
       toast.error(
         err.response?.data?.message ||
+          err?.message ||
           "Profile creation failed. Please try again.",
       );
     } finally {
@@ -408,7 +424,7 @@ const ServicePartnerSignUp = () => {
                 <div className="service-form-wrap">
                   <label htmlFor="yearsOfExperience">Years of Experience</label>
                   <input
-                    type="text"
+                    type="number"
                     name="yearsOfExperience"
                     id="yearsOfExperience"
                     value={formData.yearsOfExperience}
@@ -422,23 +438,61 @@ const ServicePartnerSignUp = () => {
                   <input type="file" name="certificate" id="certificates" accept=".pdf,.doc,.docx,image/*" onChange={handleFileChange} />
                 </div>
                 <div className="service-form-wrap">
-                  <label htmlFor="gadgetType">
-                    Gadget Type <span style={{ fontSize: "12px", color: "#6b7280", fontWeight: "normal", marginLeft: "4px" }}>(Ctrl/Cmd+click to select multiple)</span>
+                  <label>
+                    Gadget Type <span style={{ fontSize: "12px", color: "#6b7280", fontWeight: "normal", marginLeft: "4px" }}>(Select all that apply)</span>
                   </label>
-                  <select
-                    multiple
-                    name="gadgetType"
-                    id="gadgetType"
-                    value={formData.gadgetType}
-                    onChange={handleChange}
-                    required
-                    style={{ minHeight: "100px" }}
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(2, 1fr)",
+                      gap: "10px",
+                      marginTop: "4px",
+                    }}
                   >
-                    <option value="phones">Phones</option>
-                    <option value="laptops">Laptops</option>
-                    <option value="tablets">Tablets</option>
-                    <option value="other">Other</option>
-                  </select>
+                    {[
+                      { id: "phones", label: "Phones" },
+                      { id: "laptops", label: "Laptops" },
+                      { id: "tablets", label: "Tablets" },
+                      { id: "other", label: "Other" },
+                    ].map((item) => {
+                      const isChecked = Array.isArray(formData.gadgetType) && formData.gadgetType.includes(item.id);
+                      return (
+                        <label
+                          key={item.id}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
+                            padding: "12px 14px",
+                            border: `1.5px solid ${isChecked ? "#000" : "rgba(221, 221, 228, 1)"}`,
+                            borderRadius: "10px",
+                            backgroundColor: isChecked ? "rgba(0, 0, 0, 0.04)" : "#fff",
+                            cursor: "pointer",
+                            transition: "all 0.15s ease",
+                            userSelect: "none",
+                            fontWeight: isChecked ? 600 : 500,
+                            color: isChecked ? "#000" : "rgba(59, 63, 68, 1)",
+                            fontSize: "14px",
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            name="gadgetType"
+                            value={item.id}
+                            checked={isChecked}
+                            onChange={() => toggleGadgetType(item.id)}
+                            style={{
+                              accentColor: "#000",
+                              width: "16px",
+                              height: "16px",
+                              cursor: "pointer",
+                            }}
+                          />
+                          <span style={{ cursor: "pointer", flex: 1 }}>{item.label}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
                 </div>
                 <div className="service-form-wrap">
                   <label>Do you own or have access to a Service center?</label>
