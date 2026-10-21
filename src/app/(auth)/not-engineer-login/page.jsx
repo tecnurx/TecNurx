@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import logo from "@/assets/images/logo.png";
 import Image from "next/image";
 import "./englogin.css";
@@ -10,21 +10,51 @@ import { useRouter } from "next/navigation";
 import { toast } from "@/components/CustomToast";
 import { engineerAuthService } from './../../../../services/eng/engineerAuth';
 
+const REMEMBER_KEY = "technurx_remember_engineer";
+
 const EngineerLogin = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
+  // Load remembered credentials on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(REMEMBER_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.email && parsed.password) {
+          setFormData({
+            email: parsed.email,
+            password: parsed.password,
+          });
+          setRememberMe(true);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to parse remembered engineer credentials", e);
+    }
+  }, []);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleRememberToggle = (e) => {
+    const isChecked = e.target.checked;
+    setRememberMe(isChecked);
+    if (!isChecked) {
+      localStorage.removeItem(REMEMBER_KEY);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -44,6 +74,19 @@ const EngineerLogin = () => {
       };
 
       const response = await engineerAuthService.login(payload);
+
+      // Handle Remember Me persistence on successful login
+      if (rememberMe) {
+        localStorage.setItem(
+          REMEMBER_KEY,
+          JSON.stringify({
+            email: formData.email.trim(),
+            password: formData.password,
+          })
+        );
+      } else {
+        localStorage.removeItem(REMEMBER_KEY);
+      }
 
       const hasProfile = response.data?.hasServicePartnerProfile;
 
@@ -131,8 +174,17 @@ const EngineerLogin = () => {
 
               <div className="remember-forgot">
                 <div>
-                  <input type="checkbox" id="remember" disabled={loading} />
-                  <label htmlFor="remember">Remember me</label>
+                  <input
+                    type="checkbox"
+                    id="remember"
+                    checked={rememberMe}
+                    onChange={handleRememberToggle}
+                    disabled={loading}
+                    style={{ cursor: "pointer" }}
+                  />
+                  <label htmlFor="remember" style={{ cursor: "pointer" }}>
+                    Remember me
+                  </label>
                 </div>
                 <Link href="/not-engineer-login/forgot-password">Forgot Password?</Link>
               </div>

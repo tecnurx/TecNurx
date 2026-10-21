@@ -112,7 +112,9 @@ const DashboardNav = () => {
       router.push("/login");
     } catch (error) {
       console.error("Logout failed:", error);
-      localStorage.clear();
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("pendingVerificationEmail");
       document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
       router.push("/login");
     } finally {

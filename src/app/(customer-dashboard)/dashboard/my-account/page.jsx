@@ -19,9 +19,12 @@ import {
   Download,
   Loader2,
   RefreshCw,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { authService } from "../../../../../services/auth";
 import { addressService } from "../../../../../services/address";
+import { validatePassword, getPasswordRequirements } from "@/lib/passwordValidation";
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState("profile");
@@ -63,6 +66,9 @@ const Settings = () => {
   const [passwordError, setPasswordError] = useState("");
   const [passwordSuccess, setPasswordSuccess] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
@@ -77,8 +83,12 @@ const Settings = () => {
     if (!passwordCurrent)
       return setPasswordError("Current password is required");
     if (!password) return setPasswordError("New password is required");
-    if (password.length < 8)
-      return setPasswordError("New password must be at least 8 characters");
+    
+    const passwordCheck = validatePassword(password);
+    if (!passwordCheck.isValid) {
+      return setPasswordError(passwordCheck.message);
+    }
+
     if (password !== passwordConfirm) {
       return setPasswordError("New passwords do not match");
     }
@@ -731,51 +741,152 @@ const Settings = () => {
               <form className="password-form" onSubmit={handlePasswordChange}>
                 <div className="form-group">
                   <label>Current Password</label>
-                  <input
-                    type="password"
-                    value={passwordData.passwordCurrent}
-                    onChange={(e) =>
-                      setPasswordData({
-                        ...passwordData,
-                        passwordCurrent: e.target.value,
-                      })
-                    }
-                    disabled={isUpdating}
-                    required
-                  />
+                  <div style={{ position: "relative", width: "100%" }}>
+                    <input
+                      type={showCurrentPassword ? "text" : "password"}
+                      value={passwordData.passwordCurrent}
+                      onChange={(e) =>
+                        setPasswordData({
+                          ...passwordData,
+                          passwordCurrent: e.target.value,
+                        })
+                      }
+                      disabled={isUpdating}
+                      required
+                      style={{ width: "100%", paddingRight: "44px" }}
+                    />
+                    <span
+                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                      style={{
+                        position: "absolute",
+                        right: "14px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        color: "#6b7280",
+                      }}
+                    >
+                      {showCurrentPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="form-group">
                   <label>New Password</label>
-                  <input
-                    type="password"
-                    value={passwordData.password}
-                    onChange={(e) =>
-                      setPasswordData({
-                        ...passwordData,
-                        password: e.target.value,
-                      })
-                    }
-                    disabled={isUpdating}
-                    minLength={8}
-                    required
-                  />
+                  <div style={{ position: "relative", width: "100%" }}>
+                    <input
+                      type={showNewPassword ? "text" : "password"}
+                      value={passwordData.password}
+                      onChange={(e) =>
+                        setPasswordData({
+                          ...passwordData,
+                          password: e.target.value,
+                        })
+                      }
+                      disabled={isUpdating}
+                      minLength={8}
+                      required
+                      style={{ width: "100%", paddingRight: "44px" }}
+                    />
+                    <span
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      style={{
+                        position: "absolute",
+                        right: "14px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        color: "#6b7280",
+                      }}
+                    >
+                      {showNewPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                    </span>
+                  </div>
+                  {passwordData.password && (
+                    <div
+                      style={{
+                        background: "#f9fafb",
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "8px",
+                        padding: "10px 12px",
+                        marginTop: "8px",
+                        fontSize: "12px",
+                      }}
+                    >
+                      <p style={{ fontWeight: 600, color: "#374151", marginBottom: "6px" }}>
+                        Password must contain:
+                      </p>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "4px" }}>
+                        {getPasswordRequirements(passwordData.password).map((req, idx) => (
+                          <div
+                            key={idx}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "6px",
+                              color: req.met ? "#16a34a" : "#6b7280",
+                              transition: "color 0.2s ease",
+                            }}
+                          >
+                            {req.met ? (
+                              <Check size={14} color="#16a34a" strokeWidth={3} />
+                            ) : (
+                              <span
+                                style={{
+                                  width: "6px",
+                                  height: "6px",
+                                  borderRadius: "50%",
+                                  backgroundColor: "#9ca3af",
+                                  display: "inline-block",
+                                  marginLeft: "4px",
+                                  marginRight: "4px",
+                                }}
+                              />
+                            )}
+                            <span>{req.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="form-group">
                   <label>Confirm New Password</label>
-                  <input
-                    type="password"
-                    value={passwordData.passwordConfirm}
-                    onChange={(e) =>
-                      setPasswordData({
-                        ...passwordData,
-                        passwordConfirm: e.target.value,
-                      })
-                    }
-                    disabled={isUpdating}
-                    required
-                  />
+                  <div style={{ position: "relative", width: "100%" }}>
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={passwordData.passwordConfirm}
+                      onChange={(e) =>
+                        setPasswordData({
+                          ...passwordData,
+                          passwordConfirm: e.target.value,
+                        })
+                      }
+                      disabled={isUpdating}
+                      required
+                      style={{ width: "100%", paddingRight: "44px" }}
+                    />
+                    <span
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      style={{
+                        position: "absolute",
+                        right: "14px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        color: "#6b7280",
+                      }}
+                    >
+                      {showConfirmPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                    </span>
+                  </div>
                   {passwordData.password &&
                     passwordData.passwordConfirm &&
                     passwordData.password !== passwordData.passwordConfirm && (

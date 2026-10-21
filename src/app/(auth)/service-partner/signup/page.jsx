@@ -8,12 +8,16 @@ import Image from "next/image";
 import { toast } from "@/components/CustomToast";
 import axios from "../../../../../lib/axios";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff, Check } from "lucide-react";
+import { validatePassword, getPasswordRequirements } from "@/lib/passwordValidation";
 
 const ServicePartnerSignUp = () => {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
   const [formData, setFormData] = useState({
     // Step 1
@@ -77,6 +81,12 @@ const ServicePartnerSignUp = () => {
 
     if (formData.password !== formData.passwordConfirm) {
       toast.error("Passwords do not match!");
+      return;
+    }
+
+    const passwordCheck = validatePassword(formData.password);
+    if (!passwordCheck.isValid) {
+      toast.error(passwordCheck.message);
       return;
     }
 
@@ -300,27 +310,117 @@ const ServicePartnerSignUp = () => {
                 </div>
                 <div className="service-form-wrap">
                   <label htmlFor="password">Password</label>
-                  <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    placeholder="Enter Password"
-                  />
+                  <div style={{ position: "relative", width: "100%" }}>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      id="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                      placeholder="Enter Password"
+                      style={{ width: "100%", paddingRight: "44px" }}
+                    />
+                    <span
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{
+                        position: "absolute",
+                        right: "14px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        color: "#6b7280",
+                      }}
+                    >
+                      {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                    </span>
+                  </div>
+                  {formData.password && (
+                    <div
+                      style={{
+                        background: "#f9fafb",
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "8px",
+                        padding: "10px 12px",
+                        marginTop: "8px",
+                        fontSize: "12px",
+                      }}
+                    >
+                      <p style={{ fontWeight: 600, color: "#374151", marginBottom: "6px" }}>
+                        Password must contain:
+                      </p>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "4px" }}>
+                        {getPasswordRequirements(formData.password).map((req, idx) => (
+                          <div
+                            key={idx}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "6px",
+                              color: req.met ? "#16a34a" : "#6b7280",
+                              transition: "color 0.2s ease",
+                            }}
+                          >
+                            {req.met ? (
+                              <Check size={14} color="#16a34a" strokeWidth={3} />
+                            ) : (
+                              <span
+                                style={{
+                                  width: "6px",
+                                  height: "6px",
+                                  borderRadius: "50%",
+                                  backgroundColor: "#9ca3af",
+                                  display: "inline-block",
+                                  marginLeft: "4px",
+                                  marginRight: "4px",
+                                }}
+                              />
+                            )}
+                            <span>{req.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className="service-form-wrap">
                   <label htmlFor="passwordConfirm">Confirm Password</label>
-                  <input
-                    type="password"
-                    name="passwordConfirm"
-                    id="passwordConfirm"
-                    value={formData.passwordConfirm}
-                    onChange={handleChange}
-                    required
-                    placeholder="Confirm Password"
-                  />
+                  <div style={{ position: "relative", width: "100%" }}>
+                    <input
+                      type={showPasswordConfirm ? "text" : "password"}
+                      name="passwordConfirm"
+                      id="passwordConfirm"
+                      value={formData.passwordConfirm}
+                      onChange={handleChange}
+                      required
+                      placeholder="Confirm Password"
+                      style={{ width: "100%", paddingRight: "44px" }}
+                    />
+                    <span
+                      onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                      style={{
+                        position: "absolute",
+                        right: "14px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        color: "#6b7280",
+                      }}
+                    >
+                      {showPasswordConfirm ? <Eye size={18} /> : <EyeOff size={18} />}
+                    </span>
+                  </div>
+                  {formData.password &&
+                    formData.passwordConfirm &&
+                    formData.password !== formData.passwordConfirm && (
+                      <small style={{ color: "#dc2626", marginTop: "4px" }}>
+                        Passwords do not match
+                      </small>
+                    )}
                 </div>
               </div>
               <button type="submit" disabled={loading}>

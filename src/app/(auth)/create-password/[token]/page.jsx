@@ -4,10 +4,11 @@ import logimage from "@/assets/images/login.svg";
 import logo from "@/assets/images/logo.png";
 import Image from "next/image";
 import "../../login/login.css";
-import { Eye, EyeOff, CheckCircle2 } from "lucide-react";
+import { Eye, EyeOff, CheckCircle2, Check, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authService } from "../../../../../services/auth";
+import { validatePassword, getPasswordRequirements } from "@/lib/passwordValidation";
 
 const CreatePasswordContent = () => {
   const router = useRouter();
@@ -48,11 +49,8 @@ const CreatePasswordContent = () => {
   // Password match & strength validation
   const isPasswordMatch =
     password && passwordConfirm && password === passwordConfirm;
-  const isPasswordStrong =
-    password.length >= 8 &&
-    /[a-z]/.test(password) &&
-    /[0-9]/.test(password) &&
-    /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  const passwordCheck = validatePassword(password);
+  const isPasswordStrong = passwordCheck.isValid;
 
   const handleReset = async (e) => {
     e.preventDefault();
@@ -69,9 +67,7 @@ const CreatePasswordContent = () => {
     }
 
     if (!isPasswordStrong) {
-      setError(
-        "Password must be 8+ chars with lowercase, number, and special character."
-      );
+      setError(passwordCheck.message);
       return;
     }
 
@@ -140,6 +136,53 @@ const CreatePasswordContent = () => {
                     {showpassword ? <Eye size={20} /> : <EyeOff size={20} />}
                   </span>
                 </div>
+                {password && (
+                  <div
+                    style={{
+                      background: "#f9fafb",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "8px",
+                      padding: "10px 12px",
+                      marginTop: "8px",
+                      fontSize: "12px",
+                    }}
+                  >
+                    <p style={{ fontWeight: 600, color: "#374151", marginBottom: "6px" }}>
+                      Password must contain:
+                    </p>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "4px" }}>
+                      {getPasswordRequirements(password).map((req, idx) => (
+                        <div
+                          key={idx}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                            color: req.met ? "#16a34a" : "#6b7280",
+                            transition: "color 0.2s ease",
+                          }}
+                        >
+                          {req.met ? (
+                            <Check size={14} color="#16a34a" strokeWidth={3} />
+                          ) : (
+                            <span
+                              style={{
+                                width: "6px",
+                                height: "6px",
+                                borderRadius: "50%",
+                                backgroundColor: "#9ca3af",
+                                display: "inline-block",
+                                marginLeft: "4px",
+                                marginRight: "4px",
+                              }}
+                            />
+                          )}
+                          <span>{req.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Confirm Password */}
@@ -180,7 +223,7 @@ const CreatePasswordContent = () => {
               <button
                 type="submit"
                 className="sign-in-btn"
-                disabled={loading || !isPasswordMatch || !isPasswordStrong || showModal}
+                disabled={loading || showModal}
               >
                 {loading ? "Saving..." : "Save Password"}
               </button>

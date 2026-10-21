@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import logimage from "@/assets/images/login.svg";
 import logo from "@/assets/images/logo.png";
 import google from "@/assets/images/google.svg";
@@ -12,22 +12,52 @@ import { useRouter } from "next/navigation";
 import { authService } from "./../../../../services/auth";
 import { toast } from "@/components/CustomToast";
 
+const REMEMBER_KEY = "technurx_remember_user";
+
 const Login = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
+  // Load remembered credentials on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(REMEMBER_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.email && parsed.password) {
+          setFormData({
+            email: parsed.email,
+            password: parsed.password,
+          });
+          setRememberMe(true);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to parse remembered credentials", e);
+    }
+  }, []);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleRememberToggle = (e) => {
+    const isChecked = e.target.checked;
+    setRememberMe(isChecked);
+    if (!isChecked) {
+      localStorage.removeItem(REMEMBER_KEY);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -47,6 +77,19 @@ const Login = () => {
       };
 
       await authService.login(payload);
+
+      // Handle Remember Me persistence on successful login
+      if (rememberMe) {
+        localStorage.setItem(
+          REMEMBER_KEY,
+          JSON.stringify({
+            email: formData.email.trim(),
+            password: formData.password,
+          })
+        );
+      } else {
+        localStorage.removeItem(REMEMBER_KEY);
+      }
 
       toast.success("Welcome back! Redirecting...");
       setTimeout(() => router.push("/dashboard"), 1500);
@@ -169,8 +212,17 @@ const Login = () => {
 
               <div className="remember-forgot">
                 <div>
-                  <input type="checkbox" id="remember" disabled={loading} />
-                  <label htmlFor="remember">Remember me</label>
+                  <input
+                    type="checkbox"
+                    id="remember"
+                    checked={rememberMe}
+                    onChange={handleRememberToggle}
+                    disabled={loading}
+                    style={{ cursor: "pointer" }}
+                  />
+                  <label htmlFor="remember" style={{ cursor: "pointer" }}>
+                    Remember me
+                  </label>
                 </div>
                 <Link href="/forgot-password">Forgot Password?</Link>
               </div>

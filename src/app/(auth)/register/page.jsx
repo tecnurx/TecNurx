@@ -13,12 +13,13 @@ import pstep4 from "@/assets/images/pstep4.svg";
 
 import Image from "next/image";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Check } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/CustomToast";
 import "./register.css";
 import { authService } from "./../../../../services/auth";
+import { validatePassword, getPasswordRequirements } from "@/lib/passwordValidation";
 import SelectGadgets from "@/components/SelectGadgets";
 import DayMonthPicker from "./DayMonthPicker";
 
@@ -88,6 +89,14 @@ export default function MultiStepRegister() {
     // Validate passwords match
     if (formData.password !== formData.passwordConfirm) {
       toast.error("Passwords do not match!");
+      setLoading(false);
+      return;
+    }
+
+    // Validate password strength with regex
+    const passwordCheck = validatePassword(formData.password);
+    if (!passwordCheck.isValid) {
+      toast.error(passwordCheck.message);
       setLoading(false);
       return;
     }
@@ -345,6 +354,53 @@ export default function MultiStepRegister() {
                 >
                   {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
                 </span>
+                {formData.password && (
+                  <div
+                    style={{
+                      background: "#f9fafb",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "8px",
+                      padding: "10px 12px",
+                      marginTop: "8px",
+                      fontSize: "12px",
+                    }}
+                  >
+                    <p style={{ fontWeight: 600, color: "#374151", marginBottom: "6px" }}>
+                      Password must contain:
+                    </p>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "4px" }}>
+                      {getPasswordRequirements(formData.password).map((req, idx) => (
+                        <div
+                          key={idx}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                            color: req.met ? "#16a34a" : "#6b7280",
+                            transition: "color 0.2s ease",
+                          }}
+                        >
+                          {req.met ? (
+                            <Check size={14} color="#16a34a" strokeWidth={3} />
+                          ) : (
+                            <span
+                              style={{
+                                width: "6px",
+                                height: "6px",
+                                borderRadius: "50%",
+                                backgroundColor: "#9ca3af",
+                                display: "inline-block",
+                                marginLeft: "4px",
+                                marginRight: "4px",
+                              }}
+                            />
+                          )}
+                          <span>{req.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="form-group relative">
@@ -367,6 +423,13 @@ export default function MultiStepRegister() {
                     <EyeOff size={20} />
                   )}
                 </span>
+                {formData.password &&
+                  formData.passwordConfirm &&
+                  formData.password !== formData.passwordConfirm && (
+                    <small style={{ color: "#dc2626", fontSize: "12px", marginTop: "4px", display: "block" }}>
+                      Passwords do not match
+                    </small>
+                  )}
               </div>
 
               <p className="crt-p text-center text-sm">
@@ -512,6 +575,53 @@ export default function MultiStepRegister() {
                 >
                   {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
                 </span>
+                {formData.password && (
+                  <div
+                    style={{
+                      background: "#f9fafb",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "8px",
+                      padding: "10px 12px",
+                      marginTop: "8px",
+                      fontSize: "12px",
+                    }}
+                  >
+                    <p style={{ fontWeight: 600, color: "#374151", marginBottom: "6px" }}>
+                      Password must contain:
+                    </p>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "4px" }}>
+                      {getPasswordRequirements(formData.password).map((req, idx) => (
+                        <div
+                          key={idx}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                            color: req.met ? "#16a34a" : "#6b7280",
+                            transition: "color 0.2s ease",
+                          }}
+                        >
+                          {req.met ? (
+                            <Check size={14} color="#16a34a" strokeWidth={3} />
+                          ) : (
+                            <span
+                              style={{
+                                width: "6px",
+                                height: "6px",
+                                borderRadius: "50%",
+                                backgroundColor: "#9ca3af",
+                                display: "inline-block",
+                                marginLeft: "4px",
+                                marginRight: "4px",
+                              }}
+                            />
+                          )}
+                          <span>{req.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="form-group relative">
@@ -534,6 +644,13 @@ export default function MultiStepRegister() {
                     <EyeOff size={20} />
                   )}
                 </span>
+                {formData.password &&
+                  formData.passwordConfirm &&
+                  formData.password !== formData.passwordConfirm && (
+                    <small style={{ color: "#dc2626", fontSize: "12px", marginTop: "4px", display: "block" }}>
+                      Passwords do not match
+                    </small>
+                  )}
               </div>
             </div>
 
