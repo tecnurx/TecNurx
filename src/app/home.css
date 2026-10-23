@@ -566,15 +566,15 @@
   background: #000;
   justify-content: center;
 }
-.repairs-wrap {
+/* .repairs-wrap {
   display: flex;
   flex-direction: column;
   gap: 80px;
   background: black;
   padding: 120px 100px;
-}
+} */
 .repairs-top {
-  border-top: 1px dashed white;
+  /* border-top: 1px dashed white; */
   width: 100%;
   display: flex;
   justify-content: start;
@@ -624,7 +624,7 @@
 .repair-header p span {
   font-weight: 800;
   font-style: Italic;
-  font-size: 20px;
+  /* font-size: 20px; */
   color: rgba(227, 229, 232, 1);
 }
 .repair-header {
@@ -1134,6 +1134,7 @@
   .faq {
     width: 1200px;
   }
+
   .numbers-wrap {
     max-width: 800px;
   }

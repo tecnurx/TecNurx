@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import logimage from "@/assets/images/login.svg";
 import logo from "@/assets/images/logo.png";
 import google from "@/assets/images/google.svg";
@@ -8,7 +8,7 @@ import Image from "next/image";
 import "./login.css";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authService } from "./../../../../services/auth";
 import { toast } from "@/components/CustomToast";
 
@@ -16,6 +16,7 @@ const REMEMBER_KEY = "technurx_remember_user";
 
 const Login = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -92,7 +93,24 @@ const Login = () => {
       }
 
       toast.success("Welcome back! Redirecting...");
-      setTimeout(() => router.push("/dashboard"), 1500);
+
+      const redirectParam = searchParams.get("redirect");
+      let dest = redirectParam;
+      if (!dest && typeof window !== "undefined") {
+        try {
+          const pending = localStorage.getItem("pendingRepairEstimate");
+          if (pending) {
+            const parsed = JSON.parse(pending);
+            if (parsed.bookingUrl) {
+              dest = parsed.bookingUrl;
+            }
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
+
+      setTimeout(() => router.push(dest || "/dashboard"), 1500);
     } catch (err) {
       console.error("Login error:", err);
 
@@ -281,4 +299,10 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <Login />
+    </Suspense>
+  );
+}

@@ -183,7 +183,7 @@
   flex-direction: column;
   gap: 24px;
 }
-.repair-details {
+.repair-detailss {
   display: flex;
   align-items: start;
   gap: 16px;
@@ -633,7 +633,7 @@
   .bookform-grid2 {
     grid-template-columns: 1fr;
   }
-  .repair-details {
+  .repair-detailss {
     flex-direction: column;
   }
   .brand-model {

@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import "./book.css";
 import step1 from "@/assets/images/step1.svg";
 import step2 from "@/assets/images/step2.svg";
@@ -19,8 +19,109 @@ import { toast } from "@/components/CustomToast";
 import Link from "next/link";
 import { AlertCircle, Upload, X } from "lucide-react";
 
+// Fallback issue categories if backend API is offline or returns empty
+const DEFAULT_ISSUES = [
+  { category: "screen_repair", label: "Screen Replacement / Repair" },
+  { category: "battery_replacement", label: "Battery Replacement" },
+  { category: "charging_port", label: "Charging Port Repair" },
+  { category: "back_glass", label: "Back Glass / Rear Housing" },
+  { category: "camera_repair", label: "Camera Repair" },
+  { category: "water_damage", label: "Liquid / Water Damage" },
+  { category: "diagnostic_assessment", label: "Diagnostic Assessment / Inspection" },
+  { category: "other", label: "Other Issue" },
+];
+
+// Helper to infer brand, model, and deviceType from device name
+const inferDeviceDetails = (deviceName = "") => {
+  const name = (deviceName || "").trim();
+  const lower = name.toLowerCase();
+
+  let brand = "Other";
+  let deviceType = "phone";
+
+  if (/iphone|ipad|macbook|apple|imac|watch/i.test(lower)) {
+    brand = "Apple";
+    if (/macbook|imac/i.test(lower)) deviceType = "laptop";
+    else if (/ipad/i.test(lower)) deviceType = "phone";
+  } else if (/samsung|galaxy/i.test(lower)) {
+    brand = "Samsung";
+    deviceType = "phone";
+  } else if (/google|pixel/i.test(lower)) {
+    brand = "Google";
+    deviceType = "phone";
+  } else if (/redmi|xiaomi/i.test(lower)) {
+    brand = "Redmi";
+    deviceType = "phone";
+  } else if (/tecno/i.test(lower)) {
+    brand = "Tecno";
+    deviceType = "phone";
+  } else if (/infinix/i.test(lower)) {
+    brand = "Infinix";
+    deviceType = "phone";
+  } else if (/oneplus/i.test(lower)) {
+    brand = "OnePlus";
+    deviceType = "phone";
+  } else if (/oppo/i.test(lower)) {
+    brand = "Oppo";
+    deviceType = "phone";
+  } else if (/vivo/i.test(lower)) {
+    brand = "Vivo";
+    deviceType = "phone";
+  } else if (/hp|dell|lenovo|thinkpad|asus|acer/i.test(lower)) {
+    if (/hp/i.test(lower)) brand = "HP";
+    else if (/dell/i.test(lower)) brand = "Dell";
+    else if (/lenovo|thinkpad/i.test(lower)) brand = "Lenovo";
+    else if (/asus/i.test(lower)) brand = "Asus";
+    else if (/acer/i.test(lower)) brand = "Acer";
+    deviceType = "laptop";
+  } else if (/camera|canon|nikon|sony/i.test(lower)) {
+    brand = /canon/i.test(lower) ? "Canon" : /nikon/i.test(lower) ? "Nikon" : "Sony";
+    deviceType = "camera";
+  } else {
+    const parts = name.split(" ");
+    if (parts.length > 1) {
+      brand = parts[0];
+    }
+  }
+
+  let cleanModel = name;
+  if (name.toLowerCase().startsWith(brand.toLowerCase() + " ")) {
+    cleanModel = name.slice(brand.length).trim();
+  }
+
+  return { brand, model: cleanModel || name, deviceType };
+};
+
+// Helper to map incoming issue string to available issue categories
+const mapIssueCategory = (issueParam, list) => {
+  if (!issueParam || !list?.length) return list?.[0]?.category || "";
+  const norm = issueParam.toLowerCase().replace(/[-_]/g, "");
+
+  const found = list.find((item) => {
+    const cat = (item.category || "").toLowerCase().replace(/[-_]/g, "");
+    const lbl = (item.label || "").toLowerCase().replace(/[-_]/g, "");
+    if (norm === "screen" && (cat.includes("screen") || lbl.includes("screen"))) return true;
+    if (norm === "battery" && (cat.includes("battery") || lbl.includes("battery"))) return true;
+    if (norm === "charging" && (cat.includes("charg") || cat.includes("port") || lbl.includes("charg"))) return true;
+    if (norm === "backglass" && (cat.includes("back") || cat.includes("glass") || lbl.includes("back"))) return true;
+    if (norm === "camera" && (cat.includes("camera") || lbl.includes("camera"))) return true;
+    if (norm === "water" && (cat.includes("water") || cat.includes("liquid") || lbl.includes("water"))) return true;
+    if ((norm === "notsure" || norm === "diagnostic") && (cat.includes("diag") || lbl.includes("diag") || cat.includes("inspect"))) return true;
+    return cat.includes(norm) || norm.includes(cat) || lbl.includes(norm);
+  });
+
+  if (found) return found.category;
+  if (norm === "notsure" || norm === "diagnostic") {
+    const diag = list.find((i) => /diag|inspect/i.test((i.category || "") + (i.label || "")));
+    if (diag) return diag.category;
+  }
+  return list[0]?.category || issueParam;
+};
+
 const BookRepair = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [step, setStep] = useState(1);
   const [devices, setDevices] = useState([]);
   const [issues, setIssues] = useState([]);
@@ -51,7 +152,6 @@ const BookRepair = () => {
   const [receipt, setReceipt] = useState(null);
   const [submitError, setSubmitError] = useState("");
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  // const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Step 2 states
   const [selectedAddress, setSelectedAddress] = useState(null);
@@ -88,17 +188,21 @@ const BookRepair = () => {
           addressService.getUserAddresses(),
         ]);
 
+        let devList = [];
         if (devicesRes.status === "fulfilled") {
-          const devList =
+          devList =
             devicesRes.value?.data?.devices || devicesRes.value?.devices || [];
-          setDevices(devList);
         }
 
+        let issueList = [];
         if (issuesRes.status === "fulfilled") {
-          const issueList =
+          issueList =
             issuesRes.value?.data?.issues || issuesRes.value?.issues || [];
-          setIssues(issueList);
         }
+        if (!issueList.length) {
+          issueList = DEFAULT_ISSUES;
+        }
+        setIssues(issueList);
 
         if (addressesRes.status === "fulfilled") {
           const addrList =
@@ -113,15 +217,118 @@ const BookRepair = () => {
             setSelectedAddress(defaultAddr);
           }
         }
+
+        // Read query parameters & localStorage
+        const deviceParam = searchParams.get("device") || "";
+        const customModelParam = searchParams.get("customModel") || "";
+        const issueParam = searchParams.get("issue") || "";
+        const qualityParam = searchParams.get("quality") || "";
+        const typeParam = searchParams.get("type") || "";
+        const categoryParam = searchParams.get("category") || "";
+        const payOverTimeParam = searchParams.get("payOverTime") || "";
+
+        let pendingEstimate = null;
+        if (typeof window !== "undefined") {
+          try {
+            const raw = localStorage.getItem("pendingRepairEstimate");
+            if (raw) pendingEstimate = JSON.parse(raw);
+          } catch (e) {
+            // ignore
+          }
+        }
+
+        const effectiveDeviceName =
+          customModelParam || deviceParam || pendingEstimate?.device || "";
+        const effectiveIssue =
+          issueParam || pendingEstimate?.problem || (typeParam === "diagnostic" ? "diagnostic" : "");
+        const effectiveQuality =
+          qualityParam || pendingEstimate?.quality || "";
+        const effectivePayOverTime =
+          payOverTimeParam || pendingEstimate?.payOverTime || "";
+
+        if (effectiveIssue) {
+          const mappedCat = mapIssueCategory(effectiveIssue, issueList);
+          setSelectedIssueCategory(mappedCat);
+        } else if (issueList.length > 0) {
+          setSelectedIssueCategory(issueList[0].category);
+        }
+
+        // Pre-fill fault description if coming from estimate
+        if (effectiveDeviceName || effectiveIssue || effectiveQuality) {
+          if (
+            typeParam === "diagnostic" ||
+            effectiveIssue === "not_sure" ||
+            effectiveIssue === "diagnostic"
+          ) {
+            let desc = "Diagnostic assessment requested for device.";
+            if (categoryParam) desc += ` [Category: ${categoryParam.replace(/_/g, " ")}]`;
+            if (effectiveDeviceName) desc += ` [Device: ${effectiveDeviceName}]`;
+            setIssueDescription(desc);
+          } else {
+            const issueLabel = effectiveIssue
+              ? effectiveIssue.replace(/_/g, " ")
+              : "repair";
+            let desc = `Online estimate request for ${issueLabel}.`;
+            if (effectiveQuality) {
+              desc += ` Requested part quality: ${effectiveQuality.toUpperCase()}.`;
+            }
+            if (effectivePayOverTime) {
+              desc += ` Selected Pay Over Time (${effectivePayOverTime} months financing).`;
+            }
+            setIssueDescription(desc);
+          }
+        }
+
+        // Match device or create temporary device for the form
+        if (effectiveDeviceName) {
+          const targetLower = effectiveDeviceName.toLowerCase();
+          const existingDevice = devList.find((d) => {
+            const full = `${d.brand || ""} ${d.model || ""}`.toLowerCase();
+            return (
+              full.includes(targetLower) ||
+              targetLower.includes(full) ||
+              (d.model && targetLower.includes(d.model.toLowerCase()))
+            );
+          });
+
+          if (existingDevice) {
+            setSelectedDevice(existingDevice);
+            setDevices(devList);
+          } else {
+            // Create a temporary device for this booking form
+            const { brand, model, deviceType } = inferDeviceDetails(effectiveDeviceName);
+            const tempId = `temp_${Date.now()}`;
+            const tempDevice = {
+              _id: tempId,
+              id: tempId,
+              brand,
+              model,
+              deviceType,
+              condition: "good",
+              purchaseDate: new Date().toISOString().split("T")[0],
+              serialNumber: `TEMP-${Date.now().toString(36).toUpperCase()}`,
+              isTemporary: true,
+            };
+            const mergedList = [tempDevice, ...devList];
+            setDevices(mergedList);
+            setSelectedDevice(tempDevice);
+          }
+        } else {
+          setDevices(devList);
+          if (devList.length > 0) {
+            setSelectedDevice(devList[0]);
+          }
+        }
       } catch (err) {
         console.error("Failed to load data:", err);
       } finally {
+        setLoading(false);
         setLoadingAddresses(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [searchParams]);
 
   const refetchDevices = async () => {
     try {
@@ -129,7 +336,7 @@ const BookRepair = () => {
       const res = await deviceService.getAllUserDevices();
       setDevices(res?.data?.devices || []);
 
-      // Optional: auto-select the newest device (last one)
+      // Auto-select the newest device
       if (res?.data?.devices?.length > 0) {
         setSelectedDevice(res.data.devices[res.data.devices.length - 1]);
       }
@@ -190,55 +397,98 @@ const BookRepair = () => {
     setIsSubmitting(true);
 
     try {
-      const formData = new FormData();
+      let persistentDeviceId = selectedDevice?._id || selectedDevice?.id;
 
-      // Append regular fields
-      formData.append("deviceId", selectedDevice?._id || selectedDevice?.id);
+      // If device was created temporarily from quote parameters, auto-register it in database first
+      if (selectedDevice?.isTemporary) {
+        const tempPayload = new FormData();
+        tempPayload.append("deviceType", selectedDevice.deviceType || "phone");
+        tempPayload.append("brand", selectedDevice.brand || "Other");
+        tempPayload.append("model", selectedDevice.model || "Unknown");
+        tempPayload.append(
+          "serialNumber",
+          selectedDevice.serialNumber ||
+            `TEMP-${Date.now().toString(36).toUpperCase()}`
+        );
+        tempPayload.append(
+          "purchaseDate",
+          selectedDevice.purchaseDate || new Date().toISOString().split("T")[0]
+        );
+        tempPayload.append("condition", selectedDevice.condition || "good");
+        tempPayload.append("notes", "Auto-created from repair quote estimator");
+
+        const addRes = await deviceService.addDevice(tempPayload);
+        const created =
+          addRes?.data?.device ||
+          addRes?.device ||
+          addRes?.data?.newDevice ||
+          addRes?.data;
+        const newId = created?._id || created?.id || addRes?._id || addRes?.id;
+
+        if (!newId || `${newId}`.startsWith("temp_")) {
+          throw new Error(
+            addRes?.message ||
+              "Failed to register device in database before booking."
+          );
+        }
+
+        persistentDeviceId = newId;
+        setSelectedDevice((prev) => ({
+          ...prev,
+          _id: newId,
+          id: newId,
+          isTemporary: false,
+        }));
+      }
+
+      const formData = new FormData();
+      formData.append("deviceId", persistentDeviceId);
       formData.append("issueCategory", selectedIssueCategory);
       formData.append("issueDescription", issueDescription.trim());
       formData.append("serviceType", "pickup_repair");
       formData.append(
         "pickupAddressId",
-        selectedAddress?._id || selectedAddress?.id,
+        selectedAddress?._id || selectedAddress?.id
       );
 
       // Append uploaded files
-      uploadedFiles.forEach((file, index) => {
-        console.log(
-          `Appending file ${index}:`,
-          file.name,
-          file.size,
-          file.type,
-        );
+      uploadedFiles.forEach((file) => {
         formData.append("photos", file);
       });
 
       // Call the booking API
       const response = await repairService.bookRepair(formData);
 
+      // Clean up stored pending estimate
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.removeItem("pendingRepairEstimate");
+        } catch (e) {
+          // ignore
+        }
+      }
+
       // Extract payment link from response
       const paymentLink = response?.paymentLink || response?.data?.paymentLink;
 
       if (paymentLink) {
-        // Redirect to payment page
         window.location.href = paymentLink;
       } else {
-        // Fallback: show success modal if no payment required
         setIsModalOpen(true);
-        console.log("Booking successful (no payment link):", response);
       }
     } catch (error) {
       console.error("Booking failed:", error);
       toast.error(
         error.response?.data?.message ||
-          "Failed to book repair. Please try again.",
+          error.message ||
+          "Failed to book repair. Please try again."
       );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Handle Add Device
+  // Handle Add Device Modal Submission
   const handleSubmitDevice = async (e) => {
     e.preventDefault();
     setSubmitError("");
@@ -266,10 +516,7 @@ const BookRepair = () => {
       await deviceService.addDevice(payload);
       toast.success("Device added successfully!");
 
-      // Close modal
       setIsAddModalOpen(false);
-
-      // Refetch devices (this is the key part)
       await refetchDevices();
 
       // Reset form
@@ -318,6 +565,7 @@ const BookRepair = () => {
                     <div className="no-added-devices">
                       <p>No Device found, Kindly add a device to continue...</p>
                       <button
+                        type="button"
                         onClick={() => {
                           setIsAddModalOpen(true);
                         }}
@@ -326,29 +574,59 @@ const BookRepair = () => {
                       </button>
                     </div>
                   ) : (
-                    devices.map((device) => (
+                    <>
+                      {devices.map((device) => {
+                        const isSelected =
+                          selectedDevice &&
+                          ((device._id && selectedDevice._id === device._id) ||
+                            (device.id && selectedDevice.id === device.id) ||
+                            selectedDevice === device);
+                        return (
+                          <button
+                            key={device._id || device.id || `${device.brand}-${device.model}`}
+                            type="button"
+                            onClick={() => setSelectedDevice(device)}
+                            className={`option-btn ${
+                              isSelected ? "active-option" : ""
+                            }`}
+                          >
+                            <Image
+                              src={getDeviceIcon(device.deviceType)}
+                              alt={`${device.brand} ${device.model}`}
+                              width={40}
+                              height={40}
+                            />
+                            <span>
+                              {device.brand} {device.model}
+                              {device.isTemporary
+                                ? " (From Quote)"
+                                : device.condition
+                                ? ` (${device.condition})`
+                                : ""}
+                            </span>
+                          </button>
+                        );
+                      })}
                       <button
-                        key={device._id || device.id}
                         type="button"
-                        onClick={() => setSelectedDevice(device)}
-                        className={`option-btn ${
-                          selectedDevice?._id === device._id
-                            ? "active-option"
-                            : ""
-                        }`}
+                        onClick={() => setIsAddModalOpen(true)}
+                        className="option-btn"
+                        style={{
+                          border: "2px dashed #d1d5db",
+                          background: "#fafafa",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "4px",
+                          color: "#4b5563",
+                          cursor: "pointer",
+                        }}
                       >
-                        <Image
-                          src={getDeviceIcon(device.deviceType)}
-                          alt={`${device.brand} ${device.model}`}
-                          width={40}
-                          height={40}
-                        />
-                        <span>
-                          {device.brand} {device.model}
-                          {device.condition && ` (${device.condition})`}
-                        </span>
+                        <span style={{ fontSize: "20px", fontWeight: "bold", lineHeight: "1" }}>+</span>
+                        <span style={{ fontSize: "13px" }}>Add Device</span>
                       </button>
-                    ))
+                    </>
                   )}
                 </div>
               </div>
@@ -425,8 +703,14 @@ const BookRepair = () => {
             </div>
 
             <div className="repair-btn">
-              <button className="repair-btn-back">Cancel</button>
-              <button className="repair-btn-proceed" onClick={nextStep}>
+              <button
+                type="button"
+                className="repair-btn-back"
+                onClick={() => router.push("/dashboard")}
+              >
+                Cancel
+              </button>
+              <button type="button" className="repair-btn-proceed" onClick={nextStep}>
                 Proceed
               </button>
             </div>
@@ -452,13 +736,13 @@ const BookRepair = () => {
                     <p style={{ color: "#888" }}>
                       No saved addresses found. Please add one in your profile.
                     </p>
-                    <Link href='/dashboard/my-account'>Add Address.</Link>
+                    <Link href="/dashboard/my-account">Add Address.</Link>
                   </div>
                 ) : (
                   <div className="gadget-options address-options">
                     {addresses.map((address) => (
                       <button
-                        key={address._id}
+                        key={address._id || address.id}
                         type="button"
                         onClick={() => setSelectedAddress(address)}
                         className={`option-btn address-btn ${
@@ -482,36 +766,13 @@ const BookRepair = () => {
                   </div>
                 )}
               </div>
-
-              {/* Selected Address Summary */}
-              {/* {selectedAddress && (
-                <div
-                  className="selected-address-summary"
-                  style={{
-                    margin: "16px 0",
-                    padding: "12px",
-                    background: "#f8f9fa",
-                    borderRadius: "8px",
-                    border: "1px solid #ddd",
-                  }}
-                >
-                  <strong>
-                    Selected: {selectedAddress.label || selectedAddress.type}
-                  </strong>
-                  <p style={{ margin: "4px 0" }}>
-                    {selectedAddress.streetAddress}, {selectedAddress.city},{" "}
-                    {selectedAddress.state}
-                  </p>
-                  <small>{selectedAddress.formattedAddress}</small>
-                </div>
-              )} */}
             </div>
 
             <div className="repair-btn">
-              <button className="repair-btn-back" onClick={prevStep}>
+              <button type="button" className="repair-btn-back" onClick={prevStep}>
                 Back
               </button>
-              <button className="repair-btn-proceed" onClick={nextStep}>
+              <button type="button" className="repair-btn-proceed" onClick={nextStep}>
                 Proceed
               </button>
             </div>
@@ -527,7 +788,7 @@ const BookRepair = () => {
             </div>
 
             <div className="repair-summary">
-              <div className="repair-details">
+              <div className="repair-detailss">
                 {selectedDevice && (
                   <div className="brand-model">
                     <Image
@@ -540,7 +801,10 @@ const BookRepair = () => {
                       <h3>{selectedDevice.brand}</h3>
                       <p>
                         {selectedDevice.model} (
-                        {selectedDevice.condition || "N/A"})
+                        {selectedDevice.isTemporary
+                          ? "From Online Quote"
+                          : selectedDevice.condition || "N/A"}
+                        )
                       </p>
                     </div>
                   </div>
@@ -588,10 +852,11 @@ const BookRepair = () => {
             </div>
 
             <div className="repair-btn">
-              <button className="repair-btn-back" onClick={prevStep}>
+              <button type="button" className="repair-btn-back" onClick={prevStep}>
                 Back
               </button>
               <button
+                type="button"
                 className="repair-btn-proceed"
                 onClick={handleGetQuote}
                 disabled={isSubmitting}
@@ -620,16 +885,15 @@ const BookRepair = () => {
               <p>Register your device for repairs & insurance</p>
             </div>
 
-            <form onSubmit={handleSubmitDevice} className="add-device-form">
-              {submitError && (
-                <div className="alert error">
-                  <AlertCircle size={18} />
-                  {submitError}
-                </div>
-              )}
+            {submitError && (
+              <div className="error-message">
+                <AlertCircle size={18} />
+                <span>{submitError}</span>
+              </div>
+            )}
 
+            <form onSubmit={handleSubmitDevice} className="device-modal-form">
               <div className="form-grid">
-                {/* All your form fields remain the same */}
                 <div className="form-grouup">
                   <label>Device Type *</label>
                   <select
@@ -641,9 +905,8 @@ const BookRepair = () => {
                   >
                     <option value="phone">Phone</option>
                     <option value="laptop">Laptop</option>
-                    <option value="tablet">Tablet</option>
                     <option value="camera">Camera</option>
-                    <option value="other">Other</option>
+                    <option value="desktop">Desktop</option>
                   </select>
                 </div>
 
@@ -664,7 +927,7 @@ const BookRepair = () => {
                   <label>Model *</label>
                   <input
                     type="text"
-                    placeholder="e.g. iPhone 15 Pro"
+                    placeholder="e.g. iPhone 13 Pro"
                     value={formData.model}
                     onChange={(e) =>
                       setFormData({ ...formData, model: e.target.value })
@@ -674,10 +937,10 @@ const BookRepair = () => {
                 </div>
 
                 <div className="form-grouup">
-                  <label>Serial Number *</label>
+                  <label>Serial Number / IMEI *</label>
                   <input
                     type="text"
-                    placeholder="ABC123XYZ"
+                    placeholder="Serial or IMEI"
                     value={formData.serialNumber}
                     onChange={(e) =>
                       setFormData({ ...formData, serialNumber: e.target.value })
@@ -705,37 +968,50 @@ const BookRepair = () => {
                       setFormData({ ...formData, condition: e.target.value })
                     }
                   >
-                    <option value="excellent">Excellent</option>
+                    <option value="brand_new">Brand New</option>
                     <option value="good">Good</option>
                     <option value="fair">Fair</option>
                     <option value="poor">Poor</option>
-                    <option value="not_working">Not Working</option>
                   </select>
                 </div>
 
                 <div className="form-grouup full">
-                  <label>Photos "(min. 2 required)"</label>
-                  <label className="file-upload">
+                  <label>Device Photos (Optional)</label>
+                  <label className="upload-box">
                     <Upload size={20} />
-                    Upload Photos ({photos.length})
+                    <span>Upload photos (max 5)</span>
                     <input
                       type="file"
-                      accept="image/*"
                       multiple
-                      onChange={(e) => setPhotos(Array.from(e.target.files))}
+                      accept="image/*"
+                      onChange={(e) => {
+                        const newFiles = Array.from(e.target.files);
+                        setPhotos((prev) => [...prev, ...newFiles].slice(0, 5));
+                      }}
+                      style={{ display: "none" }}
                     />
                   </label>
+                  {photos.length > 0 && (
+                    <div className="selected-files">
+                      {photos.map((f, i) => (
+                        <span key={i} className="file-tag">
+                          {f.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="form-grouup full">
                   <label>Purchase Receipt (Optional)</label>
-                  <label className="file-upload">
+                  <label className="upload-box">
                     <Upload size={20} />
-                    {receipt ? receipt.name : "Upload Receipt"}
+                    <span>{receipt ? receipt.name : "Upload receipt"}</span>
                     <input
                       type="file"
-                      accept=".pdf,.jpg,.jpeg,.png"
+                      accept="image/*,.pdf"
                       onChange={(e) => setReceipt(e.target.files[0])}
+                      style={{ display: "none" }}
                     />
                   </label>
                 </div>
@@ -785,4 +1061,19 @@ const BookRepair = () => {
   );
 };
 
-export default BookRepair;
+export default function BookRepairPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="book-page">
+          <div className="book-header">
+            <h1>Book Repair</h1>
+            <p>Loading details...</p>
+          </div>
+        </div>
+      }
+    >
+      <BookRepair />
+    </Suspense>
+  );
+}
