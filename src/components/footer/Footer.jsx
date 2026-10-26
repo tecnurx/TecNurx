@@ -19,22 +19,49 @@ const Footer = ({ newsPaperWrap }) => {
       <div className="footer-center-wrap">
         <div
           className={`newsletter-wrap ${
-            newsPaperWrap ? "newletter-wrap-true" : "newletter-wrap-false"
+            newsPaperWrap
+              ? "newsletter-wrap-true newletter-wrap-true"
+              : "newsletter-wrap-false newletter-wrap-false"
           }`}
         >
-          <div className="newsletter">
-            <div>
-              <h2>Newsletter</h2>
-              <p>Sign up for our newsletter</p>
+          <div className="newsletter-card-wrapper">
+            <svg
+              className="curve-left"
+              viewBox="0 0 36 36"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M 0,0 Q 36,0 36,36 L 36,0 Z"
+                fill="var(--newsletter-bg-above, #ffffff)"
+              />
+            </svg>
+
+            <div className="newsletter">
+              <div className="newsletter-text">
+                <h2>Newsletter</h2>
+                <p>Sign up for our newsletter</p>
+              </div>
+              <div className="input-button">
+                <input type="email" placeholder="Email address" />
+                <button type="submit">Submit</button>
+              </div>
             </div>
-            <div className="input-button">
-              <input type="email" placeholder="Email address" />
-              <button>Submit</button>
-            </div>
+
+            <svg
+              className="curve-right"
+              viewBox="0 0 36 36"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M 0,36 Q 0,0 36,0 L 0,0 Z"
+                fill="var(--newsletter-bg-above, #ffffff)"
+              />
+            </svg>
           </div>
-          <div className="shape"></div>
-          <div className="shape2"></div>
         </div>
+
         <div className="footer-main">
           <div className="foot-block foot-block-img">
             <Image src={logo} alt="logo" />
@@ -101,47 +128,56 @@ const Footer = ({ newsPaperWrap }) => {
             </div>
           </div>
         </div>
-        <div className="social-wrap">
-          <a
-            className="social-icon"
-            target="_blank"
-            href="https://www.facebook.com/share/1YogVQf4Wf/?mibextid=wwXIfr"
-          >
-            <Image src={fb} alt="Facebook" />
-            Facebook
-          </a>
-          <a
-            className="social-icon"
-            target="_blank"
-            href="https://www.instagram.com/tecnurx/"
-          >
-            <Image src={ig} alt="Instagram" />
-            Instagram
-          </a>
-          <a
-            className="social-icon"
-            target="_blank"
-            href="https://x.com/TecNurx"
-          >
-            <Image src={x} alt="X" className="x-icon" />
-            Twitter
-          </a>
-          <a
-            className="social-icon"
-            target="_blank"
-            href="https://www.linkedin.com/company/tecnurx/"
-          >
-            <Image src={linkedin} alt="LinkedIn" />
-            LinkedIn
-          </a>
-          <a className="social-icon" target="_blank" href="https://wa.me/2349132367306">
-            <Image src={whatsapp} alt="Whatsapp" />
-            Whatsapp
-          </a>
+
+        <div className="social-master">
+          <div className="social-wrap">
+            <a
+              className="social-icon"
+              target="_blank"
+              href="https://www.facebook.com/share/1YogVQf4Wf/?mibextid=wwXIfr"
+            >
+              <Image src={fb} alt="Facebook" />
+              Facebook
+            </a>
+            <a
+              className="social-icon"
+              target="_blank"
+              href="https://www.instagram.com/tecnurx/"
+            >
+              <Image src={ig} alt="Instagram" />
+              Instagram
+            </a>
+            <a
+              className="social-icon"
+              target="_blank"
+              href="https://x.com/TecNurx"
+            >
+              <Image src={x} alt="X" className="x-icon" />
+              Twitter
+            </a>
+            <a
+              className="social-icon"
+              target="_blank"
+              href="https://www.linkedin.com/company/tecnurx/"
+            >
+              <Image src={linkedin} alt="LinkedIn" />
+              LinkedIn
+            </a>
+            <a
+              className="social-icon"
+              target="_blank"
+              href="https://wa.me/2349132367306"
+            >
+              <Image src={whatsapp} alt="Whatsapp" />
+              Whatsapp
+            </a>
+          </div>
         </div>
+
         <div className="copyright">
-          <p>© TecNurx All rights reserved, 2025 </p>
+          <p>© TecNurx All rights reserved, {new Date().getFullYear()}</p>
         </div>
+
         <div className="footer-imgtext">
           <Image src={tecnurx} alt="floor image" />
         </div>

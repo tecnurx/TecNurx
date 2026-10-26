@@ -40,7 +40,7 @@ export default function Home() {
       <OurServices />
 
       {/* Schedule pickup, insurance, become a partner */}
-      <HomeInsurancePartner />
+      {/* <HomeInsurancePartner /> */}
 
       {/* Repairs */}
       <Repairs />

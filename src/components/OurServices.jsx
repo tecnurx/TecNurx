@@ -33,7 +33,7 @@ const OurServices = () => {
               </Link>
             </div>
           </div>
-          {/* <div className="sgrids sgrid2">
+          <div className="sgrids sgrid2">
             <div>
               <h2>Gadget Sales</h2>
               <p>
@@ -41,13 +41,13 @@ const OurServices = () => {
                 the latest smartphones, laptops, and smart devices at great
                 prices
               </p>
-              <Link href="#">
+              <Link href="/buy-devices">
                 <span>Explore gadgets</span>
                 <ArrowRight size={18} />
               </Link>
             </div>
             <Image src={sale} alt="gadget sales" />
-          </div> */}
+          </div>
           <div className="sgrids sgrid2 sgrid3">
             <div>
               <h2>Gadget Insurance</h2>

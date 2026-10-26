@@ -15,7 +15,7 @@ const HowBest = () => {
       img: how1,
       title: "Start a claim",
       desc: "Submit a new claim for your device quickly and easily. We'll guide you through the process to get your issue resolved",
-      href: "#",
+      href: "/dashboard/insurance",
     },
     {
       id: 2,
@@ -31,13 +31,13 @@ const HowBest = () => {
       desc: "Give yourself peace of mind with our protection plans. Our flexible options cover everything from accidental damage to unexpected failures",
       href: "/insurance",
     },
-    {
-      id: 4,
-      img: how4,
-      title: "Consult us",
-      desc: "Need professional advice? Talk to our experts for assistance with device setups, product recommendations, etc.",
-      href: "#",
-    },
+    // {
+    //   id: 4,
+    //   img: how4,
+    //   title: "Consult us",
+    //   desc: "Need professional advice? Talk to our experts for assistance with device setups, product recommendations, etc.",
+    //   href: "#",
+    // },
     {
       id: 5,
       img: how5,

@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import hero from "@/assets/images/hero4.png";
+import hero from "@/assets/images/hero.png";
 import rate from "@/assets/images/rate.svg";
 import "@/app/home.css";
 import Link from "next/link";
+import OurPartners from "./OurPartners";
 
 const numberStat = [
   { id: 1, end: 2000, suffix: "+", title: "Successful Repairs" },
@@ -60,30 +61,45 @@ function AnimatedNumber({ end, suffix = "", duration = 1800 }) {
 
 const HeroSection = () => {
   return (
-    <main className="hero-section">
-      <div className="hero-content">
-        <div className="hero-texts">
-          <Image src={rate} alt="Rating badge" priority />
-          <h1>
-            All your device needs, solved with{" "}
-            <span>flexible payment plans</span>
-          </h1>
-          <p>
-            Get professional repairs, protection plans, and new devices with
-            free pickup and delivery
-          </p>
-          <div className="hero-btns">
-            {/* <Link href="/login" className="btn-primary">
-              Sign In
-            </Link> */}
-            <Link href="#GetQuote">
-              Get Quote
-            </Link>
+    <>
+      <main className="hero-section">
+        <div className="hero-content">
+          <div className="hero-texts">
+            <Image src={rate} alt="Rating badge" priority />
+            <h1>
+              All your device needs, solved with{" "}
+              <span>flexible payment plans</span>
+            </h1>
+            <p>
+              Get professional repairs, protection plans, and new devices with
+              free pickup and delivery
+            </p>
+            <div className="hero-btns">
+              <Link href="#GetQuote">Book a Repair</Link>
+              <Link href="/dashboard/insurance" className="hero-claim">
+                Claim Insurance
+              </Link>
+            </div>
           </div>
+
+          <OurPartners />
         </div>
 
-        {/* Numbers */}
-        <div className="numbers-wrap numbers-pc">
+        <Image
+          src={hero}
+          alt="Hero illustration – device repair service"
+          className="hero-image"
+          priority
+        />
+      </main>
+
+      {/* Numbers */}
+      <section className="number-section">
+        <div className="num-top">
+          <span>Talking numbers...</span>
+        </div>
+        <div className="num-div"></div>
+        <div className="numbers-wrap">
           {numberStat.map((stat) => (
             <div key={stat.id} className="stat-item">
               <h2 className="stat-value">
@@ -97,31 +113,8 @@ const HeroSection = () => {
             </div>
           ))}
         </div>
-      </div>
-
-      <Image
-        src={hero}
-        alt="Hero illustration – device repair service"
-        className="hero-image"
-        priority
-      />
-
-      {/* Numbers mobile */}
-      <div className="numbers-wrap numbers-mobile">
-        {numberStat.map((stat) => (
-          <div key={stat.id} className="stat-item">
-            <h2 className="stat-value">
-              <AnimatedNumber
-                end={stat.end}
-                suffix={stat.suffix}
-                duration={1800} // 1.8 seconds – feels nice
-              />
-            </h2>
-            <h3>{stat.title}</h3>
-          </div>
-        ))}
-      </div>
-    </main>
+      </section>
+    </>
   );
 };
 

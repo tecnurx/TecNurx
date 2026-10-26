@@ -2,105 +2,240 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search, X } from "lucide-react";
+import { Search, X, RotateCcw, ChevronDown } from "lucide-react";
 import "./repairs.css";
 
-// Brands list
-const BRANDS = ["Apple", "Samsung", "Google", "Redmi", "Other"];
+// 5 Device Types (Matching Image 1 & 2)
+const DEVICE_TYPES = ["Phone", "Tablet", "Laptop", "Camera", "Other"];
 
-// Comprehensive dummy model catalog
-const MODELS_BY_BRAND = {
-  Apple: [
-    "iPhone 16 Pro Max",
-    "iPhone 16 Pro",
-    "iPhone 16 Plus",
-    "iPhone 16",
-    "iPhone 15 Pro Max",
-    "iPhone 15 Pro",
-    "iPhone 15 Plus",
-    "iPhone 15",
-    "iPhone 14 Pro Max",
-    "iPhone 14 Pro",
-    "iPhone 14 Plus",
-    "iPhone 14",
-    "iPhone 13 Pro Max",
-    "iPhone 13 Pro",
-    "iPhone 13",
-    "iPhone 13 mini",
-    "iPhone 12 Pro Max",
-    "iPhone 12 Pro",
-    "iPhone 12",
-    "iPhone 12 mini",
-    "iPhone 11 Pro Max",
-    "iPhone 11 Pro",
-    "iPhone 11",
-    "iPhone XR",
-    "iPhone XS Max",
-    "iPhone X",
-    "iPhone SE (3rd Gen)",
-    'iPad Pro 12.9"',
-    "iPad Air (M2)",
-    "iPad 10th Gen",
-    'MacBook Pro 14"',
-    "MacBook Air M2",
-  ],
-  Samsung: [
-    "Galaxy S24 Ultra",
-    "Galaxy S24+",
-    "Galaxy S24",
-    "Galaxy S23 Ultra",
-    "Galaxy S23+",
-    "Galaxy S23",
-    "Galaxy S22 Ultra",
-    "Galaxy S22+",
-    "Galaxy S22",
-    "Galaxy Z Fold 5",
-    "Galaxy Z Flip 5",
-    "Galaxy A54 5G",
-    "Galaxy A34 5G",
-    "Galaxy A24",
-    "Galaxy A14",
-    "Galaxy Note 20 Ultra",
-    "Galaxy Tab S9",
-  ],
-  Google: [
-    "Pixel 9 Pro XL",
-    "Pixel 9 Pro",
-    "Pixel 9",
-    "Pixel 8 Pro",
-    "Pixel 8",
-    "Pixel 8a",
-    "Pixel 7 Pro",
-    "Pixel 7",
-    "Pixel 7a",
-    "Pixel 6 Pro",
-    "Pixel 6",
-    "Pixel 6a",
-  ],
-  Redmi: [
-    "Redmi Note 13 Pro+",
-    "Redmi Note 13 Pro",
-    "Redmi Note 13",
-    "Redmi Note 12 Pro",
-    "Redmi Note 12",
-    "Redmi Note 11",
-    "Redmi 13C",
-    "Redmi 12",
-    "Redmi 10C",
-  ],
-  Other: [
-    "Tecno Camon 30 Premier",
-    "Tecno Spark 20 Pro",
-    "Infinix Note 40 Pro",
-    "Infinix Hot 40",
-    "OnePlus 12",
-    "OnePlus 11",
-    "Oppo Reno 11 Pro",
-    "Vivo V30 Pro",
-    "HP Pavilion 15",
-    "Dell XPS 13",
-    "Lenovo ThinkPad X1",
-  ],
+// Brands per device type
+const BRANDS_BY_DEVICE_TYPE = {
+  Phone: ["Apple", "Samsung", "Google", "Redmi", "Tecno", "Infinix", "Other"],
+  Tablet: ["Apple", "Samsung", "Lenovo", "Microsoft", "Other"],
+  Laptop: ["Apple", "HP", "Dell", "Lenovo", "Asus", "Acer", "Other"],
+  Camera: ["Canon", "Nikon", "Sony", "Fujifilm", "Other"],
+  Other: ["Apple", "Samsung", "Sony", "Nintendo", "Other"],
+};
+
+// Comprehensive dummy model catalog grouped by device type and brand
+const MODELS_CATALOG = {
+  Phone: {
+    Apple: [
+      "iPhone 16 Pro Max",
+      "iPhone 16 Pro",
+      "iPhone 16 Plus",
+      "iPhone 16",
+      "iPhone 15 Pro Max",
+      "iPhone 15 Pro",
+      "iPhone 15 Plus",
+      "iPhone 15",
+      "iPhone 14 Pro Max",
+      "iPhone 14 Pro",
+      "iPhone 14 Plus",
+      "iPhone 14",
+      "iPhone 13 Pro Max",
+      "iPhone 13 Pro",
+      "iPhone 13",
+      "iPhone 13 mini",
+      "iPhone 12 Pro Max",
+      "iPhone 12 Pro",
+      "iPhone 12",
+      "iPhone 12 mini",
+      "iPhone 11 Pro Max",
+      "iPhone 11 Pro",
+      "iPhone 11",
+      "iPhone XR",
+      "iPhone XS Max",
+      "iPhone X",
+      "iPhone SE (3rd Gen)",
+    ],
+    Samsung: [
+      "Galaxy S24 Ultra",
+      "Galaxy S24+",
+      "Galaxy S24",
+      "Galaxy S23 Ultra",
+      "Galaxy S23+",
+      "Galaxy S23",
+      "Galaxy S22 Ultra",
+      "Galaxy S22+",
+      "Galaxy S22",
+      "Galaxy Z Fold 5",
+      "Galaxy Z Flip 5",
+      "Galaxy A54 5G",
+      "Galaxy A34 5G",
+      "Galaxy A24",
+      "Galaxy A14",
+      "Galaxy Note 20 Ultra",
+    ],
+    Google: [
+      "Pixel 9 Pro XL",
+      "Pixel 9 Pro",
+      "Pixel 9",
+      "Pixel 8 Pro",
+      "Pixel 8",
+      "Pixel 8a",
+      "Pixel 7 Pro",
+      "Pixel 7",
+      "Pixel 7a",
+      "Pixel 6 Pro",
+      "Pixel 6",
+      "Pixel 6a",
+    ],
+    Redmi: [
+      "Redmi Note 13 Pro+",
+      "Redmi Note 13 Pro",
+      "Redmi Note 13",
+      "Redmi Note 12 Pro",
+      "Redmi Note 12",
+      "Redmi Note 11",
+      "Redmi 13C",
+      "Redmi 12",
+      "Redmi 10C",
+    ],
+    Tecno: [
+      "Tecno Camon 30 Premier",
+      "Tecno Camon 30 Pro",
+      "Tecno Spark 20 Pro",
+      "Tecno Spark 20",
+      "Tecno Phantom V Fold",
+      "Tecno Pova 6",
+    ],
+    Infinix: [
+      "Infinix Note 40 Pro",
+      "Infinix Note 40",
+      "Infinix Hot 40 Pro",
+      "Infinix Hot 40",
+      "Infinix Zero 30",
+    ],
+    Other: [
+      "OnePlus 12",
+      "OnePlus 11",
+      "Oppo Reno 11 Pro",
+      "Vivo V30 Pro",
+      "Xiaomi 14",
+    ],
+  },
+  Tablet: {
+    Apple: [
+      'iPad Pro 12.9" (6th Gen)',
+      'iPad Pro 11" (4th Gen)',
+      "iPad Air (M2)",
+      "iPad Air (5th Gen)",
+      "iPad 10th Gen",
+      "iPad 9th Gen",
+      "iPad mini (6th Gen)",
+    ],
+    Samsung: [
+      "Galaxy Tab S9 Ultra",
+      "Galaxy Tab S9+",
+      "Galaxy Tab S9",
+      "Galaxy Tab S8",
+      "Galaxy Tab A9+",
+      "Galaxy Tab A9",
+    ],
+    Lenovo: ["Tab P12 Pro", "Tab P11 Pro", "Tab M10 Plus"],
+    Microsoft: ["Surface Pro 9", "Surface Pro 8", "Surface Go 3"],
+    Other: ["Xiaomi Pad 6", "Huawei MatePad Pro"],
+  },
+  Laptop: {
+    Apple: [
+      'MacBook Pro 16" (M3)',
+      'MacBook Pro 14" (M3)',
+      'MacBook Pro 16" (M1/M2)',
+      'MacBook Pro 14" (M1/M2)',
+      'MacBook Air 15" (M2/M3)',
+      'MacBook Air 13" (M2/M3)',
+      'MacBook Air 13" (M1)',
+    ],
+    HP: [
+      "HP Spectre x360",
+      "HP Envy 15",
+      "HP Pavilion 15",
+      "HP Omen 16",
+      "HP EliteBook 840",
+    ],
+    Dell: [
+      "Dell XPS 15",
+      "Dell XPS 13 Plus",
+      "Dell XPS 13",
+      "Dell Inspiron 15",
+      "Dell Latitude 5420",
+      "Dell G15 Gaming",
+    ],
+    Lenovo: [
+      "ThinkPad X1 Carbon",
+      "ThinkPad T14",
+      "ThinkPad E14",
+      "Legion Pro 5",
+      "IdeaPad 3",
+      "Yoga 9i",
+    ],
+    Asus: [
+      "ROG Zephyrus G14",
+      "ZenBook 14 OLED",
+      "VivoBook 15",
+      "TUF Gaming A15",
+    ],
+    Acer: [
+      "Acer Swift 3",
+      "Acer Aspire 5",
+      "Acer Nitro 5",
+      "Predator Helios 300",
+    ],
+    Other: ["Microsoft Surface Laptop 5", "Razer Blade 15"],
+  },
+  Camera: {
+    Canon: [
+      "EOS R5",
+      "EOS R6 Mark II",
+      "EOS R8",
+      "EOS 5D Mark IV",
+      "EOS 90D",
+      "EOS Rebel T7",
+    ],
+    Nikon: [
+      "Nikon Z8",
+      "Nikon Z6 II",
+      "Nikon Z50",
+      "Nikon D850",
+      "Nikon D7500",
+    ],
+    Sony: [
+      "Sony Alpha 7 IV",
+      "Sony Alpha 7R V",
+      "Sony FX3",
+      "Sony ZV-E10",
+      "Sony A6700",
+    ],
+    Fujifilm: [
+      "Fujifilm X-T5",
+      "Fujifilm X-H2",
+      "Fujifilm X-S20",
+      "Fujifilm X100V",
+    ],
+    Other: [
+      "Panasonic Lumix S5 II",
+      "GoPro HERO 12 Black",
+      "DJI Osmo Pocket 3",
+    ],
+  },
+  Other: {
+    Apple: [
+      "Apple Watch Series 9",
+      "Apple Watch Ultra 2",
+      "Apple Watch SE",
+      "AirPods Pro (2nd Gen)",
+      "AirPods Max",
+    ],
+    Samsung: [
+      "Galaxy Watch 6 Classic",
+      "Galaxy Watch 6",
+      "Galaxy Buds2 Pro",
+    ],
+    Sony: ["PlayStation 5", "PlayStation 5 Digital", "Sony WH-1000XM5"],
+    Nintendo: ["Nintendo Switch OLED", "Nintendo Switch Lite"],
+    Other: ["Xbox Series X", "Xbox Series S", "Steam Deck OLED"],
+  },
 };
 
 // 6 Closest Match options (when exact model is unlisted - Figma Image 2)
@@ -282,11 +417,13 @@ const Repairs = () => {
   // Stepper state: 1: Device, 2: Problem, 3: Part Quality
   const [step, setStep] = useState(1);
 
-  // Step 1: Device states
+  // Step 1: Device states (Image 1: initially null so Device Type pills are displayed with hint)
+  const [selectedDeviceType, setSelectedDeviceType] = useState(null);
   const [selectedBrand, setSelectedBrand] = useState("Apple");
+  const [isBrandDropdownOpen, setIsBrandDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedModel, setSelectedModel] = useState("iPhone 13 Pro");
+  const [selectedModel, setSelectedModel] = useState("");
   const [isModelUnlisted, setIsModelUnlisted] = useState(false);
   const [selectedClosestMatch, setSelectedClosestMatch] =
     useState("mid_range_android");
@@ -306,6 +443,43 @@ const Repairs = () => {
   const [paybackMonths, setPaybackMonths] = useState(6);
 
   const searchContainerRef = useRef(null);
+  const brandDropdownRef = useRef(null);
+
+  // Available brands for selected device type
+  const availableBrands = useMemo(() => {
+    if (!selectedDeviceType) return [];
+    return BRANDS_BY_DEVICE_TYPE[selectedDeviceType] || ["Other"];
+  }, [selectedDeviceType]);
+
+  // When device type changes (Image 1 -> Image 2)
+  const handleSelectDeviceType = (type) => {
+    setSelectedDeviceType(type);
+    const brands = BRANDS_BY_DEVICE_TYPE[type] || ["Other"];
+    const defaultBrand = brands.includes(selectedBrand) ? selectedBrand : brands[0];
+    setSelectedBrand(defaultBrand);
+    setSelectedModel("");
+    setSearchQuery("");
+    setIsDropdownOpen(false);
+    setIsBrandDropdownOpen(false);
+    setIsModelUnlisted(false);
+  };
+
+  // Stepper Reset handler (Image 2 Reset button)
+  const handleReset = () => {
+    setStep(1);
+    setSelectedDeviceType(null);
+    setSelectedBrand("Apple");
+    setSelectedModel("");
+    setSearchQuery("");
+    setIsDropdownOpen(false);
+    setIsBrandDropdownOpen(false);
+    setIsModelUnlisted(false);
+    setSelectedClosestMatch("mid_range_android");
+    setCustomModelInput("");
+    setSelectedProblem("");
+    setSelectedQuality("oem");
+    setIsPayOverTime(false);
+  };
 
   // Check auth state on mount
   useEffect(() => {
@@ -316,7 +490,7 @@ const Repairs = () => {
     }
   }, []);
 
-  // Close search dropdown on click outside
+  // Close dropdowns on click outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -325,6 +499,12 @@ const Repairs = () => {
       ) {
         setIsDropdownOpen(false);
       }
+      if (
+        brandDropdownRef.current &&
+        !brandDropdownRef.current.contains(e.target)
+      ) {
+        setIsBrandDropdownOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -332,16 +512,23 @@ const Repairs = () => {
 
   // Filtered models for search dropdown
   const filteredModels = useMemo(() => {
-    const list = MODELS_BY_BRAND[selectedBrand] || [];
+    if (!selectedDeviceType) return [];
+    const brandCatalog =
+      MODELS_CATALOG[selectedDeviceType]?.[selectedBrand] || [];
+
     if (!searchQuery.trim()) {
-      return list;
+      return brandCatalog;
     }
     const q = searchQuery.toLowerCase();
-    const brandMatches = list.filter((m) => m.toLowerCase().includes(q));
+    const brandMatches = brandCatalog.filter((m) =>
+      m.toLowerCase().includes(q)
+    );
     if (brandMatches.length > 0) return brandMatches;
 
+    // Search across all brands of this device type
     const allMatches = [];
-    Object.values(MODELS_BY_BRAND).forEach((arr) => {
+    const allBrandsCatalog = MODELS_CATALOG[selectedDeviceType] || {};
+    Object.values(allBrandsCatalog).forEach((arr) => {
       arr.forEach((m) => {
         if (m.toLowerCase().includes(q) && !allMatches.includes(m)) {
           allMatches.push(m);
@@ -349,7 +536,7 @@ const Repairs = () => {
       });
     });
     return allMatches;
-  }, [selectedBrand, searchQuery]);
+  }, [selectedDeviceType, selectedBrand, searchQuery]);
 
   // Handle Model Selection
   const handleSelectModel = (model) => {
@@ -451,6 +638,7 @@ const Repairs = () => {
       isModelUnlisted
     ) {
       params.set("type", "diagnostic");
+      if (selectedDeviceType) params.set("deviceType", selectedDeviceType.toLowerCase());
       if (effectiveDevice) params.set("device", effectiveDevice);
       if (isModelUnlisted) {
         params.set("category", selectedClosestMatch);
@@ -458,6 +646,7 @@ const Repairs = () => {
       }
     } else {
       params.set("type", "repair");
+      if (selectedDeviceType) params.set("deviceType", selectedDeviceType.toLowerCase());
       if (effectiveDevice) params.set("device", effectiveDevice);
       if (selectedProblem) params.set("issue", selectedProblem);
       if (selectedQuality) params.set("quality", selectedQuality);
@@ -473,6 +662,7 @@ const Repairs = () => {
         localStorage.setItem(
           "pendingRepairEstimate",
           JSON.stringify({
+            deviceType: selectedDeviceType,
             device: effectiveDevice,
             problem: selectedProblem,
             quality: selectedQuality,
@@ -527,40 +717,64 @@ const Repairs = () => {
         <div className="repair-calculator-container">
           {/* ================= LEFT WIZARD CARD ================= */}
           <div className="wizard-card">
-            {/* Stepper Navigation (Matching Figma: spaced without arrows) */}
-            <div className="stepper-nav">
-              <button
-                type="button"
-                className={`stepper-step ${step === 1 ? "active" : ""}`}
-                onClick={() => setStep(1)}
-              >
-                1. Device
-              </button>
+            {/* Stepper Navigation + Reset Button (Image 2) */}
+            <div className="stepper-header-row">
+              <div className="stepper-nav">
+                <button
+                  type="button"
+                  className={`stepper-step ${step === 1 ? "active" : ""}`}
+                  onClick={() => setStep(1)}
+                >
+                  1. Device
+                </button>
+
+                <button
+                  type="button"
+                  className={`stepper-step ${
+                    step === 2
+                      ? "active"
+                      : selectedModel
+                      ? "completed"
+                      : "disabled"
+                  }`}
+                  onClick={() => selectedModel && setStep(2)}
+                  disabled={!selectedModel}
+                >
+                  2. Problem
+                </button>
+
+                <button
+                  type="button"
+                  className={`stepper-step ${
+                    step === 3
+                      ? "active"
+                      : selectedProblem && selectedProblem !== "not_sure"
+                      ? "completed"
+                      : "disabled"
+                  }`}
+                  onClick={() =>
+                    selectedProblem &&
+                    selectedProblem !== "not_sure" &&
+                    setStep(3)
+                  }
+                  disabled={!selectedProblem || selectedProblem === "not_sure"}
+                >
+                  3. Part Quality
+                </button>
+              </div>
 
               <button
                 type="button"
-                className={`stepper-step ${step === 2 ? "active" : ""}`}
-                onClick={() => selectedModel && setStep(2)}
-                disabled={!selectedModel}
+                className="btn-stepper-reset"
+                onClick={handleReset}
+                title="Reset selections"
               >
-                2. Problem
-              </button>
-
-              <button
-                type="button"
-                className={`stepper-step ${step === 3 ? "active" : ""}`}
-                onClick={() =>
-                  selectedProblem &&
-                  selectedProblem !== "not_sure" &&
-                  setStep(3)
-                }
-                disabled={!selectedProblem || selectedProblem === "not_sure"}
-              >
-                3. Part Quality
+                <RotateCcw size={13} />
+                <span>Reset</span>
               </button>
             </div>
 
-            {/* Selected Tags: Step 2 shows [iPhone 13 Pro], Step 3 shows BOTH as yellow badges */}
+            {/* Selected Tags: Step 2 shows [Device Model], Step 3 shows BOTH as yellow badges */}
             {step === 2 && selectedModel && (
               <div className="selected-tags-row">
                 <div
@@ -617,22 +831,22 @@ const Repairs = () => {
               </div>
             )}
 
-            {/* ================= STEP 1: DEVICE SELECTION ================= */}
+            {/* ================= STEP 1: DEVICE SELECTION (Matching Image 1 & Image 2) ================= */}
             {step === 1 && !isModelUnlisted && (
               <div key="step-1-exact" className="wizard-step-content">
-                {/* Brand Selection */}
+                {/* DEVICE TYPE (Image 1 & 2) */}
                 <div>
-                  <div className="field-label">BRAND</div>
+                  <div className="field-label">DEVICE TYPE</div>
                   <div className="pills-group">
-                    {BRANDS.map((brand) => (
+                    {DEVICE_TYPES.map((type) => (
                       <button
-                        key={brand}
+                        key={type}
                         type="button"
                         className={`pill-btn ${
-                          selectedBrand === brand ? "active" : ""
+                          selectedDeviceType === type ? "active" : ""
                         }`}
                         style={
-                          selectedBrand === brand
+                          selectedDeviceType === type
                             ? {
                                 backgroundColor: "#ffc200",
                                 color: "#000000",
@@ -641,69 +855,120 @@ const Repairs = () => {
                               }
                             : undefined
                         }
-                        onClick={() => {
-                          setSelectedBrand(brand);
-                          setSearchQuery("");
-                        }}
+                        onClick={() => handleSelectDeviceType(type)}
                       >
-                        {brand}
+                        {type}
                       </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Model Search Input */}
-                <div ref={searchContainerRef}>
-                  <div className="field-label">MODEL</div>
-                  <div className="search-input-wrap">
-                    <Search size={18} className="search-icon-inside" />
-                    <input
-                      type="text"
-                      className="search-input-field"
-                      placeholder="Search your model"
-                      value={searchQuery}
-                      onChange={(e) => {
-                        setSearchQuery(e.target.value);
-                        setIsDropdownOpen(true);
-                      }}
-                      onFocus={() => setIsDropdownOpen(true)}
-                    />
+                {/* Helper text when no device type is chosen (Image 1) */}
+                {!selectedDeviceType && (
+                  <p className="device-type-hint">
+                    Brand and model appear after you choose a device type.
+                  </p>
+                )}
 
-                    {/* Autocomplete suggestions dropdown */}
-                    {isDropdownOpen && (
-                      <div className="model-dropdown">
-                        {filteredModels.length > 0 ? (
-                          filteredModels.map((model) => (
-                            <div
-                              key={model}
-                              className={`model-dropdown-item ${
-                                selectedModel === model ? "focused" : ""
-                              }`}
-                              onClick={() => handleSelectModel(model)}
-                            >
-                              <span>{model}</span>
-                            </div>
-                          ))
-                        ) : (
-                          <div className="model-dropdown-empty">
-                            No models found matching &quot;{searchQuery}&quot;
+                {/* Brand & Model appear after choosing device type (Image 2) */}
+                {selectedDeviceType && (
+                  <>
+                    {/* BRAND DROPDOWN SELECT */}
+                    <div ref={brandDropdownRef}>
+                      <div className="field-label">BRAND</div>
+                      <div className="custom-select-container">
+                        <button
+                          type="button"
+                          className={`custom-select-trigger ${
+                            isBrandDropdownOpen ? "open" : ""
+                          }`}
+                          onClick={() => setIsBrandDropdownOpen((prev) => !prev)}
+                        >
+                          <span>{selectedBrand || "Select brand"}</span>
+                          <ChevronDown
+                            size={18}
+                            className={`select-chevron ${
+                              isBrandDropdownOpen ? "open" : ""
+                            }`}
+                          />
+                        </button>
+                        {isBrandDropdownOpen && (
+                          <div className="custom-select-dropdown">
+                            {availableBrands.map((brand) => (
+                              <div
+                                key={brand}
+                                className={`custom-select-option ${
+                                  selectedBrand === brand ? "active" : ""
+                                }`}
+                                onClick={() => {
+                                  setSelectedBrand(brand);
+                                  setIsBrandDropdownOpen(false);
+                                  setSearchQuery("");
+                                  setSelectedModel("");
+                                }}
+                              >
+                                <span>{brand}</span>
+                              </div>
+                            ))}
                           </div>
                         )}
                       </div>
-                    )}
-                  </div>
-                </div>
+                    </div>
 
-                {/* Model not listed link */}
-                <div>
-                  <button
-                    type="button"
-                    className="text-link-action"
-                    onClick={handleSwitchToClosestMatch}
-                  >
-                    My model isn&apos;t listed
-                  </button>
-                </div>
+                    {/* MODEL SEARCH */}
+                    <div ref={searchContainerRef}>
+                      <div className="field-label">MODEL</div>
+                      <div className="search-input-wrap">
+                        <Search size={18} className="search-icon-inside" />
+                        <input
+                          type="text"
+                          className="search-input-field"
+                          placeholder="Search your model"
+                          value={searchQuery}
+                          onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            setIsDropdownOpen(true);
+                          }}
+                          onFocus={() => setIsDropdownOpen(true)}
+                        />
+
+                        {/* Dropdown list with dividers matching Image 2 */}
+                        {isDropdownOpen && (
+                          <div className="model-dropdown">
+                            {filteredModels.length > 0 ? (
+                              filteredModels.map((model) => (
+                                <div
+                                  key={model}
+                                  className={`model-dropdown-item ${
+                                    selectedModel === model ? "focused" : ""
+                                  }`}
+                                  onClick={() => handleSelectModel(model)}
+                                >
+                                  <span>{model}</span>
+                                </div>
+                              ))
+                            ) : (
+                              <div className="model-dropdown-empty">
+                                No models found matching &quot;{searchQuery}&quot;
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Model not listed link */}
+                    <div>
+                      <button
+                        type="button"
+                        className="text-link-action"
+                        onClick={handleSwitchToClosestMatch}
+                      >
+                        My model isn&apos;t listed
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             )}
 

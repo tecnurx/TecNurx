@@ -63,6 +63,7 @@ const Navbar = () => {
           </div>
 
           <Link href="/insurance">Insurance</Link>
+          <Link href="/buy-devices">Buy a device</Link>
         </nav>
 
         <div className="auth-btns">
