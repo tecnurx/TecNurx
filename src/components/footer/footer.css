@@ -10,149 +10,7 @@ footer {
   flex-direction: column;
 }
 
-.footer-main {
-  display: flex;
-  width: 100%;
-  background: rgba(8, 8, 8, 1);
-}
-.foot-block {
-  padding: 64px 24px;
-  border: 0.5px solid rgba(59, 63, 68, 1);
-  border-bottom: none;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-.foot-block-1 {
-  border-left: none;
-  width: 303px;
-  height: 586px;
-}
-.foot-block-img {
-  width: 232px;
-  border-left: none;
-}
-.foot-block-wrap {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-.foot-block h3,
-.foot-contact h3 {
-  font-family: Plus Jakarta Sans;
-  font-weight: 400;
-  font-style: Regular;
-  font-size: 14px;
-  line-height: 100%;
-  letter-spacing: 1px;
-  vertical-align: middle;
-  text-transform: uppercase;
-  color: rgba(158, 165, 173, 1);
-}
-.foot-block a,
-.foot-contact p {
-  font-family: Plus Jakarta Sans;
-  font-weight: 400;
-  font-style: Regular;
-  font-size: 16px;
-  line-height: 24px;
-  letter-spacing: 0%;
-  vertical-align: middle;
-  color: white;
-}
-.social-icon {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 24px;
-  font-family: Plus Jakarta Sans;
-  font-weight: 800;
-  font-style: ExtraBold;
-  font-size: 20px;
-  line-height: 28px;
-  letter-spacing: 0%;
-  vertical-align: middle;
-  color: rgba(255, 255, 255, 1);
-  border-top: 0.5px solid rgba(59, 63, 68, 1);
-  border-left: 0.5px solid rgba(59, 63, 68, 1);
-  border-bottom: none;
-  cursor: pointer;
-}
-.social-icon img {
-  height: 25px;
-  width: 25px;
-}
-.x-icon {
-  height: 18px !important;
-  width: 18px !important;
-}
-.social-wrap {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  background: rgba(8, 8, 8, 1);
-  position: relative;
-  z-index: 10;
-}
-.copyright {
-  font-family: Plus Jakarta Sans;
-  font-weight: 400;
-  font-style: Regular;
-  font-size: 13px;
-  line-height: 16px;
-  letter-spacing: 0%;
-  text-align: center;
-  vertical-align: middle;
-  color: rgba(144, 152, 162, 1);
-  padding: 40px;
-  background: rgba(8, 8, 8, 1);
-  border-top: 0.5px solid rgba(59, 63, 68, 1);
-  border-bottom: 0.5px solid rgba(59, 63, 68, 1);
-  background-position: bottom;
-}
-.foot-contact {
-  width: 100%;
-  border: 0.5px solid rgba(59, 63, 68, 1);
-  border-right: none;
-  border-bottom: none;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-.foot-contact h2 {
-  padding-left: 24px;
-  padding-bottom: 32px;
-  font-family: Plus Jakarta Sans;
-  font-weight: 400;
-  font-style: Regular;
-  font-size: 14px;
-  line-height: 100%;
-  letter-spacing: 1px;
-  vertical-align: middle;
-  text-transform: uppercase;
-  color: rgba(158, 165, 173, 1);
-}
-.foot-block-addy {
-  height: 586px;
-  padding: 64px 0;
-}
-.footer-img {
-  position: absolute;
-  bottom: 10px;
-}
-.addy-block {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding: 24px;
-  border-top: 0.5px solid rgba(59, 63, 68, 1);
-  border-bottom: 0.5px solid rgba(59, 63, 68, 1);
-}
-.addy-block2 {
-  border-bottom: none;
-}
-.addy-block p {
-  display: flex;
-  gap: 8px;
-}
+/* Newsletter Section with Curved Wings */
 .newsletter-wrap {
   width: 100%;
   position: relative;
@@ -318,6 +176,215 @@ footer {
   transform: scale(0.97);
 }
 
+/* Footer Main Layout */
+.footer-main {
+  display: flex;
+  width: 100%;
+  background: rgba(8, 8, 8, 1);
+  border-top: 0.5px solid rgba(59, 63, 68, 1);
+}
+
+/* Left Brand Column (TecNurx + AbTechCare product of) */
+.foot-brand-col {
+  width: 220px;
+  flex-shrink: 0;
+  border-right: 0.5px solid rgba(59, 63, 68, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 64px 32px 36px;
+  box-sizing: border-box;
+}
+
+.foot-logo {
+  width: 140px;
+  height: auto;
+  display: block;
+}
+
+.foot-product-of {
+  padding-top: 48px;
+}
+
+.abtechcare-logo {
+  width: 135px;
+  height: auto;
+  display: block;
+  opacity: 0.95;
+  object-fit: contain;
+}
+
+/* Right Content Area (3 Columns + Bottom Social Row) */
+.foot-content-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.foot-sections-grid {
+  display: grid;
+  grid-template-columns: 240px 240px 1fr;
+  flex: 1;
+}
+
+.foot-block {
+  padding: 64px 32px;
+  border-right: 0.5px solid rgba(59, 63, 68, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  box-sizing: border-box;
+}
+
+.foot-block-contact {
+  border-right: none;
+  padding-right: 40px;
+}
+
+.foot-block h3 {
+  font-family:
+    Plus Jakarta Sans,
+    sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(158, 165, 173, 1);
+  margin: 0;
+}
+
+.foot-block a {
+  font-family:
+    Plus Jakarta Sans,
+    sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.foot-block a:hover {
+  color: #ffc200;
+}
+
+/* Contact Address Blocks */
+.addy-block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 24px;
+  border-bottom: 0.5px solid rgba(59, 63, 68, 1);
+}
+
+.addy-block2 {
+  border-bottom: none;
+  padding-top: 24px;
+  padding-bottom: 0;
+}
+
+.addy-block h4 {
+  font-family:
+    Plus Jakarta Sans,
+    sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 100%;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(158, 165, 173, 1);
+  margin: 0;
+}
+
+.addy-block p {
+  font-family:
+    Plus Jakarta Sans,
+    sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 22px;
+  color: #ffffff;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+}
+
+.addy-block p img {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+/* Social Row (Positioned below the 3 content columns) */
+.social-wrap {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  background: rgba(8, 8, 8, 1);
+  border-top: 0.5px solid rgba(59, 63, 68, 1);
+  position: relative;
+  z-index: 10;
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 22px 24px;
+  font-family:
+    Plus Jakarta Sans,
+    sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 24px;
+  color: #ffffff;
+  text-decoration: none;
+  border-right: 0.5px solid rgba(59, 63, 68, 1);
+  cursor: pointer;
+  box-sizing: border-box;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.social-icon:last-child {
+  border-right: none;
+}
+
+.social-icon:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffc200;
+}
+
+.social-icon svg {
+  flex-shrink: 0;
+}
+
+/* Copyright Row */
+.copyright {
+  font-family:
+    Plus Jakarta Sans,
+    sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 16px;
+  text-align: center;
+  color: rgba(144, 152, 162, 1);
+  padding: 40px 24px;
+  background: rgba(8, 8, 8, 1);
+  border-top: 0.5px solid rgba(59, 63, 68, 1);
+  border-bottom: 0.5px solid rgba(59, 63, 68, 1);
+  position: relative;
+  z-index: 10;
+}
+
+.copyright p {
+  margin: 0;
+}
+
+/* Floor Image */
 .footer-imgtext {
   width: 100%;
   background: rgba(8, 8, 8, 1);
@@ -327,6 +394,25 @@ footer {
   width: 100%;
   margin-top: -260px;
   pointer-events: none;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 1150px) {
+  .foot-brand-col {
+    width: 180px;
+    padding: 48px 20px 28px;
+  }
+  .foot-sections-grid {
+    grid-template-columns: 200px 200px 1fr;
+  }
+  .foot-block {
+    padding: 48px 20px;
+  }
+  .social-icon {
+    padding: 18px 14px;
+    font-size: 14px;
+    gap: 8px;
+  }
 }
 
 @media screen and (max-width: 900px) {
@@ -353,18 +439,30 @@ footer {
   .newsletter button {
     right: 5px;
   }
-  .footer-main {
-    flex-wrap: wrap;
+
+  .foot-brand-col {
+    width: 160px;
+    padding: 36px 16px 24px;
   }
-  .foot-block-img {
-    width: 208px;
+  .foot-logo {
+    width: 120px;
   }
-  .foot-block-1 {
-    width: 280px;
+  .abtechcare-logo {
+    width: 110px;
+  }
+  .foot-sections-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .foot-block-contact {
+    grid-column: 1 / -1;
+    border-top: 0.5px solid rgba(59, 63, 68, 1);
+    border-right: none;
+  }
+  .social-wrap {
+    grid-template-columns: repeat(3, 1fr);
   }
   .social-icon {
-    font-size: 16px;
-    padding: 18px;
+    border-bottom: 0.5px solid rgba(59, 63, 68, 1);
   }
 }
 
@@ -375,18 +473,6 @@ footer {
   .curve-left,
   .curve-right {
     display: none;
-  }
-  .footer-main {
-    display: block;
-  }
-  .foot-block-1,
-  .foot-block-img {
-    width: 100%;
-    height: 100%;
-  }
-  .footer-imgtext img {
-    height: 200px;
-    margin-top: 0;
   }
   .newsletter {
     padding: 22px 16px;
@@ -402,53 +488,90 @@ footer {
   .newsletter button {
     right: 5px;
   }
-  .foot-contact h2 {
-    padding: 24px;
+
+  .footer-main {
+    flex-direction: column;
   }
+  .foot-brand-col {
+    width: 100%;
+    border-right: none;
+    border-bottom: 0.5px solid rgba(59, 63, 68, 1);
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 20px;
+  }
+  .foot-product-of {
+    padding-top: 0;
+  }
+  .foot-logo {
+    width: 115px;
+  }
+  .abtechcare-logo {
+    width: 115px;
+  }
+
+  .foot-sections-grid {
+    grid-template-columns: 1fr;
+  }
+  .foot-block {
+    width: 100%;
+    border-right: none;
+    border-bottom: 0.5px solid rgba(59, 63, 68, 1);
+    padding: 32px 20px;
+  }
+
   .social-wrap {
     grid-template-columns: repeat(2, 1fr);
   }
   .social-icon {
+    padding: 16px 14px;
+    font-size: 14px;
     border: 0.5px solid rgba(59, 63, 68, 1);
+    border-left: none;
+  }
+  .social-icon:nth-child(2n) {
+    border-right: none;
+  }
+  .social-icon:last-child {
+    grid-column: 1 / -1;
+    border-right: none;
+  }
+
+  .copyright {
+    padding: 28px 16px;
+    font-size: 12px;
+  }
+
+  .footer-imgtext img {
+    height: 200px;
+    margin-top: 0;
   }
 }
 
 @media screen and (min-width: 1450px) {
-  .foot-block-img {
-    width: 250px;
+  .footer-main {
+    max-width: 1380px;
+    margin: 0 auto;
+    border-left: 0.5px solid rgba(59, 63, 68, 1);
+    border-right: 0.5px solid rgba(59, 63, 68, 1);
   }
-  .foot-block-1 {
+  .foot-brand-col {
     width: 250px;
+    padding: 64px 40px 40px;
+  }
+  .foot-sections-grid {
+    grid-template-columns: 280px 280px 1fr;
   }
   .foot-block {
-    padding: 64px 48px;
+    padding: 64px 40px;
   }
-  footer {
-    background: rgba(8, 8, 8, 1);
-  }
-  .footer-center-wrap {
-    width: 100%;
-  }
-  .foot-block-addy,
-  .addy-block2 {
-    width: 500px;
-  }
-  .footer-main {
-    max-width: 1200px;
+  .copyright {
+    max-width: 1380px;
     margin: 0 auto;
-    justify-content: center;
-  }
-  .social-master {
-    display: flex;
-    justify-content: center;
-  }
-  .social-wrap {
-    width: 1300px;
-  }
-  .social-icon:first-child{
-    border-left: none;
-  }
-  .foot-contact {
-    width: 500px;
+    width: 100%;
+    box-sizing: border-box;
+    border-left: 0.5px solid rgba(59, 63, 68, 1);
+    border-right: 0.5px solid rgba(59, 63, 68, 1);
   }
 }

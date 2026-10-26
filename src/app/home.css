@@ -611,11 +611,14 @@
   padding-bottom: 0;
 }
 .bus-trust {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 .trust-head {
   display: flex;
@@ -624,17 +627,110 @@
   font-weight: 500;
   gap: 24px;
   align-items: center;
+  max-width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
-.trust-head span{
+.trust-head span {
   height: 1px;
-  background: #9098A2;
+  background: #9098a2;
   width: 215px;
+  flex-shrink: 1;
 }
-.trust-logo{
+.trust-logo {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  padding-bottom: 120px;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+}
+
+.trust-logo-track {
   display: flex;
   align-items: center;
-  gap: 70px;
-  padding-bottom: 120px;
+  gap: 64px;
+  width: max-content;
+  will-change: transform;
+  animation: scroll-trust-logos 35s linear infinite;
+}
+
+.trust-logo:hover .trust-logo-track {
+  animation-play-state: paused;
+}
+
+.trust-logo-item {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trust-logo-item svg {
+  height: 44px;
+  width: auto;
+  display: block;
+  opacity: 0.85;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.trust-logo-item:hover svg {
+  opacity: 1;
+  transform: scale(1.06);
+}
+
+@keyframes scroll-trust-logos {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .trust-logo {
+    padding-bottom: 80px;
+  }
+  .trust-logo-track {
+    gap: 44px;
+    animation-duration: 28s;
+  }
+  .trust-logo-item svg {
+    height: 36px;
+  }
+  .trust-head {
+    font-size: 16px;
+    gap: 16px;
+  }
+  .trust-head span {
+    width: 100px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trust-logo-track {
+    animation: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    max-width: 100%;
+  }
+  .trust-logo-item {
+    scroll-snap-align: center;
+  }
 }
 .GetQuote {
   display: flex;
@@ -1197,6 +1293,49 @@
   }
   .numbers-wrap h3 {
     font-size: 12px;
+  }
+  .bus-trust {
+    gap: 20px;
+  }
+  .trust-head {
+    font-size: 14px;
+    gap: 12px;
+    width: 100%;
+    justify-content: center;
+  }
+  .trust-head span {
+    width: 48px;
+    min-width: 20px;
+  }
+  .trust-logo {
+    padding-bottom: 60px;
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 10%,
+      black 90%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 10%,
+      black 90%,
+      transparent 100%
+    );
+  }
+  .trust-logo-track {
+    gap: 28px;
+    animation-duration: 22s;
+  }
+  .trust-logo-item svg {
+    height: 28px;
+  }
+  .partner-grid{
+    gap: 20px;
+  }
+  .partner-section{
+    padding: 18px;
   }
 }
 
