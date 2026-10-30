@@ -5,55 +5,68 @@ import {
   Smartphone,
   Laptop,
   Wrench,
-  DollarSign,
   Package,
   AlertCircle,
-  Cpu,
   Tag,
   PlusIcon,
+  Edit,
 } from "lucide-react";
 import "./adgad.css";
 import { adminService } from "../../../../../services/admin/admin";
+import { useStaffPermissions } from "../../../../../config/adminPermissions";
 import Link from "next/link";
+import AdminTable from "@/components/AdminTable";
 
 const AdminGadgets = () => {
+  const { can } = useStaffPermissions();
+  const canManageCatalog = can("catalog:manage") || can("services:manage");
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [offerings, setOfferings] = useState([]);
 
+  const fetchServices = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await adminService.getAllServices();
+
+      const data =
+        res.data?.serviceOfferings ||
+        res.serviceOfferings ||
+        res.data?.offerings ||
+        res.offerings ||
+        (Array.isArray(res.data) ? res.data : null) ||
+        (Array.isArray(res) ? res : []);
+      setOfferings(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Failed to load service offerings:", err);
+      setError(err.message || "Failed to load gadget services.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const res = await adminService.getAllServices();
-
-        // Adjust according to actual response shape
-        const data = res.data?.serviceOfferings || res.serviceOfferings || [];
-        setOfferings(data);
-      } catch (err) {
-        console.error("Failed to load service offerings:", err);
-        setError(err.message || "Failed to load gadget services.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchServices();
   }, []);
 
-  // Calculate stats from real data
   const totalServices = offerings.reduce(
-    (sum, o) => sum + o.services.length,
-    0,
+    (sum, o) => sum + (o.services?.length || 0),
+    0
   );
   const activeServices = offerings.reduce(
-    (sum, o) => sum + o.activeServicesCount,
-    0,
+    (sum, o) =>
+      sum +
+      (o.activeServicesCount ??
+        o.services?.filter((s) => s.isAvailable)?.length ??
+        0),
+    0
   );
-  const uniqueDevices = new Set(offerings.map((o) => `${o.brand}-${o.model}`))
-    .size;
-  const totalBrands = new Set(offerings.map((o) => o.brand)).size;
+  const uniqueDevices = new Set(
+    offerings.map((o) => `${o.brand || ""}-${o.model || ""}`)
+  ).size;
+  const totalBrands = new Set(offerings.map((o) => o.brand).filter(Boolean)).size;
 
   const stats = [
     {
@@ -82,7 +95,123 @@ const AdminGadgets = () => {
     },
   ];
 
-  if (loading) {
+  const columns = [
+    {
+      header: "Device",
+      accessor: "deviceType",
+      sortable: true,
+      render: (o) => (
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {o.deviceType === "phone" ? <Smartphone size={17} color="#2563eb" /> : <Laptop size={17} color="#0891b2" />}
+          <span style={{ textTransform: "capitalize", fontWeight: "500" }}>{o.deviceType || "Device"}</span>
+        </div>
+      ),
+    },
+    {
+      header: "Brand",
+      accessor: "brand",
+      sortable: true,
+      render: (o) => <span style={{ fontWeight: "600", color: "#0f172a" }}>{o.brand}</span>,
+    },
+    {
+      header: "Model",
+      accessor: "model",
+      sortable: true,
+      render: (o) => <span>{o.model}</span>,
+    },
+    {
+      header: "Variant",
+      accessor: "variant",
+      render: (o) => <span style={{ color: "#64748b" }}>{o.variant || "—"}</span>,
+    },
+    {
+      header: "Year",
+      accessor: "releaseYear",
+      sortable: true,
+      render: (o) => o.releaseYear || "—",
+    },
+    {
+      header: "Services",
+      accessor: "services.length",
+      sortable: true,
+      render: (o) => o.services?.length || 0,
+    },
+    {
+      header: "Active",
+      accessor: "activeServicesCount",
+      sortable: true,
+      render: (o) => o.activeServicesCount ?? (o.services?.filter((s) => s.isAvailable)?.length || 0),
+    },
+    {
+      header: "Status",
+      accessor: "isActive",
+      sortable: true,
+      render: (o) => {
+        const active = o.isActive !== false;
+        return (
+          <span
+            style={{
+              padding: "4px 10px",
+              borderRadius: "12px",
+              fontSize: "12px",
+              fontWeight: "600",
+              background: active ? "#dcfce7" : "#f1f5f9",
+              color: active ? "#15803d" : "#64748b",
+            }}
+          >
+            {active ? "Active" : "Inactive"}
+          </span>
+        );
+      },
+    },
+    {
+      header: "Action",
+      align: "center",
+      render: (o) => (
+        <Link
+          href={`/admin-dashboard/gadgets/${o._id || o.id}`}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "4px",
+            padding: "6px 12px",
+            background: "#f1f5f9",
+            border: "1px solid #cbd5e1",
+            borderRadius: "6px",
+            fontSize: "12px",
+            fontWeight: "600",
+            color: "#0f172a",
+            textDecoration: "none",
+          }}
+        >
+          <Edit size={13} /> Edit
+        </Link>
+      ),
+    },
+  ];
+
+  const tableFilters = [
+    {
+      key: "deviceType",
+      label: "All Devices",
+      options: [
+        { value: "phone", label: "Phones" },
+        { value: "laptop", label: "Laptops" },
+        { value: "tablet", label: "Tablets" },
+      ],
+    },
+    {
+      key: "isActive",
+      label: "All Status",
+      filterFn: (o, val) => (val === "active" ? o.isActive !== false : o.isActive === false),
+      options: [
+        { value: "active", label: "Active" },
+        { value: "inactive", label: "Inactive" },
+      ],
+    },
+  ];
+
+  if (loading && offerings.length === 0) {
     return (
       <div className="resolve-wrap">
         <p>Loading service catalog...</p>
@@ -91,12 +220,12 @@ const AdminGadgets = () => {
     );
   }
 
-  if (error) {
+  if (error && offerings.length === 0) {
     return (
       <div className="resolve-wrap error">
         <AlertCircle size={32} color="#ef4444" />
         <p>{error}</p>
-        <button onClick={() => window.location.reload()}>Retry</button>
+        <button onClick={fetchServices}>Retry</button>
       </div>
     );
   }
@@ -104,10 +233,18 @@ const AdminGadgets = () => {
   return (
     <div className="admin-dashboard">
       <div className="dashboard-header gadget-header">
-        <h1>Gadget Service Catalog</h1>
-        <Link href={"/admin-dashboard/gadgets/service-offering"}>
-          Create Service <PlusIcon size={24} />
-        </Link>
+        <div>
+          <h1>Gadget Service Catalog</h1>
+          <p style={{ margin: "4px 0 0", fontSize: "14px", color: "#64748b" }}>
+            Manage supported device brands, repair models, and pricing catalog.
+          </p>
+        </div>
+
+        {canManageCatalog && (
+          <Link href={"/admin-dashboard/gadgets/service-offering"} className="create-service-btn">
+            Create Service <PlusIcon size={20} />
+          </Link>
+        )}
       </div>
 
       {/* Stats */}
@@ -123,71 +260,17 @@ const AdminGadgets = () => {
         ))}
       </div>
 
-      {/* Service Offerings Table */}
-      <div className="adcard">
-        <h2>Supported Devices & Services ({offerings.length})</h2>
-
-        {offerings.length === 0 ? (
-          <div className="empty-state">
-            <p>No gadget service offerings found in the system.</p>
-          </div>
-        ) : (
-          <div className="adtable-container">
-            <table className="addata-table gadgets-table">
-              <thead>
-                <tr>
-                  <th>Device</th>
-                  <th>Brand</th>
-                  <th>Model</th>
-                  <th>Variant</th>
-                  <th>Year</th>
-                  <th>Services</th>
-                  <th>Active</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {offerings.map((offering) => (
-                  <tr key={offering._id}>
-                    <td>
-                      <div className="device-cell">
-                        {offering.deviceType === "phone" ? (
-                          <Smartphone size={18} />
-                        ) : (
-                          <Laptop size={18} />
-                        )}
-                        {offering.deviceType}
-                      </div>
-                    </td>
-                    <td>{offering.brand}</td>
-                    <td>{offering.model}</td>
-                    <td>{offering.variant || "—"}</td>
-                    <td>{offering.releaseYear || "—"}</td>
-                    <td>{offering.services.length}</td>
-                    <td>{offering.activeServicesCount}</td>
-                    <td>
-                      <span
-                        className={`status-badge ${offering.isActive ? "active" : "inactive"}`}
-                      >
-                        {offering.isActive ? "Active" : "Inactive"}
-                      </span>
-                    </td>
-                    <td>
-                      <Link
-                        style={{ cursor: "pointer", color: "#28a745" }}
-                        href={`/admin-dashboard/gadgets/${offering._id}`}
-                      >
-                        Edit
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+      {/* Responsive Catalog Table */}
+      <AdminTable
+        title={`Supported Devices & Services (${offerings.length})`}
+        subtitle="Catalog models with individual repair services, parts, and warranty configuration"
+        data={offerings}
+        columns={columns}
+        filters={tableFilters}
+        searchPlaceholder="Search brand, model, variant..."
+        initialPageSize={10}
+        emptyMessage="No gadget service offerings found matching your search."
+      />
     </div>
   );
 };

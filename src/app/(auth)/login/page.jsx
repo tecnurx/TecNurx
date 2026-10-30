@@ -11,7 +11,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { authService } from "./../../../../services/auth";
 import { toast } from "@/components/CustomToast";
 
-const REMEMBER_KEY = "technurx_remember_user";
+const REMEMBER_KEY = "tecnurx_remember_user";
 
 const Login = () => {
   const router = useRouter();
@@ -174,7 +174,7 @@ const Login = () => {
         </div>
 
         <div className="card-wrap">
-          <div className="card login-card">
+          <div className="login-card">
             <Link href="/" className="logi-logo" aria-label="TecNurx Home">
               <Image src={logo} alt="TecNurx" width={135} priority />
             </Link>
@@ -183,8 +183,8 @@ const Login = () => {
               Welcome <span>back</span>
             </h2>
 
-            <form onSubmit={handleSubmit} className="form">
-              <div className="form-group">
+            <form onSubmit={handleSubmit} className="login-form form">
+              <div className="login-form-group form-group">
                 <label htmlFor="login-email">E-mail</label>
                 <input
                   id="login-email"
@@ -198,7 +198,7 @@ const Login = () => {
                 />
               </div>
 
-              <div className="form-group">
+              <div className="login-form-group form-group">
                 <label htmlFor="login-password">Password</label>
                 <div className="password-wrapper">
                   <input

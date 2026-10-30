@@ -18,11 +18,15 @@ import {
 } from "lucide-react";
 import "./admineng.css";
 import { adminService } from "../../../../../services/admin/admin";
+import { useStaffPermissions } from "../../../../../config/adminPermissions";
 import axios from "../../../../../lib/axios";
 import Link from "next/link";
 import { validatePassword, getPasswordRequirements } from "@/lib/passwordValidation";
+import AdminTable from "@/components/AdminTable";
 
 const AdminEngineers = () => {
+  const { can } = useStaffPermissions();
+  const canManageEngineers = can("engineers:manage");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [engineers, setEngineers] = useState([]);
@@ -71,9 +75,15 @@ const AdminEngineers = () => {
       setLoading(true);
       setError(null);
       const res = await adminService.getAllEngineers();
-      const data = res.data?.engineers || [];
+      const data =
+        res.data?.engineers ||
+        res.data?.servicePartners ||
+        (Array.isArray(res.data) ? res.data : []) ||
+        res.engineers ||
+        res.servicePartners ||
+        [];
       setEngineers(data);
-      setEngStats(res.stats || {});
+      setEngStats(res.stats || res.data?.stats || {});
     } catch (err) {
       console.error("Failed to load engineers:", err);
       setError(err.message || "Failed to load engineers. Please try again.");
@@ -216,20 +226,31 @@ const AdminEngineers = () => {
       if (formData.certificate) payload.append("certificate", formData.certificate);
       if (formData.resume) payload.append("resume", formData.resume);
 
-      // Send using axios with token header and multipart/form-data
-      await axios.post("/service-providers", payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
+      // Submit via admin auto-approve endpoint, fallback to service-providers
       if (createdEngineerId) {
         try {
-          await adminService.verifyEngineer(createdEngineerId);
-        } catch (verifyErr) {
-          console.log("Auto-verification skipped or failed:", verifyErr);
+          await adminService.createServiceProvider(createdEngineerId, payload);
+        } catch (adminErr) {
+          console.warn("admin service-partner endpoint fallback:", adminErr.message);
+          await axios.post("/service-providers", payload, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          });
+          try {
+            await adminService.verifyEngineer(createdEngineerId);
+          } catch (verifyErr) {
+            console.log("Auto-verification skipped or failed:", verifyErr);
+          }
         }
+      } else {
+        await axios.post("/service-providers", payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        });
       }
 
       setIsModalOpen(false);
@@ -307,24 +328,26 @@ const AdminEngineers = () => {
         }}
       >
         <h1>Engineers / Service Partners</h1>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            background: "#111827",
-            color: "white",
-            border: "none",
-            padding: "10px 20px",
-            borderRadius: "8px",
-            cursor: "pointer",
-            fontWeight: 600,
-            fontSize: "14px",
-          }}
-        >
-          <Plus size={18} /> Create Engineer
-        </button>
+        {canManageEngineers && (
+          <button
+            onClick={() => setIsModalOpen(true)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              background: "#111827",
+              color: "white",
+              border: "none",
+              padding: "10px 20px",
+              borderRadius: "8px",
+              cursor: "pointer",
+              fontWeight: 600,
+              fontSize: "14px",
+            }}
+          >
+            <Plus size={18} /> Create Engineer
+          </button>
+        )}
       </div>
 
       {/* Stats Cards */}
@@ -340,54 +363,113 @@ const AdminEngineers = () => {
         ))}
       </div>
 
-      {/* Engineers Table */}
-      <div className="adcard">
-        <h3>All Engineers ({engineers.length})</h3>
-
-        {engineers.length === 0 ? (
-          <div className="empty-state">
-            <p>No engineers found in the system.</p>
-          </div>
-        ) : (
-          <div className="adtable-container">
-            <table className="addata-table engineers-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Phone</th>
-                  <th>Email</th>
-                  <th>Created At</th>
-                  <th>Total Repairs</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {engineers.map((eng) => (
-                  <tr key={eng._id || eng.id}>
-                    <td>
-                      {eng.fname} {eng.lname}
-                    </td>
-                    <td>{eng.phoneNumber}</td>
-                    <td>{eng.email}</td>
-                    <td>{eng.createdAt}</td>
-                    <td>{eng.stats?.totalRepairs || 0}</td>
-                    <td>{eng.isVerified ? "verified" : "unverified"}</td>
-                    <td>
-                      <Link
-                        href={`/admin-dashboard/engineers/${eng._id || eng.id}`}
-                        className="view-repair"
-                      >
-                        View
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+      {/* Responsive Engineers Table */}
+      <AdminTable
+        title={`All Engineers & Partners (${engineers.length})`}
+        subtitle="Manage registered repair engineers, service partner applications, and verification statuses"
+        data={engineers}
+        columns={[
+          {
+            header: "Name",
+            accessor: "fname",
+            sortable: true,
+            render: (eng) => (
+              <span style={{ fontWeight: "600", color: "#0f172a" }}>
+                {eng.fname
+                  ? `${eng.fname} ${eng.lname || ""}`
+                  : eng.fullname || eng.name || "N/A"}
+              </span>
+            ),
+          },
+          {
+            header: "Phone",
+            accessor: "phoneNumber",
+            render: (eng) => eng.phoneNumber || eng.phone || "—",
+          },
+          {
+            header: "Email",
+            accessor: "email",
+            sortable: true,
+            render: (eng) => (
+              <span style={{ color: "#475569" }}>{eng.email || "—"}</span>
+            ),
+          },
+          {
+            header: "Created At",
+            accessor: "createdAt",
+            sortable: true,
+            render: (eng) => (
+              <span style={{ color: "#64748b", fontSize: "13px" }}>
+                {eng.createdAt ? new Date(eng.createdAt).toLocaleDateString() : "—"}
+              </span>
+            ),
+          },
+          {
+            header: "Total Repairs",
+            accessor: "stats.totalRepairs",
+            sortable: true,
+            render: (eng) => eng.stats?.totalRepairs || eng.totalRepairs || 0,
+          },
+          {
+            header: "Status",
+            accessor: "isVerified",
+            sortable: true,
+            render: (eng) => {
+              const isVerified =
+                eng.isVerified ||
+                eng.status === "verified" ||
+                eng.status === "approved";
+              return (
+                <span
+                  style={{
+                    padding: "4px 10px",
+                    borderRadius: "12px",
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    textTransform: "capitalize",
+                    background: isVerified ? "#dcfce7" : "#fee2e2",
+                    color: isVerified ? "#15803d" : "#b91c1c",
+                  }}
+                >
+                  {isVerified ? "Verified" : "Unverified"}
+                </span>
+              );
+            },
+          },
+          {
+            header: "Action",
+            align: "center",
+            render: (eng) => (
+              <Link
+                href={`/admin-dashboard/engineers/${eng._id || eng.id}`}
+                className="view-repair"
+              >
+                View
+              </Link>
+            ),
+          },
+        ]}
+        filters={[
+          {
+            key: "isVerified",
+            label: "All Verification Status",
+            filterFn: (eng, val) => {
+              const isVer =
+                eng.isVerified ||
+                eng.status === "verified" ||
+                eng.status === "approved";
+              return val === "verified" ? isVer : !isVer;
+            },
+            options: [
+              { value: "verified", label: "Verified" },
+              { value: "unverified", label: "Unverified" },
+            ],
+          },
+        ]}
+        searchPlaceholder="Search engineer name, email, phone..."
+        initialPageSize={10}
+        emptyMessage="No engineers found matching your search."
+      />
 
       {/* Create Engineer Modal */}
       {isModalOpen && (

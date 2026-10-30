@@ -16,12 +16,16 @@ import {
   XCircleIcon,
   X,
   Search,
+  ArrowRight,
+  ArrowUpRight,
+  Eye,
 } from "lucide-react";
 import { engineerAuthService } from "../../../../services/eng/engineerAuth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/CustomToast";
 import WithdrawModal from "../components/WithdrawModal";
+import DataTable from "@/components/DataTable";
 
 const EngineerDashboard = () => {
   const router = useRouter();
@@ -135,13 +139,13 @@ const EngineerDashboard = () => {
       id: 3,
       title: "Completed Repairs",
       value: engStats?.completedRepairs || "0",
-      icon: <XCircleIcon size={24} />,
+      icon: <CheckCircle2 size={24} />,
     },
     {
       id: 4,
       title: "Cancelled Repairs",
       value: engStats?.cancelledRepairs || "0",
-      icon: <CheckCircle2 size={24} />,
+      icon: <XCircleIcon size={24} />,
     },
   ];
 
@@ -173,139 +177,300 @@ const EngineerDashboard = () => {
         ))}
       </div>
 
-      {/* Wallet Balance & Search Card */}
-      <div className="balance-card">
-        <h2>Wallet Balance</h2>
-        <div className="balance-amount">₦{walletBalance.toLocaleString()}</div>
-        <button
-          className="btn-primary"
-          onClick={() => setShowWithdrawModal(true)}
-        >
-          Withdraw
-        </button>
+      {/* Redesigned Wallet & Search Hero Area */}
+      <div className="dashboard-hero-section">
+        {/* Wallet Balance Card */}
+        <div className="hero-wallet-card">
+          <div className="hero-card-header">
+            <div className="hero-card-title">
+              <span className="hero-badge">Engineer Wallet</span>
+              <h3>Available Balance</h3>
+            </div>
+            <div className="hero-card-icon">
+              <Wallet size={22} />
+            </div>
+          </div>
 
-        {/* Search Repair By ID Form */}
-        <form onSubmit={handleSearchRepair} className="search-bar">
-          <input
-            type="text"
-            value={searchId}
-            onChange={(e) => setSearchId(e.target.value)}
-            placeholder="Search repair by ID or order number"
-          />
-          <button type="submit" className="btn-search">
-            Search
-          </button>
-        </form>
+          <div className="hero-wallet-body">
+            <div className="hero-balance-value">
+              ₦{walletBalance.toLocaleString()}
+            </div>
+            <span className="hero-balance-sub">Ready for withdrawal to your bank account</span>
+          </div>
+
+          <div className="hero-wallet-actions">
+            <button
+              className="hero-btn-withdraw"
+              onClick={() => setShowWithdrawModal(true)}
+            >
+              <ArrowUpRight size={16} /> Withdraw Funds
+            </button>
+            <Link href="/engineer-dashboard/wallet" className="hero-btn-secondary">
+              View History
+            </Link>
+          </div>
+        </div>
+
+        {/* Quick Repair Search Card */}
+        <div className="hero-search-card">
+          <div className="hero-card-header">
+            <div className="hero-card-title">
+              <span className="hero-badge search-badge">Quick Lookup</span>
+              <h3>Find Assigned Repair</h3>
+            </div>
+            <div className="hero-card-icon">
+              <Search size={22} />
+            </div>
+          </div>
+
+          <p className="hero-search-desc">
+            Instantly search any repair order by ID to update progress, log diagnostic parts, or inspect details.
+          </p>
+
+          <form onSubmit={handleSearchRepair} className="hero-search-form">
+            <div className="hero-input-wrapper">
+              <Search size={18} className="hero-input-icon" />
+              <input
+                type="text"
+                value={searchId}
+                onChange={(e) => setSearchId(e.target.value)}
+                placeholder="Enter repair ID or order #..."
+              />
+            </div>
+            <button type="submit" className="hero-btn-search">
+              Search
+            </button>
+          </form>
+        </div>
       </div>
 
       {/* Main Sections */}
-      <div className="sections-grid">
+      <div className="sections-grid" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
         {/* Recent Repairs */}
-        <div className="engcardd">
-          <div className="table-split">
-            <h3>Recent Repairs ({repairs.length})</h3>
-            <Link href="/engineer-dashboard/repairs">View all</Link>
-          </div>
-          <div className="table-container">
-            {repairs.length === 0 ? (
-              <p className="empty-state">No repairs assigned yet.</p>
-            ) : (
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Order No.</th>
-                    <th>Date Assigned</th>
-                    <th>Fault Fixed</th>
-                    <th>Repair Status</th>
-                    <th>Amount</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {repairs.slice(0, 4).map((repair) => (
-                    <tr key={repair._id}>
-                      <td>#{repair._id.slice(-8)}</td>
-                      <td>
-                        {new Date(
-                          repair.assignedAt || repair.createdAt
-                        ).toLocaleDateString()}
-                      </td>
-                      <td>
-                        {repair.device?.brand?.toUpperCase()}{" "}
-                        {repair.device?.model} -{" "}
-                        {repair.issueCategory?.replace(/_/g, " ")}
-                      </td>
-                      <td>{repair.status?.replace(/_/g, " ")}</td>
-                      <td>
-                        ₦
-                        {(
-                          repair.estimatedCost?.totalCost || 0
-                        ).toLocaleString()}
-                      </td>
-                      <td>
-                        <Link
-                          href={`/engineer-dashboard/repairs/${repair._id}`}
-                          className="view-repair"
-                        >
-                          View
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        </div>
+        <DataTable
+          title="Recent Repairs"
+          subtitle={`Latest assigned repair orders (${repairs.length} total)`}
+          data={repairs}
+          columns={[
+            {
+              header: "Order No.",
+              accessor: "_id",
+              sortable: true,
+              render: (r) => (
+                <span style={{ fontWeight: "700", color: "#0f172a" }}>
+                  #{r._id ? r._id.slice(-8) : "N/A"}
+                </span>
+              ),
+            },
+            {
+              header: "Date Assigned",
+              accessor: "assignedAt",
+              sortable: true,
+              render: (r) => {
+                const rawDate = r.assignedAt || r.createdAt;
+                return (
+                  <span style={{ color: "#64748b", fontSize: "13px" }}>
+                    {rawDate ? new Date(rawDate).toLocaleDateString() : "—"}
+                  </span>
+                );
+              },
+            },
+            {
+              header: "Fault Fixed",
+              accessor: "issueCategory",
+              render: (r) => (
+                <span>
+                  <strong>{r.device?.brand?.toUpperCase()} {r.device?.model}</strong>{" "}
+                  - {r.issueCategory?.replace(/_/g, " ")}
+                </span>
+              ),
+            },
+            {
+              header: "Repair Status",
+              accessor: "status",
+              sortable: true,
+              render: (r) => {
+                const status = (r.status || "pending").toLowerCase();
+                const isCompleted = status === "completed" || status === "fixed";
+                const isInProgress = status.includes("progress") || status === "diagnosing";
+                const isCancelled = status === "cancelled";
+                return (
+                  <span
+                    style={{
+                      padding: "3px 9px",
+                      borderRadius: "12px",
+                      fontSize: "12px",
+                      fontWeight: "600",
+                      textTransform: "capitalize",
+                      background: isCompleted ? "#dcfce7" : isInProgress ? "#e0f2fe" : isCancelled ? "#fee2e2" : "#fef3c7",
+                      color: isCompleted ? "#15803d" : isInProgress ? "#0369a1" : isCancelled ? "#b91c1c" : "#b45309",
+                    }}
+                  >
+                    {r.status?.replace(/_/g, " ") || "Pending"}
+                  </span>
+                );
+              },
+            },
+            {
+              header: "Amount",
+              accessor: "estimatedCost.totalCost",
+              sortable: true,
+              render: (r) => (
+                <span style={{ fontWeight: "700", color: "#0f172a" }}>
+                  ₦{(r.estimatedCost?.totalCost || 0).toLocaleString()}
+                </span>
+              ),
+            },
+            {
+              header: "Action",
+              align: "center",
+              render: (r) => (
+                <Link
+                  href={`/engineer-dashboard/repairs/${r._id}`}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    padding: "4px 10px",
+                    background: "#0f172a",
+                    color: "#ffffff",
+                    borderRadius: "6px",
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    textDecoration: "none",
+                  }}
+                >
+                  <Eye size={12} />
+                  <span>View</span>
+                </Link>
+              ),
+            },
+          ]}
+          actions={
+            <Link
+              href="/engineer-dashboard/repairs"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "6px 12px",
+                background: "#f1f5f9",
+                color: "#0f172a",
+                borderRadius: "6px",
+                fontSize: "13px",
+                fontWeight: "600",
+                textDecoration: "none",
+              }}
+            >
+              <span>View All</span>
+              <ArrowRight size={13} />
+            </Link>
+          }
+          initialPageSize={5}
+          pageSizeOptions={[5, 10, 20]}
+          searchPlaceholder="Filter recent repairs..."
+          searchKeys={["_id", "status", "issueCategory", "device.brand", "device.model"]}
+          emptyMessage="No repairs assigned yet."
+        />
 
         {/* Recent Payments */}
-        <div className="engcardd">
-          <div className="table-split">
-            <h3>Recent Payments ({payments.length})</h3>
-            <Link href="/engineer-dashboard/payments">View all</Link>
-          </div>
-          <div className="table-container">
-            {payments.length === 0 ? (
-              <p className="empty-state">No payments yet.</p>
-            ) : (
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Order No.</th>
-                    <th>Fault Fixed</th>
-                    <th>Date Initiated</th>
-                    <th>Payment Status</th>
-                    <th>Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {payments.slice(0, 4).map((payment) => (
-                    <tr key={payment.transactionId || payment._id}>
-                      <td>#{payment.transactionId || payment._id?.slice(-8)}</td>
-                      <td>
-                        {payment.repairId?.device?.brand}{" "}
-                        {payment.repairId?.device?.model} -{" "}
-                        {payment.repairId?.issueCategory?.replace(/_/g, " ")}
-                      </td>
-                      <td>
-                        {new Date(payment.dateInitiated).toLocaleString()}
-                      </td>
-                      <td className={`payment-${payment.status}`}>
-                        {payment.status}
-                      </td>
-                      <td>
-                        ₦
-                        {(
-                          payment.repairId?.estimatedCost?.totalCost || 0
-                        ).toLocaleString()}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        </div>
+        <DataTable
+          title="Recent Payments"
+          subtitle={`Latest payouts and settlement activities (${payments.length} total)`}
+          data={payments}
+          columns={[
+            {
+              header: "Order / Txn ID",
+              accessor: "transactionId",
+              sortable: true,
+              render: (p) => (
+                <span style={{ fontWeight: "700", color: "#0f172a" }}>
+                  #{p.transactionId || (p._id ? p._id.slice(-8) : "N/A")}
+                </span>
+              ),
+            },
+            {
+              header: "Fault Fixed",
+              accessor: "repairId.issueCategory",
+              render: (p) => (
+                <span>
+                  <strong>{p.repairId?.device?.brand} {p.repairId?.device?.model}</strong>{" "}
+                  - {p.repairId?.issueCategory?.replace(/_/g, " ")}
+                </span>
+              ),
+            },
+            {
+              header: "Date Initiated",
+              accessor: "dateInitiated",
+              sortable: true,
+              render: (p) => (
+                <span style={{ color: "#64748b", fontSize: "13px" }}>
+                  {p.dateInitiated ? new Date(p.dateInitiated).toLocaleString() : "—"}
+                </span>
+              ),
+            },
+            {
+              header: "Payment Status",
+              accessor: "status",
+              sortable: true,
+              render: (p) => {
+                const status = (p.status || "pending").toLowerCase();
+                const isSuccess = status === "paid" || status === "completed" || status === "success";
+                const isFailed = status === "failed";
+                return (
+                  <span
+                    style={{
+                      padding: "3px 9px",
+                      borderRadius: "12px",
+                      fontSize: "12px",
+                      fontWeight: "600",
+                      textTransform: "capitalize",
+                      background: isSuccess ? "#dcfce7" : isFailed ? "#fee2e2" : "#fef3c7",
+                      color: isSuccess ? "#15803d" : isFailed ? "#b91c1c" : "#b45309",
+                    }}
+                  >
+                    {p.status || "Pending"}
+                  </span>
+                );
+              },
+            },
+            {
+              header: "Amount",
+              accessor: "amount",
+              sortable: true,
+              render: (p) => (
+                <span style={{ fontWeight: "700", color: "#0f172a" }}>
+                  ₦{(p.repairId?.estimatedCost?.totalCost || p.amount || 0).toLocaleString()}
+                </span>
+              ),
+            },
+          ]}
+          actions={
+            <Link
+              href="/engineer-dashboard/payments"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "6px 12px",
+                background: "#f1f5f9",
+                color: "#0f172a",
+                borderRadius: "6px",
+                fontSize: "13px",
+                fontWeight: "600",
+                textDecoration: "none",
+              }}
+            >
+              <span>View All</span>
+              <ArrowRight size={13} />
+            </Link>
+          }
+          initialPageSize={5}
+          pageSizeOptions={[5, 10, 20]}
+          searchPlaceholder="Filter recent payments..."
+          searchKeys={["transactionId", "_id", "status", "repairId.issueCategory"]}
+          emptyMessage="No payments yet."
+        />
       </div>
 
       {/* Shared Withdraw Modal */}

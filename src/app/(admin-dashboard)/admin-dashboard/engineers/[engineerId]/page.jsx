@@ -19,11 +19,16 @@ import {
 } from "lucide-react";
 import styles from "./engineer.module.css";
 import { adminService } from "../../../../../../services/admin/admin";
+import { useStaffPermissions } from "../../../../../../config/adminPermissions";
 import axios from "../../../../../../lib/axios";
+import { toast } from "@/components/CustomToast";
+import ConfirmModal from "@/components/ConfirmModal";
 
 export default function EngineerDetailsPage({ params }) {
   const { engineerId } = use(params);
   const router = useRouter();
+  const { can } = useStaffPermissions();
+  const canVerify = can("engineers:verify");
 
   const [engineer, setEngineer] = useState(null);
   const [stats, setStats] = useState(null);
@@ -33,16 +38,18 @@ export default function EngineerDetailsPage({ params }) {
 
   const [isVerifying, setIsVerifying] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this engineer? This action cannot be undone.")) return;
     try {
       setIsDeleting(true);
       await adminService.deleteEngineerbyId(engineerId);
+      toast.success("Engineer deleted successfully.");
+      setDeleteModalOpen(false);
       router.push("/admin-dashboard/engineers");
     } catch (err) {
       console.error("Failed to delete engineer:", err);
-      alert(err.response?.data?.message || "Failed to delete engineer.");
+      toast.error(err.response?.data?.message || "Failed to delete engineer.");
     } finally {
       setIsDeleting(false);
     }
@@ -58,8 +65,13 @@ export default function EngineerDetailsPage({ params }) {
       const spId = response.data?.servicePartnerId || response.servicePartnerId;
       if (spId) {
         try {
-          const spRes = await axios.get(`/service-providers/${spId}`);
-          setServiceProvider(spRes.data?.data?.servicePartner || spRes.data?.data?.serviceProvider || spRes.data?.data || spRes.data);
+          const spRes = await adminService.getServicePartnerById(spId);
+          setServiceProvider(
+            spRes.data?.servicePartner ||
+              spRes.data?.serviceProvider ||
+              spRes.data ||
+              spRes
+          );
         } catch (spErr) {
           console.log("Service provider details not found", spErr.message);
         }
@@ -82,12 +94,13 @@ export default function EngineerDetailsPage({ params }) {
     try {
       setIsVerifying(true);
       await adminService.verifyEngineer(engineerId);
-      // Reload engineer details to reflect updated verified status
+      toast.success("Service partner approved successfully!");
       await fetchEngineer();
     } catch (err) {
       console.log("Failed to verify engineer:", err);
-      alert(
-        "user has to complete the Service partner form before they can be verified",
+      toast.error(
+        err.response?.data?.message ||
+          "User has to complete the Service Partner form before they can be verified."
       );
     } finally {
       setIsVerifying(false);
@@ -173,7 +186,7 @@ export default function EngineerDetailsPage({ params }) {
           </div>
         </div>
         <div style={{ display: "flex", gap: "12px" }}>
-          {!isApproved && (
+          {!isApproved && canVerify && (
             <button
               className={styles.actionPrimary}
               onClick={handleVerify}
@@ -363,6 +376,19 @@ export default function EngineerDetailsPage({ params }) {
           </div>
         )}
       </div>
+
+      {/* Delete Engineer Confirm Modal */}
+      <ConfirmModal
+        isOpen={deleteModalOpen}
+        title="Delete Engineer"
+        message="Are you sure you want to delete this engineer? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+        isLoading={isDeleting}
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteModalOpen(false)}
+      />
     </div>
   );
 }

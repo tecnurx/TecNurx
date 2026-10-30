@@ -53,7 +53,7 @@ const TokenHandler = ({ onTokenProcessed }) => {
         onTokenProcessed();
       } catch (err) {
         console.error("Failed to initialize user from google token", err);
-        alert("Login failed. Please try again.");
+        console.error("Login failed. Please try again.");
         router.replace("/login");
       } finally {
         setIsProcessing(false);

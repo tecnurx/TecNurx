@@ -2,10 +2,8 @@
 
 .sidebar {
   position: fixed;
-  top: 80px; /* Below fixed navbar */
-  left: 0;
-  /* width: 250px; */
-  height: calc(100vh - 80px); /* Full height minus navbar */
+  top: 75px;
+  height: calc(100vh - 75px); /* Full height minus navbar */
   background: rgba(244, 244, 244, 1);
   padding: 50px 24px; /* Your original padding */
   display: flex;
@@ -93,3 +91,18 @@
   }
 }
 
+
+
+@media (max-width: 900px) {
+  .sidebar {
+    top: 70px;
+    height: calc(100vh - 70px);
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    top: 66px;
+    height: calc(100vh - 66px);
+  }
+}

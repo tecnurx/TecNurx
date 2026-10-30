@@ -156,11 +156,22 @@ const DashboardNav = () => {
       </Link>
 
       {/* Mobile Menu */}
-      <div className="side-logo-menu" onClick={toggleSidebar}>
-        <button className="menu-toggle-btn">
-          {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
+      <div className="side-logo-menu">
+        <button
+          type="button"
+          className="menu-toggle-btn"
+          onClick={toggleSidebar}
+          aria-label="Toggle navigation menu"
+        >
+          {isSidebarOpen ? (
+            <X size={20} color="#111111" strokeWidth={2.2} />
+          ) : (
+            <Menu size={20} color="#111111" strokeWidth={2.2} />
+          )}
         </button>
-        <Image src={logo} alt="logo" width={120} />
+        <Link href="/dashboard" style={{ display: "flex", alignItems: "center" }}>
+          <Image src={logo} alt="TecNurx" width={115} height={28} priority />
+        </Link>
       </div>
 
       <div className="nav-items">

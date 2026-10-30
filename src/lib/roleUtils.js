@@ -12,8 +12,16 @@ export const extractUserRole = (userData) => {
   if (!userData) return "customer";
 
   // Handle nested objects safely
-  const userObj = userData.user || userData.data?.user || userData;
-  const rawRole = userObj.role || userObj.type || userObj.userType || "";
+  const userObj = userData.staff || userData.user || userData.data?.staff || userData.data?.user || userData;
+
+  // Extract role string or object role name
+  const rawRole =
+    (typeof userObj.role === "object" ? userObj.role?.name : userObj.role) ||
+    userObj.type ||
+    userObj.userType ||
+    userObj.adminType ||
+    "";
+
   const roleStr = String(rawRole)
     .toLowerCase()
     .trim()
@@ -39,8 +47,23 @@ export const extractUserRole = (userData) => {
     return "engineer";
   }
 
-  // 3. Admin role check
-  if (["admin", "administrator", "superadmin"].includes(roleStr)) {
+  // 3. Admin / Staff roles check
+  if (
+    [
+      "admin",
+      "administrator",
+      "superadmin",
+      "super_admin",
+      "support",
+      "operationsadmin",
+      "logisticsadmin",
+      "financeadmin",
+      "supportadmin",
+    ].includes(roleStr) ||
+    roleStr.includes("admin") ||
+    Array.isArray(userObj.permissions) ||
+    (userObj.role && typeof userObj.role === "object" && Array.isArray(userObj.role.permissions))
+  ) {
     return "admin";
   }
 

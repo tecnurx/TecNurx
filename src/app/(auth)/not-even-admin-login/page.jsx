@@ -122,6 +122,15 @@ const AdminLogin = () => {
                 </div>
               </div>
 
+              <div style={{ textAlign: "right", marginTop: "-8px", marginBottom: "8px" }}>
+                <Link
+                  href="/not-even-admin-login/forgot-password"
+                  style={{ fontSize: "13px", color: "#666", textDecoration: "none" }}
+                >
+                  Forgot password?
+                </Link>
+              </div>
+
               <div className="sign-btn">
                 <button
                   type="submit"

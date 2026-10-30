@@ -136,18 +136,18 @@
   margin-bottom: 28px;
 }
 
-.form-group {
+.claim-form-container .form-group {
   margin-bottom: 24px;
 }
 
-.form-group label {
+.claim-form-container .form-group label {
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
 }
 
-.form-group select,
-.form-group textarea {
+.claim-form-container .form-group select,
+.claim-form-container .form-group textarea {
   width: 100%;
   padding: 12px 14px;
   border: 1.5px solid #ddd;
@@ -155,7 +155,7 @@
   font-size: 15px;
 }
 
-.form-group textarea {
+.claim-form-container .form-group textarea {
   resize: vertical;
 }
 

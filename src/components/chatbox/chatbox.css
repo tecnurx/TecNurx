@@ -1,188 +1,1319 @@
-/* components/Chatbox/Chatbox.css */
-.chatbox-toggle {
+/* =========================================================================
+   TecNurx Support Chatbox - Modern Minimalist Design System
+   ========================================================================= */
+
+/* 1. Floating Launcher Button */
+.tnx-launcher {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  background: #000; /* blue-500 */
-  color: white;
-  border: none;
+  bottom: 24px;
+  right: 24px;
+  width: 58px;
+  height: 58px;
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 50%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
   cursor: pointer;
-  z-index: 1000;
+  z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background-color 0.2s ease;
+  user-select: none;
 }
 
-.chatbox-toggle:hover {
-  transform: scale(1.1);
-  background: #f2f2f2;
-  color: black;
+.tnx-launcher:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  background: #111111;
 }
 
-.chat-badge {
+.tnx-launcher.is-open {
+  background: #000000;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.tnx-launcher-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tnx-launcher-badge {
   position: absolute;
-  top: -5px;
-  right: -5px;
+  top: -2px;
+  right: -2px;
   background: #ef4444;
-  color: white;
-  font-size: 12px;
-  width: 20px;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 20px;
   height: 20px;
-  border-radius: 50%;
+  border-radius: 10px;
+  border: 2px solid #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0 5px;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
 }
 
-.chatbox-window {
+/* 2. Main Chat Window */
+.tnx-chatbox {
   position: fixed;
-  bottom: 90px;
-  right: 20px;
-  width: 380px;
-  height: 520px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  bottom: 94px;
+  right: 24px;
+  width: 390px;
+  height: 600px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 120px);
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
-  z-index: 1000;
-  transition: all 0.3s ease;
+  z-index: 10000;
   overflow: hidden;
+  font-family: inherit;
+  transition: height 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: tnxSlideUp 0.22s ease-out;
 }
 
-.chatbox-window.minimized {
-  height: 60px;
+.tnx-chatbox.is-minimized {
+  height: 64px;
 }
 
-.chatbox-header {
-  background: #000;
-  color: white;
-  padding: 16px;
+@keyframes tnxSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 3. Header Bar */
+.tnx-header {
+  background: #000000;
+  color: #ffffff;
+  padding: 14px 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 2px solid #ffc400;
+  user-select: none;
 }
 
-.header-info h4 {
-  margin: 0;
-  font-size: 16px;
+.tnx-header-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
 }
 
-.header-info small {
-  opacity: 0.9;
-  font-size: 12px;
-}
-
-.header-actions button {
+.tnx-btn-header-back {
   background: none;
   border: none;
-  color: white;
+  color: #ffffff;
   cursor: pointer;
-  padding: 4px;
-  opacity: 0.8;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease;
 }
 
-.header-actions button:hover {
-  opacity: 1;
+.tnx-btn-header-back:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
-.chatbox-messages {
+.tnx-brand-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 196, 0, 0.4);
+  color: #ffc400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.tnx-online-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background: #10b981;
+  border: 2px solid #000000;
+  border-radius: 50%;
+}
+
+.tnx-header-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.tnx-header-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+.tnx-header-subtitle {
+  margin: 2px 0 0 0;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+}
+
+.tnx-dot-green {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  margin-right: 5px;
+}
+
+.tnx-badge-status {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: capitalize;
+}
+
+.tnx-badge-status.status-open {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.tnx-badge-status.status-pending {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+}
+
+.tnx-badge-status.status-closed {
+  background: rgba(156, 163, 175, 0.2);
+  color: #d1d5db;
+}
+
+.tnx-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tnx-btn-header-action {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.tnx-btn-header-action:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+/* 4. Body Layout */
+.tnx-body {
   flex: 1;
-  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+/* 5. Common Elements */
+.tnx-alert-banner {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin: 12px 16px;
+  line-height: 1.4;
+}
+
+.tnx-btn-primary {
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  text-decoration: none;
+}
+
+.tnx-btn-primary:hover:not(:disabled) {
+  background: #27272a;
+}
+
+.tnx-btn-primary:disabled {
+  background: #a1a1aa;
+  cursor: not-allowed;
+}
+
+.tnx-btn-secondary {
+  background: #f4f4f5;
+  color: #18181b;
+  border: 1px solid #e4e4e7;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.tnx-btn-secondary:hover {
+  background: #e4e4e7;
+}
+
+.tnx-loading-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: #71717a;
+  gap: 12px;
+}
+
+.tnx-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #e4e4e7;
+  border-top-color: #000000;
+  border-radius: 50%;
+  animation: tnxSpin 0.7s linear infinite;
+}
+
+@keyframes tnxSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tnx-empty-box {
+  padding: 48px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.tnx-empty-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #f4f4f5;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.tnx-empty-box h3 {
+  margin: 0 0 8px 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #09090b;
+}
+
+.tnx-empty-box p {
+  margin: 0 0 20px 0;
+  font-size: 13px;
+  color: #71717a;
+  line-height: 1.5;
+}
+
+/* =========================================================================
+   VIEW 1: HOME & CONVERSATIONS LIST
+   ========================================================================= */
+.tnx-view-home {
+  flex: 1;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hero Welcome Card */
+.tnx-hero-card {
+  margin: 16px;
+  padding: 20px;
   background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.message {
-  margin-bottom: 12px;
-  max-width: 80%;
-}
-
-.message.bot {
+.tnx-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #b45309;
+  background: rgba(255, 196, 0, 0.15);
+  padding: 3px 8px;
+  border-radius: 6px;
   align-self: flex-start;
 }
 
-.message.user {
-  align-self: flex-end;
-  background: #000;
-  color: white;
-  border-radius: 18px 18px 18px 4px;
-  padding: 10px 14px;
+.tnx-hero-card h3 {
+  margin: 2px 0 0 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #09090b;
+  letter-spacing: -0.01em;
 }
 
-.message.bot {
-  background: #e2e8f0;
-  color: #1e293b;
-  border-radius: 18px 18px 4px 18px;
-  padding: 10px 14px;
+.tnx-hero-card p {
+  margin: 0 0 6px 0;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.45;
 }
 
-.message p {
-  margin: 0;
-}
-
-.message small {
-  font-size: 10px;
-  opacity: 0.7;
-  margin-top: 4px;
-  display: block;
-}
-
-.chatbox-input {
-  display: flex;
-  padding: 12px;
-  background: white;
-  border-top: 1px solid #e2e8f0;
-}
-
-.chatbox-input input {
-  flex: 1;
-  padding: 10px 14px;
-  border: 1px solid #cbd5e1;
-  border-radius: 24px;
-  outline: none;
-}
-
-.chatbox-input input:focus {
-  border-color: #000;
-}
-
-.chatbox-input button {
-  margin-left: 8px;
-  background: #000;
-  color: white;
+.tnx-btn-new-ticket {
+  background: #000000;
+  color: #ffffff;
   border: none;
-  width: 40px;
-  height: 40px;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  transition: all 0.15s ease;
+}
+
+.tnx-btn-new-ticket:hover:not(:disabled) {
+  background: #27272a;
+}
+
+.tnx-btn-new-ticket:disabled {
+  background: #cbd5e1;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.tnx-arrow-right {
+  margin-left: auto;
+  opacity: 0.8;
+}
+
+.tnx-limit-note {
+  font-size: 11px;
+  color: #dc2626;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* Conversations Section */
+.tnx-conversations-section {
+  flex: 1;
+  padding: 0 16px 16px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tnx-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  letter-spacing: 0.01em;
+}
+
+.tnx-count-pill {
+  background: #e5e7eb;
+  color: #1f2937;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.tnx-no-tix-box {
+  padding: 32px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #9ca3af;
+  gap: 8px;
+}
+
+.tnx-no-tix-box h4 {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.tnx-no-tix-box p {
+  margin: 0;
+  font-size: 12px;
+  color: #6b7280;
+  max-width: 260px;
+  line-height: 1.4;
+}
+
+.tnx-ticket-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tnx-ticket-row {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tnx-ticket-row:hover {
+  border-color: #000000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.tnx-ticket-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tnx-cat-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #4b5563;
+  text-transform: capitalize;
+}
+
+.tnx-status-chip {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  text-transform: capitalize;
+}
+
+.tnx-status-chip.chip-open {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.tnx-status-chip.chip-pending {
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.tnx-status-chip.chip-closed {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.tnx-ticket-row-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tnx-ticket-row-snippet {
+  margin: 0;
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tnx-ticket-row-footer {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.tnx-ticket-row-footer span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tnx-view-link {
+  color: #000000;
+  font-weight: 600;
+}
+
+/* =========================================================================
+   VIEW 2: NEW TICKET FORM
+   ========================================================================= */
+.tnx-view-form {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tnx-form-intro h4 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.tnx-form-intro p {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.tnx-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tnx-form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.tnx-label-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.tnx-label-flex small {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.tnx-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tnx-pill-btn {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.tnx-pill-btn:hover {
+  border-color: #000000;
+}
+
+.tnx-pill-btn.is-selected {
+  background: #000000;
+  border-color: #000000;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.tnx-input,
+.tnx-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 13px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #111827;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tnx-input:focus,
+.tnx-textarea:focus {
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+}
+
+.tnx-textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.45;
+}
+
+/* Thumbnail upload grid */
+.tnx-thumbs-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.tnx-thumb-card {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.tnx-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tnx-thumb-remove {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.tnx-thumb-add-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  border: 1px dashed #9ca3af;
+  background: #f9fafb;
+  color: #4b5563;
+  font-size: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tnx-thumb-add-btn:hover {
+  border-color: #000000;
+  background: #f3f4f6;
+  color: #000000;
+}
+
+.tnx-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #f3f4f6;
+}
+
+/* =========================================================================
+   VIEW 3: CONVERSATION THREAD
+   ========================================================================= */
+.tnx-view-chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fafafa;
+}
+
+/* Chat Subheader Meta Bar */
+.tnx-chat-meta-bar {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tnx-chat-meta-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.tnx-meta-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.tnx-meta-id {
+  font-size: 11px;
+  color: #9ca3af;
+  font-family: monospace;
+}
+
+.tnx-btn-resolve {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.tnx-btn-resolve:hover {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.tnx-btn-resolve.reopen {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1e40af;
+}
+
+/* Message Feed */
+.tnx-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tnx-empty-chat-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  color: #9ca3af;
+  gap: 8px;
+  font-size: 13px;
+}
+
+/* 1. System bot message (centered) */
+.tnx-msg-system {
+  display: flex;
+  justify-content: center;
+  margin: 6px 0;
+}
+
+.tnx-system-box {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 10px 14px;
+  max-width: 85%;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.tnx-system-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #b45309;
+  background: rgba(255, 196, 0, 0.2);
+  padding: 2px 7px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tnx-system-box p {
+  margin: 4px 0 2px 0;
+  font-size: 12px;
+  color: #374151;
+  line-height: 1.4;
+}
+
+.tnx-system-box small {
+  font-size: 10px;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+/* 2. Message Bubbles */
+.tnx-msg-row {
+  display: flex;
+  width: 100%;
+}
+
+.tnx-msg-row.is-user {
+  justify-content: flex-end;
+}
+
+.tnx-msg-row.is-staff {
+  justify-content: flex-start;
+}
+
+.tnx-msg-bubble {
+  max-width: 82%;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  word-break: break-word;
+}
+
+.tnx-msg-row.is-user .tnx-msg-bubble {
+  background: #000000;
+  color: #ffffff;
+  border-radius: 18px 18px 4px 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.tnx-msg-row.is-staff .tnx-msg-bubble {
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px 18px 18px 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.tnx-msg-author {
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 2px;
+}
+
+.tnx-msg-row.is-user .tnx-msg-author {
+  display: none;
+}
+
+.tnx-msg-row.is-staff .tnx-msg-author {
+  color: #0284c7;
+}
+
+.tnx-staff-badge {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #0284c7;
+}
+
+.tnx-msg-text {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.tnx-msg-photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.tnx-msg-img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.tnx-msg-img:hover {
+  transform: scale(1.03);
+}
+
+.tnx-msg-time {
+  font-size: 10px;
+  margin-top: 2px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tnx-msg-row.is-user .tnx-msg-time {
+  color: rgba(255, 255, 255, 0.65);
+  text-align: right;
+}
+
+.tnx-msg-row.is-staff .tnx-msg-time {
+  color: #9ca3af;
+  text-align: left;
+}
+
+/* Typing Indicator */
+.tnx-typing-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  align-self: flex-start;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.tnx-typing-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.tnx-typing-dots span {
+  width: 6px;
+  height: 6px;
+  background: #9ca3af;
+  border-radius: 50%;
+  animation: tnxBounce 1.2s infinite ease-in-out;
+}
+
+.tnx-typing-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.tnx-typing-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes tnxBounce {
+  0%, 80%, 100% {
+    transform: scale(0.7);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+.tnx-typing-box small {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* Closed state banner */
+.tnx-closed-bar {
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  padding: 14px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.tnx-closed-bar p {
+  margin: 0;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.tnx-btn-reopen {
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Chat Input Bar */
+.tnx-input-area {
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tnx-reply-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tnx-reply-thumb-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  padding: 3px 8px 3px 4px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #374151;
+  max-width: 160px;
+}
+
+.tnx-mini-thumb {
+  width: 22px;
+  height: 22px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.tnx-mini-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.tnx-reply-thumb-chip button {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.tnx-reply-thumb-chip button:hover {
+  color: #ef4444;
+}
+
+.tnx-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  padding: 4px 6px 4px 12px;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.tnx-input-wrapper:focus-within {
+  border-color: #000000;
+  background: #ffffff;
+}
+
+.tnx-btn-paperclip {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: color 0.15s ease;
+}
+
+.tnx-btn-paperclip:hover:not(:disabled) {
+  color: #000000;
+}
+
+.tnx-btn-paperclip:disabled {
+  color: #d1d5db;
+  cursor: not-allowed;
+}
+
+.tnx-chat-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13.5px;
+  color: #111827;
+  font-family: inherit;
+  padding: 6px 0;
+}
+
+.tnx-btn-send {
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
 }
 
-.chatbox-input button:disabled {
-  background: #94a3b8;
+.tnx-btn-send:hover:not(:disabled) {
+  background: #27272a;
+}
+
+.tnx-btn-send:disabled {
+  background: #e5e7eb;
+  color: #9ca3af;
   cursor: not-allowed;
 }
 
-/* Responsive */
+/* =========================================================================
+   LIGHTBOX FULL-SCREEN MODAL
+   ========================================================================= */
+.tnx-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 50000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: tnxFadeIn 0.18s ease-out;
+}
+
+@keyframes tnxFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.tnx-lightbox-container {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tnx-lightbox-container img {
+  max-width: 100%;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.tnx-btn-lightbox-close {
+  position: absolute;
+  top: -44px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #ffffff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.tnx-btn-lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* =========================================================================
+   MOBILE RESPONSIVENESS
+   ========================================================================= */
 @media (max-width: 480px) {
-  .chatbox-window {
+  .tnx-chatbox {
     width: 100%;
     height: 100%;
     bottom: 0;
     right: 0;
     border-radius: 0;
+    max-width: 100vw;
+    max-height: 100vh;
   }
 
-  .chatbox-toggle {
-    bottom: 15px;
-    right: 15px;
+  .tnx-launcher {
+    bottom: 16px;
+    right: 16px;
   }
 }

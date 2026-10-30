@@ -25,6 +25,7 @@ const UserDetailsPage = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -79,13 +80,14 @@ const UserDetailsPage = () => {
       <div className="user-profile-card">
         <div className="user-avatar-section">
           <div className="avatar-wrapper">
-            {user.photo && user.photo !== "default.jpg" ? (
+            {user.photo && user.photo !== "default.jpg" && !imgError ? (
               <Image
                 src={user.photo}
                 alt={`${user.fname} ${user.lname}`}
                 width={120}
                 height={120}
                 className="user-avatar"
+                onError={() => setImgError(true)}
               />
             ) : (
               <div className="default-avatar">

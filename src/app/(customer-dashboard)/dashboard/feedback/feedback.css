@@ -69,17 +69,17 @@
   color: #333;
 }
 
-.form-group {
+.feedback-form .form-group {
   margin-bottom: 24px;
 }
 
-.form-group label {
+.feedback-form .form-group label {
   display: block;
   margin-bottom: 10px;
   font-weight: 500;
 }
 
-.form-group textarea {
+.feedback-form .form-group textarea {
   width: 100%;
   padding: 14px;
   border: 1.5px solid #ddd;

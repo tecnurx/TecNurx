@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "@/components/CustomToast";
 import { engineerAuthService } from './../../../../services/eng/engineerAuth';
 
-const REMEMBER_KEY = "technurx_remember_engineer";
+const REMEMBER_KEY = "tecnurx_remember_engineer";
 
 const EngineerLogin = () => {
   const router = useRouter();

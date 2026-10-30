@@ -1,0 +1,37 @@
+/* admin.css */
+
+.view-all-tx-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background-color: #0f172a;
+  color: #ffffff !important;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.view-all-tx-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.view-all-tx-btn:hover {
+  background-color: #1e293b;
+  border-color: #334155;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px -1px rgba(15, 23, 42, 0.2);
+}
+
+.view-all-tx-btn:hover svg {
+  transform: translateX(3px);
+}
+
+.view-all-tx-btn:active {
+  transform: translateY(0);
+}

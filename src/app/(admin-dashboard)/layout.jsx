@@ -8,11 +8,14 @@ import AdNav from "./components/AdNav";
 import AdSidebar from "./components/sidebar/AdSidebar";
 import "./adminall.css";
 import SessionExpiry from "@/components/SessionExpiry";
+import CustomToast from "@/components/CustomToast";
+import AdminSupportNotifier from "./components/AdminSupportNotifier";
 import {
   hasAdminAccess,
   getAdminType,
 } from "../../../config/adminPermissions";
 import { extractUserRole } from "@/lib/roleUtils";
+import { adminAuthService } from "../../../services/admin/adminlogin";
 import { ShieldAlert } from "lucide-react";
 
 export default function AdminDashboardLayout({ children }) {
@@ -22,19 +25,21 @@ export default function AdminDashboardLayout({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userJson = localStorage.getItem("user");
-    const token = localStorage.getItem("token");
+    const userJson = localStorage.getItem("staff") || localStorage.getItem("user");
+    const token = localStorage.getItem("staff_token") || localStorage.getItem("token");
 
     if (!userJson || !token) {
       router.replace("/not-even-admin-login");
       return;
     }
 
-    // Keep cookie in sync with localStorage token
+    // Keep cookies in sync with localStorage token
+    const secureFlag = process.env.NODE_ENV === "production" ? "Secure;" : "";
+    if (!document.cookie.includes("staff_jwt=")) {
+      document.cookie = `staff_jwt=${token}; path=/; max-age=604800; SameSite=Lax; ${secureFlag}`;
+    }
     if (!document.cookie.includes("token=")) {
-      document.cookie = `token=${token}; path=/; max-age=604800; SameSite=Lax; ${
-        process.env.NODE_ENV === "production" ? "Secure;" : ""
-      }`;
+      document.cookie = `token=${token}; path=/; max-age=604800; SameSite=Lax; ${secureFlag}`;
     }
 
     // Ensure loginTime is initialized if missing
@@ -52,6 +57,21 @@ export default function AdminDashboardLayout({ children }) {
       }
 
       setUser(parsedUser);
+
+      // Refresh /staff/me to ensure latest permissions and active role
+      adminAuthService
+        .getMe()
+        .then((res) => {
+          const freshStaff = res?.data?.staff || res?.staff || res?.data;
+          if (freshStaff) {
+            localStorage.setItem("staff", JSON.stringify(freshStaff));
+            localStorage.setItem("user", JSON.stringify(freshStaff));
+            setUser(freshStaff);
+          }
+        })
+        .catch((err) => {
+          console.warn("Could not refresh /staff/me in background", err?.message);
+        });
     } catch (error) {
       console.log("Invalid user data in localStorage", error);
       router.replace("/");
@@ -160,7 +180,9 @@ export default function AdminDashboardLayout({ children }) {
             </main>
           </div>
         </SidebarProvider>
+        <AdminSupportNotifier />
         <SessionExpiry />
+        <CustomToast />
       </main>
     </div>
   );

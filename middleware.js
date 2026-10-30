@@ -7,64 +7,59 @@ const PROTECTED_DASHBOARDS = [
   "/admin-dashboard", // Admin
 ];
 
-// All login/auth pages across the app
-const AUTH_PAGES = [
-  "/login", // Customer login
-  "/not-engineer-login", // Engineer login
-  "/not-even-admin-login", // Admin login
-  "/register",
-  "/service-partner",
-  "/forgot-password",
-  "/create-password",
-  "/verify-email",
-];
-
 export function middleware(request) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("token")?.value;
+  const staffToken = request.cookies.get("staff_jwt")?.value;
 
   const isProtected = PROTECTED_DASHBOARDS.some((prefix) =>
-    pathname.startsWith(prefix),
+    pathname.startsWith(prefix)
   );
 
   // 1. Protect all dashboards: no token → redirect to appropriate login
-  if (isProtected && !token) {
+  if (isProtected) {
     // Allow access if there's a ?token= query param (Google redirect flow)
     if (request.nextUrl.searchParams.has("token")) {
       return NextResponse.next();
     }
 
-    // Smart redirect based on which dashboard they're trying to access
-    if (pathname.startsWith("/engineer-dashboard")) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-
+    // Admin dashboard protection: requires staff_jwt or token
     if (pathname.startsWith("/admin-dashboard")) {
-      return NextResponse.redirect(new URL("/", request.url));
+      if (!staffToken && !token) {
+        const loginUrl = new URL("/not-even-admin-login", request.url);
+        loginUrl.searchParams.set("redirect", pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+      return NextResponse.next();
     }
 
-    // Default to customer login with redirect parameter
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(loginUrl);
+    // Engineer dashboard protection
+    if (pathname.startsWith("/engineer-dashboard")) {
+      if (staffToken && !token) {
+        return NextResponse.redirect(new URL("/admin-dashboard", request.url));
+      }
+      if (!token) {
+        const loginUrl = new URL("/not-engineer-login", request.url);
+        loginUrl.searchParams.set("redirect", pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+      return NextResponse.next();
+    }
+
+    // Customer dashboard protection
+    if (pathname.startsWith("/dashboard")) {
+      if (staffToken && !token) {
+        return NextResponse.redirect(new URL("/admin-dashboard", request.url));
+      }
+      if (!token) {
+        const loginUrl = new URL("/login", request.url);
+        loginUrl.searchParams.set("redirect", pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+      return NextResponse.next();
+    }
   }
 
-  // 2. If already logged in and visiting ANY login/auth page → go to resolver
-  // const isAuthPage = AUTH_PAGES.some((authPath) =>
-  //   pathname.startsWith(authPath),
-  // );
-
-  // // CRITICAL: Don't redirect if already on resolve-role (prevents infinite loop)
-  // const isResolvePage = pathname.startsWith("/resolve-role");
-
-  // if (isAuthPage && token && !isResolvePage) {
-  //   console.log(
-  //     `User with token visited ${pathname}, redirecting to resolve-role`,
-  //   );
-  //   return NextResponse.redirect(new URL("/resolve-role", request.url));
-  // }
-
-  // 3. Allow everything else (including resolve-role itself)
   return NextResponse.next();
 }
 

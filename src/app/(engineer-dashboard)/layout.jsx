@@ -8,6 +8,7 @@ import EngNav from "./components/EngNav";
 import { SidebarProvider } from "../../../context/SidebarContext";
 import CustomToast from "@/components/CustomToast";
 import SessionExpiry from "@/components/SessionExpiry";
+import Chatbox from "@/components/chatbox/Chatbox";
 import { extractUserRole } from "@/lib/roleUtils";
 
 export default function EngineerDashboardLayout({ children }) {
@@ -70,6 +71,7 @@ export default function EngineerDashboardLayout({ children }) {
             <main className="main-content">{children}</main>
           </div>
         </SidebarProvider>
+        <Chatbox />
         <CustomToast />
         <SessionExpiry />
       </main>
