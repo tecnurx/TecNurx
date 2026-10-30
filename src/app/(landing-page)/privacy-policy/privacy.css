@@ -24,7 +24,7 @@
 .write-up {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  /* gap: 24px; */
   color: rgba(8, 8, 8, 1);
 }
 .write-up h2 {
@@ -35,6 +35,8 @@
   line-height: 100%;
   letter-spacing: 0%;
   vertical-align: middle;
+  margin-bottom: 8px;
+  margin-top: 32px;
 }
 .write-up p,
 .write-up li {
@@ -42,7 +44,7 @@
   font-weight: 400;
   font-style: Regular;
   font-size: 20px;
-  line-height: 100%;
+  line-height: 29px;
   letter-spacing: 0%;
   vertical-align: middle;
 }
@@ -54,8 +56,12 @@
 @media screen and (max-width: 600px) {
   .privacy-wrap{
     padding: 60px 32px;
+    gap: 24px;
   }
   .privacy-wrap h1{
-    font-size: 38px;
+    font-size: 42px;
+  }
+  .write-up p, .write-up li{
+    font-size: 16px;
   }
 }

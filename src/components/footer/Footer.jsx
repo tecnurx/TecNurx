@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import React from "react";
 import logo from "@/assets/images/foot-logo.svg";
@@ -23,12 +25,13 @@ const Footer = ({ newsPaperWrap }) => {
           <div className="newsletter-card-wrapper">
             <svg
               className="curve-left"
-              viewBox="0 0 36 36"
+              viewBox="0 0 36 40"
               preserveAspectRatio="none"
               aria-hidden="true"
+              shapeRendering="geometricPrecision"
             >
               <path
-                d="M 0,0 Q 36,0 36,36 L 36,0 Z"
+                d="M 0,0 L 36,0 L 36,40 Q 36,4 0,4 Z"
                 fill="var(--newsletter-bg-above, #ffffff)"
               />
             </svg>
@@ -46,12 +49,13 @@ const Footer = ({ newsPaperWrap }) => {
 
             <svg
               className="curve-right"
-              viewBox="0 0 36 36"
+              viewBox="0 0 36 40"
               preserveAspectRatio="none"
               aria-hidden="true"
+              shapeRendering="geometricPrecision"
             >
               <path
-                d="M 0,36 Q 0,0 36,0 L 0,0 Z"
+                d="M 0,0 L 36,0 L 36,4 Q 0,4 0,40 Z"
                 fill="var(--newsletter-bg-above, #ffffff)"
               />
             </svg>
@@ -63,7 +67,7 @@ const Footer = ({ newsPaperWrap }) => {
             <div className="foot-logo-top">
               <Image src={logo} alt="TecNurx" className="foot-logo" />
             </div>
-            <div className="foot-product-of">
+            <div className="foot-product-of foot-product-of-desktop">
               <Image
                 src={abtechcare}
                 alt="A digital product of: AbTechCare RC 8318381"
@@ -83,10 +87,24 @@ const Footer = ({ newsPaperWrap }) => {
               <div className="foot-block">
                 <h3>our services</h3>
                 <Link href="/dashboard/book-repair">Gadget Repair</Link>
-                <Link href="#">Gadget Sales</Link>
+                <Link href="/buy-devices">Gadget Sales</Link>
                 <Link href="/insurance">Gadget Insurance</Link>
                 <Link href="/track-repair">Track Repair</Link>
-                <Link href="/#GetQuote">Get a Quote</Link>
+                <Link
+                  href="/#GetQuote"
+                  onClick={(e) => {
+                    const el = document.getElementById("GetQuote");
+                    if (el) {
+                      e.preventDefault();
+                      el.scrollIntoView({ behavior: "smooth" });
+                      if (window.location.hash !== "#GetQuote") {
+                        window.history.pushState(null, "", "/#GetQuote");
+                      }
+                    }
+                  }}
+                >
+                  Get a quote
+                </Link>
               </div>
 
               <div className="foot-block foot-block-contact">
@@ -240,6 +258,14 @@ const Footer = ({ newsPaperWrap }) => {
               </a>
             </div>
           </div>
+        </div>
+
+        <div className="foot-product-of-mobile">
+          <Image
+            src={abtechcare}
+            alt="A digital product of: AbTechCare RC 8318381"
+            className="abtechcare-logo"
+          />
         </div>
 
         <div className="copyright">

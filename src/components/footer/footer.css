@@ -50,9 +50,9 @@ footer {
 .curve-left {
   position: absolute;
   right: 100%;
-  top: 50%;
+  top: calc(50% - 4px);
   width: 36px;
-  height: 36px;
+  height: 40px;
   pointer-events: none;
   z-index: 1;
   margin-right: -1px;
@@ -61,9 +61,9 @@ footer {
 .curve-right {
   position: absolute;
   left: 100%;
-  top: 50%;
+  top: calc(50% - 4px);
   width: 36px;
-  height: 36px;
+  height: 40px;
   pointer-events: none;
   z-index: 1;
   margin-left: -1px;
@@ -212,6 +212,10 @@ footer {
   display: block;
   opacity: 0.95;
   object-fit: contain;
+}
+
+.foot-product-of-mobile {
+  display: none;
 }
 
 /* Right Content Area (3 Columns + Bottom Social Row) */
@@ -422,7 +426,8 @@ footer {
   .curve-left,
   .curve-right {
     width: 24px;
-    height: 24px;
+    height: 28px;
+    top: calc(50% - 4px);
   }
   .newsletter {
     flex-direction: column;
@@ -467,85 +472,244 @@ footer {
 }
 
 @media screen and (max-width: 600px) {
+  .newsletter-wrap {
+    padding: 40px 20px 24px !important;
+    background: transparent !important;
+  }
   .newsletter-card-wrapper {
-    margin: 0 12px;
+    margin: 0 !important;
+    max-width: 100% !important;
   }
   .curve-left,
   .curve-right {
-    display: none;
+    display: none !important;
   }
   .newsletter {
-    padding: 22px 16px;
-    border-radius: 28px;
-    border-width: 6px;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+    width: 100% !important;
+  }
+  .newsletter-text {
+    gap: 6px !important;
+  }
+  .newsletter h2 {
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+  }
+  .newsletter p {
+    font-size: 14.5px !important;
+    color: #9098a2 !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+  }
+  .input-button {
+    width: 100% !important;
+    max-width: 100% !important;
+    background: #ffffff !important;
+    border-radius: 9999px !important;
+    padding: 4px 5px 4px 20px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 50px !important;
+    position: relative !important;
   }
   .newsletter input {
-    height: 48px;
-    font-size: 14px;
-    padding: 0 90px 0 16px;
-    border-radius: 14px;
+    flex: 1 !important;
+    width: auto !important;
+    height: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    padding: 0 10px 0 0 !important;
+    font-size: 15px !important;
+    color: #111111 !important;
+    border-radius: 0 !important;
+  }
+  .newsletter input::placeholder {
+    color: #8e95a0 !important;
+    font-size: 15px !important;
   }
   .newsletter button {
-    right: 5px;
+    position: static !important;
+    height: 42px !important;
+    padding: 0 24px !important;
+    background: #080808 !important;
+    color: #ffffff !important;
+    border-radius: 9999px !important;
+    font-size: 14.5px !important;
+    font-weight: 700 !important;
+    border: none !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
   }
 
   .footer-main {
-    flex-direction: column;
+    flex-direction: column !important;
+    width: 100% !important;
+    border-top: none !important;
   }
   .foot-brand-col {
-    width: 100%;
-    border-right: none;
-    border-bottom: 0.5px solid rgba(59, 63, 68, 1);
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 28px 20px;
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 32px 20px 24px !important;
+    box-sizing: border-box !important;
   }
-  .foot-product-of {
-    padding-top: 0;
+  .foot-product-of-desktop {
+    display: none !important;
   }
   .foot-logo {
-    width: 115px;
-  }
-  .abtechcare-logo {
-    width: 115px;
+    width: 145px !important;
+    height: auto !important;
+    display: block !important;
   }
 
   .foot-sections-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
   }
   .foot-block {
-    width: 100%;
-    border-right: none;
-    border-bottom: 0.5px solid rgba(59, 63, 68, 1);
-    padding: 32px 20px;
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 24px 20px !important;
+    box-sizing: border-box !important;
+    gap: 16px !important;
+  }
+  .foot-block h3 {
+    font-size: 12px !important;
+    letter-spacing: 1.5px !important;
+    color: #8e95a0 !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    margin: 0 !important;
+  }
+  .foot-block a {
+    font-size: 15.5px !important;
+    color: #ffffff !important;
+    line-height: 1.4 !important;
+    font-weight: 500 !important;
+  }
+
+  .foot-block-contact {
+    border-top: none !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 24px 20px !important;
+  }
+  .addy-block {
+    gap: 14px !important;
+    padding-bottom: 24px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  .addy-block h4 {
+    font-size: 12px !important;
+    letter-spacing: 1.5px !important;
+    color: #8e95a0 !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    margin: 0 !important;
+  }
+  .addy-block p {
+    font-size: 14.5px !important;
+    color: #ffffff !important;
+    line-height: 1.5 !important;
+    gap: 12px !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    margin: 0 !important;
+  }
+  .addy-block p img {
+    width: 18px !important;
+    height: 18px !important;
+    flex-shrink: 0 !important;
+    margin-top: 2px !important;
+  }
+  .addy-block2 {
+    padding-top: 24px !important;
+    padding-bottom: 0 !important;
+    border-bottom: none !important;
   }
 
   .social-wrap {
-    grid-template-columns: repeat(2, 1fr);
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px 16px !important;
+    padding: 28px 20px !important;
+    border-top: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: transparent !important;
   }
   .social-icon {
-    padding: 16px 14px;
-    font-size: 14px;
-    border: 0.5px solid rgba(59, 63, 68, 1);
-    border-left: none;
-  }
-  .social-icon:nth-child(2n) {
-    border-right: none;
+    padding: 0 !important;
+    border: none !important;
+    font-size: 15.5px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    gap: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    background: transparent !important;
   }
   .social-icon:last-child {
-    grid-column: 1 / -1;
-    border-right: none;
+    grid-column: auto !important;
+    border: none !important;
+  }
+  .social-icon svg {
+    width: 24px !important;
+    height: 24px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .foot-product-of-mobile {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    padding: 28px 20px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-sizing: border-box !important;
+    background: rgba(8, 8, 8, 1) !important;
+  }
+  .foot-product-label {
+    font-size: 13px !important;
+    color: #8e95a0 !important;
+    font-weight: 400 !important;
+    margin: 0 !important;
+    font-family: Plus Jakarta Sans, sans-serif !important;
+  }
+  .foot-product-of-mobile .abtechcare-logo {
+    width: 140px !important;
+    height: auto !important;
+    opacity: 0.95 !important;
+    display: block !important;
   }
 
   .copyright {
-    padding: 28px 16px;
-    font-size: 12px;
+    padding: 24px 20px 40px !important;
+    border: none !important;
+    text-align: center !important;
+    background: rgba(8, 8, 8, 1) !important;
+  }
+  .copyright p {
+    font-size: 11.5px !important;
+    color: #6b7280 !important;
+    margin: 0 !important;
+    line-height: 1.4 !important;
   }
 
-  .footer-imgtext img {
-    height: 200px;
-    margin-top: 0;
+  .footer-imgtext {
+    display: none !important;
   }
 }
 

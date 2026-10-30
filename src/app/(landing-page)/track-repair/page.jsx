@@ -60,7 +60,7 @@ const TrackRepair = () => {
           </h1>
           <p>
             Follow your device's journey every step of the way, so you're always
-            in the loop.
+            in the loop
           </p>
         </div>
 
@@ -116,7 +116,7 @@ const TrackRepair = () => {
         trackData={repairData} // from trackRepair API
       />
 
-      <Footer />
+      <Footer newsPaperWrap={true} />
     </div>
   );
 };

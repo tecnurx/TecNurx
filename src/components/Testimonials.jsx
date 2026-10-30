@@ -1789,23 +1789,18 @@ const trustLogos = [
 ];
 
 const Testimonials = () => {
-  // Duplicate for seamless 60fps infinite marquee loop across all screen sizes
-  const sliderLogos = [
-    ...trustLogos,
-    ...trustLogos,
-    ...trustLogos,
-    ...trustLogos,
-  ];
-
   return (
     <div>
       <div className="testimonial-wrap">
         <div className="faq-header testimonial-padding">
           <div className="faq-top">
-            <span style={{ background: "white" }}>Testimonials</span>
+            <span>Testimonials</span>
           </div>
           <h1>
-            People that <span>trust us</span> <i>are saying these...</i>
+            People that <span className="text-yellow">trust us</span>{" "}
+            <span className="text-muted">are</span>
+            <br />
+            <i className="text-muted">saying these...</i>
           </h1>
         </div>
         <Swiper />
@@ -1816,14 +1811,12 @@ const Testimonials = () => {
           <p>Businesses that trust us</p>
           <span></span>
         </div>
-        <div className="trust-logo" aria-label="Businesses that trust us" role="region">
-          <div className="trust-logo-track">
-            {sliderLogos.map((logo, index) => (
-              <div className="trust-logo-item" key={index}>
-                {logo}
-              </div>
-            ))}
-          </div>
+        <div className="trust-logo">
+          {trustLogos.map((logo, index) => (
+            <div className="trust-logo-item" key={index}>
+              {logo}
+            </div>
+          ))}
         </div>
       </div>
     </div>

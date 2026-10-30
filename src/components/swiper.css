@@ -11,7 +11,7 @@
   gap: 24px;
   animation: scroll-left 80s linear infinite;
   will-change: transform;
-  align-items: center;
+  align-items: stretch;
   width: max-content; /* Allows full width of all cards */
 }
 
@@ -45,6 +45,12 @@
 }
 
 /* Text content wrapper */
+.stext-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .stext-wrap h2 {
   font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 800;
@@ -87,6 +93,16 @@
   display: block;
 }
 
+.author-avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.testimonial-dots {
+  display: none;
+}
+
 /* Seamless infinite animation */
 @keyframes scroll-left {
   from {
@@ -121,16 +137,106 @@
   }
 }
 
-@media screen and (max-width: 480px) {
-  .swiper-card {
-    width: 300px;
-    padding: 28px;
+@media screen and (max-width: 600px) {
+  .marquee-wrap {
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
-  .stext-wrap p {
-    font-size: 15px;
+  .marquee {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0 0 6px 0;
+  }
+  .marquee::-webkit-scrollbar {
+    display: none;
   }
   .marquee-track {
-    gap: 16px;
+    animation: none !important;
+    display: flex !important;
+    gap: 16px !important;
+    padding: 0 20px !important;
+    width: max-content !important;
+  }
+  .desktop-only-card {
+    display: none !important;
+  }
+  .swiper-card {
+    scroll-snap-align: start;
+    width: calc(100vw - 72px) !important;
+    max-width: 340px !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 28px !important;
+    padding: 28px 24px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 24px !important;
+    box-sizing: border-box !important;
+    flex: 0 0 auto !important;
+  }
+  .quote {
+    opacity: 0.04 !important;
+    top: 8px !important;
+    left: 10px !important;
+    width: 90px !important;
+  }
+  .stext-wrap p {
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+    color: #334155 !important;
+    font-weight: 400 !important;
+  }
+  .card-details {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    margin-top: auto !important;
+  }
+  .author-avatar {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    flex-shrink: 0 !important;
+  }
+  .card-details h3 {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    line-height: 1.2 !important;
+    margin: 0 0 2px 0 !important;
+  }
+  .card-details span {
+    font-size: 13.5px !important;
+    color: #64748b !important;
+    font-weight: 400 !important;
+    line-height: 1.2 !important;
+  }
+  .testimonial-dots {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 16px 20px 0 !important;
+  }
+  .testimonial-dot {
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: 50% !important;
+    background-color: #cbd5e1 !important;
+    border: none !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    transition: all 0.25s ease !important;
+  }
+  .testimonial-dot.active {
+    width: 24px !important;
+    border-radius: 9999px !important;
+    background-color: #000000 !important;
   }
 }
 @media screen and (min-width: 1450px) {

@@ -65,7 +65,12 @@ const HeroSection = () => {
       <main className="hero-section">
         <div className="hero-content">
           <div className="hero-texts">
-            <Image src={rate} alt="Rating badge" priority />
+            <Image
+              src={rate}
+              alt="Rating badge"
+              priority
+              className="hero-rating-badge"
+            />
             <h1>
               All your device needs, solved with{" "}
               <span>flexible payment plans</span>
@@ -75,7 +80,21 @@ const HeroSection = () => {
               free pickup and delivery
             </p>
             <div className="hero-btns">
-              <Link href="#GetQuote">Book a Repair</Link>
+              <Link
+                href="/#GetQuote"
+                onClick={(e) => {
+                  const el = document.getElementById("GetQuote");
+                  if (el) {
+                    e.preventDefault();
+                    el.scrollIntoView({ behavior: "smooth" });
+                    if (window.location.hash !== "#GetQuote") {
+                      window.history.pushState(null, "", "#GetQuote");
+                    }
+                  }
+                }}
+              >
+                Book a Repair
+              </Link>
               <Link href="/dashboard/insurance" className="hero-claim">
                 Claim Insurance
               </Link>

@@ -1,125 +1,375 @@
+.navbar-wrap {
+  width: 100%;
+  background: rgba(244, 244, 244, 1);
+  border-bottom: 1px solid #DDDDE4;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 120px 8px;
-  border-bottom: rgba(221, 221, 228, 1) 1px solid;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 14px 48px;
   background: rgba(244, 244, 244, 1);
-  position: relative;
+  box-sizing: border-box;
 }
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+/* Center Navigation Links */
 .nav-links {
   display: flex;
+  align-items: center;
+  gap: 36px;
 }
-.nav-links a,
-.nav-links button {
-  font-family: "Plus Jakarta Sans";
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 24px;
-  letter-spacing: 0%;
-  color: rgba(8, 8, 8, 1);
-  padding: 12px 24px 20px;
-  cursor: pointer;
-  /* width: 107px; */
+
+.nav-links a {
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 14.5px;
+  line-height: 1.4;
+  color: #111111;
+  text-decoration: none;
+  padding: 6px 0;
+  transition: color 0.15s ease;
 }
+
+.nav-links a:hover {
+  color: #000000;
+}
+
+/* Repairs Dropdown Trigger */
+.nav-repairs-container {
+  position: relative;
+}
+
 .dropdown {
   background: transparent;
   display: flex;
   gap: 5px;
   align-items: center;
-  justify-content: center;
   border: none;
   cursor: pointer;
-}
-.auth-btns {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.auth-btns a {
-  border-radius: 40px;
-  padding: 16px;
-  color: black;
-  font-family: Plus Jakarta Sans;
-  font-weight: 400;
-  font-style: Regular;
-  font-size: 14px;
-  line-height: 100%;
-  letter-spacing: 0%;
-  text-align: center;
-  border: none;
-  background: white;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 14.5px;
+  line-height: 1.4;
+  color: #111111;
+  padding: 6px 0;
+  transition: color 0.15s ease;
 }
 
-.auth-btns a:last-child {
-  background: black;
-  color: white;
+.dropdown:hover {
+  color: #000000;
 }
 
-/* Hide dropdown by default */
+/* Desktop Repairs Dropdown Card */
 .dropdown-list {
   display: flex;
   flex-direction: row;
   gap: 24px;
   opacity: 0;
   visibility: hidden;
-  border-radius: 24px;
-  padding: 40px;
-  border: 1px solid rgba(221, 221, 228, 1);
-  background: #fff;
+  border-radius: 20px;
+  padding: 28px 32px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
   position: absolute;
-  top: 100%;
-  left: -100%;
-  transform: translateY(15px);
-  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
-  z-index: 10;
+  top: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  z-index: 100;
 }
+
 .dropdown-list a {
-  /* width: 273px; */
   display: flex;
   gap: 16px;
-  align-items: start;
-  padding: 0 !important;
-}
-.dropdown-list h4 {
-  font-family: Plus Jakarta Sans;
-  font-weight: 700;
-  font-style: Bold;
-  font-size: 16px;
-  line-height: 100%;
-  letter-spacing: 0%;
-  vertical-align: middle;
-  color: rgba(8, 8, 8, 1);
-  margin-bottom: 16px;
-}
-.dropdown-list p {
-  font-family: Plus Jakarta Sans;
-  font-weight: 400;
-  font-style: Regular;
-  font-size: 14px;
-  line-height: 100%;
-  letter-spacing: 0%;
-  vertical-align: middle;
-  color: rgba(144, 152, 162, 1);
-  width: 217px;
+  align-items: flex-start;
+  padding: 8px 12px !important;
+  border-radius: 12px;
+  transition: background 0.15s ease;
+  text-decoration: none;
 }
 
-/* Show dropdown on hover */
-.test:hover .dropdown-list,
-.dropdown:hover + .dropdown-list {
+.dropdown-list a:hover {
+  background: #f8fafc;
+}
+
+.dropdown-list h4 {
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.3;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+}
+
+.dropdown-list p {
+  font-family: inherit;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #64748b;
+  width: 210px;
+  margin: 0;
+}
+
+.nav-repairs-container:hover .dropdown-list {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
+  transform: translateX(-50%) translateY(0);
 }
 
-/* Optional: make sure dropdown doesn’t hide immediately when moving mouse */
-.nav-links {
+/* Right Section Actions */
+.nav-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-signin {
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 14.5px;
+  color: #111111;
+  text-decoration: none;
+  padding: 6px 4px;
+  transition: color 0.15s ease;
+}
+
+.nav-signin:hover {
+  color: #4b5563;
+}
+
+.nav-book-btn {
+  background: #000000;
+  color: #ffffff;
+  border-radius: 9999px;
+  padding: 10px 22px;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.nav-book-btn:hover {
+  background: #222222;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.nav-book-btn:active {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+
+/* Country Selector (Desktop & Mobile) */
+.country-selector-wrap {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
-/* Optional: small hover styling */
-.dropdown:hover {
-  color: #000;
+.country-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 24px;
+  transition: background 0.15s ease;
+}
+
+.country-btn:hover {
+  background: #f1f5f9;
+}
+
+.country-chevron {
+  transition: transform 0.2s ease;
+}
+
+.country-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+/* Country Dropdown Card - Matching Image 2 */
+.country-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  width: 165px;
+  overflow: hidden;
+  z-index: 1000;
+  animation: countryDropFade 0.15s ease-out;
+}
+
+@keyframes countryDropFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.country-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  color: #0f172a;
+  transition: background 0.15s ease;
+}
+
+.country-option:hover {
+  background: #f8fafc;
+}
+
+.country-option.active {
+  background: #f8fafc;
+  font-weight: 600;
+}
+
+.country-divider {
+  height: 1px;
+  width: 100%;
+  background: #e2e8f0;
+}
+
+/* Mobile Header Controls (hidden on desktop) */
+.mobile-header-controls {
+  display: none;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobile-nav-book-btn {
+  display: none;
+  background: #ffc200;
+  color: #000000;
+  border-radius: 9999px;
+  height: 44px;
+  padding: 0 20px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  white-space: nowrap;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+}
+
+.mobile-nav-book-btn:hover {
+  background: #f0b500;
+}
+
+.mobile-nav-book-btn:active {
+  transform: scale(0.97);
+}
+
+.mobile-menu-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid #DDDDE4;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.mobile-menu-btn:hover {
+  background: #f8fafc;
+}
+
+.mobile-menu-btn:active {
+  transform: scale(0.95);
+}
+
+/* Region Selector in Drawer */
+.drawer-country-selector {
+  padding: 14px 0 16px;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 8px;
+}
+
+.drawer-country-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.drawer-country-options {
+  display: flex;
+  gap: 10px;
+}
+
+.drawer-country-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #334155;
+  transition: all 0.15s ease;
+}
+
+.drawer-country-btn.active {
+  border-color: #ffc200;
+  background: #fffdf5;
+  color: #0f172a;
+  font-weight: 600;
 }
 
 /* Mobile Side Drawer */
@@ -128,16 +378,16 @@
   top: 0;
   right: -100%;
   width: 320px;
-  max-width: 90vw;
+  max-width: 85vw;
   height: 100vh;
-  background: white;
-  z-index: 1000;
-  transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  z-index: 1100;
+  transition: right 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   padding: 24px;
-  padding-bottom: 80px;
+  box-sizing: border-box;
 }
 
 .mobile-drawer.open {
@@ -148,72 +398,133 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
 }
 
 .drawer-header button {
   background: none;
   border: none;
   cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .drawer-links {
   flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
-.drawer-links a, .mobile-repairs-section span {
+.drawer-links > a {
   display: block;
   padding: 16px 0;
-  font-family: "Plus Jakarta Sans";
-  font-size: 18px;
+  font-family: inherit;
+  font-size: 17px;
   font-weight: 500;
-  color: #080808;
-  border-bottom: 1px solid #eee;
+  color: #0f172a;
+  text-decoration: none;
+  border-bottom: 1px solid #f1f5f9;
 }
 
+/* Mobile Repairs Accordion */
+.mobile-repairs-section {
+  width: 100%;
+}
+
+.mobile-repairs-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 500;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.chevron {
+  transition: transform 0.25s ease;
+}
+
+.chevron.rotated {
+  transform: rotate(180deg);
+}
+
+.mobile-dropdown-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+.mobile-dropdown-content.open {
+  max-height: 300px;
+}
 
 .mobile-repair-item {
   display: flex;
-  gap: 16px;
-  padding: 20px 0;
-  border-bottom: 1px solid #eee;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px 8px;
   text-decoration: none;
+  border-bottom: 1px solid #f8fafc;
+  border-radius: 10px;
+  transition: background 0.15s;
 }
 
-.mobile-repair-item h4, .mobile-repairs-section span {
-  font-size: 16px;
+.mobile-repair-item:hover {
+  background: #f8fafc;
+}
+
+.mobile-repair-item h4 {
+  font-size: 14px;
   font-weight: 600;
-  margin-bottom: 4px;
+  color: #0f172a;
+  margin: 0 0 4px 0;
 }
 
 .mobile-repair-item p {
-  font-size: 14px;
-  color: #9098a2;
+  font-size: 12px;
+  color: #64748b;
   line-height: 1.4;
+  margin: 0;
 }
 
 .drawer-auth {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 40px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
 }
 
 .drawer-auth a {
-  padding: 16px;
+  padding: 14px;
   text-align: center;
-  border-radius: 40px;
+  border-radius: 9999px;
+  font-size: 15px;
   font-weight: 500;
+  text-decoration: none;
 }
 
 .drawer-auth a:first-child {
   background: transparent;
-  border: 1px solid #ddd;
+  border: 1px solid #d1d5db;
+  color: #111111;
 }
 
-.get-started-btn {
-  background: black !important;
-  color: white;
+.drawer-auth .get-started-btn {
+  background: #000000;
+  color: #ffffff;
+  border: none;
 }
 
 /* Overlay */
@@ -224,125 +535,53 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.4);
-  z-index: 999;
-  backdrop-filter: blur(4px);
-}
-.mobile-menu-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 700;
-  display: none;
-  color: #000;
+  z-index: 1050;
+  backdrop-filter: blur(2px);
 }
 
-/* Mobile Repairs Toggle Button */
-.mobile-repairs-toggle {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 0;
-  background: none;
-  border: none;
-  border-bottom: 1px solid #eee;
-  font-family: "Plus Jakarta Sans";
-  font-size: 18px;
-  font-weight: 500;
-  color: #080808;
-  cursor: pointer;
-}
-
-.chevron {
-  transition: transform 0.3s ease;
-}
-
-.chevron.rotated {
-  transform: rotate(180deg);
-}
-
-/* Mobile Dropdown Content */
-.mobile-dropdown-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.4s ease, padding 0.4s ease;
-  padding: 0 0;
-}
-
-.mobile-dropdown-content.open {
-  max-height: 400px; /* enough for both items */
-  /* padding: 16px 0 24px; */
-}
-
-/* Mobile Repair Items */
-.mobile-repair-item {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  padding: 20px 0;
-  text-decoration: none;
-  border-bottom: 1px solid #eee;
-  transition: background 0.2s;
-}
-
-.mobile-repair-item:hover {
-  background: #f9f9f9;
-  border-radius: 12px;
-  padding: 20px 12px;
-  margin: 0 -12px;
-}
-
-.mobile-repair-item h4 {
-  font-size: 14px;
-  font-weight: 600;
-  color: #080808;
-  margin-bottom: 6px;
-}
-
-.mobile-repair-item p {
-  font-size: 10px;
-  color: #9098a2;
-  line-height: 1.5;
-  margin: 0;
-}
-
+/* Breakpoints */
 @media screen and (max-width: 900px) {
-  .mobile-menu-btn {
+  .nav-links,
+  .nav-right-actions {
+    display: none;
+  }
+
+  .mobile-header-controls {
     display: flex;
   }
-  .nav-links,
-  .auth-btns {
-    display: none;
+
+  .mobile-nav-book-btn {
+    display: inline-flex;
+  }
+
+  .navbar {
+    padding: 14px 28px;
   }
 }
 
 @media screen and (max-width: 600px) {
   .navbar {
-    padding: 22px 32px;
+    padding: 12px 18px;
   }
-}
 
-@media screen and (min-width: 2000px) {
-  .navbar {
-    padding: 20px 320px 12px;
+  .mobile-header-controls {
+    gap: 8px;
   }
-}
 
-@media screen and (min-width: 1450px) {
-  .navbar {
-    width: 1150px;
-    gap: 200px;
-    padding-left: 10px;
-    padding-right: 10px;
+  .mobile-nav-book-btn {
+    height: 40px;
+    padding: 0 12px;
+    font-size: 11px;
+    font-weight: 700;
   }
-  .navbar-wrap {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    background: #f4f4f4;
+
+  .mobile-menu-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .mobile-drawer {
+    width: 290px;
+    padding: 20px 18px;
   }
 }
