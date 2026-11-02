@@ -1,14 +1,14 @@
 "use client";
+
 import React, { useState, useEffect, Suspense } from "react";
-import logimage from "@/assets/images/login.svg";
-import logo from "@/assets/images/logo.png";
 import Image from "next/image";
-import "../../login/login.css";
-import { Eye, EyeOff, CheckCircle2, Check, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Eye, EyeOff, CheckCircle2, Check, X } from "lucide-react";
+import logo from "@/assets/images/logo.png";
 import { authService } from "../../../../../services/auth";
 import { validatePassword, getPasswordRequirements } from "@/lib/passwordValidation";
+import { toast } from "@/components/CustomToast";
 
 const CreatePasswordContent = () => {
   const router = useRouter();
@@ -58,21 +58,25 @@ const CreatePasswordContent = () => {
 
     if (!password || !passwordConfirm) {
       setError("Please fill in both password fields.");
+      toast.error("Please fill in both password fields.");
       return;
     }
 
     if (password !== passwordConfirm) {
       setError("Passwords do not match.");
+      toast.error("Passwords do not match.");
       return;
     }
 
     if (!isPasswordStrong) {
       setError(passwordCheck.message);
+      toast.error(passwordCheck.message);
       return;
     }
 
     if (!token) {
-      setError("Invalid token. Please try resetting again.");
+      setError("Invalid or expired reset link. Please request a new one.");
+      toast.error("Invalid reset token.");
       return;
     }
 
@@ -81,155 +85,263 @@ const CreatePasswordContent = () => {
     try {
       await authService.resetPassword({ password, passwordConfirm, token });
       setShowModal(true);
+      toast.success("Password reset successfully!");
     } catch (err) {
       const errMsg =
         err.response?.data?.message ||
         err.message ||
         "Failed to reset password. Link may have expired.";
       setError(errMsg);
+      toast.error(errMsg);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div>
-      <div className="login-wrap">
-        <Image className="sideimage" src={logimage} alt="Login" />
-        <div className="card-wrap">
-          <div className="card">
-            <Link href="/" className="logi-logo">
-              <Image src={logo} alt="logo" width={120} />
-            </Link>
-            <div>
-              <h2>
-                Create a new <span>password</span>
-              </h2>
-              <p>Create a strong password to protect your account</p>
+    <div
+      style={{
+        minHeight: "100vh",
+        width: "100%",
+        backgroundColor: "#f5f6f8",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "24px",
+        boxSizing: "border-box",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "460px",
+          width: "100%",
+          background: "#ffffff",
+          borderRadius: "24px",
+          padding: "40px 36px",
+          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.05)",
+          border: "1px solid #e5e7eb",
+          display: "flex",
+          flexDirection: "column",
+          boxSizing: "border-box",
+        }}
+      >
+        {/* Header */}
+        <div style={{ textAlign: "center", marginBottom: "26px" }}>
+          <Link href="/" style={{ display: "inline-block", marginBottom: "16px" }}>
+            <Image
+              src={logo}
+              alt="TecNurx"
+              width={130}
+              height={32}
+              priority
+              style={{ objectFit: "contain", margin: "0 auto" }}
+            />
+          </Link>
+          <h2 style={{ fontSize: "24px", fontWeight: "800", color: "#111827", margin: 0 }}>
+            Create a new password
+          </h2>
+          <p style={{ fontSize: "14px", color: "#6b7280", marginTop: "8px", lineHeight: "1.4" }}>
+            Create a strong password to protect your account.
+          </p>
+        </div>
+
+        {/* Error Banner */}
+        {error && (
+          <div
+            style={{
+              padding: "12px 14px",
+              background: "#fef2f2",
+              border: "1px solid #fecaca",
+              borderRadius: "10px",
+              marginBottom: "20px",
+              color: "#b91c1c",
+              fontSize: "13px",
+              lineHeight: "1.4",
+            }}
+          >
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleReset} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          {/* New Password */}
+          <div>
+            <label style={{ fontSize: "13px", fontWeight: "600", color: "#374151", display: "block", marginBottom: "6px" }}>
+              New Password
+            </label>
+            <div style={{ position: "relative" }}>
+              <input
+                type={showpassword ? "text" : "password"}
+                placeholder="Enter strong password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={loading || showModal}
+                style={{
+                  width: "100%",
+                  boxSizing: "border-box",
+                  padding: "12px 42px 12px 14px",
+                  borderRadius: "10px",
+                  border: "1px solid #d1d5db",
+                  fontSize: "14px",
+                  outline: "none",
+                  backgroundColor: "#fff",
+                  color: "#111827",
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowpassword(!showpassword)}
+                style={{
+                  position: "absolute",
+                  right: "12px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "#9ca3af",
+                  padding: "4px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {showpassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
 
-            {/* Error Message */}
-            {error && (
-              <div className="error-message">
-                <p>{error}</p>
+            {/* Password Requirements Checklist */}
+            {password && (
+              <div
+                style={{
+                  background: "#f9fafb",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: "10px",
+                  padding: "12px 14px",
+                  marginTop: "10px",
+                  fontSize: "12px",
+                }}
+              >
+                <p style={{ fontWeight: 600, color: "#374151", marginBottom: "8px", margin: 0 }}>
+                  Password must contain:
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "5px", marginTop: "6px" }}>
+                  {getPasswordRequirements(password).map((req, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        color: req.met ? "#16a34a" : "#6b7280",
+                        fontSize: "12px",
+                        fontWeight: req.met ? "600" : "400",
+                      }}
+                    >
+                      {req.met ? (
+                        <Check size={14} color="#16a34a" strokeWidth={3} />
+                      ) : (
+                        <span
+                          style={{
+                            width: "5px",
+                            height: "5px",
+                            borderRadius: "50%",
+                            backgroundColor: "#9ca3af",
+                            display: "inline-block",
+                            marginLeft: "4px",
+                            marginRight: "4px",
+                          }}
+                        />
+                      )}
+                      <span>{req.label}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
-
-            <form onSubmit={handleReset} className="form">
-              {/* New Password */}
-              <div className="form-group">
-                <label>New Password</label>
-                <div className="password-wrapper">
-                  <input
-                    type={showpassword ? "text" : "password"}
-                    placeholder="Enter strong password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    disabled={loading || showModal}
-                  />
-                  <span
-                    className="eye"
-                    onClick={() => setShowpassword(!showpassword)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {showpassword ? <Eye size={20} /> : <EyeOff size={20} />}
-                  </span>
-                </div>
-                {password && (
-                  <div
-                    style={{
-                      background: "#f9fafb",
-                      border: "1px solid #e5e7eb",
-                      borderRadius: "8px",
-                      padding: "10px 12px",
-                      marginTop: "8px",
-                      fontSize: "12px",
-                    }}
-                  >
-                    <p style={{ fontWeight: 600, color: "#374151", marginBottom: "6px" }}>
-                      Password must contain:
-                    </p>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "4px" }}>
-                      {getPasswordRequirements(password).map((req, idx) => (
-                        <div
-                          key={idx}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "6px",
-                            color: req.met ? "#16a34a" : "#6b7280",
-                            transition: "color 0.2s ease",
-                          }}
-                        >
-                          {req.met ? (
-                            <Check size={14} color="#16a34a" strokeWidth={3} />
-                          ) : (
-                            <span
-                              style={{
-                                width: "6px",
-                                height: "6px",
-                                borderRadius: "50%",
-                                backgroundColor: "#9ca3af",
-                                display: "inline-block",
-                                marginLeft: "4px",
-                                marginRight: "4px",
-                              }}
-                            />
-                          )}
-                          <span>{req.label}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Confirm Password */}
-              <div className="form-group">
-                <label>Confirm Password</label>
-                <div className="password-wrapper">
-                  <input
-                    type={showpasswordConfirm ? "text" : "password"}
-                    placeholder="Re-enter password"
-                    value={passwordConfirm}
-                    onChange={(e) => setPasswordConfirm(e.target.value)}
-                    required
-                    disabled={loading || showModal}
-                    style={{
-                      borderColor:
-                        passwordConfirm && password !== passwordConfirm
-                          ? "red"
-                          : "",
-                    }}
-                  />
-                  <span
-                    className="eye"
-                    onClick={() => setShowpasswordConfirm(!showpasswordConfirm)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {showpasswordConfirm ? (
-                      <Eye size={20} />
-                    ) : (
-                      <EyeOff size={20} />
-                    )}
-                  </span>
-                </div>
-                {passwordConfirm && password !== passwordConfirm && (
-                  <small style={{ color: "red" }}>Passwords do not match</small>
-                )}
-              </div>
-
-              <button
-                type="submit"
-                className="sign-in-btn"
-                disabled={loading || showModal}
-              >
-                {loading ? "Saving..." : "Save Password"}
-              </button>
-            </form>
           </div>
-        </div>
+
+          {/* Confirm Password */}
+          <div>
+            <label style={{ fontSize: "13px", fontWeight: "600", color: "#374151", display: "block", marginBottom: "6px" }}>
+              Confirm Password
+            </label>
+            <div style={{ position: "relative" }}>
+              <input
+                type={showpasswordConfirm ? "text" : "password"}
+                placeholder="Re-enter password"
+                value={passwordConfirm}
+                onChange={(e) => setPasswordConfirm(e.target.value)}
+                required
+                disabled={loading || showModal}
+                style={{
+                  width: "100%",
+                  boxSizing: "border-box",
+                  padding: "12px 42px 12px 14px",
+                  borderRadius: "10px",
+                  border: passwordConfirm && !isPasswordMatch ? "1px solid #ef4444" : "1px solid #d1d5db",
+                  fontSize: "14px",
+                  outline: "none",
+                  backgroundColor: "#fff",
+                  color: "#111827",
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowpasswordConfirm(!showpasswordConfirm)}
+                style={{
+                  position: "absolute",
+                  right: "12px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "#9ca3af",
+                  padding: "4px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {showpasswordConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            {passwordConfirm && !isPasswordMatch && (
+              <small style={{ color: "#ef4444", fontSize: "12px", display: "block", marginTop: "4px" }}>
+                Passwords do not match
+              </small>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading || showModal}
+            style={{
+              backgroundColor: "#ffc400",
+              color: "#000",
+              border: "none",
+              borderRadius: "10px",
+              padding: "13px",
+              fontSize: "15px",
+              fontWeight: "700",
+              cursor: loading ? "not-allowed" : "pointer",
+              opacity: loading ? 0.7 : 1,
+              transition: "all 0.2s ease",
+              marginTop: "4px",
+            }}
+          >
+            {loading ? "Saving Password..." : "Save Password"}
+          </button>
+
+          <div style={{ textAlign: "center", marginTop: "8px" }}>
+            <Link
+              href="/login"
+              style={{ fontSize: "14px", color: "#6b7280", textDecoration: "none", fontWeight: "500" }}
+            >
+              Back to Sign In
+            </Link>
+          </div>
+        </form>
       </div>
 
       {/* Role Selection Modal on Successful Password Reset */}
@@ -285,9 +397,9 @@ const CreatePasswordContent = () => {
                 style={{
                   fontSize: "22px",
                   fontWeight: "700",
-                  color: "#111",
+                  color: "#111827",
                   marginBottom: "8px",
-                  fontFamily: "Plus Jakarta Sans, sans-serif",
+                  margin: 0,
                 }}
               >
                 Password Reset Successful!
@@ -295,9 +407,9 @@ const CreatePasswordContent = () => {
               <p
                 style={{
                   fontSize: "14px",
-                  color: "#666",
+                  color: "#6b7280",
                   lineHeight: "1.5",
-                  fontFamily: "Plus Jakarta Sans, sans-serif",
+                  marginTop: "8px",
                 }}
               >
                 Your password has been updated. Please select your account portal to sign in:
@@ -316,19 +428,16 @@ const CreatePasswordContent = () => {
                 onClick={() => router.push("/login")}
                 style={{
                   width: "100%",
-                  padding: "16px",
-                  borderRadius: "60px",
+                  padding: "14px",
+                  borderRadius: "10px",
                   backgroundColor: "#000",
                   color: "#fff",
-                  fontWeight: "600",
+                  fontWeight: "700",
                   fontSize: "15px",
                   border: "none",
                   cursor: "pointer",
-                  fontFamily: "Plus Jakarta Sans, sans-serif",
-                  transition: "all 0.2s ease-in-out",
+                  transition: "all 0.2s ease",
                 }}
-                onMouseOver={(e) => (e.currentTarget.style.opacity = "0.9")}
-                onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
               >
                 Login as Customer
               </button>
@@ -337,19 +446,16 @@ const CreatePasswordContent = () => {
                 onClick={() => router.push("/not-engineer-login")}
                 style={{
                   width: "100%",
-                  padding: "16px",
-                  borderRadius: "60px",
+                  padding: "14px",
+                  borderRadius: "10px",
                   backgroundColor: "#fff",
                   color: "#000",
-                  fontWeight: "600",
+                  fontWeight: "700",
                   fontSize: "15px",
-                  border: "1.5px solid #000",
+                  border: "1.5px solid #d1d5db",
                   cursor: "pointer",
-                  fontFamily: "Plus Jakarta Sans, sans-serif",
-                  transition: "all 0.2s ease-in-out",
+                  transition: "all 0.2s ease",
                 }}
-                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#f9f9f9")}
-                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#fff")}
               >
                 Login as Engineer
               </button>
@@ -363,7 +469,7 @@ const CreatePasswordContent = () => {
 
 export default function CreatePassword() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div style={{ padding: "40px", textAlign: "center" }}>Loading...</div>}>
       <CreatePasswordContent />
     </Suspense>
   );

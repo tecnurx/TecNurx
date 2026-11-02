@@ -94,22 +94,19 @@ const Login = () => {
       toast.success("Welcome back! Redirecting...");
 
       const redirectParam = searchParams.get("redirect");
-      let dest = redirectParam;
-      if (!dest && typeof window !== "undefined") {
-        try {
-          const pending = localStorage.getItem("pendingRepairEstimate");
-          if (pending) {
-            const parsed = JSON.parse(pending);
-            if (parsed.bookingUrl) {
-              dest = parsed.bookingUrl;
-            }
-          }
-        } catch (e) {
-          // ignore
+      let dest = redirectParam || "/dashboard";
+
+      // If user came specifically from the repair estimate flow, clear the pending estimate once redirected
+      if (typeof window !== "undefined") {
+        if (redirectParam && redirectParam.includes("book-repair")) {
+          // preserve estimate for the book-repair page to consume
+        } else {
+          // Regular login - clean any stale repair estimates
+          localStorage.removeItem("pendingRepairEstimate");
         }
       }
 
-      setTimeout(() => router.push(dest || "/dashboard"), 1500);
+      setTimeout(() => router.push(dest), 1500);
     } catch (err) {
       console.error("Login error:", err);
 

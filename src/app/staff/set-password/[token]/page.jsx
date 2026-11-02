@@ -4,12 +4,11 @@ import React, { useState, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Lock, CheckCircle2 } from "lucide-react";
+import { Eye, EyeOff, Lock, CheckCircle2, Check } from "lucide-react";
 import logo from "@/assets/images/logo.png";
-import "@/app/(auth)/login/login.css";
 import { adminAuthService } from "@/../services/admin/adminlogin";
 import { toast } from "@/components/CustomToast";
-import { validatePassword } from "@/lib/passwordValidation";
+import { validatePassword, getPasswordRequirements } from "@/lib/passwordValidation";
 
 export default function StaffSetPasswordPage({ params }) {
   const resolvedParams = use(params);
@@ -66,14 +65,47 @@ export default function StaffSetPasswordPage({ params }) {
   };
 
   return (
-    <div className="login-wrap" style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
-      <div className="card-wrap" style={{ maxWidth: "440px", width: "100%", background: "#fff", borderRadius: "16px", padding: "32px", boxShadow: "0 10px 25px rgba(0,0,0,0.08)" }}>
-        <div style={{ textAlign: "center", marginBottom: "24px" }}>
-          <Image src={logo} alt="TecNurx Logo" width={140} height={40} style={{ objectFit: "contain", margin: "0 auto 16px" }} />
-          <h2 style={{ fontSize: "22px", fontWeight: "700", color: "#111827", margin: 0 }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        width: "100%",
+        backgroundColor: "#f5f6f8",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "24px",
+        boxSizing: "border-box",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "460px",
+          width: "100%",
+          background: "#ffffff",
+          borderRadius: "24px",
+          padding: "40px 36px",
+          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.05)",
+          border: "1px solid #e5e7eb",
+          display: "flex",
+          flexDirection: "column",
+          boxSizing: "border-box",
+        }}
+      >
+        <div style={{ textAlign: "center", marginBottom: "28px" }}>
+          <Link href="/" style={{ display: "inline-block", marginBottom: "16px" }}>
+            <Image
+              src={logo}
+              alt="TecNurx"
+              width={130}
+              height={32}
+              priority
+              style={{ objectFit: "contain", margin: "0 auto" }}
+            />
+          </Link>
+          <h2 style={{ fontSize: "24px", fontWeight: "800", color: "#111827", margin: 0 }}>
             Set Your Staff Password
           </h2>
-          <p style={{ fontSize: "14px", color: "#6b7280", marginTop: "6px" }}>
+          <p style={{ fontSize: "14px", color: "#6b7280", marginTop: "8px", lineHeight: "1.4" }}>
             Welcome to the TecNurx Staff Portal. Please set a password for your account.
           </p>
         </div>
@@ -89,8 +121,8 @@ export default function StaffSetPasswordPage({ params }) {
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <div className="form-group">
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            <div>
               <label style={{ fontSize: "13px", fontWeight: "600", color: "#374151", display: "block", marginBottom: "6px" }}>
                 New Password
               </label>
@@ -104,11 +136,14 @@ export default function StaffSetPasswordPage({ params }) {
                   disabled={loading}
                   style={{
                     width: "100%",
-                    padding: "10px 40px 10px 12px",
-                    borderRadius: "8px",
+                    boxSizing: "border-box",
+                    padding: "12px 42px 12px 14px",
+                    borderRadius: "10px",
                     border: "1px solid #d1d5db",
                     fontSize: "14px",
                     outline: "none",
+                    backgroundColor: "#fff",
+                    color: "#111827",
                   }}
                 />
                 <button
@@ -123,14 +158,67 @@ export default function StaffSetPasswordPage({ params }) {
                     border: "none",
                     cursor: "pointer",
                     color: "#9ca3af",
+                    padding: "4px",
+                    display: "flex",
+                    alignItems: "center",
                   }}
                 >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+
+              {/* Password Requirements Checklist */}
+              {password && (
+                <div
+                  style={{
+                    background: "#f9fafb",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "10px",
+                    padding: "12px 14px",
+                    marginTop: "10px",
+                    fontSize: "12px",
+                  }}
+                >
+                  <p style={{ fontWeight: 600, color: "#374151", marginBottom: "8px", margin: 0 }}>
+                    Password must contain:
+                  </p>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "5px", marginTop: "6px" }}>
+                    {getPasswordRequirements(password).map((req, idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          color: req.met ? "#16a34a" : "#6b7280",
+                          fontSize: "12px",
+                          fontWeight: req.met ? "600" : "400",
+                        }}
+                      >
+                        {req.met ? (
+                          <Check size={14} color="#16a34a" strokeWidth={3} />
+                        ) : (
+                          <span
+                            style={{
+                              width: "5px",
+                              height: "5px",
+                              borderRadius: "50%",
+                              backgroundColor: "#9ca3af",
+                              display: "inline-block",
+                              marginLeft: "4px",
+                              marginRight: "4px",
+                            }}
+                          />
+                        )}
+                        <span>{req.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className="form-group">
+            <div>
               <label style={{ fontSize: "13px", fontWeight: "600", color: "#374151", display: "block", marginBottom: "6px" }}>
                 Confirm Password
               </label>
@@ -144,11 +232,14 @@ export default function StaffSetPasswordPage({ params }) {
                   disabled={loading}
                   style={{
                     width: "100%",
-                    padding: "10px 40px 10px 12px",
-                    borderRadius: "8px",
-                    border: "1px solid #d1d5db",
+                    boxSizing: "border-box",
+                    padding: "12px 42px 12px 14px",
+                    borderRadius: "10px",
+                    border: passwordConfirm && password !== passwordConfirm ? "1px solid #ef4444" : "1px solid #d1d5db",
                     fontSize: "14px",
                     outline: "none",
+                    backgroundColor: "#fff",
+                    color: "#111827",
                   }}
                 />
                 <button
@@ -163,11 +254,19 @@ export default function StaffSetPasswordPage({ params }) {
                     border: "none",
                     cursor: "pointer",
                     color: "#9ca3af",
+                    padding: "4px",
+                    display: "flex",
+                    alignItems: "center",
                   }}
                 >
-                  {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+              {passwordConfirm && password !== passwordConfirm && (
+                <small style={{ color: "#ef4444", fontSize: "12px", display: "block", marginTop: "4px" }}>
+                  Passwords do not match
+                </small>
+              )}
             </div>
 
             <button
@@ -177,22 +276,23 @@ export default function StaffSetPasswordPage({ params }) {
                 backgroundColor: "#ffc400",
                 color: "#000",
                 border: "none",
-                borderRadius: "8px",
-                padding: "12px",
+                borderRadius: "10px",
+                padding: "13px",
                 fontSize: "15px",
-                fontWeight: "600",
+                fontWeight: "700",
                 cursor: loading ? "not-allowed" : "pointer",
                 opacity: loading ? 0.7 : 1,
-                transition: "background 0.2s ease",
+                transition: "all 0.2s ease",
+                marginTop: "4px",
               }}
             >
               {loading ? "Setting Password..." : "Set Password & Log In"}
             </button>
 
-            <div style={{ textAlign: "center", marginTop: "12px" }}>
+            <div style={{ textAlign: "center", marginTop: "8px" }}>
               <Link
                 href="/not-even-admin-login"
-                style={{ fontSize: "13px", color: "#4b5563", textDecoration: "none" }}
+                style={{ fontSize: "14px", color: "#6b7280", textDecoration: "none", fontWeight: "500" }}
               >
                 Back to Staff Login
               </Link>
