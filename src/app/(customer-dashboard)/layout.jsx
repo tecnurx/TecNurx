@@ -3,7 +3,6 @@
 import "@/app/globals.css";
 import DashboardNav from "@/components/dashboard/DashboardNav";
 import Sidebar from "@/components/sidebar/Sidebar";
-import { Plus_Jakarta_Sans } from "next/font/google";
 import { SidebarProvider } from "../../../context/SidebarContext";
 import Chatbox from "@/components/chatbox/Chatbox";
 import CustomToast from "@/components/CustomToast";
@@ -11,11 +10,6 @@ import SessionExpiry from "@/components/SessionExpiry";
 import { useEffect, useState, React, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { extractUserRole } from "@/lib/roleUtils";
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-});
 
 function LayoutContent({ children }) {
   const router = useRouter();

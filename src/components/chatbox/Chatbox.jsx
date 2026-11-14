@@ -45,10 +45,14 @@ const CATEGORY_ICONS = {
   other: <HelpCircle size={13} />,
 };
 
-export default function Chatbox() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function Chatbox({
+  isInline = false,
+  defaultView = "list",
+  initialTicketId = null,
+}) {
+  const [isOpen, setIsOpen] = useState(isInline ? true : false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [view, setView] = useState("list"); // "list" | "detail" | "new"
+  const [view, setView] = useState(defaultView); // "list" | "detail" | "new"
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -627,22 +631,28 @@ export default function Chatbox() {
   return (
     <>
       {/* ===================== FLOATING LAUNCHER BUTTON ===================== */}
-      <button
-        onClick={() => setIsOpen((prev) => !prev)}
-        className={`tnx-launcher ${isOpen ? "is-open" : ""}`}
-        aria-label={isOpen ? "Close TecNurx support" : "Open TecNurx support"}
-      >
-        <div className="tnx-launcher-icon">
-          {isOpen ? <X size={22} /> : <MessageCircle size={24} />}
-        </div>
-        {!isOpen && unreadCount > 0 && (
-          <span className="tnx-launcher-badge">{unreadCount}</span>
-        )}
-      </button>
+      {!isInline && (
+        <button
+          onClick={() => setIsOpen((prev) => !prev)}
+          className={`tnx-launcher ${isOpen ? "is-open" : ""}`}
+          aria-label={isOpen ? "Close TecNurx support" : "Open TecNurx support"}
+        >
+          <div className="tnx-launcher-icon">
+            {isOpen ? <X size={22} /> : <MessageCircle size={24} />}
+          </div>
+          {!isOpen && unreadCount > 0 && (
+            <span className="tnx-launcher-badge">{unreadCount}</span>
+          )}
+        </button>
+      )}
 
       {/* ===================== CHAT WIDGET WINDOW ===================== */}
-      {isOpen && (
-        <div className={`tnx-chatbox ${isMinimized ? "is-minimized" : ""}`}>
+      {(isOpen || isInline) && (
+        <div
+          className={`tnx-chatbox ${isInline ? "is-inline" : ""} ${
+            isMinimized && !isInline ? "is-minimized" : ""
+          }`}
+        >
           {/* HEADER */}
           <div className="tnx-header">
             <div className="tnx-header-main">
@@ -692,26 +702,28 @@ export default function Chatbox() {
               </div>
             </div>
 
-            <div className="tnx-header-actions">
-              <button
-                type="button"
-                onClick={() => setIsMinimized((prev) => !prev)}
-                className="tnx-btn-header-action"
-                title={isMinimized ? "Expand" : "Minimize"}
-                aria-label={isMinimized ? "Expand" : "Minimize"}
-              >
-                {isMinimized ? <Maximize2 size={16} /> : <Minimize2 size={16} />}
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsOpen(false)}
-                className="tnx-btn-header-action"
-                title="Close chat"
-                aria-label="Close"
-              >
-                <X size={17} />
-              </button>
-            </div>
+            {!isInline && (
+              <div className="tnx-header-actions">
+                <button
+                  type="button"
+                  onClick={() => setIsMinimized((prev) => !prev)}
+                  className="tnx-btn-header-action"
+                  title={isMinimized ? "Expand" : "Minimize"}
+                  aria-label={isMinimized ? "Expand" : "Minimize"}
+                >
+                  {isMinimized ? <Maximize2 size={16} /> : <Minimize2 size={16} />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  className="tnx-btn-header-action"
+                  title="Close chat"
+                  aria-label="Close"
+                >
+                  <X size={17} />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* CHAT CONTAINER BODY */}

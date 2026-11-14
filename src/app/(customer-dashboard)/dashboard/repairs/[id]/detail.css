@@ -1,0 +1,604 @@
+/* ==========================================================================
+   Repair Detail Page Styles - Customer Dashboard Redesign
+   ========================================================================== */
+
+.repair-detail-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 8px 0 48px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  color: #111827;
+}
+
+/* --------------------------------------------------------------------------
+   Header Row
+   -------------------------------------------------------------------------- */
+.repair-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.detail-header-left {
+  flex: 1;
+}
+
+.detail-title-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.detail-device-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.detail-subtitle {
+  font-size: 14.5px;
+  color: #64748b;
+  margin: 0;
+  font-weight: 400;
+}
+
+.detail-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-contact-support {
+  background: #ffffff;
+  border: 1px solid #0f172a;
+  color: #0f172a;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 9px 22px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-family: inherit;
+}
+
+.btn-contact-support:hover {
+  background: #f8fafc;
+  transform: translateY(-1px);
+}
+
+.btn-review-quote {
+  background-color: #ffb800;
+  border: none;
+  color: #000000;
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 9px 24px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-family: inherit;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-review-quote:hover {
+  background-color: #f0ab00;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 184, 0, 0.25);
+}
+
+/* --------------------------------------------------------------------------
+   Two-Column Grid Layout
+   -------------------------------------------------------------------------- */
+.repair-detail-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* --------------------------------------------------------------------------
+   Left Column: Progress Timeline Card
+   -------------------------------------------------------------------------- */
+.detail-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.detail-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 24px 0;
+  letter-spacing: -0.01em;
+}
+
+/* Timeline Vertical */
+.timeline-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-step-row {
+  display: flex;
+  gap: 16px;
+  position: relative;
+  min-height: 48px;
+}
+
+.timeline-step-row:last-child {
+  min-height: auto;
+}
+
+/* Indicator column with circle and connecting line */
+.timeline-step-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 22px;
+  flex-shrink: 0;
+}
+
+.timeline-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+/* Completed Step: Solid Black with Checkmark */
+.timeline-step-row.completed .timeline-circle {
+  background-color: #0f172a;
+  color: #ffffff;
+}
+
+/* Active Step: Outer ring with yellow/black center */
+.timeline-step-row.active .timeline-circle {
+  background-color: #ffffff;
+  border: 2.5px solid #ffb800;
+}
+
+.timeline-active-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #ffb800;
+}
+
+/* Upcoming Step: Hollow gray circle */
+.timeline-step-row.upcoming .timeline-circle {
+  background-color: #ffffff;
+  border: 2px solid #cbd5e1;
+}
+
+/* Connecting Line */
+.timeline-connecting-line {
+  width: 2px;
+  flex: 1;
+  min-height: 24px;
+  margin: 2px 0;
+}
+
+.timeline-step-row.completed .timeline-connecting-line {
+  background-color: #0f172a;
+}
+
+.timeline-step-row.active .timeline-connecting-line,
+.timeline-step-row.upcoming .timeline-connecting-line {
+  background-color: #e2e8f0;
+}
+
+.timeline-step-content {
+  padding-bottom: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.timeline-step-row:last-child .timeline-step-content {
+  padding-bottom: 0;
+}
+
+.timeline-step-label {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.timeline-step-row.upcoming .timeline-step-label {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.timeline-step-time {
+  font-size: 12.5px;
+  color: #64748b;
+  margin: 0;
+}
+
+.timeline-step-action-note {
+  font-size: 13px;
+  color: #64748b;
+  margin: 2px 0 0 0;
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   Right Column Cards
+   -------------------------------------------------------------------------- */
+.detail-right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Card 1: Action Needed (Black Bordered) */
+.action-needed-card {
+  background: #ffffff;
+  border: 1.5px solid #0f172a;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.action-needed-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.01em;
+}
+
+.action-needed-desc {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+}
+
+.action-needed-btn {
+  background-color: #ffb800;
+  border: none;
+  color: #000000;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 11px 26px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-family: inherit;
+  display: inline-block;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.action-needed-btn:hover {
+  background-color: #f0ab00;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 184, 0, 0.25);
+}
+
+/* Card 2: Pickup and Delivery */
+.info-key-val-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-key-val-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+}
+
+.info-key-val-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.info-key-val-row:first-child {
+  padding-top: 0;
+}
+
+.info-label {
+  color: #64748b;
+  font-weight: 400;
+}
+
+.info-value {
+  color: #0f172a;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Card 3: Device */
+.device-card-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.device-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.device-top-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.device-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background-color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f172a;
+  flex-shrink: 0;
+}
+
+.device-name-sub {
+  display: flex;
+  flex-direction: column;
+}
+
+.device-name-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.device-condition-sub {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+}
+
+.device-badge-verified {
+  background-color: #def7ec;
+  color: #03543f;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.device-badge-dot {
+  font-size: 6px;
+  line-height: 1;
+}
+
+.device-divider {
+  border: none;
+  border-top: 1px solid #f1f5f9;
+  margin: 16px 0;
+}
+
+.device-issue-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.device-issue-label {
+  color: #64748b;
+  font-weight: 400;
+}
+
+.device-issue-val {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* --------------------------------------------------------------------------
+   Quote Review Modal
+   -------------------------------------------------------------------------- */
+.quote-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.quote-modal-box {
+  background: #ffffff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 480px;
+  padding: 28px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  position: relative;
+}
+
+.quote-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.quote-modal-header h3 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.quote-modal-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quote-modal-close-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.quote-details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+  background: #f8fafc;
+  padding: 18px;
+  border-radius: 14px;
+}
+
+.quote-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.quote-row.total {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 12px;
+  font-weight: 700;
+  font-size: 16px;
+  color: #0f172a;
+}
+
+.quote-actions-row {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-approve-quote {
+  flex: 1;
+  background-color: #ffb800;
+  border: none;
+  color: #000000;
+  font-weight: 700;
+  padding: 12px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.btn-approve-quote:hover {
+  background-color: #f0ab00;
+}
+
+.btn-decline-quote {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.btn-decline-quote:hover {
+  background: #f8fafc;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Design
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 900px) {
+  .repair-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .repair-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .detail-header-actions {
+    width: 100%;
+  }
+
+  .btn-contact-support,
+  .btn-review-quote {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .repair-detail-wrapper {
+    padding: 0 0 36px;
+  }
+
+  .detail-device-title {
+    font-size: 24px;
+  }
+
+  .detail-card {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+
+  .detail-header-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-contact-support,
+  .btn-review-quote {
+    width: 100%;
+    padding: 11px 20px;
+  }
+
+  .quote-actions-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-approve-quote,
+  .btn-decline-quote {
+    width: 100%;
+    text-align: center;
+  }
+
+  .device-card-left {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}

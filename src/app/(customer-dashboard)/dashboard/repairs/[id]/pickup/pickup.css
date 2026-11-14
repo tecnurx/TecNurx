@@ -1,0 +1,171 @@
+/* ==========================================================================
+   Pickup Scheduled Page Styles (Image 6 Specification)
+   ========================================================================== */
+
+.pickup-scheduled-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 8px 0 48px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  color: #111827;
+}
+
+/* Header */
+.pickup-page-header {
+  margin-bottom: 24px;
+}
+
+.pickup-title-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 6px;
+}
+
+.pickup-page-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.pickup-page-sub {
+  font-size: 14.5px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* 2-Column Grid */
+.pickup-page-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Cards */
+.pickup-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.pickup-card-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 20px 0;
+}
+
+/* Details Key-Val Table */
+.pickup-details-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.pickup-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 15px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14.5px;
+  gap: 20px;
+}
+
+.pickup-detail-row:last-child {
+  border-bottom: none;
+}
+
+.pickup-label {
+  color: #64748b;
+  font-weight: 500;
+  flex-shrink: 0;
+  width: 130px;
+}
+
+.pickup-val {
+  color: #0f172a;
+  font-weight: 600;
+  text-align: right;
+  word-break: break-word;
+}
+
+/* Handover Code Card */
+.handover-card {
+  border: 1px solid #000000;
+}
+
+.handover-code-box {
+  background-color: #f3f4f6;
+  border-radius: 16px;
+  padding: 24px 16px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.handover-digits {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: 0.35em;
+  color: #000000;
+  font-family: monospace, sans-serif;
+  display: inline-block;
+  padding-left: 0.35em; /* counteract letter-spacing offset */
+}
+
+.handover-footnote {
+  font-size: 13.5px;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Actions Row */
+.pickup-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.btn-reschedule {
+  background: #ffffff;
+  border: 1.5px solid #0f172a;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 28px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-reschedule:hover {
+  background: #f8fafc;
+}
+
+.btn-cancel-repair {
+  background: none;
+  border: none;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 8px 4px;
+}
+
+.btn-cancel-repair:hover {
+  opacity: 0.75;
+}
+
+@media (max-width: 840px) {
+  .pickup-page-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,735 @@
+/* ==========================================================================
+   Add Device Page Styles - Pixel Perfect to Designer Mockup
+   ========================================================================== */
+
+.add-device-page {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 0 60px 0;
+  box-sizing: border-box;
+}
+
+/* Page Header */
+.add-device-header {
+  margin-bottom: 24px;
+}
+
+.add-device-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px 0;
+}
+
+.add-device-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* 3-Step Progress Stepper */
+.add-device-stepper {
+  margin-bottom: 28px;
+}
+
+.stepper-progress-bars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.stepper-segment-bar {
+  height: 4px;
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
+}
+
+.stepper-segment-bar.completed {
+  background-color: #000000;
+}
+
+.stepper-segment-bar.active {
+  background-color: #ffb800;
+}
+
+.stepper-segment-bar.upcoming {
+  background-color: #e5e7eb;
+}
+
+.stepper-labels-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.stepper-label-item {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+  text-align: left;
+}
+
+.stepper-label-item.active {
+  color: #111827;
+  font-weight: 700;
+}
+
+/* Main 2-Column Grid */
+.add-device-grid {
+  display: grid;
+  grid-template-columns: 1fr 370px;
+  gap: 32px;
+  align-items: start;
+}
+
+/* Left Column: Form Container */
+.add-device-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Selected Device Yellow Tag */
+.device-selected-tag-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.device-selected-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #ffb800;
+  color: #000000;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.device-selected-pill .dot {
+  font-size: 8px;
+  color: #000000;
+}
+
+.btn-change-device {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px;
+  font-family: inherit;
+  transition: color 0.15s ease;
+}
+
+.btn-change-device:hover {
+  color: #111827;
+}
+
+/* Inline Device Picker (when changing device) */
+.inline-device-picker {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.inline-picker-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.inline-picker-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inline-picker-field label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.inline-picker-field select,
+.inline-picker-field input {
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #111827;
+  outline: none;
+}
+
+.inline-picker-field select:focus,
+.inline-picker-field input:focus {
+  border-color: #000000;
+}
+
+.btn-picker-done {
+  align-self: flex-start;
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Field Group */
+.add-device-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.add-device-label {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.add-device-input {
+  width: 100%;
+  padding: 14px 18px;
+  background-color: #ffffff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 14px;
+  font-size: 15px;
+  color: #111827;
+  font-family: inherit;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.add-device-input:focus {
+  border-color: #000000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+.add-device-input::placeholder {
+  color: #9ca3af;
+}
+
+.add-device-hint {
+  font-size: 13px;
+  color: #64748b;
+  margin: 2px 0 0 0;
+}
+
+/* Where did you get it? (Radio Option Cards) */
+.source-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.source-option-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background-color: #ffffff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.source-option-card:hover {
+  border-color: #cbd5e1;
+  background-color: #fafafa;
+}
+
+.source-option-card.selected {
+  border: 2px solid #000000;
+  background-color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.source-radio-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.15s ease;
+}
+
+.source-option-card.selected .source-radio-circle {
+  border-color: #000000;
+}
+
+.source-radio-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #000000;
+}
+
+.source-option-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.source-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.source-sub {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Condition Pills */
+.condition-pills-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.condition-pill-btn {
+  background-color: #ffffff;
+  border: 1.5px solid #e5e7eb;
+  color: #111827;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 8px 22px;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.condition-pill-btn:hover {
+  border-color: #cbd5e1;
+}
+
+.condition-pill-btn.selected {
+  background-color: #000000;
+  border-color: #000000;
+  color: #ffffff;
+}
+
+/* Photos Grid (4 upload slots) */
+.photos-upload-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.photo-slot-box {
+  background-color: #f3f4f6;
+  border-radius: 14px;
+  height: 94px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.photo-slot-box:hover {
+  background-color: #e5e7eb;
+  border-color: #cbd5e1;
+}
+
+.photo-slot-icon {
+  color: #64748b;
+}
+
+.photo-slot-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.photo-slot-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.btn-remove-photo {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #ffffff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+}
+
+/* Proof of Ownership (Dashed Box) */
+.receipt-upload-box {
+  background-color: #ffffff;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 16px;
+  padding: 24px 20px;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.receipt-upload-box:hover {
+  border-color: #000000;
+  background-color: #fafafa;
+}
+
+.receipt-upload-icon {
+  color: #64748b;
+  margin-bottom: 2px;
+}
+
+.receipt-upload-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.receipt-upload-sub {
+  font-size: 12.5px;
+  color: #64748b;
+  margin: 0;
+}
+
+.receipt-attached-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.receipt-attached-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Bottom Actions Row */
+.add-device-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  margin-top: 6px;
+}
+
+.btn-back-outline {
+  background: #ffffff;
+  border: 1.5px solid #000000;
+  color: #000000;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 32px;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.16s ease;
+  text-decoration: none;
+}
+
+.btn-back-outline:hover {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.btn-continue-primary {
+  background-color: #ffb800;
+  border: none;
+  color: #000000;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 38px;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.16s ease;
+}
+
+.btn-continue-primary:hover {
+  background-color: #e6a600;
+  transform: translateY(-1px);
+}
+
+.btn-continue-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ==========================================================================
+   Right Column Aside Cards
+   ========================================================================== */
+
+.add-device-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.add-device-aside-card {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-sizing: border-box;
+}
+
+.aside-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 20px 0;
+  letter-spacing: -0.01em;
+}
+
+/* Timeline steps */
+.aside-timeline-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.aside-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.aside-step-number {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.aside-step-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.aside-step-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.aside-step-desc {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Gray Notice Box at bottom of card 1 */
+.aside-notice-box {
+  background-color: #f3f4f6;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.aside-notice-icon {
+  color: #4b5563;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.aside-notice-text {
+  font-size: 12.5px;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Statuses List in Card 2 */
+.aside-statuses-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.aside-statuses-list .device-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 9999px;
+}
+
+.pill-ineligible {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.pill-ineligible .device-status-dot {
+  color: #ef4444;
+}
+
+/* Review Summary Table in Step 3 */
+.device-review-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.device-review-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.device-review-table tr {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.device-review-table tr:last-child {
+  border-bottom: none;
+}
+
+.device-review-table td {
+  padding: 14px 18px;
+  font-size: 14px;
+}
+
+.device-review-label {
+  color: #64748b;
+  font-weight: 500;
+  width: 40%;
+}
+
+.device-review-value {
+  color: #111827;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Category Grid for Step 1 */
+.device-category-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.device-category-card {
+  background-color: #ffffff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.device-category-card:hover {
+  border-color: #cbd5e1;
+  background-color: #fafafa;
+}
+
+.device-category-card.selected {
+  border-color: #000000;
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.device-category-card.selected .device-category-icon {
+  color: #ffb800;
+}
+
+.device-category-title {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media screen and (max-width: 900px) {
+  .add-device-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .photos-upload-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .device-category-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

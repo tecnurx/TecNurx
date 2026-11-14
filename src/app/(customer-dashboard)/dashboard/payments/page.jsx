@@ -1,169 +1,415 @@
 "use client";
+
 import React, { useState } from "react";
 import "./payment.css";
-import {
-  CreditCard,
-  Wallet,
-  Building2,
-  Calendar,
-  Receipt,
-  ArrowRight,
-  Check,
-  AlertCircle,
-} from "lucide-react";
+import { CreditCard, Check, X, AlertCircle, Download } from "lucide-react";
+import { toast } from "@/components/CustomToast";
 
 const Payments = () => {
-  const [selectedMethod, setSelectedMethod] = useState("card");
+  const [isAddCardOpen, setIsAddCardOpen] = useState(false);
+  const [isAutoRepayOpen, setIsAutoRepayOpen] = useState(false);
+  const [isAutoRepayActive, setIsAutoRepayActive] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
-  // Sample current plan
-  const currentPlan = {
-    type: "Yearly",
-    nextBilling: "Oct 12, 2026",
-    totalPaid: "₦24,900",
-    tier: "Premium",
+  // New Card Form
+  const [cardForm, setCardForm] = useState({
+    cardNumber: "",
+    expiry: "",
+    cvv: "",
+  });
+
+  // Active instalment demo data (matching mockup exactly with no brackets)
+  const activeInstalment = {
+    current: 2,
+    total: 3,
+    dueDate: "Nov 18, 2026",
+    amount: "₦25,000",
   };
 
-  // Sample payment history
-  const paymentHistory = [
+  // History items matching mockup
+  const historyItems = [
     {
-      date: "Oct 12, 2025",
-      description: "Yearly Premium Plan Renewal",
-      amount: "₦24,900",
-      method: "Visa Card •••• 4242",
-      status: "success",
+      id: "TNX-4421",
+      service: "Screen replacement",
+      amount: "₦35,000",
+      date: "Nov 4, 2026",
+      status: "Paid",
+    },
+    {
+      id: "TNX-1290",
+      service: "Battery replacement",
+      amount: "₦18,000",
+      date: "Oct 24, 2026",
+      status: "Paid",
     },
   ];
 
-  const getStatusIcon = (status) => {
-    return status === "success" ? (
-      <Check size={16} style={{ color: "#10b981" }} />
-    ) : null;
+  const handlePayNow = () => {
+    setIsProcessingPayment(true);
+    setTimeout(() => {
+      setIsProcessingPayment(false);
+      toast.success("Instalment payment of ₦25,000 processed successfully!");
+    }, 1200);
+  };
+
+  const handleAddCardSubmit = (e) => {
+    e.preventDefault();
+    if (!cardForm.cardNumber || !cardForm.expiry || !cardForm.cvv) {
+      toast.error("Please fill in all card details");
+      return;
+    }
+    toast.success("Payment method added successfully!");
+    setIsAddCardOpen(false);
+    setCardForm({ cardNumber: "", expiry: "", cvv: "" });
+  };
+
+  const handleDownloadReceipts = () => {
+    toast.success("Downloading payment receipts as PDF...");
   };
 
   return (
     <div className="payments-page">
+      {/* Header */}
       <div className="payments-header">
-        <h1>Payments & Plans</h1>
-        <p>
-          Manage your subscription, view history, and update payment methods
+        <h1 className="payments-title">Payments</h1>
+        <p className="payments-subtitle">
+          Instalments, payment methods and receipts.
         </p>
       </div>
 
-      <div className="no-payment">
-        <AlertCircle size={48} />
-        <h2>Current Plan Summary</h2>
-        <p>No active subscription plans at the moment.</p>
+      {/* 2-Column Grid */}
+      <div className="payments-grid">
+        {/* Left Column: Active Instalment & History */}
+        <div className="payments-left-col">
+          {/* Card 1: Active Instalment (Pay Later) */}
+          <div className="payment-card active-instalment-card">
+            <div className="instalment-banner-bar">
+              <span className="instalment-dot">●</span>
+              <span>Pay Later</span>
+            </div>
+
+            <h2 className="instalment-title">
+              Payment {activeInstalment.current} of {activeInstalment.total}
+            </h2>
+            <p className="instalment-due-date">Due {activeInstalment.dueDate}</p>
+
+            <div className="instalment-amount">{activeInstalment.amount}</div>
+
+            <button
+              type="button"
+              className="btn-pay-now-full"
+              onClick={handlePayNow}
+              disabled={isProcessingPayment}
+            >
+              {isProcessingPayment ? "Processing payment..." : "Pay now"}
+            </button>
+          </div>
+
+          {/* Card 2: History */}
+          <div className="payment-card">
+            <h2 className="payment-card-title">History</h2>
+
+            <div className="history-list">
+              {historyItems.map((item) => (
+                <div key={item.id} className="history-item-row">
+                  <div className="history-item-info">
+                    <h3 className="history-item-title">
+                      Repair #{item.id} · {item.service}
+                    </h3>
+                    <p className="history-item-sub">
+                      {item.amount} · {item.date}
+                    </p>
+                  </div>
+
+                  <span className="status-pill-paid">
+                    <span className="status-dot">●</span>
+                    <span>{item.status}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              className="download-receipts-link"
+              onClick={handleDownloadReceipts}
+            >
+              Download receipts
+            </button>
+          </div>
+        </div>
+
+        {/* Right Column: Payment Methods & Automatic Repayments */}
+        <div className="payments-right-col">
+          {/* Card 1: Payment methods */}
+          <div className="payment-card">
+            <h2 className="payment-card-title">Payment methods</h2>
+
+            <div className="saved-card-row">
+              <div className="saved-card-meta">
+                <div className="card-icon-box">
+                  <CreditCard size={20} />
+                </div>
+                <div className="card-number-exp">
+                  <span className="card-number-label">
+                    Mastercard •••• 4242
+                  </span>
+                  <span className="card-exp-label">Expires 12/28</span>
+                </div>
+              </div>
+
+              <span className="pill-default-badge">
+                <span className="dot">●</span>
+                Default
+              </span>
+            </div>
+
+            <button
+              type="button"
+              className="btn-outline-action"
+              onClick={() => setIsAddCardOpen(true)}
+            >
+              Add payment method
+            </button>
+          </div>
+
+          {/* Card 2: Automatic repayments */}
+          <div className="payment-card">
+            <div className="auto-repayments-header">
+              <h2 className="auto-repayments-title">Automatic repayments</h2>
+              <span
+                className={
+                  isAutoRepayActive ? "pill-status-on" : "pill-status-off"
+                }
+              >
+                <span className="dot">●</span>
+                {isAutoRepayActive ? "On" : "Off"}
+              </span>
+            </div>
+
+            <p className="auto-repayments-desc">
+              Pay each instalment automatically when it is due.
+            </p>
+
+            <button
+              type="button"
+              className="btn-outline-action"
+              onClick={() => setIsAutoRepayOpen(true)}
+            >
+              {isAutoRepayActive ? "Manage" : "Set up"}
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Current Plan Summary */}
-      {/* <div className="current-plan-section">
-        <h2>Current Plan Summary</h2>
-        <div className="plan-summary-card">
-          <div className="plan-details">
-            <div className="plan-tier">
-              {currentPlan.tier} Plan ({currentPlan.type})
-            </div>
-            <div className="plan-meta">
-              <span>
-                <Calendar size={16} /> Next billing:{" "}
-                <strong>{currentPlan.nextBilling}</strong>
-              </span>
-              <span>
-                <Receipt size={16} /> Total paid to date:{" "}
-                <strong>{currentPlan.totalPaid}</strong>
-              </span>
-            </div>
-          </div>
-          <button className="manage-plan-btn">Manage Plan</button>
-        </div>
-      </div> */}
-
-      {/* Payment History Table */}
-      {/* <div className="payment-history-section">
-        <h2>Payment History</h2>
-        <div className="history-table">
-          <div className="table-header">
-            <span>Date</span>
-            <span>Description</span>
-            <span>Amount</span>
-            <span>Method</span>
-            <span>Status</span>
-          </div>
-          {paymentHistory.map((payment, i) => (
-            <div key={i} className="table-row">
-              <span>{payment.date}</span>
-              <span>{payment.description}</span>
-              <span className="amount">{payment.amount}</span>
-              <span>{payment.method}</span>
-              <span className="status-success">
-                {getStatusIcon(payment.status)} Paid
-              </span>
-            </div>
-          ))}
-        </div>
-      </div> */}
-
-      {/* Add Payment Method */}
-      {/* <div className="add-method-section">
-        <h2>Add Payment Method</h2>
-        <div className="method-selector">
-          <button
-            className={selectedMethod === "card" ? "active" : ""}
-            onClick={() => setSelectedMethod("card")}
+      {/* MODAL 1: ADD PAYMENT METHOD */}
+      {isAddCardOpen && (
+        <div
+          className="payment-modal-backdrop"
+          onClick={() => setIsAddCardOpen(false)}
+        >
+          <div
+            className="payment-modal-card"
+            onClick={(e) => e.stopPropagation()}
           >
-            <CreditCard size={20} /> Card
-          </button>
-          <button
-            className={selectedMethod === "bank" ? "active" : ""}
-            onClick={() => setSelectedMethod("bank")}
-          >
-            <Building2 size={20} /> Bank Transfer
-          </button>
-          <button
-            className={selectedMethod === "wallet" ? "active" : ""}
-            onClick={() => setSelectedMethod("wallet")}
-          >
-            <Wallet size={20} /> Wallet / USSD
-          </button>
-        </div>
+            <div className="payment-modal-head">
+              <h2>Add payment method</h2>
+              <button
+                type="button"
+                className="payment-modal-close"
+                onClick={() => setIsAddCardOpen(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
 
-        <div className="integration-note">
-          <p>We securely process payments via:</p>
-          <div className="logos">
-            <span>Paystack</span>
-            <span>Flutterwave</span>
-            <span>Providus Bank</span>
-          </div>
-        </div>
-
-        <form className="add-method-form">
-          {selectedMethod === "card" && (
-            <>
-              <input type="text" placeholder="Card Number" />
-              <div className="row">
-                <input type="text" placeholder="MM/YY" />
-                <input type="text" placeholder="CVV" />
+            <form onSubmit={handleAddCardSubmit}>
+              <div style={{ marginBottom: "16px" }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "13.5px",
+                    fontWeight: 600,
+                    marginBottom: "6px",
+                  }}
+                >
+                  Card number
+                </label>
+                <input
+                  type="text"
+                  placeholder="1234 5678 9012 3456"
+                  maxLength={19}
+                  value={cardForm.cardNumber}
+                  onChange={(e) =>
+                    setCardForm({ ...cardForm, cardNumber: e.target.value })
+                  }
+                  style={{
+                    width: "100%",
+                    padding: "10px 14px",
+                    borderRadius: "10px",
+                    border: "1px solid #d1d5db",
+                    fontSize: "14px",
+                    boxBox: "border-box",
+                  }}
+                  required
+                />
               </div>
-              <input type="text" placeholder="Cardholder Name" />
-            </>
-          )}
-          {selectedMethod === "bank" && (
-            <p className="info-text">
-              You will be redirected to your bank's secure page for transfer
-              authorization.
+
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "14px",
+                  marginBottom: "20px",
+                }}
+              >
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "13.5px",
+                      fontWeight: 600,
+                      marginBottom: "6px",
+                    }}
+                  >
+                    Expiry date
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="MM/YY"
+                    maxLength={5}
+                    value={cardForm.expiry}
+                    onChange={(e) =>
+                      setCardForm({ ...cardForm, expiry: e.target.value })
+                    }
+                    style={{
+                      width: "100%",
+                      padding: "10px 14px",
+                      borderRadius: "10px",
+                      border: "1px solid #d1d5db",
+                      fontSize: "14px",
+                    }}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "13.5px",
+                      fontWeight: 600,
+                      marginBottom: "6px",
+                    }}
+                  >
+                    CVV
+                  </label>
+                  <input
+                    type="password"
+                    placeholder="123"
+                    maxLength={4}
+                    value={cardForm.cvv}
+                    onChange={(e) =>
+                      setCardForm({ ...cardForm, cvv: e.target.value })
+                    }
+                    style={{
+                      width: "100%",
+                      padding: "10px 14px",
+                      borderRadius: "10px",
+                      border: "1px solid #d1d5db",
+                      fontSize: "14px",
+                    }}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="payment-modal-actions">
+                <button
+                  type="button"
+                  className="btn-modal-cancel"
+                  onClick={() => setIsAddCardOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn-modal-submit">
+                  Save card
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 2: AUTOMATIC REPAYMENTS SETUP */}
+      {isAutoRepayOpen && (
+        <div
+          className="payment-modal-backdrop"
+          onClick={() => setIsAutoRepayOpen(false)}
+        >
+          <div
+            className="payment-modal-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="payment-modal-head">
+              <h2>Set up automatic repayments</h2>
+              <button
+                type="button"
+                className="payment-modal-close"
+                onClick={() => setIsAutoRepayOpen(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <p style={{ fontSize: "14px", color: "#4b5563", lineHeight: 1.5 }}>
+              When enabled, your scheduled repair instalments will be debited
+              from your default payment method on the due date automatically.
             </p>
-          )}
-          {selectedMethod === "wallet" && (
-            <p className="info-text">
-              Pay via mobile wallet, USSD, or QR code through Flutterwave or
-              Paystack.
-            </p>
-          )}
-          <button type="submit" className="add-method-btn">
-            Add Payment Method
-          </button>
-        </form>
-      </div> */}
+
+            <div
+              style={{
+                background: "#f9fafb",
+                padding: "16px",
+                borderRadius: "14px",
+                margin: "18px 0",
+              }}
+            >
+              <div style={{ fontSize: "13.5px", color: "#64748b" }}>
+                Default card:
+              </div>
+              <strong style={{ fontSize: "15px", color: "#111827" }}>
+                Mastercard •••• 4242
+              </strong>
+            </div>
+
+            <div className="payment-modal-actions">
+              <button
+                type="button"
+                className="btn-modal-cancel"
+                onClick={() => setIsAutoRepayOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn-modal-submit"
+                onClick={() => {
+                  setIsAutoRepayActive(!isAutoRepayActive);
+                  setIsAutoRepayOpen(false);
+                  toast.success(
+                    isAutoRepayActive
+                      ? "Automatic repayments turned off"
+                      : "Automatic repayments enabled!"
+                  );
+                }}
+              >
+                {isAutoRepayActive ? "Turn off" : "Enable automatic debits"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

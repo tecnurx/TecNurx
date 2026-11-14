@@ -98,7 +98,7 @@ const Login = () => {
 
       // If user came specifically from the repair estimate flow, clear the pending estimate once redirected
       if (typeof window !== "undefined") {
-        if (redirectParam && redirectParam.includes("book-repair")) {
+        if (redirectParam && (redirectParam.includes("book-repair") || redirectParam.includes("repairs/book"))) {
           // preserve estimate for the book-repair page to consume
         } else {
           // Regular login - clean any stale repair estimates

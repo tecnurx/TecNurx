@@ -86,7 +86,7 @@ const Footer = ({ newsPaperWrap }) => {
 
               <div className="foot-block">
                 <h3>our services</h3>
-                <Link href="/dashboard/book-repair">Gadget Repair</Link>
+                <Link href="/dashboard/repairs/book">Gadget Repair</Link>
                 <Link href="/buy-devices">Gadget Sales</Link>
                 <Link href="/insurance">Gadget Insurance</Link>
                 <Link href="/track-repair">Track Repair</Link>

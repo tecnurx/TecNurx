@@ -1,0 +1,464 @@
+/* ==========================================================================
+   Claim Tracker Page Styles - Pixel Perfect to Designer Mockup
+   ========================================================================== */
+
+.claim-tracker-page {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 0 60px 0;
+  box-sizing: border-box;
+}
+
+/* Page Header */
+.claim-tracker-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.claim-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.claim-page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.claim-id-nowrap {
+  white-space: nowrap;
+}
+
+.claim-page-subtitle {
+  font-size: 14.5px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Status Badges */
+.pill-claim-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.pill-claim-status .dot {
+  font-size: 8px;
+}
+
+.pill-more-info {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.pill-more-info .dot {
+  color: #f59e0b;
+}
+
+.pill-approved {
+  background-color: #ecfdf5;
+  color: #059669;
+}
+
+.pill-approved .dot {
+  color: #10b981;
+}
+
+.pill-declined {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.pill-declined .dot {
+  color: #ef4444;
+}
+
+/* Main 2-Column Content Grid */
+.claim-tracker-grid {
+  display: grid;
+  grid-template-columns: 1fr 370px;
+  gap: 28px;
+  align-items: start;
+}
+
+/* Left Column: Claim Progress Card */
+.claim-progress-card {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 20px;
+  padding: 28px 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.claim-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 24px 0;
+  letter-spacing: -0.01em;
+}
+
+/* Vertical Timeline */
+.claim-timeline {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.claim-timeline-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  position: relative;
+  padding-bottom: 26px;
+}
+
+.claim-timeline-step:last-child {
+  padding-bottom: 0;
+}
+
+/* Connecting Line between steps */
+.claim-step-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.claim-step-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  z-index: 2;
+  margin-top: 3px;
+}
+
+.claim-step-dot.completed {
+  background-color: #000000;
+  border: none;
+}
+
+.claim-step-dot.active {
+  background-color: #ffb800;
+  border: 2px solid #000000;
+}
+
+.claim-step-dot.upcoming {
+  background-color: #ffffff;
+  border: 2px solid #cbd5e1;
+}
+
+.claim-step-line {
+  position: absolute;
+  top: 17px;
+  bottom: -29px;
+  width: 2px;
+  z-index: 1;
+}
+
+.claim-timeline-step:last-child .claim-step-line {
+  display: none;
+}
+
+.claim-step-line.completed {
+  background-color: #000000;
+}
+
+.claim-step-line.upcoming {
+  background-color: #e5e7eb;
+}
+
+/* Step Content */
+.claim-step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.claim-step-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.claim-step-title.active {
+  color: #000000;
+}
+
+.claim-step-sub {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+}
+
+.claim-progress-footnote {
+  font-size: 13px;
+  color: #64748b;
+  margin: 18px 0 0 0;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* ==========================================================================
+   Right Column Cards
+   ========================================================================== */
+
+.claim-tracker-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Card 1: Action Needed Card (Solid Black Outline) */
+.claim-action-needed-card {
+  background: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 20px;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.action-needed-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px 0;
+}
+
+.action-needed-instruction {
+  font-size: 13.5px;
+  color: #4b5563;
+  margin: 0 0 16px 0;
+  line-height: 1.45;
+}
+
+/* Dashed Document Upload Box */
+.claim-doc-upload-box {
+  background-color: #ffffff;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 14px;
+  padding: 22px 16px;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 18px;
+  transition: all 0.15s ease;
+}
+
+.claim-doc-upload-box:hover {
+  border-color: #000000;
+  background-color: #fafafa;
+}
+
+.claim-upload-icon {
+  color: #4b5563;
+  margin-bottom: 2px;
+}
+
+.claim-upload-main {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.claim-upload-sub {
+  font-size: 12px;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.claim-attached-file-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  margin-bottom: 18px;
+  box-sizing: border-box;
+}
+
+.claim-attached-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.btn-remove-claim-file {
+  background: #e2e8f0;
+  border: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.btn-remove-claim-file:hover {
+  background: #cbd5e1;
+  color: #0f172a;
+}
+
+/* Primary Yellow Action Button */
+.btn-send-to-insurer {
+  width: 100%;
+  background-color: #ffb800;
+  border: none;
+  color: #000000;
+  font-size: 14.5px;
+  font-weight: 700;
+  padding: 13px 20px;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.16s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-send-to-insurer:hover {
+  background-color: #e6a600;
+  transform: translateY(-1px);
+}
+
+.btn-send-to-insurer:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Card 2: Policy Card */
+.claim-policy-card {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-sizing: border-box;
+}
+
+.policy-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 18px 0;
+  letter-spacing: -0.01em;
+}
+
+.policy-rows-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.policy-row-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.policy-row-item:first-child {
+  padding-top: 0;
+}
+
+.policy-row-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.policy-row-label {
+  font-size: 13.5px;
+  color: #64748b;
+}
+
+.policy-row-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Active Status Pill */
+.pill-policy-active {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #ecfdf5;
+  color: #059669;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 9999px;
+}
+
+.pill-policy-active .dot {
+  color: #10b981;
+  font-size: 8px;
+}
+
+/* Responsive */
+@media screen and (max-width: 900px) {
+  .claim-tracker-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .claim-tracker-page {
+    padding: 0 0 36px;
+  }
+
+  .claim-tracker-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .claim-page-title {
+    font-size: 24px;
+  }
+
+  .pill-claim-status {
+    align-self: flex-start;
+  }
+
+  .claim-progress-card,
+  .claim-detail-card {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+}

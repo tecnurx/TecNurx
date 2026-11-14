@@ -1,211 +1,344 @@
-/* Existing styles remain unchanged */
-.dashNav {
+/* ==========================================================================
+   Topbar (DashboardNav) Styles - Redesigned UI
+   ========================================================================== */
+
+.topbar-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 38px;
-  border-bottom: rgba(221, 221, 228, 1) 1px solid;
-  background: rgba(244, 244, 244, 1);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
   width: 100%;
+  height: 100%;
+  padding: 0 40px;
   box-sizing: border-box;
-  z-index: 1000;
-  height: 75px;
-}
-.nav-items {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-.nav-search {
-  position: relative;
-}
-.nav-search input {
-  padding: 12px 24px;
-  width: 300px;
-  background: transparent;
-  border: 1px solid rgba(221, 221, 228, 1);
-  border-radius: 30px;
-}
-.nav-search input,
-.nav-search::placeholder {
-  font-size: 14px;
-  font-weight: 500;
-}
-.search-icon {
-  position: absolute;
-  top: 14%;
-  right: 5%;
-  cursor: pointer;
-  color: rgba(221, 221, 228, 1);
-}
-.notification {
-  cursor: pointer;
 }
 
-/* New styles for user profile and dropdown */
-.user-profile {
-  position: relative;
+/* Left Section: Breadcrumb & Title */
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
-.user-icon {
-  cursor: pointer;
+
+.topbar-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.01em;
 }
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: rgba(255, 255, 255, 1);
-  border: 1px solid rgba(221, 221, 228, 1);
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  min-width: 180px;
-  z-index: 10;
-  overflow: hidden;
-}
-.dropdown-item {
-  display: block;
-  padding: 12px 16px;
+
+.topbar-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 14px;
-  font-weight: 500;
-  color: rgba(0, 0, 0, 0.8);
+}
+
+.breadcrumb-link {
+  color: #64748b;
   text-decoration: none;
-  transition: background 0.2s ease;
-}
-.dropdown-item:hover {
-  background: rgba(244, 244, 244, 1);
+  font-weight: 500;
+  transition: color 0.15s ease;
 }
 
-/* New styles for notifications panel */
-.notifications {
-  position: relative;
+.breadcrumb-link:hover {
+  color: #0f172a;
 }
-.notifications-panel {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: rgba(255, 255, 255, 1);
-  border: 1px solid rgba(221, 221, 228, 1);
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 300px;
-  z-index: 10;
-  overflow: hidden;
-}
-.notifications-header {
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(221, 221, 228, 1);
-}
-.notifications-header h3 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: rgba(0, 0, 0, 0.9);
-}
-.notifications-list {
-  max-height: 300px;
-  overflow-y: auto;
-}
-.notifications-list .loading{
-  padding: 12px;
-}
-.notification-item {
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(221, 221, 228, 1);
-}
-.notification-item:last-child {
-  border-bottom: none;
-}
-.notification-item p {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 500;
-  color: rgba(0, 0, 0, 0.8);
-}
-.notification-item .timestamp {
-  /* display: block; */
-  font-size: 12px;
+
+.breadcrumb-sep {
+  color: #94a3b8;
   font-weight: 400;
-  color: rgba(0, 0, 0, 0.5);
-  margin-top: 4px;
-  width: 100%;
 }
-.notification-item:hover {
-  background: rgba(244, 244, 244, 1);
+
+.breadcrumb-current {
+  font-weight: 700;
+  color: #0f172a;
 }
-.side-logo-menu {
+
+/* Mobile Sidebar Toggle - identical to landing page navbar .mobile-menu-btn */
+.mobile-sidebar-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid #DDDDE4;
+  background: #ffffff;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  color: #111111;
+}
+
+.mobile-sidebar-toggle:hover {
+  background: #f8fafc;
+}
+
+.mobile-sidebar-toggle:active {
+  transform: scale(0.95);
+}
+
+/* Right Section: Notifications & Profile */
+.topbar-right {
   display: flex;
   align-items: center;
-  gap: 8px;
-  display: none;
-  /* justify-content: space-between; */
-  /* padding-left: 12px; */
+  gap: 12px;
 }
-.navonelogo img {
-  /* width: 120px; */
+
+.topbar-notifications {
+  position: relative;
 }
-.log-out-item {
-  display: flex !important;
-  align-items: center;
-  gap: 8px;
-  background: none;
-  border: none;
-  width: 100%;
-  text-align: left;
-  padding: 12px 16px;
-  /* cursor: isLoggingOut ? "not-allowed" : pointer; */
-  color: #e74c3c;
-}
-.notification-badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #e74c3c;
-  color: white;
-  font-size: 12px;
-  width: 20px;
-  height: 20px;
+
+.topbar-bell-btn {
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.notification-wrapper {
-  position: relative;
   cursor: pointer;
+  position: relative;
+  color: #1e293b;
+  transition: all 0.15s ease;
+  padding: 0;
 }
 
-.unread {
-  background-color: rgba(0, 123, 255, 0.1);
-  font-weight: 600;
+.topbar-bell-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.topbar-bell-dot {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  width: 7px;
+  height: 7px;
+  background-color: #ffb800;
+  border-radius: 50%;
+  border: 1.5px solid #ffffff;
+}
+
+/* User Avatar Badge - Black with TO */
+.topbar-profile {
+  position: relative;
+}
+
+.user-avatar-badge {
+  min-width: 38px;
+  height: 38px;
+  padding: 0 8px;
+  border-radius: 9999px;
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s ease;
+}
+
+.user-avatar-badge:hover {
+  opacity: 0.88;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  min-width: 210px;
+  z-index: 100;
+  overflow: hidden;
+  padding: 6px 0;
+}
+
+.dropdown-user-info {
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dropdown-user-info strong {
+  font-size: 13.5px;
+  color: #0f172a;
+}
+
+.dropdown-user-info span {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.dropdown-divider {
+  border: none;
+  border-top: 1px solid #f1f5f9;
+  margin: 4px 0;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #334155;
+  text-decoration: none;
+  background: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: background-color 0.15s ease;
+}
+
+.dropdown-item:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.log-out-item {
+  color: #dc2626;
+}
+
+.log-out-item:hover {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+/* Notifications Panel */
+.notifications-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  width: 320px;
+  max-height: 400px;
+  z-index: 100;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.notifications-header {
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.notifications-header h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
 }
 
 .mark-all-read {
-  font-size: 14px;
-  color: #007bff;
   background: none;
   border: none;
+  color: #ffb800;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
+  padding: 0;
 }
 
-@media screen and (max-width: 900px) {
-  .navonelogo {
-    display: none;
+.notifications-list {
+  overflow-y: auto;
+  max-height: 320px;
+}
+
+.notification-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f8fafc;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  transition: background-color 0.15s ease;
+}
+
+.notification-item.unread {
+  background-color: #fefce8;
+}
+
+.notification-item:hover {
+  background-color: #f8fafc;
+}
+
+.notif-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 2px 0;
+}
+
+.notif-message {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.timestamp {
+  font-size: 11px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.loading,
+.error {
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 13px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 1024px) {
+  .topbar-container {
+    padding: 0 16px;
   }
-  .side-logo-menu {
-    display: flex;
+
+  .mobile-sidebar-toggle {
+    display: inline-flex;
   }
 }
-@media screen and (max-width: 600px) {
-  .dashNav {
-    padding: 12px 16px;
-    height: 66px;
+
+/* Breadcrumbs on mobile: show only the first route e.g. "Repairs" */
+@media screen and (max-width: 768px) {
+  .topbar-breadcrumb .breadcrumb-sub {
+    display: none !important;
   }
-  .side-logo-menu img {
-    width: 105px !important;
-    height: auto !important;
+
+  .topbar-breadcrumb .breadcrumb-root {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+    text-decoration: none;
+    pointer-events: none;
+    letter-spacing: -0.01em;
   }
 }

@@ -694,7 +694,7 @@ const Repairs = () => {
       if (selectedQuality) params.set("quality", selectedQuality);
       if (isPayOverTime) params.set("payOverTime", `${paybackMonths}`);
     }
-    return `/dashboard/book-repair?${params.toString()}`;
+    return `/dashboard/repairs/book?${params.toString()}`;
   };
 
   // Save current estimate to localStorage

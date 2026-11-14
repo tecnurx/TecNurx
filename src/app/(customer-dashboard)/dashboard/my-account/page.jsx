@@ -1,60 +1,41 @@
-// Settings.jsx
 "use client";
+
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import "./settings.css";
 import {
-  User,
-  Shield,
-  Bell,
-  Database,
-  Upload,
-  Camera,
-  Check,
-  X,
-  Smartphone,
-  Globe,
-  Mail,
-  Lock,
-  Trash2,
-  Download,
-  Loader2,
-  RefreshCw,
+  MapPin,
   Eye,
   EyeOff,
+  X,
+  Loader2,
+  Check,
 } from "lucide-react";
 import { authService } from "../../../../../services/auth";
 import { addressService } from "../../../../../services/address";
 import { validatePassword, getPasswordRequirements } from "@/lib/passwordValidation";
 
-const Settings = () => {
-  const [activeTab, setActiveTab] = useState("profile");
-  const [profilePic, setProfilePic] = useState(null);
-  const [twoFA, setTwoFA] = useState(true);
+export default function AccountPage() {
+  const router = useRouter();
+  const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [notifications, setNotifications] = useState({
-    email: true,
-    sms: false,
-    app: true,
+
+  // Modals state
+  const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const [showAddAddressModal, setShowAddAddressModal] = useState(false);
+
+  // Profile Form State
+  const [profileFormData, setProfileFormData] = useState({
+    fname: "",
+    lname: "",
+    email: "",
+    phoneNumber: "",
   });
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfilePic(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const [currentUser, setCurrentUser] = useState();
-
-  useEffect(() => {
-    const response = authService.getCurrentUser();
-    setCurrentUser(response);
-    setLoading(false);
-  }, []);
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileError, setProfileError] = useState("");
+  const [profileSuccess, setProfileSuccess] = useState("");
 
   // Password Form State
   const [passwordData, setPasswordData] = useState({
@@ -62,28 +43,112 @@ const Settings = () => {
     password: "",
     passwordConfirm: "",
   });
-
-  const [passwordError, setPasswordError] = useState("");
-  const [passwordSuccess, setPasswordSuccess] = useState("");
-  const [isUpdating, setIsUpdating] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
 
-  const handlePasswordChange = async (e) => {
+  // Address State
+  const [addresses, setAddresses] = useState([]);
+  const [loadingAddresses, setLoadingAddresses] = useState(true);
+  const [addressForm, setAddressForm] = useState({
+    type: "dropoff",
+    label: "",
+    streetAddress: "",
+    city: "",
+    state: "Lagos",
+    postalCode: "",
+    country: "Nigeria",
+    isDefault: false,
+  });
+  const [savingAddress, setSavingAddress] = useState(false);
+  const [addressError, setAddressError] = useState("");
+  const [addressSuccess, setAddressSuccess] = useState("");
+
+  // Load User Data
+  useEffect(() => {
+    try {
+      const user = authService.getCurrentUser();
+      setCurrentUser(user);
+      if (user) {
+        setProfileFormData({
+          fname: user.fname || "",
+          lname: user.lname || "",
+          email: user.email || "",
+          phoneNumber: user.phoneNumber || "",
+        });
+      }
+    } catch (e) {
+      console.error("Error loading user", e);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Fetch Addresses
+  const fetchAddresses = async () => {
+    try {
+      setLoadingAddresses(true);
+      const res = await addressService.getUserAddresses();
+      const list = res?.data?.addresses || [];
+      setAddresses(list);
+    } catch (err) {
+      console.error("Failed to load addresses", err);
+    } finally {
+      setLoadingAddresses(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAddresses();
+  }, []);
+
+  // Update Profile Info
+  const handleProfileSubmit = async (e) => {
     e.preventDefault();
+    setProfileError("");
+    setProfileSuccess("");
+    setProfileSaving(true);
 
-    // Reset messages
+    try {
+      await authService.updateMe({
+        fname: profileFormData.fname,
+        lname: profileFormData.lname,
+        email: profileFormData.email,
+        phoneNumber: profileFormData.phoneNumber,
+      });
+
+      setProfileSuccess("Profile updated successfully!");
+      const updated = authService.getCurrentUser();
+      if (updated) {
+        setCurrentUser(updated);
+        localStorage.setItem("user", JSON.stringify(updated));
+      }
+      setTimeout(() => {
+        setShowEditProfileModal(false);
+        setProfileSuccess("");
+      }, 900);
+    } catch (err) {
+      const msg = err.response?.data?.message || "Failed to update profile. Please try again.";
+      setProfileError(msg);
+    } finally {
+      setProfileSaving(false);
+    }
+  };
+
+  // Change Password
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
     setPasswordError("");
     setPasswordSuccess("");
 
     const { passwordCurrent, password, passwordConfirm } = passwordData;
 
-    // Validation
-    if (!passwordCurrent)
-      return setPasswordError("Current password is required");
+    if (!passwordCurrent) return setPasswordError("Current password is required");
     if (!password) return setPasswordError("New password is required");
-    
+
     const passwordCheck = validatePassword(password);
     if (!passwordCheck.isValid) {
       return setPasswordError(passwordCheck.message);
@@ -93,8 +158,7 @@ const Settings = () => {
       return setPasswordError("New passwords do not match");
     }
 
-    setIsUpdating(true);
-
+    setPasswordSaving(true);
     try {
       await authService.updatePassword({
         passwordCurrent,
@@ -107,143 +171,49 @@ const Settings = () => {
         password: "",
         passwordConfirm: "",
       });
+      setTimeout(() => {
+        setShowChangePasswordModal(false);
+        setPasswordSuccess("");
+      }, 1000);
     } catch (err) {
-      const msg =
-        err.response?.data?.message ||
-        "Failed to update password. Please try again.";
+      const msg = err.response?.data?.message || "Failed to update password. Please try again.";
       setPasswordError(msg);
     } finally {
-      setIsUpdating(false);
+      setPasswordSaving(false);
     }
   };
 
-  //UPDATE ME
-
-  const [userUpdateError, setUserUpdateError] = useState("");
-  const [userUpdateSuccess, setUserUpdateSuccess] = useState("");
-  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
-  const [userUpdateData, setUserUpdateData] = useState({
-    lname: currentUser?.lname,
-    fname: currentUser?.fname,
-    email: currentUser?.email,
-    phoneNumber: currentUser?.phoneNumber,
-    photo: currentUser?.photo,
-  });
-
-  // Load initial data when currentUser is available
-  useEffect(() => {
-    if (currentUser) {
-      setUserUpdateData({
-        fname: currentUser.fname || "",
-        lname: currentUser.lname || "",
-        email: currentUser.email || "",
-        phoneNumber: currentUser.phoneNumber || "",
-      });
-      // Also set initial profile pic if exists
-      if (currentUser.photo) {
-        setProfilePic(currentUser.photo);
-      }
-    }
-  }, [currentUser]);
-
-  const updateUserInfo = async (e) => {
-    e.preventDefault();
-
-    setUserUpdateError("");
-    setUserUpdateSuccess("");
-
-    setIsUpdatingProfile(true);
-
-    try {
-      await authService.updateMe({
-        fname: userUpdateData.fname,
-        lname: userUpdateData.lname,
-        email: userUpdateData.email,
-        phoneNumber: userUpdateData.phoneNumber,
-        photo: profilePic, // this is the base64 from upload or existing URL
-      });
-
-      setUserUpdateSuccess("User data updated successfully!");
-      const updatedUser = authService.getCurrentUser();
-      if (updatedUser) {
-        setCurrentUser(updatedUser);
-        localStorage.setItem("user", JSON.stringify(updatedUser));
-      }
-    } catch (err) {
-      const msg =
-        err.response?.data?.message ||
-        "Failed to update user data. Please try again.";
-      setUserUpdateError(msg);
-    } finally {
-      setIsUpdatingProfile(false);
-    }
-  };
-
-  //ADDRESS
-  const [addresses, setAddresses] = useState([]);
-  const [loadingAddresses, setLoadingAddresses] = useState(true);
-  const [showAddAddress, setShowAddAddress] = useState(false);
-
-  // Form state for new/edit address
-  const [addressForm, setAddressForm] = useState({
-    type: "dropoff", // or "pickup"
-    label: "",
-    streetAddress: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    country: "Nigeria",
-    isDefault: false,
-  });
-
-  const [addressError, setAddressError] = useState("");
-  const [addressSuccess, setAddressSuccess] = useState("");
-  const [savingAddress, setSavingAddress] = useState(false);
-
-  const fetchAddresses = async () => {
-    try {
-      setLoadingAddresses(true);
-      const response = await addressService.getUserAddresses();
-      setAddresses(response.data?.addresses || []);
-    } catch (err) {
-      console.error("Failed to load addresses", err);
-    } finally {
-      setLoadingAddresses(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAddresses();
-  }, []);
-
-  const handleCreateAddress = async (e) => {
+  // Create Address
+  const handleAddressSubmit = async (e) => {
     e.preventDefault();
     setAddressError("");
     setAddressSuccess("");
 
-    // Basic validation
-    if (!addressForm.label || !addressForm.streetAddress || !addressForm.city) {
-      return setAddressError("Please fill in all required fields");
+    if (!addressForm.label?.trim()) {
+      return setAddressError("Address label is required");
+    }
+    if (!addressForm.streetAddress?.trim()) {
+      return setAddressError("Street address is required");
+    }
+    if (!addressForm.city?.trim()) {
+      return setAddressError("City is required");
     }
 
     setSavingAddress(true);
-
     try {
-      const newAddress = await addressService.createAddress({
-        type: addressForm.type,
-        label: addressForm.label,
-        streetAddress: addressForm.streetAddress,
-        city: addressForm.city,
-        state: addressForm.state,
-        postalCode: addressForm.postalCode,
-        country: addressForm.country,
-        isDefault: addressForm.isDefault,
+      await addressService.createAddress({
+        type: addressForm.type || "dropoff",
+        label: addressForm.label.trim(),
+        streetAddress: addressForm.streetAddress.trim(),
+        city: addressForm.city.trim(),
+        state: addressForm.state?.trim() || "",
+        postalCode: addressForm.postalCode?.trim() || "",
+        country: addressForm.country || "Nigeria",
+        isDefault: Boolean(addressForm.isDefault),
       });
 
       await fetchAddresses();
       setAddressSuccess("Address added successfully!");
-
-      // Reset form
       setAddressForm({
         type: "dropoff",
         label: "",
@@ -254,7 +224,10 @@ const Settings = () => {
         country: "Nigeria",
         isDefault: false,
       });
-      setShowAddAddress(false);
+      setTimeout(() => {
+        setShowAddAddressModal(false);
+        setAddressSuccess("");
+      }, 900);
     } catch (err) {
       setAddressError(err.response?.data?.message || "Failed to save address");
     } finally {
@@ -262,590 +235,394 @@ const Settings = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading...</p>
-        <div className="respinner"></div>
-      </div>
-    );
-  }
+  // Logout
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+    } catch (e) {
+      console.error("Logout error", e);
+    } finally {
+      router.push("/login");
+    }
+  };
+
+  const fullName = [currentUser?.fname, currentUser?.lname].filter(Boolean).join(" ") || "User";
+  const userEmail = currentUser?.email || "No email registered";
+  const userPhone = currentUser?.phoneNumber || "No phone registered";
+
+  // Check if address is in Lagos for serviceable pill
+  const isServiceableAddress = (addr) => {
+    const loc = `${addr.state || ""} ${addr.city || ""} ${addr.streetAddress || ""}`.toLowerCase();
+    return loc.includes("lagos") || loc.includes("ikeja") || loc.includes("lekki") || loc.includes("victoria");
+  };
 
   return (
-    <div className="settings-page">
-      <div className="settings-header">
-        <h1>My Account</h1>
-        <p>Manage your account preferences and security</p>
+    <div className="account-page">
+      {/* Header */}
+      <div className="account-header">
+        <h1 className="account-title">Account</h1>
+        <p className="account-subtitle">Your details, addresses and security.</p>
       </div>
 
-      {/* Tab Navigation */}
-      <div className="settings-tabs">
-        <button
-          className={activeTab === "profile" ? "tab active" : "tab"}
-          onClick={() => setActiveTab("profile")}
-        >
-          <User size={18} />
-          Profile
-        </button>
-        <button
-          className={activeTab === "security" ? "tab active" : "tab"}
-          onClick={() => setActiveTab("security")}
-        >
-          <Shield size={18} />
-          Security
-        </button>
-        {/* <button
-          className={activeTab === "notifications" ? "tab active" : "tab"}
-          onClick={() => setActiveTab("notifications")}
-        >
-          <Bell size={18} />
-          Notifications
-        </button> */}
-        <button
-          className={activeTab === "privacy" ? "tab active" : "tab"}
-          onClick={() => setActiveTab("privacy")}
-        >
-          <Database size={18} />
-          Data & Privacy
-        </button>
-      </div>
+      {/* Main 2-Column Grid */}
+      <div className="account-grid">
+        {/* Left Column */}
+        <div className="account-left-col">
+          {/* 1. Profile Card */}
+          <div className="account-card">
+            <div className="account-card-header">
+              <h2 className="account-card-title">Profile</h2>
+              <button
+                type="button"
+                className="account-card-action-link"
+                onClick={() => {
+                  setProfileFormData({
+                    fname: currentUser?.fname || "",
+                    lname: currentUser?.lname || "",
+                    email: currentUser?.email || "",
+                    phoneNumber: currentUser?.phoneNumber || "",
+                  });
+                  setProfileError("");
+                  setProfileSuccess("");
+                  setShowEditProfileModal(true);
+                }}
+              >
+                Edit
+              </button>
+            </div>
 
-      <div className="settings-content">
-        {/* 1. Profile Settings */}
-        {activeTab === "profile" && (
-          <div>
-            <form className="profile-tab" onSubmit={updateUserInfo}>
-              <div className="profile-picture-section">
-                <div className="avatar-wrapper">
-                  {profilePic ? (
-                    <img
-                      src={profilePic}
-                      alt="Profile"
-                      className="avatar-img"
-                    />
-                  ) : (
-                    <div className="avatar-placeholder">
-                      <User size={48} />
-                    </div>
-                  )}
-                  <label className="upload-btn">
-                    <Camera size={18} />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                    />
-                  </label>
-                </div>
-                <div>
-                  <h3>
-                    {currentUser?.fname} {currentUser?.lname}
-                  </h3>
-                  <p>{currentUser?.email}</p>
+            <div className="account-info-rows">
+              <div className="account-info-row">
+                <span className="account-info-label">Name</span>
+                <span className="account-info-value">{fullName}</span>
+              </div>
+              <div className="account-info-row">
+                <span className="account-info-label">Email</span>
+                <div className="account-info-value">
+                  <span>{userEmail}</span>
+                  <span className="pill-verified-inline">
+                    <span className="dot">•</span> Verified
+                  </span>
                 </div>
               </div>
-              {/* Error / Success Messages */}
-              {userUpdateError && (
-                <div className="alert error">
-                  <X size={18} />
-                  {userUpdateError}
+              <div className="account-info-row">
+                <span className="account-info-label">Phone</span>
+                <div className="account-info-value">
+                  <span>{userPhone}</span>
+                  <span className="pill-verified-inline">
+                    <span className="dot">•</span> Verified
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Addresses Card */}
+          <div className="account-card">
+            <div className="account-card-header">
+              <h2 className="account-card-title">Addresses</h2>
+            </div>
+
+            <div className="account-addresses-list">
+              {addresses && addresses.length > 0 ? (
+                addresses.map((addr, idx) => {
+                  const serviceable = isServiceableAddress(addr);
+                  const displayCity = addr.city || (addr.state ? addr.state : "Lagos");
+                  return (
+                    <div key={addr._id || idx} className="account-address-row">
+                      <div className="account-address-left">
+                        <div className="account-address-icon">
+                          <MapPin size={18} />
+                        </div>
+                        <div className="account-address-text">
+                          <h4>{addr.streetAddress || addr.label || "Address line"}</h4>
+                          <p>{displayCity}</p>
+                        </div>
+                      </div>
+                      {serviceable ? (
+                        <span className="pill-serviceable">
+                          <span className="dot">•</span> Serviceable
+                        </span>
+                      ) : (
+                        <span className="pill-outside-coverage">
+                          <span className="dot">•</span> Outside current coverage
+                        </span>
+                      )}
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="account-address-row">
+                  <div className="account-address-left">
+                    <div className="account-address-icon">
+                      <MapPin size={18} />
+                    </div>
+                    <div className="account-address-text">
+                      <h4>No address added yet</h4>
+                      <p>Add your pickup address to schedule repairs</p>
+                    </div>
+                  </div>
                 </div>
               )}
-              {userUpdateSuccess && (
-                <div className="alert success">
-                  <Check size={18} />
-                  {userUpdateSuccess}
+            </div>
+
+            <button
+              type="button"
+              className="btn-add-address-outline"
+              onClick={() => {
+                setAddressError("");
+                setAddressSuccess("");
+                setShowAddAddressModal(true);
+              }}
+            >
+              Add address
+            </button>
+          </div>
+
+          {/* 3. Security Card */}
+          <div className="account-card">
+            <div className="account-card-header">
+              <h2 className="account-card-title">Security</h2>
+            </div>
+
+            <div className="account-info-rows">
+              <div className="security-row">
+                <span className="security-label">Password</span>
+                <button
+                  type="button"
+                  className="account-card-action-link"
+                  onClick={() => {
+                    setPasswordData({
+                      passwordCurrent: "",
+                      password: "",
+                      passwordConfirm: "",
+                    });
+                    setPasswordError("");
+                    setPasswordSuccess("");
+                    setShowChangePasswordModal(true);
+                  }}
+                >
+                  Change
+                </button>
+              </div>
+              <div className="security-row">
+                <span className="security-label">Sign-in methods</span>
+                <span className="security-value">Google · Phone OTP</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column */}
+        <div className="account-right-col">
+          {/* Verification Card */}
+          <div className="account-card">
+            <h2 className="account-card-title" style={{ marginBottom: "16px" }}>
+              Verification
+            </h2>
+
+            <div className="verification-status-banner">
+              <span className="dot">•</span> Account verified
+            </div>
+
+            <p className="verification-desc">
+              Extra checks appear only when a service needs them.
+            </p>
+
+            <Link href="/dashboard/my-account/verification" className="verification-link">
+              Open verification centre
+            </Link>
+          </div>
+
+          {/* Log out Button */}
+          <button
+            type="button"
+            className="btn-account-logout"
+            onClick={handleLogout}
+          >
+            Log out
+          </button>
+        </div>
+      </div>
+
+      {/* Edit Profile Modal */}
+      {showEditProfileModal && (
+        <div className="account-modal-backdrop" onClick={() => setShowEditProfileModal(false)}>
+          <div className="account-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="account-modal-header">
+              <div>
+                <h2>Edit profile</h2>
+                <p>Update your personal details</p>
+              </div>
+              <button
+                type="button"
+                className="account-modal-close-btn"
+                onClick={() => setShowEditProfileModal(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {profileError && <div className="account-form-error">{profileError}</div>}
+            {profileSuccess && <div className="account-form-success">{profileSuccess}</div>}
+
+            <form onSubmit={handleProfileSubmit}>
+              <div className="account-form-grid">
+                <div className="account-form-field">
+                  <label>First name</label>
+                  <input
+                    type="text"
+                    value={profileFormData.fname}
+                    onChange={(e) =>
+                      setProfileFormData({ ...profileFormData, fname: e.target.value })
+                    }
+                    placeholder="First name"
+                    required
+                  />
                 </div>
-              )}
-              {passwordSuccess && (
-                <div className="alert success">
-                  <Check size={18} />
-                  {passwordSuccess}
+                <div className="account-form-field">
+                  <label>Last name</label>
+                  <input
+                    type="text"
+                    value={profileFormData.lname}
+                    onChange={(e) =>
+                      setProfileFormData({ ...profileFormData, lname: e.target.value })
+                    }
+                    placeholder="Last name"
+                    required
+                  />
                 </div>
-              )}
-              <div className="profile-form">
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>First Name</label>
-                    <input
-                      type="text"
-                      value={userUpdateData?.fname}
-                      onChange={(e) =>
-                        setUserUpdateData({
-                          ...userUpdateData,
-                          fname: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Last Name</label>
-                    <input
-                      type="text"
-                      value={userUpdateData?.lname}
-                      onChange={(e) =>
-                        setUserUpdateData({
-                          ...userUpdateData,
-                          lname: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Email</label>
-                    <input
-                      type="email"
-                      value={userUpdateData?.email}
-                      onChange={(e) =>
-                        setUserUpdateData({
-                          ...userUpdateData,
-                          email: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Phone Number</label>
-                    <input
-                      type="text"
-                      value={userUpdateData?.phoneNumber}
-                      onChange={(e) =>
-                        setUserUpdateData({
-                          ...userUpdateData,
-                          phoneNumber: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
+                <div className="account-form-field full">
+                  <label>Email address</label>
+                  <input
+                    type="email"
+                    value={profileFormData.email}
+                    onChange={(e) =>
+                      setProfileFormData({ ...profileFormData, email: e.target.value })
+                    }
+                    placeholder="Email address"
+                    required
+                  />
                 </div>
+                <div className="account-form-field full">
+                  <label>Phone number</label>
+                  <input
+                    type="tel"
+                    value={profileFormData.phoneNumber}
+                    onChange={(e) =>
+                      setProfileFormData({ ...profileFormData, phoneNumber: e.target.value })
+                    }
+                    placeholder="+234..."
+                  />
+                </div>
+              </div>
+
+              <div className="account-modal-actions">
+                <button
+                  type="button"
+                  className="btn-modal-cancel"
+                  onClick={() => setShowEditProfileModal(false)}
+                >
+                  Cancel
+                </button>
                 <button
                   type="submit"
-                  className="save-btn"
-                  disabled={isUpdatingProfile}
+                  className="btn-modal-submit"
+                  disabled={profileSaving}
                 >
-                  {isUpdatingProfile ? (
+                  {profileSaving ? (
                     <>
-                      <Loader2 size={18} className="spin" />
-                      Saving...
+                      <Loader2 size={16} className="btn-inline-spinner" /> Saving...
                     </>
                   ) : (
-                    "Save Changes"
+                    "Save changes"
                   )}
                 </button>
               </div>
             </form>
-            {/* Addresses Section */}
-            <div className="addresses-section" style={{ marginTop: "40px" }}>
-              <div
-                className="section-header"
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <h3>Saved Addresses</h3>
-                <div
-                  style={{ display: "flex", gap: "12px", alignItems: "center" }}
-                >
-                  <button
-                    type="button"
-                    onClick={fetchAddresses}
-                    className="save-btn"
-                    style={{
-                      padding: "8px 12px",
-                      fontSize: "14px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                    title="Refresh Addresses"
-                    disabled={loadingAddresses}
-                  >
-                    <RefreshCw
-                      size={18}
-                      className={loadingAddresses ? "spin-animation" : ""}
-                    />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowAddAddress(!showAddAddress)}
-                    className="save-btn"
-                    style={{ padding: "8px 16px", fontSize: "14px" }}
-                  >
-                    {showAddAddress ? "Cancel" : "Add New Address"}
-                  </button>
-                </div>
-              </div>
-
-              {/* Success/Error Messages */}
-              {addressError && (
-                <div className="alert error" style={{ margin: "16px 0" }}>
-                  <X size={18} />
-                  {addressError}
-                </div>
-              )}
-              {addressSuccess && (
-                <div className="alert success" style={{ margin: "16px 0" }}>
-                  <Check size={18} />
-                  {addressSuccess}
-                </div>
-              )}
-
-              {/* Add New Address Form */}
-              {showAddAddress && (
-                <form
-                  onSubmit={handleCreateAddress}
-                  className="address-form"
-                  style={{
-                    marginTop: "20px",
-                    padding: "20px",
-                    background: "#f9f9f9",
-                    borderRadius: "8px",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "12px",
-                  }}
-                >
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label>
-                        Address Label <span style={{ color: "red" }}>*</span>
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Home, Office"
-                        value={addressForm.label}
-                        onChange={(e) =>
-                          setAddressForm({
-                            ...addressForm,
-                            label: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Type</label>
-                      <select
-                        value={addressForm.type}
-                        onChange={(e) =>
-                          setAddressForm({
-                            ...addressForm,
-                            type: e.target.value,
-                          })
-                        }
-                      >
-                        <option value="dropoff">Dropoff</option>
-                        <option value="pickup">Pickup</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label>
-                      Street Address <span style={{ color: "red" }}>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="House number, street name"
-                      value={addressForm.streetAddress}
-                      onChange={(e) =>
-                        setAddressForm({
-                          ...addressForm,
-                          streetAddress: e.target.value,
-                        })
-                      }
-                      required
-                    />
-                  </div>
-
-                  <div className="form-row-three">
-                    <div className="form-group">
-                      <label>
-                        City <span style={{ color: "red" }}>*</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={addressForm.city}
-                        onChange={(e) =>
-                          setAddressForm({
-                            ...addressForm,
-                            city: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>State</label>
-                      <input
-                        type="text"
-                        value={addressForm.state}
-                        onChange={(e) =>
-                          setAddressForm({
-                            ...addressForm,
-                            state: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Postal Code</label>
-                      <input
-                        type="text"
-                        value={addressForm.postalCode}
-                        onChange={(e) =>
-                          setAddressForm({
-                            ...addressForm,
-                            postalCode: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Country</label>
-                    <input type="text" value="Nigeria" disabled />
-                  </div>
-
-                  <label
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      margin: "16px 0",
-                    }}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={addressForm.isDefault}
-                      onChange={(e) =>
-                        setAddressForm({
-                          ...addressForm,
-                          isDefault: e.target.checked,
-                        })
-                      }
-                    />
-                    <span>Set as default address</span>
-                  </label>
-
-                  <button
-                    type="submit"
-                    className="save-btn"
-                    disabled={savingAddress}
-                  >
-                    {savingAddress ? (
-                      <>
-                        <Loader2 size={18} className="spin" />
-                        Saving...
-                      </>
-                    ) : (
-                      "Save Address"
-                    )}
-                  </button>
-                </form>
-              )}
-
-              {/* List of Saved Addresses */}
-              <div className="addresses-list" style={{ marginTop: "24px" }}>
-                {loadingAddresses ? (
-                  <p>Loading addresses...</p>
-                ) : addresses.length === 0 ? (
-                  <p>No saved addresses yet.</p>
-                ) : (
-                  addresses?.map((addr) => (
-                    <div
-                      key={addr._id || addr.id}
-                      className="address-card"
-                      style={{
-                        padding: "16px",
-                        border: "1px solid #ddd",
-                        borderRadius: "8px",
-                        marginBottom: "12px",
-                        background: addr.isDefault ? "#f0fdf4" : "#fff",
-                        borderLeft: addr.isDefault
-                          ? "4px solid #22c55e"
-                          : "4px solid transparent",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <div>
-                          <strong>{addr.label}</strong>
-                          {addr.isDefault && (
-                            <span
-                              style={{
-                                marginLeft: "8px",
-                                color: "#22c55e",
-                                fontSize: "12px",
-                              }}
-                            >
-                              Default
-                            </span>
-                          )}
-                          <p style={{ margin: "8px 0", color: "#555" }}>
-                            {addr.streetAddress}
-                            <br />
-                            {addr.city}, {addr.state}{" "}
-                            {addr.postalCode && `• ${addr.postalCode}`}
-                            <br />
-                            {addr.country}
-                          </p>
-                          <small style={{ textTransform: "capitalize" }}>
-                            Type: {addr.type}
-                          </small>
-                        </div>
-                        <div>
-                          {/* You can add Edit/Delete buttons here later */}
-                          {/* <button>Edit</button> <button>Delete</button> */}
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Security Tab */}
-        {activeTab === "security" && (
-          <div className="security-tab">
-            {/* Change Password */}
-            <div className="security-section">
-              <h3>Change Password</h3>
+      {/* Change Password Modal */}
+      {showChangePasswordModal && (
+        <div className="account-modal-backdrop" onClick={() => setShowChangePasswordModal(false)}>
+          <div className="account-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="account-modal-header">
+              <div>
+                <h2>Change password</h2>
+                <p>Ensure your account is using a strong, unique password</p>
+              </div>
+              <button
+                type="button"
+                className="account-modal-close-btn"
+                onClick={() => setShowChangePasswordModal(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
 
-              {/* Error / Success Messages */}
-              {passwordError && (
-                <div className="alert error">
-                  <X size={18} />
-                  {passwordError}
-                </div>
-              )}
-              {passwordSuccess && (
-                <div className="alert success">
-                  <Check size={18} />
-                  {passwordSuccess}
-                </div>
-              )}
+            {passwordError && <div className="account-form-error">{passwordError}</div>}
+            {passwordSuccess && <div className="account-form-success">{passwordSuccess}</div>}
 
-              <form className="password-form" onSubmit={handlePasswordChange}>
-                <div className="form-group">
-                  <label>Current Password</label>
-                  <div style={{ position: "relative", width: "100%" }}>
+            <form onSubmit={handlePasswordSubmit}>
+              <div className="account-form-grid">
+                <div className="account-form-field full">
+                  <label>Current password</label>
+                  <div className="password-input-wrap">
                     <input
                       type={showCurrentPassword ? "text" : "password"}
                       value={passwordData.passwordCurrent}
                       onChange={(e) =>
-                        setPasswordData({
-                          ...passwordData,
-                          passwordCurrent: e.target.value,
-                        })
+                        setPasswordData({ ...passwordData, passwordCurrent: e.target.value })
                       }
-                      disabled={isUpdating}
+                      placeholder="Enter current password"
                       required
-                      style={{ width: "100%", paddingRight: "44px" }}
                     />
-                    <span
+                    <button
+                      type="button"
+                      className="password-toggle-btn"
                       onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                      style={{
-                        position: "absolute",
-                        right: "14px",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        color: "#6b7280",
-                      }}
                     >
-                      {showCurrentPassword ? <Eye size={18} /> : <EyeOff size={18} />}
-                    </span>
+                      {showCurrentPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label>New Password</label>
-                  <div style={{ position: "relative", width: "100%" }}>
+                <div className="account-form-field full">
+                  <label>New password</label>
+                  <div className="password-input-wrap">
                     <input
                       type={showNewPassword ? "text" : "password"}
                       value={passwordData.password}
                       onChange={(e) =>
-                        setPasswordData({
-                          ...passwordData,
-                          password: e.target.value,
-                        })
+                        setPasswordData({ ...passwordData, password: e.target.value })
                       }
-                      disabled={isUpdating}
-                      minLength={8}
+                      placeholder="Enter new password (min. 8 characters)"
                       required
-                      style={{ width: "100%", paddingRight: "44px" }}
                     />
-                    <span
+                    <button
+                      type="button"
+                      className="password-toggle-btn"
                       onClick={() => setShowNewPassword(!showNewPassword)}
-                      style={{
-                        position: "absolute",
-                        right: "14px",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        color: "#6b7280",
-                      }}
                     >
-                      {showNewPassword ? <Eye size={18} /> : <EyeOff size={18} />}
-                    </span>
+                      {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                   </div>
+
                   {passwordData.password && (
-                    <div
-                      style={{
-                        background: "#f9fafb",
-                        border: "1px solid #e5e7eb",
-                        borderRadius: "8px",
-                        padding: "10px 12px",
-                        marginTop: "8px",
-                        fontSize: "12px",
-                      }}
-                    >
-                      <p style={{ fontWeight: 600, color: "#374151", marginBottom: "6px" }}>
-                        Password must contain:
-                      </p>
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "4px" }}>
+                    <div className="password-requirements-box">
+                      <p className="password-requirements-title">Password must contain:</p>
+                      <div className="password-requirements-list">
                         {getPasswordRequirements(passwordData.password).map((req, idx) => (
                           <div
                             key={idx}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "6px",
-                              color: req.met ? "#16a34a" : "#6b7280",
-                              transition: "color 0.2s ease",
-                            }}
+                            className={`password-requirement-item ${req.met ? "met" : ""}`}
                           >
                             {req.met ? (
-                              <Check size={14} color="#16a34a" strokeWidth={3} />
+                              <Check size={13} className="req-icon met" />
                             ) : (
-                              <span
-                                style={{
-                                  width: "6px",
-                                  height: "6px",
-                                  borderRadius: "50%",
-                                  backgroundColor: "#9ca3af",
-                                  display: "inline-block",
-                                  marginLeft: "4px",
-                                  marginRight: "4px",
-                                }}
-                              />
+                              <span className="req-dot">•</span>
                             )}
                             <span>{req.label}</span>
                           </div>
@@ -855,206 +632,204 @@ const Settings = () => {
                   )}
                 </div>
 
-                <div className="form-group">
-                  <label>Confirm New Password</label>
-                  <div style={{ position: "relative", width: "100%" }}>
+                <div className="account-form-field full">
+                  <label>Confirm new password</label>
+                  <div className="password-input-wrap">
                     <input
                       type={showConfirmPassword ? "text" : "password"}
                       value={passwordData.passwordConfirm}
                       onChange={(e) =>
-                        setPasswordData({
-                          ...passwordData,
-                          passwordConfirm: e.target.value,
-                        })
+                        setPasswordData({ ...passwordData, passwordConfirm: e.target.value })
                       }
-                      disabled={isUpdating}
+                      placeholder="Repeat new password"
                       required
-                      style={{ width: "100%", paddingRight: "44px" }}
                     />
-                    <span
+                    <button
+                      type="button"
+                      className="password-toggle-btn"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      style={{
-                        position: "absolute",
-                        right: "14px",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        color: "#6b7280",
-                      }}
                     >
-                      {showConfirmPassword ? <Eye size={18} /> : <EyeOff size={18} />}
-                    </span>
+                      {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                   </div>
-                  {passwordData.password &&
-                    passwordData.passwordConfirm &&
+                  {passwordData.passwordConfirm &&
                     passwordData.password !== passwordData.passwordConfirm && (
-                      <small style={{ color: "#e74c3c" }}>
+                      <span className="password-mismatch-hint">
                         Passwords do not match
-                      </small>
+                      </span>
                     )}
                 </div>
+              </div>
 
+              <div className="account-modal-actions">
+                <button
+                  type="button"
+                  className="btn-modal-cancel"
+                  onClick={() => setShowChangePasswordModal(false)}
+                >
+                  Cancel
+                </button>
                 <button
                   type="submit"
-                  className="save-btn"
-                  disabled={
-                    isUpdating ||
-                    !passwordData.passwordCurrent ||
-                    !passwordData.password ||
-                    !passwordData.passwordConfirm ||
-                    passwordData.password !== passwordData.passwordConfirm ||
-                    passwordData.password.length < 8
-                  }
+                  className="btn-modal-submit"
+                  disabled={passwordSaving}
                 >
-                  {isUpdating ? (
+                  {passwordSaving ? (
                     <>
-                      <Loader2 size={18} className="spin" />
-                      Updating...
+                      <Loader2 size={16} className="btn-inline-spinner" /> Updating...
                     </>
                   ) : (
-                    "Update Password"
+                    "Update password"
                   )}
                 </button>
-              </form>
-            </div>
-
-            {/* Recent Login Activity */}
-            {/*
-            <div className="security-section">
-              <h3>Recent Login Activity</h3>
-              <div className="login-history">
-                <div className="login-item">
-                  <Smartphone size={20} />
-                  <div>
-                    <strong>iPhone 15 Pro</strong> • New York, USA
-                    <small>Today, 2:34 PM • Current session</small>
-                  </div>
-                  <span className="active-dot"></span>
-                </div>
-                <div className="login-item">
-                  <Globe size={20} />
-                  <div>
-                    <strong>Chrome • Windows</strong> • Los Angeles, USA
-                    <small>Yesterday, 9:12 AM</small>
-                  </div>
-                </div>
               </div>
-            </div>
-            */}
+            </form>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* 3. Notifications */}
-        {activeTab === "notifications" && (
-          <div className="notifications-tab">
-            <h3>Notification Preferences</h3>
-            <div className="notification-options">
-              <div className="notif-item">
-                <div>
-                  <Mail size={20} />
-                  <div>
-                    <strong>Email Notifications</strong>
-                    <p>Repair updates, promotions, account alerts</p>
-                  </div>
-                </div>
-                <label className="toggle-switch">
-                  <input
-                    type="checkbox"
-                    checked={notifications.email}
-                    onChange={() =>
-                      setNotifications({
-                        ...notifications,
-                        email: !notifications.email,
-                      })
-                    }
-                  />
-                  <span className="slider"></span>
-                </label>
+      {/* Add Address Modal */}
+      {showAddAddressModal && (
+        <div className="account-modal-backdrop" onClick={() => setShowAddAddressModal(false)}>
+          <div className="account-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="account-modal-header">
+              <div>
+                <h2>Add new address</h2>
+                <p>We will check coverage when arranging device pickups</p>
               </div>
-
-              <div className="notif-item">
-                <div>
-                  <Smartphone size={20} />
-                  <div>
-                    <strong>SMS Alerts</strong>
-                    <p>Critical updates only (repair status, claims)</p>
-                  </div>
-                </div>
-                <label className="toggle-switch">
-                  <input
-                    type="checkbox"
-                    checked={notifications.sms}
-                    onChange={() =>
-                      setNotifications({
-                        ...notifications,
-                        sms: !notifications.sms,
-                      })
-                    }
-                  />
-                  <span className="slider"></span>
-                </label>
-              </div>
-
-              <div className="notif-item">
-                <div>
-                  <Bell size={20} />
-                  <div>
-                    <strong>App Push Notifications</strong>
-                    <p>Real-time updates in the mobile app</p>
-                  </div>
-                </div>
-                <label className="toggle-switch">
-                  <input
-                    type="checkbox"
-                    checked={notifications.app}
-                    onChange={() =>
-                      setNotifications({
-                        ...notifications,
-                        app: !notifications.app,
-                      })
-                    }
-                  />
-                  <span className="slider"></span>
-                </label>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 4. Data & Privacy */}
-        {activeTab === "privacy" && (
-          <div className="privacy-tab">
-            <div className="privacy-actions">
-              <button className="privacy-btn download">
-                <Download size={20} />
-                Download My Data
-                <small>Receive a copy of all your account data</small>
-              </button>
-
-              <button className="privacy-btn delete">
-                <Trash2 size={20} />
-                Delete Account
-                <small>This action is permanent and cannot be undone</small>
+              <button
+                type="button"
+                className="account-modal-close-btn"
+                onClick={() => setShowAddAddressModal(false)}
+              >
+                <X size={18} />
               </button>
             </div>
 
-            <div className="legal-notices">
-              <h4>Legal & Consent</h4>
-              <p>
-                By using this service, you agree to our{" "}
-                <a href="#">Terms of Service</a> and{" "}
-                <a href="#">Privacy Policy</a>. You consent to the collection
-                and processing of your personal data as described.
-              </p>
-              <p>Last updated: December 1, 2025</p>
-            </div>
+            {addressError && <div className="account-form-error">{addressError}</div>}
+            {addressSuccess && <div className="account-form-success">{addressSuccess}</div>}
+
+            <form onSubmit={handleAddressSubmit}>
+              <div className="account-form-grid">
+                <div className="account-form-field">
+                  <label>
+                    Address Label <span className="required-star">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={addressForm.label}
+                    onChange={(e) => setAddressForm({ ...addressForm, label: e.target.value })}
+                    placeholder="e.g. Home, Office"
+                    required
+                  />
+                </div>
+
+                <div className="account-form-field">
+                  <label>Type</label>
+                  <select
+                    value={addressForm.type}
+                    onChange={(e) => setAddressForm({ ...addressForm, type: e.target.value })}
+                  >
+                    <option value="dropoff">Dropoff</option>
+                    <option value="pickup">Pickup</option>
+                  </select>
+                </div>
+
+                <div className="account-form-field full">
+                  <label>
+                    Street Address <span className="required-star">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={addressForm.streetAddress}
+                    onChange={(e) =>
+                      setAddressForm({ ...addressForm, streetAddress: e.target.value })
+                    }
+                    placeholder="House number, street name"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="account-form-grid three-cols">
+                <div className="account-form-field">
+                  <label>
+                    City <span className="required-star">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={addressForm.city}
+                    onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="account-form-field">
+                  <label>State</label>
+                  <input
+                    type="text"
+                    value={addressForm.state}
+                    onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })}
+                  />
+                </div>
+
+                <div className="account-form-field">
+                  <label>Postal Code</label>
+                  <input
+                    type="text"
+                    value={addressForm.postalCode}
+                    onChange={(e) => setAddressForm({ ...addressForm, postalCode: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="account-form-grid" style={{ marginBottom: "8px" }}>
+                <div className="account-form-field full">
+                  <label>Country</label>
+                  <input
+                    type="text"
+                    value={addressForm.country || "Nigeria"}
+                    readOnly
+                    style={{ backgroundColor: "#f9fafb", cursor: "default" }}
+                  />
+                </div>
+              </div>
+
+              <label className="account-checkbox-row">
+                <input
+                  type="checkbox"
+                  checked={addressForm.isDefault}
+                  onChange={(e) => setAddressForm({ ...addressForm, isDefault: e.target.checked })}
+                />
+                <span>Set as default address</span>
+              </label>
+
+              <div className="account-modal-actions">
+                <button
+                  type="button"
+                  className="btn-modal-cancel"
+                  onClick={() => setShowAddAddressModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn-modal-submit"
+                  disabled={savingAddress}
+                >
+                  {savingAddress ? (
+                    <>
+                      <Loader2 size={16} className="btn-inline-spinner" /> Saving...
+                    </>
+                  ) : (
+                    "Save address"
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
-};
-
-export default Settings;
+}

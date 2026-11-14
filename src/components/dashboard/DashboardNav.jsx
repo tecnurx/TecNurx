@@ -1,12 +1,10 @@
 "use client";
 
-import { Bell, Search, CircleUserRound, LogOut, Menu, X } from "lucide-react";
+import { Bell, Menu, X, LogOut, User, CreditCard } from "lucide-react";
 import React, { useContext, useState, useRef, useEffect } from "react";
-import logo from "@/assets/images/logo.png";
 import "./dashcomp.css";
-import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { authService } from "../../../services/auth";
 import { SidebarContext } from "../../../context/SidebarContext";
 import { NotificationService } from "../../../services/notification";
@@ -20,12 +18,25 @@ const DashboardNav = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
 
   const { isSidebarOpen, toggleSidebar } = useContext(SidebarContext);
   const router = useRouter();
+  const pathname = usePathname();
 
   const notificationsRef = useRef(null);
   const profileRef = useRef(null);
+
+  useEffect(() => {
+    try {
+      const userJson = localStorage.getItem("user");
+      if (userJson) {
+        setCurrentUser(JSON.parse(userJson));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -43,7 +54,6 @@ const DashboardNav = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Format timestamp nicely
   const formatTimestamp = (isoString) => {
     const date = new Date(isoString);
     const now = new Date();
@@ -68,7 +78,6 @@ const DashboardNav = () => {
         NotificationService.getUnreadCount(),
       ]);
 
-      // API structure: { data: { notifications: [...] }, unreadCount: 0 }
       const notifs = notifsRes?.data?.notifications || [];
       const count = countRes?.unreadCount || countRes?.data?.unreadCount || 0;
 
@@ -110,11 +119,10 @@ const DashboardNav = () => {
     try {
       await authService.logout();
       router.push("/login");
-    } catch (error) {
-      console.error("Logout failed:", error);
+    } catch (err) {
+      console.error("Logout failed:", err);
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      localStorage.removeItem("pendingVerificationEmail");
       document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
       router.push("/login");
     } finally {
@@ -123,10 +131,8 @@ const DashboardNav = () => {
     }
   };
 
-  // FIXED: Use correct _id and isRead
   const markAsRead = async (notificationId) => {
-    if (!notificationId) return; // safety
-
+    if (!notificationId) return;
     try {
       await NotificationService.markOneasRead(notificationId);
       setNotifications((prev) =>
@@ -148,18 +154,205 @@ const DashboardNav = () => {
     }
   };
 
-  return (
-    <div className="dashNav">
-      {/* Desktop Logo */}
-      <Link href="/dashboard" className="navonelogo">
-        <Image src={logo} alt="logo" width={120} />
-      </Link>
+  // Generate dynamic breadcrumbs matching design
+  const renderBreadcrumb = () => {
+    // Book repair
+    if (pathname === "/dashboard/repairs/book" || pathname === "/dashboard/book-repair") {
+      return (
+        <div className="topbar-breadcrumb">
+          <Link href="/dashboard/repairs" className="breadcrumb-link breadcrumb-root">
+            Repairs
+          </Link>
+          <span className="breadcrumb-sep breadcrumb-sub">/</span>
+          <span className="breadcrumb-current breadcrumb-sub">Book a repair</span>
+        </div>
+      );
+    }
 
-      {/* Mobile Menu */}
-      <div className="side-logo-menu">
+    if (
+      pathname.startsWith("/dashboard/repairs/") ||
+      pathname.startsWith("/dashboard/my-orders/")
+    ) {
+      const rest = pathname
+        .replace("/dashboard/repairs/", "")
+        .replace("/dashboard/my-orders/", "");
+      const isQuote = rest.includes("/quote");
+      const isPickup = rest.includes("/pickup");
+      const id = rest.split("/")[0];
+      const displayId =
+        id.length > 8 ? id.slice(-8).toUpperCase() : id.toUpperCase();
+
+      if (isQuote) {
+        return (
+          <div className="topbar-breadcrumb">
+            <Link href="/dashboard/repairs" className="breadcrumb-link breadcrumb-root">
+              Repairs
+            </Link>
+            <span className="breadcrumb-sep breadcrumb-sub">/</span>
+            <Link
+              href={`/dashboard/repairs/${id}`}
+              className="breadcrumb-link breadcrumb-sub"
+            >
+              Repair #{displayId}
+            </Link>
+            <span className="breadcrumb-sep breadcrumb-sub">/</span>
+            <span className="breadcrumb-current breadcrumb-sub">Quote</span>
+          </div>
+        );
+      }
+
+      if (isPickup) {
+        return (
+          <div className="topbar-breadcrumb">
+            <Link href="/dashboard/repairs" className="breadcrumb-link breadcrumb-root">
+              Repairs
+            </Link>
+            <span className="breadcrumb-sep breadcrumb-sub">/</span>
+            <Link
+              href={`/dashboard/repairs/${id}`}
+              className="breadcrumb-link breadcrumb-sub"
+            >
+              Repair #{displayId}
+            </Link>
+            <span className="breadcrumb-sep breadcrumb-sub">/</span>
+            <span className="breadcrumb-current breadcrumb-sub">Pickup</span>
+          </div>
+        );
+      }
+
+      return (
+        <div className="topbar-breadcrumb">
+          <Link href="/dashboard/repairs" className="breadcrumb-link breadcrumb-root">
+            Repairs
+          </Link>
+          <span className="breadcrumb-sep breadcrumb-sub">/</span>
+          <span className="breadcrumb-current breadcrumb-sub">Repair #{displayId}</span>
+        </div>
+      );
+    }
+    if (pathname === "/dashboard/repairs" || pathname === "/dashboard/my-orders") {
+      return <span className="topbar-title">Repairs</span>;
+    }
+    if (pathname === "/dashboard/devices/add") {
+      return (
+        <div className="topbar-breadcrumb">
+          <Link href="/dashboard/devices" className="breadcrumb-link breadcrumb-root">
+            Devices
+          </Link>
+          <span className="breadcrumb-sep breadcrumb-sub">/</span>
+          <span className="breadcrumb-current breadcrumb-sub">Add a device</span>
+        </div>
+      );
+    }
+    if (pathname.startsWith("/dashboard/devices/")) {
+      const devId = pathname.replace("/dashboard/devices/", "");
+      if (devId !== "add") {
+        return (
+          <div className="topbar-breadcrumb">
+            <Link href="/dashboard/devices" className="breadcrumb-link breadcrumb-root">
+              Devices
+            </Link>
+            <span className="breadcrumb-sep breadcrumb-sub">/</span>
+            <span className="breadcrumb-current breadcrumb-sub">View device</span>
+          </div>
+        );
+      }
+    }
+    if (pathname === "/dashboard/devices") {
+      return <span className="topbar-title">Devices</span>;
+    }
+    if (pathname === "/dashboard/payments") {
+      return (
+        <div className="topbar-breadcrumb">
+          <Link href="/dashboard/my-account" className="breadcrumb-link breadcrumb-root">
+            Account
+          </Link>
+          <span className="breadcrumb-sep breadcrumb-sub">/</span>
+          <span className="breadcrumb-current breadcrumb-sub">Payments</span>
+        </div>
+      );
+    }
+    if (pathname.includes("/claims/")) {
+      const rest = pathname.split("/claims/")[1];
+      const claimId = rest ? rest.split("/")[0] : "CLM-0192";
+      return (
+        <div className="topbar-breadcrumb">
+          <Link href="/dashboard/insurance" className="breadcrumb-link breadcrumb-root">
+            Protection
+          </Link>
+          <span className="breadcrumb-sep breadcrumb-sub">/</span>
+          <span className="breadcrumb-current breadcrumb-sub">Claim #{claimId.toUpperCase()}</span>
+        </div>
+      );
+    }
+    if (pathname === "/dashboard/insurance" || pathname === "/dashboard/protection") {
+      return <span className="topbar-title">Protection</span>;
+    }
+    if (pathname === "/dashboard/support") {
+      return (
+        <div className="topbar-breadcrumb">
+          <Link href="/dashboard/my-account" className="breadcrumb-link breadcrumb-root">
+            Account
+          </Link>
+          <span className="breadcrumb-sep breadcrumb-sub">/</span>
+          <span className="breadcrumb-current breadcrumb-sub">Support</span>
+        </div>
+      );
+    }
+    if (
+      pathname === "/dashboard/notifications" ||
+      pathname === "/dashboard/my-account/notifications"
+    ) {
+      return (
+        <div className="topbar-breadcrumb">
+          <Link href="/dashboard/my-account" className="breadcrumb-link breadcrumb-root">
+            Account
+          </Link>
+          <span className="breadcrumb-sep breadcrumb-sub">/</span>
+          <span className="breadcrumb-current breadcrumb-sub">Notifications</span>
+        </div>
+      );
+    }
+    if (pathname === "/dashboard/my-account/verification") {
+      return (
+        <div className="topbar-breadcrumb">
+          <Link href="/dashboard/my-account" className="breadcrumb-link breadcrumb-root">
+            Account
+          </Link>
+          <span className="breadcrumb-sep breadcrumb-sub">/</span>
+          <span className="breadcrumb-current breadcrumb-sub">Verification</span>
+        </div>
+      );
+    }
+    if (pathname === "/dashboard/my-account") {
+      return <span className="topbar-title">Account</span>;
+    }
+    if (pathname === "/dashboard/book-repair") {
+      return <span className="topbar-title">Book a Repair</span>;
+    }
+    if (pathname === "/dashboard") {
+      return <span className="topbar-title">Overview</span>;
+    }
+    return <span className="topbar-title">Repairs</span>;
+  };
+
+  const getUserInitials = () => {
+    if (currentUser?.fname && currentUser?.lname) {
+      return `${currentUser.fname[0]}${currentUser.lname[0]}`.toUpperCase();
+    }
+    if (currentUser?.fname) {
+      return `${currentUser.fname.slice(0, 2)}`.toUpperCase();
+    }
+    return "TO";
+  };
+
+  return (
+    <div className="topbar-container">
+      {/* Left side: Mobile menu toggle + dynamic breadcrumb */}
+      <div className="topbar-left">
         <button
           type="button"
-          className="menu-toggle-btn"
+          className="mobile-sidebar-toggle"
           onClick={toggleSidebar}
           aria-label="Toggle navigation menu"
         >
@@ -169,87 +362,57 @@ const DashboardNav = () => {
             <Menu size={20} color="#111111" strokeWidth={2.2} />
           )}
         </button>
-        <Link href="/dashboard" style={{ display: "flex", alignItems: "center" }}>
-          <Image src={logo} alt="TecNurx" width={115} height={28} priority />
-        </Link>
+
+        {renderBreadcrumb()}
       </div>
 
-      <div className="nav-items">
-        <div className="nav-search">
-          <input type="text" placeholder="Search" />
-          <Search className="search-icon" />
+      {/* Right side: Notifications bell + User badge */}
+      <div className="topbar-right">
+        {/* Notifications Page Link */}
+        <div className="topbar-notifications">
+          <Link
+            href="/dashboard/notifications"
+            className="topbar-bell-btn"
+            aria-label="View notifications"
+          >
+            <Bell size={18} strokeWidth={2} />
+            {unreadCount > 0 && <span className="topbar-bell-dot"></span>}
+          </Link>
         </div>
 
-        {/* Notifications */}
-        <div className="notifications" ref={notificationsRef}>
-          <div className="notification-wrapper" onClick={toggleNotifications}>
-            <Bell className="notification" />
-            {unreadCount > 0 && (
-              <span className="notification-badge">{unreadCount}</span>
-            )}
-          </div>
+        {/* User initials badge */}
+        <div className="topbar-profile" ref={profileRef}>
+          <button
+            type="button"
+            className="user-avatar-badge"
+            onClick={toggleDropdown}
+            aria-label="User account menu"
+          >
+            {getUserInitials()}
+          </button>
 
-          {isNotificationsOpen && (
-            <div className="notifications-panel">
-              <div className="notifications-header">
-                <h3>Notifications</h3>
-                {unreadCount > 0 && (
-                  <button onClick={markAllAsRead} className="mark-all-read">
-                    Mark all as read
-                  </button>
-                )}
-              </div>
-
-              <div className="notifications-list">
-                {loading ? (
-                  <p className="loading">Loading...</p>
-                ) : error ? (
-                  <p className="error">{error}</p>
-                ) : notifications.length === 0 ? (
-                  <p className="loading">No notifications</p>
-                ) : (
-                  notifications.map((n) => (
-                    <div
-                      key={n._id} // ← Fixed: use _id
-                      className={`notification-item ${
-                        n.isRead ? "" : "unread"
-                      }`}
-                      onClick={() => !n.isRead && markAsRead(n._id)}
-                      style={{ cursor: n.isRead ? "default" : "pointer" }}
-                    >
-                      <div>
-                        <p className="notif-title">{n.title}</p>
-                        <p className="notif-message">{n.message}</p>
-                      </div>
-                      <span className="timestamp">
-                        {formatTimestamp(n.createdAt)}
-                      </span>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Profile Dropdown */}
-        <div className="user-profile" ref={profileRef}>
-          <CircleUserRound onClick={toggleDropdown} className="user-icon" />
           {isDropdownOpen && (
             <div className="dropdown-menu">
+              <div className="dropdown-user-info">
+                <strong>
+                  {currentUser?.fname} {currentUser?.lname}
+                </strong>
+                <span>{currentUser?.email}</span>
+              </div>
+              <hr className="dropdown-divider" />
               <Link href="/dashboard/my-account" className="dropdown-item">
-                My Account
+                <User size={15} /> My Account
               </Link>
-              <Link href="/dashboard/payments" className="dropdown-item">
-                Payment Settings
-              </Link>
+              {/* <Link href="/dashboard/payments" className="dropdown-item">
+                <CreditCard size={15} /> Payment Settings
+              </Link> */}
               <hr className="dropdown-divider" />
               <button
                 onClick={handleLogout}
                 disabled={isLoggingOut}
                 className="dropdown-item log-out-item"
               >
-                <LogOut size={16} />
+                <LogOut size={15} />
                 {isLoggingOut ? "Logging out..." : "Logout"}
               </button>
             </div>

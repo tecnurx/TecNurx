@@ -997,7 +997,7 @@ const Insurance = () => {
                     </p>
                     <div className="alert-actions">
                       <Link
-                        href="/dashboard/book-repair"
+                        href="/dashboard/repairs/book"
                         className="repair-estimate-btn"
                       >
                         Get a <span>repair estimate</span>

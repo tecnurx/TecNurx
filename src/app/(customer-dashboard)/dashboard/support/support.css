@@ -1,0 +1,253 @@
+/* ==========================================================================
+   Customer Support Page Styles (/dashboard/support)
+   Matching Designer Mockup with Embedded Chatbox
+   ========================================================================== */
+
+.support-page {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 0 60px 0;
+  box-sizing: border-box;
+}
+
+/* Header */
+.support-header {
+  margin-bottom: 24px;
+}
+
+.support-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+  margin: 0 0 4px 0;
+}
+
+.support-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* 2-Column Grid matching Mockup */
+.support-grid {
+  display: grid;
+  grid-template-columns: 1fr 440px;
+  gap: 28px;
+  align-items: start;
+}
+
+/* Cards Base */
+.support-card {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-sizing: border-box;
+}
+
+.support-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 18px 0;
+  letter-spacing: -0.01em;
+}
+
+/* 1. Contact Us Channels List */
+.contact-channels-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-channel-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid #f1f5f9;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.15s ease;
+}
+
+.contact-channel-item:last-of-type {
+  border-bottom: none;
+  padding-bottom: 16px;
+}
+
+.contact-channel-item:hover {
+  opacity: 0.8;
+}
+
+.contact-channel-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #111827;
+  flex-shrink: 0;
+}
+
+.contact-channel-info h4 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 2px 0;
+}
+
+.contact-channel-info p {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 0;
+}
+
+.support-hours-footnote {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #f1f5f9;
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* 2. Your Tickets Section */
+.tickets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ticket-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ticket-item-row:hover {
+  border-color: #cbd5e1;
+  background-color: #f1f5f9;
+}
+
+.ticket-item-left h4 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 3px 0;
+}
+
+.ticket-item-left p {
+  font-size: 12.5px;
+  color: #64748b;
+  margin: 0;
+}
+
+.ticket-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.ticket-status-pill.open {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.ticket-status-pill.closed {
+  background-color: #ecfdf5;
+  color: #047857;
+}
+
+.ticket-empty-text {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 0;
+  padding: 10px 0;
+}
+
+/* 3. Common Questions Accordion */
+.faq-accordion-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.faq-item {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+}
+
+.faq-question-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #111827;
+  text-align: left;
+  cursor: pointer;
+  gap: 12px;
+  transition: color 0.15s ease;
+}
+
+.faq-question-btn:hover {
+  color: #d97706;
+}
+
+.faq-icon {
+  color: #64748b;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.faq-item.is-open .faq-icon {
+  transform: rotate(90deg);
+  color: #111827;
+}
+
+.faq-answer-content {
+  padding: 0 0 16px 0;
+  font-size: 13.5px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+/* Right Column: Embedded Chatbox Host */
+.support-chatbox-column {
+  position: sticky;
+  top: 90px;
+}
+
+/* Responsive */
+@media screen and (max-width: 960px) {
+  .support-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .support-chatbox-column {
+    position: static;
+  }
+}

@@ -1,0 +1,220 @@
+/* ==========================================================================
+   Verification Centre Page Styles (/dashboard/my-account/verification)
+   ========================================================================== */
+
+.verification-page {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 0 60px 0;
+  box-sizing: border-box;
+}
+
+.verification-header {
+  margin-bottom: 24px;
+}
+
+.verification-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+  margin: 0 0 4px 0;
+}
+
+.verification-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* 2-Column Grid */
+.verification-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 28px;
+  align-items: start;
+}
+
+/* Left Column: Service Cards */
+.verification-services-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.verification-service-card {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 20px;
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  gap: 16px;
+  transition: all 0.15s ease;
+}
+
+.verification-service-card:hover {
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.verification-service-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.verification-service-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #111827;
+  flex-shrink: 0;
+}
+
+.verification-service-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.verification-service-info h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.verification-service-info p {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Status Badges */
+.pill-verification-complete {
+  background-color: #ecfdf5;
+  color: #047857;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pill-verification-neutral {
+  background-color: #f1f5f9;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pill-verification-complete .dot,
+.pill-verification-neutral .dot {
+  font-size: 8px;
+}
+
+/* Right Column: Explanatory Cards */
+.verification-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.verification-info-card {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.verification-info-card h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 12px 0;
+}
+
+.verification-info-card p {
+  font-size: 13.5px;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.verification-notice-box {
+  margin-top: 16px;
+  background-color: #f8fafc;
+  border: 1px solid #edf2f7;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.verification-notice-icon {
+  color: #64748b;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.verification-notice-text {
+  font-size: 13px;
+  color: #334155;
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+@media (max-width: 960px) {
+  .verification-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .verification-page {
+    padding: 0 0 36px;
+  }
+
+  .verification-title {
+    font-size: 26px;
+  }
+
+  .verification-service-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px 16px;
+    border-radius: 16px;
+    gap: 12px;
+  }
+
+  .verification-service-left {
+    width: 100%;
+  }
+
+  .verification-info-card {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+}

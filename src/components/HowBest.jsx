@@ -22,7 +22,7 @@ const HowBest = () => {
       img: how2,
       title: "Fix something",
       desc: "Don't let a broken device slow you down. Schedule an expert repair with our technicians to get your gadget working like new",
-      href: "/dashboard/book-repair",
+      href: "/dashboard/repairs/book",
     },
     {
       id: 3,

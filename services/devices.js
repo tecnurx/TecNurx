@@ -18,8 +18,14 @@ export const deviceService = {
     return response.data;
   },
 
-  updateDevice: async ({ deviceId }) => {
-    const response = await axios.patch(`/devices/${deviceId}`);
+  updateDevice: async (arg1, arg2) => {
+    if (arg1 && typeof arg1 === "object" && arg1.deviceId) {
+      const { deviceId, ...rest } = arg1;
+      const data = arg2 !== undefined ? arg2 : rest;
+      const response = await axios.patch(`/devices/${deviceId}`, data);
+      return response.data;
+    }
+    const response = await axios.patch(`/devices/${arg1}`, arg2);
     return response.data;
   },
 

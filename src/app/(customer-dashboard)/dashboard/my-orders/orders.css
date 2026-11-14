@@ -1,166 +1,494 @@
-.orders-page {
-  padding: 24px;
-  max-width: 1200px;
-  /* margin: 0 auto; */
+/* ==========================================================================
+   Repairs / My Orders Page Styles - Redesigned UI
+   ========================================================================== */
+
+.repairs-page-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 8px 0 48px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  color: #111827;
 }
 
-.orders-header h1 {
-  font-size: 28px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
-
-.orders-header p {
-  color: rgba(0, 0, 0, 0.7);
-  font-size: 16px;
-}
-
-.orders-list {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  margin-top: 32px;
-}
-
-.order-card {
-  background: #fff;
-  border: 1.5px solid rgba(221, 221, 228, 0.8);
-  border-radius: 16px;
-  overflow: hidden;
-  transition: all 0.2s ease;
-}
-
-.order-card:hover {
-  border-color: rgba(255, 196, 0, 0.5);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
-}
-
-.order-main {
-  padding: 24px;
+/* --------------------------------------------------------------------------
+   Header Section
+   -------------------------------------------------------------------------- */
+.repairs-header {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  gap: 16px;
 }
 
-.order-id-date {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.repairs-header-text {
+  flex: 1;
 }
 
-.order-id {
- font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: #ffc400;
+.repairs-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
 }
 
-.order-date {
+.repairs-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+  font-weight: 400;
+}
+
+.book-repair-header-btn {
+  background-color: #ffb800;
+  color: #000000;
   font-size: 14px;
-  color: #666;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.order-details h3 {
-  margin: 0 0 6px 0;
-  font-size: 18px;
   font-weight: 600;
-}
-
-.service {
-  color: #666;
-  margin: 0 0 12px 0;
-}
-
-.order-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 14px;
-  color: #444;
-}
-
-.order-meta span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.status-badge {
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.order-actions {
-  padding: 0 24px 20px;
-}
-
-.track-btn {
-  padding: 12px 24px;
-  background: #ffc400;
-  color: black;
+  padding: 10px 24px;
+  border-radius: 9999px;
   border: none;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
+  text-decoration: none;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.book-repair-header-btn:hover {
+  background-color: #f0ab00;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 184, 0, 0.25);
+}
+
+.book-repair-header-btn:active {
+  transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   Filter Tabs
+   -------------------------------------------------------------------------- */
+.repairs-tabs-bar {
+  display: flex;
+  align-items: center;
   gap: 10px;
-  transition: background 0.2s;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
 }
 
-.track-btn:hover {
-  background: #e0ad00;
-}
-
-/* Empty State */
-.empty-orders {
-  text-align: center;
-  padding: 80px 20px;
-  color: #666;
-}
-
-.empty-orders p {
-  margin: 16px 0 24px;
-  font-size: 18px;
-}
-
-.request-repair-btn {
-  padding: 14px 32px;
-  background: #ffc400;
-  color: black;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
+.tab-pill-btn {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
+  font-size: 13.5px;
   font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 9999px;
   cursor: pointer;
+  transition: all 0.18s ease;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
-@media screen and (max-width: 1290px) {
-  .orders-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.tab-pill-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
 }
 
-@media screen and (max-width: 900px) {
+.tab-pill-btn.active {
+  background: #111827;
+  color: #ffffff;
+  border-color: #111827;
 }
 
-@media screen and (max-width: 600px) {
-  .orders-page {
-    padding: 0;
+/* --------------------------------------------------------------------------
+   Status Badge Pills
+   -------------------------------------------------------------------------- */
+.status-pill,
+.status-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.status-dot,
+.status-badge-pill .dot {
+  font-size: 8px;
+  line-height: 1;
+}
+
+/* Amber / Quote Ready / In Progress */
+.status-pill.badge-warning,
+.status-badge-pill.warning {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.status-pill.badge-warning .status-dot,
+.status-badge-pill.warning .dot {
+  color: #f59e0b;
+}
+
+/* Green / Delivered / Completed */
+.status-pill.badge-success,
+.status-badge-pill.success {
+  background-color: #ecfdf5;
+  color: #047857;
+}
+
+.status-pill.badge-success .status-dot,
+.status-badge-pill.success .dot {
+  color: #10b981;
+}
+
+/* Gray / Cancelled / Neutral */
+.status-pill.badge-neutral,
+.status-badge-pill.pending {
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+.status-pill.badge-neutral .status-dot,
+.status-badge-pill.pending .dot {
+  color: #64748b;
+}
+
+/* Blue / Engineer Assigned / Info */
+.status-pill.badge-info,
+.status-badge-pill.info {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+}
+
+.status-pill.badge-info .status-dot,
+.status-badge-pill.info .dot {
+  color: #3b82f6;
+}
+
+/* --------------------------------------------------------------------------
+   Active Repair Card
+   -------------------------------------------------------------------------- */
+.active-repair-card {
+  background: #ffffff;
+  border: 1.5px solid #111827;
+  border-radius: 20px;
+  padding: 24px 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.active-card-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.active-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.active-device-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.015em;
+}
+
+.active-repair-sub {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* 6-segment Progress Bar */
+.progress-segments-row {
+  display: flex;
+  gap: 8px;
+  margin: 22px 0 12px 0;
+  align-items: center;
+}
+
+.progress-segment {
+  height: 6px;
+  flex: 1;
+  border-radius: 9999px;
+  transition: background-color 0.25s ease;
+}
+
+.progress-segment.completed {
+  background-color: #111827;
+}
+
+.progress-segment.active {
+  background-color: #ffb800;
+}
+
+.progress-segment.upcoming {
+  background-color: #e2e8f0;
+}
+
+.active-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.step-info-label {
+  font-size: 13.5px;
+  color: #64748b;
+  font-weight: 400;
+}
+
+.review-quote-action {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.review-quote-action:hover {
+  color: #ffb800;
+}
+
+/* --------------------------------------------------------------------------
+   Past Repairs Card
+   -------------------------------------------------------------------------- */
+.past-repairs-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 24px 28px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.past-repairs-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.01em;
+}
+
+.past-repairs-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.past-repair-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: background-color 0.15s ease, padding 0.15s ease;
+  border-radius: 8px;
+}
+
+.past-repair-row:last-child {
+  border-bottom: none;
+  padding-bottom: 4px;
+}
+
+.past-repair-row:hover {
+  background-color: #fafbfd;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.past-repair-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.past-repair-device {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+}
+
+.past-repair-sub {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Empty State Card (Design 2)
+   -------------------------------------------------------------------------- */
+.empty-repairs-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 88px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.empty-icon-box {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background-color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.empty-wrench-icon {
+  color: #0f172a;
+  transform: rotate(-10deg);
+}
+
+.empty-title {
+  font-size: 21px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.015em;
+}
+
+.empty-desc {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.55;
+  max-width: 380px;
+  margin: 0 0 24px 0;
+}
+
+.empty-book-btn {
+  background-color: #ffb800;
+  color: #000000;
+  font-size: 14.5px;
+  font-weight: 600;
+  padding: 12px 32px;
+  border-radius: 9999px;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.empty-book-btn:hover {
+  background-color: #f0ab00;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 184, 0, 0.25);
+}
+
+.empty-estimate-link {
+  color: #0f172a;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  margin-top: 16px;
+  display: inline-block;
+  transition: color 0.15s ease;
+}
+
+.empty-estimate-link:hover {
+  color: #ffb800;
+}
+
+/* --------------------------------------------------------------------------
+   Preview Mode Toggle Tool (Helpful for reviewing both states)
+   -------------------------------------------------------------------------- */
+.preview-switch-toolbar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1f5f9;
+  border-radius: 9999px;
+  padding: 4px 10px;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #475569;
+}
+
+.preview-switch-btn {
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  transition: all 0.15s ease;
+}
+
+.preview-switch-btn.active {
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Design
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 640px) {
+  .repairs-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  .orders-list {
-    grid-template-columns: 1fr;
+
+  .book-repair-header-btn {
+    width: 100%;
+    justify-content: center;
   }
-  .orders-header h1{
-    font-size: 24px;
+
+  .active-repair-card {
+    padding: 20px 18px;
   }
-  .orders-header p{
-    font-size: 14px;
+
+  .active-card-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .past-repairs-card {
+    padding: 20px 18px;
+  }
+
+  .past-repair-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .empty-repairs-card {
+    padding: 60px 18px;
   }
 }

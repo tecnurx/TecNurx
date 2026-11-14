@@ -1,0 +1,688 @@
+/* ==========================================================================
+   Book a Repair Styles (Images 1-5 Specification)
+   ========================================================================== */
+
+.book-repair-page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 8px 0 54px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  color: #111827;
+}
+
+/* Page Header */
+.book-header {
+  margin-bottom: 24px;
+}
+
+.book-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.025em;
+}
+
+.book-step-sub {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Stepper Progress Bar */
+.book-stepper-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.book-stepper-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stepper-bar {
+  height: 4px;
+  border-radius: 9999px;
+  background-color: #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.stepper-bar.completed {
+  background-color: #000000;
+}
+
+.stepper-bar.active {
+  background-color: #ffb800;
+}
+
+.stepper-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.stepper-label.active {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.stepper-label.completed {
+  color: #0f172a;
+}
+
+/* 2-Column Layout */
+.book-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 28px;
+  align-items: start;
+}
+
+/* Main Form Card */
+.book-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.book-card-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 20px 0;
+  letter-spacing: -0.015em;
+}
+
+/* Radio Selection Cards (Step 1 Device, Step 2 Quality, Step 3 Address) */
+.selection-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.selection-card {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  cursor: pointer;
+  background: #ffffff;
+  transition: all 0.18s ease;
+}
+
+.selection-card:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.selection-card.selected {
+  border-color: #000000;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px #000000;
+}
+
+.custom-radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: all 0.15s ease;
+}
+
+.selection-card.selected .custom-radio {
+  border-color: #000000;
+}
+
+.radio-inner-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #000000;
+}
+
+.selection-card-content {
+  flex: 1;
+}
+
+.selection-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.selection-item-name {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.selection-pill-row {
+  margin: 5px 0 6px 0;
+  display: flex;
+  align-items: center;
+}
+
+.status-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3.5px 11px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
+.status-badge-pill .dot {
+  font-size: 8px;
+  line-height: 1;
+}
+
+.status-badge-pill.success,
+.status-badge-pill.pill-verified {
+  background-color: #ecfdf5;
+  color: #047857;
+}
+
+.status-badge-pill.success .dot,
+.status-badge-pill.pill-verified .dot {
+  color: #10b981;
+}
+
+.status-badge-pill.pending,
+.status-badge-pill.pill-pending {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.status-badge-pill.pending .dot,
+.status-badge-pill.pill-pending .dot {
+  color: #64748b;
+}
+
+.status-badge-pill.warning,
+.status-badge-pill.pill-review {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.status-badge-pill.warning .dot,
+.status-badge-pill.pill-review .dot {
+  color: #f59e0b;
+}
+
+.selection-item-sub {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 0;
+}
+
+.add-new-btn-card {
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  background: #fafafa;
+  transition: all 0.15s ease;
+  color: #0f172a;
+}
+
+.add-new-btn-card:hover {
+  border-color: #94a3b8;
+  background: #f4f4f5;
+}
+
+.add-plus-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #e4e4e7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.add-card-text h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 2px 0;
+}
+
+.add-card-text p {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Step 2 Problem Screen */
+.device-header-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #fef3c7;
+  color: #854d0e;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  margin-bottom: 24px;
+}
+
+.device-header-pill .dot {
+  font-size: 8px;
+  color: #d97706;
+}
+
+.problem-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 12px 0;
+}
+
+.category-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.category-chip {
+  padding: 9px 18px;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.category-chip:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.category-chip.selected {
+  background: #000000;
+  border-color: #000000;
+  color: #ffffff;
+}
+
+/* Part Quality Options */
+.quality-price-tag {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 4px 0 2px 0;
+}
+
+/* Step 3 Pickup Screen */
+.day-cards-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.day-picker-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 14px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background: #ffffff;
+}
+
+.day-picker-card:hover {
+  border-color: #cbd5e1;
+}
+
+.day-picker-card.selected {
+  background: #000000;
+  border-color: #000000;
+  color: #ffffff;
+}
+
+.day-picker-card.selected .day-name-sub {
+  color: #9ca3af;
+}
+
+.day-number {
+  font-size: 17px;
+  font-weight: 800;
+  margin-bottom: 2px;
+}
+
+.day-name-sub {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.time-window-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.time-slot-chip {
+  padding: 10px 18px;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.time-slot-chip:hover {
+  border-color: #cbd5e1;
+}
+
+.time-slot-chip.selected {
+  background: #000000;
+  border-color: #000000;
+  color: #ffffff;
+}
+
+.input-group-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.contact-text-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  font-size: 14.5px;
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+
+.contact-text-input:focus {
+  border-color: #000000;
+}
+
+/* Step 4 Review Screen */
+.review-table {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+}
+
+.review-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 14px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+  gap: 16px;
+}
+
+.review-row:last-child {
+  border-bottom: none;
+}
+
+.review-label {
+  color: #64748b;
+  font-weight: 500;
+  width: 120px;
+  flex-shrink: 0;
+}
+
+.review-val {
+  color: #0f172a;
+  font-weight: 700;
+  text-align: right;
+  word-break: break-word;
+}
+
+.agreement-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 0 20px 0;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.agreement-checkbox-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #000000;
+  cursor: pointer;
+}
+
+/* Bottom Action Buttons */
+.form-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.btn-form-back {
+  background: #ffffff;
+  border: 1.5px solid #0f172a;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 28px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-form-back:hover {
+  background: #f8fafc;
+}
+
+.btn-form-continue {
+  background-color: #ffb800;
+  border: none;
+  color: #000000;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 34px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-form-continue:hover {
+  background-color: #e6a600;
+}
+
+.btn-form-continue:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Right Side Cards */
+.side-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  margin-bottom: 20px;
+}
+
+.side-card-title {
+  font-size: 19px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 20px 0;
+}
+
+/* How It Works Steps */
+.how-it-works-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.how-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.how-step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #000000;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.how-step-text h4 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 3px 0;
+}
+
+.how-step-text p {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Estimate Card */
+.estimate-price-banner {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.02em;
+}
+
+.estimate-sub-note {
+  font-size: 13.5px;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0 0 18px 0;
+}
+
+.estimate-info-box {
+  background-color: #f8fafc;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: #334155;
+  line-height: 1.45;
+}
+
+.estimate-info-box .icon {
+  color: #059669;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+@media (max-width: 860px) {
+  .book-grid {
+    grid-template-columns: 1fr;
+  }
+  .book-stepper-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .day-cards-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .book-repair-page {
+    padding: 0 0 36px;
+  }
+
+  .book-title {
+    font-size: 26px;
+  }
+
+  .book-card {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+
+  .book-card-title {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .day-cards-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .form-actions-row {
+    gap: 12px;
+  }
+
+  .btn-form-back {
+    padding: 10px 20px;
+    font-size: 13.5px;
+  }
+
+  .btn-form-continue {
+    padding: 11px 24px;
+    font-size: 13.5px;
+    flex: 1;
+    text-align: center;
+  }
+
+  .estimate-price-banner {
+    font-size: 26px;
+  }
+}

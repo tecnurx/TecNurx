@@ -1,325 +1,562 @@
-.insurance-page {
-  padding: 24px;
-  /* max-width: 1100px; */
+/* ==========================================================================
+   Protection Page Styles - Customer Dashboard Redesign
+   ========================================================================== */
+
+.protection-page {
+  padding: 4px 0 60px 0;
+  max-width: 1140px;
   margin: 0 auto;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  box-sizing: border-box;
 }
 
-.insurance-header h1 {
-  font-size: 28px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-}
-
-.insurance-header p {
-  color: rgba(0, 0, 0, 0.7);
-  font-size: 16px;
-}
-
-/* Tabs */
-.insurance-tabs {
+/* Page Header */
+.protection-header {
   display: flex;
-  gap: 4px;
-  margin: 32px 0 24px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.tab {
-  padding: 12px 20px;
-  background: none;
-  border: none;
-  font-size: 15px;
-  font-weight: 500;
-  color: #666;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border-bottom: 3px solid transparent;
-  transition: all 0.2s;
-}
-
-.tab.active {
-  color: #000;
-  font-weight: 600;
-  border-bottom-color: #ffc400;
-}
-
-.tab:hover:not(.active) {
-  color: #000;
-  background: #f9f9f9;
-}
-
-/* Active Plans */
-.active-plans {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 26px;
   gap: 16px;
 }
 
-.plan-card {
+.protection-header-left .protection-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px 0;
+}
+
+.protection-header-left .protection-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+}
+
+.protection-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* State Switcher (for previewing Coming soon vs Normal) */
+.state-switcher-pills {
+  display: inline-flex;
+  background-color: #f3f4f6;
+  border-radius: 9999px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.state-switcher-btn {
+  background: transparent;
+  border: none;
+  border-radius: 9999px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.state-switcher-btn.active {
+  background: #ffffff;
+  color: #111827;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.btn-find-plan-header {
+  background-color: #ffb800;
+  color: #000000;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.16s ease;
+  white-space: nowrap;
+  font-family: inherit;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-find-plan-header:hover {
+  background-color: #e6a600;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   STATE 1: COMING SOON (Design 2)
+   ========================================================================== */
+
+.coming-soon-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 80px 24px;
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  align-items: start;
-  padding: 20px;
-  background: #fff;
-  border: 1px solid rgba(221, 221, 228, 0.8);
-  border-radius: 16px;
-  transition: all 0.2s;
-}
-
-.plan-card:hover {
-  border-color: rgba(255, 196, 0, 0.5);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-}
-
-.plan-info h3 {
-  margin: 4px 0;
-  font-size: 18px;
-}
-
-.coverage {
-  color: #10b981;
-  font-weight: 500;
-  margin: 8px 0;
-}
-
-.plan-meta {
-  font-size: 14px;
-  color: #666;
-}
-
-.plan-id {
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-weight: 600;
-  color: #ffc400;
-}
-
-.plan-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: space-between;
-  width: 100%;
   align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-.renew-btn {
-  padding: 10px 20px;
-  background: #ffc400;
-  color: black;
-  border: none;
-  border-radius: 10px;
+.coming-soon-icon-box {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #111827;
+  margin-bottom: 22px;
+}
+
+.coming-soon-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.01em;
+  margin: 0 0 10px 0;
+}
+
+.coming-soon-desc {
+  font-size: 14.5px;
+  color: #64748b;
+  line-height: 1.55;
+  max-width: 440px;
+  margin: 0 0 20px 0;
+}
+
+.coming-soon-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #fef3c7;
+  color: #b45309;
+  font-size: 12px;
   font-weight: 600;
-  cursor: pointer;
-}
-
-.view-policy {
-  font-size: 14px;
-  color: #ffc400;
-  text-decoration: none;
-}
-
-/* Claim Form */
-.claim-form-container {
-  max-width: 680px;
-  margin: 0 auto;
-}
-
-.claim-form h2 {
-  font-size: 22px;
-  margin-bottom: 8px;
-}
-
-.claim-form p {
-  color: #666;
-  margin-bottom: 28px;
-}
-
-.claim-form-container .form-group {
+  padding: 4px 14px;
+  border-radius: 9999px;
   margin-bottom: 24px;
 }
 
-.claim-form-container .form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
+.coming-soon-pill-badge .dot {
+  color: #f59e0b;
+  font-size: 10px;
 }
 
-.claim-form-container .form-group select,
-.claim-form-container .form-group textarea {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1.5px solid #ddd;
-  border-radius: 10px;
-  font-size: 15px;
-}
-
-.claim-form-container .form-group textarea {
-  resize: vertical;
-}
-
-.file-upload {
-  position: relative;
-}
-
-.file-upload input {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.upload-area {
-  border: 2px dashed #ccc;
-  border-radius: 12px;
-  padding: 40px 20px;
-  text-align: center;
-  background: #fafafa;
-  color: #888;
-  transition: all 0.2s;
-}
-
-.upload-area:hover {
-  border-color: #ffc400;
-  background: #fffbe6;
-}
-
-.uploaded-files {
-  margin-top: 12px;
-  font-size: 14px;
-  color: #666;
-}
-
-.submit-claim-btn {
-  width: 100%;
-  padding: 14px;
-  background: #ffc400;
-  color: black;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
+.btn-notify-me {
+  background-color: #ffb800;
+  color: #000000;
+  font-size: 14.5px;
   font-weight: 600;
+  padding: 12px 32px;
+  border-radius: 9999px;
+  border: none;
   cursor: pointer;
-  margin-top: 16px;
+  transition: all 0.16s ease;
+  font-family: inherit;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-/* Claim History */
-.claim-history {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+.btn-notify-me:hover {
+  background-color: #e6a600;
+  transform: translateY(-1px);
 }
 
-.claim-item {
+/* ==========================================================================
+   STATE 2: NORMAL STATE - PLANS & CLAIMS (Design 3)
+   ========================================================================== */
+
+.protection-sections-list {
   display: flex;
   flex-direction: column;
-  align-items: start;
-  gap: 32px;
-  padding: 18px;
-  background: #fff;
-  border: 1px solid rgba(221, 221, 228, 0.8);
-  border-radius: 14px;
+  gap: 28px;
 }
 
-.claim-main h4 {
-  margin: 0 0 4px 0;
+.protection-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.claim-main p {
+.protection-section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
   margin: 0;
-  color: #666;
-  font-size: 14px;
 }
 
-.claim-id-date {
-  font-size: 14px;
-  color: #888;
-  margin-bottom: 8px;
+.protection-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 24px 28px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
-.claim-status {
+
+/* Card Header Row */
+.protection-card-header {
   display: flex;
-  /* flex-direction: column; */
-  width: 100%;
-  gap: 12px;
-  align-items: start;
+  align-items: flex-start;
   justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
-.status-badgee {
+.protection-card-meta {
   display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.protection-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #111827;
+  flex-shrink: 0;
+}
+
+.protection-plan-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.protection-item-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.claim-id-nowrap {
+  white-space: nowrap;
+}
+
+.protection-item-sub {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Status Pills */
+.pill-active-plan {
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 13px;
+  background-color: #ecfdf5;
+  color: #059669;
+  font-size: 12px;
   font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  white-space: nowrap;
 }
 
-.status-badgee.approved {
-  background: #d1fae5;
-  color: #065f46;
-}
-.status-badgee.rejected {
-  background: #fee2e2;
-  color: #991b1b;
-}
-.status-badgee.pending {
-  background: #fff4e5;
-  color: #d97706;
+.pill-active-plan .dot {
+  color: #10b981;
+  font-size: 10px;
 }
 
-.payout {
+.pill-claim-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #fef3c7;
+  color: #b45309;
+  font-size: 12px;
   font-weight: 600;
-  color: #000;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  white-space: nowrap;
 }
-.no-plans {
+
+.pill-claim-warning .dot {
+  color: #f59e0b;
+  font-size: 10px;
+}
+
+/* Plans Card Actions Row */
+.protection-actions-row {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 12px;
-  padding: 40px 20px;
-}
-.no-plans h2 {
-  font-size: 18px;
-}
-.no-plans p {
-  color: #666;
-  font-size: 14px;
-  text-align: center;
 }
 
-@media screen and (max-width: 1290px) {
-  .insurance-page {
-    padding: 24px 0;
+.btn-view-policy {
+  background: transparent;
+  border: 1.5px solid #000000;
+  color: #000000;
+  border-radius: 9999px;
+  padding: 9px 22px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  font-family: inherit;
+}
+
+.btn-view-policy:hover {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.btn-start-claim {
+  background-color: #ffb800;
+  color: #000000;
+  border: none;
+  border-radius: 9999px;
+  padding: 10px 24px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  font-family: inherit;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-start-claim:hover {
+  background-color: #e6a600;
+  transform: translateY(-1px);
+}
+
+/* Claims Card Action */
+.protection-claim-action {
+  margin-top: 4px;
+}
+
+.claim-track-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  text-decoration: underline;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s ease;
+}
+
+.claim-track-link:hover {
+  opacity: 0.75;
+}
+
+/* ==========================================================================
+   Modals
+   ========================================================================== */
+
+.protection-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  backdrop-filter: blur(4px);
+}
+
+.protection-modal-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 28px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  animation: modalFadeIn 0.2s ease-out;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
   }
-  .active-plans {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .claim-history {
-    grid-template-columns: repeat(2, 1fr);
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
-@media screen and (max-width: 900px) {
+
+.protection-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
-@media screen and (max-width: 600px) {
-  .plan-actions {
-    align-items: stretch;
+
+.protection-modal-head h2 {
+  font-size: 19px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.protection-modal-close {
+  background: #f3f4f6;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+}
+
+.protection-modal-close:hover {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.policy-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.policy-info-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.policy-info-item span:first-child {
+  color: #64748b;
+}
+
+.policy-info-item span:last-child {
+  color: #111827;
+  font-weight: 600;
+}
+
+.protection-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn-modal-cancel {
+  padding: 10px 22px;
+  border-radius: 9999px;
+  border: 1.5px solid #e5e7eb;
+  background: #ffffff;
+  color: #374151;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-modal-cancel:hover {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.btn-protection-modal-close {
+  background-color: #ffb800;
+  color: #000000;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 24px;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-protection-modal-close:hover {
+  background-color: #f0ab00;
+}
+
+.btn-protection-modal-close:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media screen and (max-width: 640px) {
+  .protection-page {
+    padding: 0 0 36px;
   }
-  .active-plans {
-    grid-template-columns: 1fr;
+
+  .protection-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
-  .insurance-tabs {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+
+  .protection-actions-row {
+    flex-direction: column;
+    width: 100%;
   }
-  .claim-history {
-    grid-template-columns: 1fr;
+
+  .btn-view-policy,
+  .btn-start-claim {
+    width: 100%;
+    text-align: center;
   }
-  .insurance-header h1 {
-    font-size: 24px;
+
+  .protection-card {
+    padding: 20px 16px;
+    border-radius: 16px;
   }
-  .insurance-header p {
-    font-size: 14px;
+
+  .protection-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .protection-card-meta {
+    width: 100%;
+  }
+
+  .pill-claim-warning,
+  .pill-active-plan {
+    align-self: flex-start;
+  }
+
+  .protection-modal-actions {
+    flex-direction: column-reverse;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .btn-modal-cancel,
+  .btn-protection-modal-close {
+    width: 100%;
+    text-align: center;
   }
 }

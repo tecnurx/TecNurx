@@ -54,7 +54,7 @@ const OurServices = () => {
                 />
               </div>
 
-              <Link href="/dashboard/book-repair">
+              <Link href="/dashboard/repairs/book">
                 <span>Start a repair</span>
                 <ArrowRight size={18} />
               </Link>
