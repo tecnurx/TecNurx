@@ -19,6 +19,7 @@ export default function StaffResetPasswordPage({ params }) {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -133,6 +134,7 @@ export default function StaffResetPasswordPage({ params }) {
                   placeholder="Enter new password (min. 8 characters)"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => setIsFocused(true)}
                   disabled={loading}
                   style={{
                     width: "100%",
@@ -168,7 +170,7 @@ export default function StaffResetPasswordPage({ params }) {
               </div>
 
               {/* Password Requirements Checklist */}
-              {password && (
+              {(password || isFocused) && (
                 <div
                   style={{
                     background: "#f9fafb",

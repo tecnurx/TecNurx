@@ -192,7 +192,7 @@ export default function SupportPage() {
                       aria-expanded={isOpen}
                     >
                       <span>{faq.question}</span>
-                      <ChevronRight size={18} className="faq-icon" />
+                      <ArrowRight size={17} className="faq-icon" />
                     </button>
 
                     {isOpen && (

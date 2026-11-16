@@ -1,4 +1,5 @@
 "use client";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 import React, { useState, useEffect } from "react";
 import {
@@ -228,12 +229,7 @@ const AdminOrders = () => {
   ];
 
   if (loading && repairs.length === 0) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading orders...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   if (error && repairs.length === 0) {

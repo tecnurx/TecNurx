@@ -220,12 +220,31 @@
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.add-device-input:focus {
+.add-device-textarea {
+  width: 100%;
+  padding: 14px 18px;
+  background-color: #ffffff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 14px;
+  font-size: 15px;
+  color: #111827;
+  font-family: inherit;
+  box-sizing: border-box;
+  outline: none;
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.5;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.add-device-input:focus,
+.add-device-textarea:focus {
   border-color: #000000;
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
 }
 
-.add-device-input::placeholder {
+.add-device-input::placeholder,
+.add-device-textarea::placeholder {
   color: #9ca3af;
 }
 

@@ -6,6 +6,7 @@ import { Check, Smartphone, X } from "lucide-react";
 import { repairService } from "../../../../../../services/repairs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 // Helper to safely format address whether it's an object, string, or undefined
 const formatAddress = (addr) => {
@@ -352,12 +353,7 @@ export default function RepairDetailPage({ params }) {
       : "badge-warning";
 
   if (loading) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading repair details...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   return (

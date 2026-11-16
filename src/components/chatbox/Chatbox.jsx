@@ -2,10 +2,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import Link from "next/link";
 import {
-  MessageCircle,
+  MessageSquare,
+  ArrowRight,
   X,
-  Send,
   Minimize2,
   Maximize2,
   Paperclip,
@@ -16,33 +17,34 @@ import {
   RotateCcw,
   Image as ImageIcon,
   ShieldCheck,
-  Headphones,
-  Sparkles,
-  ArrowRight,
-  Wrench,
-  CreditCard,
-  Smartphone,
-  User,
-  HelpCircle,
+  Send,
+  Loader2,
   Bot,
-  ExternalLink,
+  HelpCircle,
 } from "lucide-react";
 import { supportService } from "../../../services/supportService";
+import { repairService } from "../../../services/repairs";
 import ConfirmModal from "@/components/ConfirmModal";
 import { playNotificationSound } from "@/lib/soundUtils";
 import { toast } from "@/components/CustomToast";
+import TecNurxLoader from "@/components/TecNurxLoader";
 import "./chatbox.css";
+
+/* =========================================================================
+   NOTE: Static Assistant Demo Version has been commented out and preserved
+   in src/components/chatbox/ChatboxStaticAssistant.jsx
+   ========================================================================= */
 
 const MAX_ATTACHMENTS = 3;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-const CATEGORY_ICONS = {
-  account: <User size={13} />,
-  repair: <Wrench size={13} />,
-  payment: <CreditCard size={13} />,
-  device: <Smartphone size={13} />,
-  engineer: <ShieldCheck size={13} />,
-  other: <HelpCircle size={13} />,
+const CATEGORY_LABELS = {
+  repair: "Repair",
+  payment: "Payment",
+  device: "Device",
+  account: "Account",
+  engineer: "Engineer",
+  other: "General",
 };
 
 export default function Chatbox({
@@ -55,6 +57,7 @@ export default function Chatbox({
   const [view, setView] = useState(defaultView); // "list" | "detail" | "new"
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [activeRepair, setActiveRepair] = useState(null);
 
   // Tickets state
   const [tickets, setTickets] = useState([]);
@@ -62,11 +65,10 @@ export default function Chatbox({
   const [messages, setMessages] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [categories, setCategories] = useState([
-    "account",
     "repair",
     "payment",
     "device",
-    "engineer",
+    "account",
     "other",
   ]);
   const [loading, setLoading] = useState(false);
@@ -89,14 +91,14 @@ export default function Chatbox({
   const [typingUser, setTypingUser] = useState(null);
   const typingTimeoutRef = useRef(null);
 
-  // Lightbox / preview image modal
+  // Lightbox preview image modal
   const [previewImage, setPreviewImage] = useState(null);
 
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const replyFileInputRef = useRef(null);
 
-  // Custom Modal dialog state (replacing native alert & confirm)
+  // Custom Modal dialog state
   const [modalConfig, setModalConfig] = useState({
     isOpen: false,
     title: "",
@@ -143,7 +145,7 @@ export default function Chatbox({
     });
   };
 
-  // Check login status on mount
+  // Check login status & load active repair context on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const token =
@@ -161,6 +163,27 @@ export default function Chatbox({
         }
       }
     }
+
+    const fetchActiveRepair = async () => {
+      try {
+        const res = await repairService.getUserRepairs();
+        const list = res?.data?.repairs || res?.repairs || [];
+        if (list && list.length > 0) {
+          const active =
+            list.find(
+              (r) =>
+                r.status !== "completed" &&
+                r.status !== "cancelled" &&
+                r.status !== "delivered"
+            ) || list[0];
+          setActiveRepair(active);
+        }
+      } catch (err) {
+        console.warn("Could not fetch active repair for Chatbox context:", err);
+      }
+    };
+
+    fetchActiveRepair();
   }, []);
 
   // Initialize Socket and listeners
@@ -212,7 +235,6 @@ export default function Chatbox({
           return exists ? prev : [...prev, message];
         });
       } else if (isFromStaff) {
-        // Customer is not viewing this conversation -> notify & increment badge
         setUnreadCount((prev) => prev + 1);
         playNotificationSound();
         const snippet =
@@ -276,7 +298,7 @@ export default function Chatbox({
     }
   }, [messages, view, typingUser]);
 
-  // Fetch categories and user tickets when opening chat
+  // Fetch categories and user tickets
   const loadInitialData = useCallback(async () => {
     if (!isLoggedIn) return;
     try {
@@ -287,11 +309,10 @@ export default function Chatbox({
         supportService.getMyTickets().catch(() => []),
       ]);
       const defaultCategories = [
-        "account",
         "repair",
         "payment",
         "device",
-        "engineer",
+        "account",
         "other",
       ];
       const validCategories =
@@ -301,22 +322,29 @@ export default function Chatbox({
       const ticketList = Array.isArray(tix) ? tix : [];
       setTickets(ticketList);
 
-      // Compute initial unread tickets waiting on user response
       const pendingResponseCount = ticketList.filter(
         (t) =>
           (t.status || "").toLowerCase() === "pending" ||
           t.lastMessageBy === "staff"
       ).length;
       setUnreadCount(pendingResponseCount);
+
+      if (initialTicketId) {
+        const found = ticketList.find(
+          (t) => (t._id || t.id) === initialTicketId
+        );
+        if (found) {
+          handleOpenTicket(found);
+        }
+      }
     } catch (err) {
       console.error("Support chat load error:", err);
       setError("Unable to load support tickets. Please try again.");
     } finally {
       setLoading(false);
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, initialTicketId]);
 
-  // Load tickets on mount to display badge, and re-fetch when opened
   useEffect(() => {
     if (isLoggedIn) {
       loadInitialData();
@@ -378,15 +406,12 @@ export default function Chatbox({
     }
 
     setError(null);
-    const firstCat = categories[0];
-    const defaultCat =
-      typeof firstCat === "string"
-        ? firstCat
-        : firstCat?.id || firstCat?.slug || firstCat?.name || "account";
-    setNewCategory(defaultCat);
+    setNewCategory("repair");
     setNewSubject("");
     setNewMessage("");
-    setNewRepairId("");
+    setNewRepairId(
+      activeRepair?.orderId || activeRepair?._id?.slice(-8).toUpperCase() || ""
+    );
     setNewAttachments([]);
     setView("new");
   };
@@ -470,28 +495,34 @@ export default function Chatbox({
     e.preventDefault();
     if (!newSubject.trim() || !newMessage.trim()) {
       showAlertModal(
-        "Missing Information",
-        "Please provide both a subject and initial message for your ticket.",
+        "Missing Fields",
+        "Please provide both a subject and details for your ticket.",
         "warning"
       );
       return;
     }
 
+    setSubmittingTicket(true);
+    setError(null);
+
     try {
-      setSubmittingTicket(true);
-      setError(null);
-      const created = await supportService.createTicket({
-        category: newCategory || "general",
-        subject: newSubject.trim(),
-        message: newMessage.trim(),
-        repairId: newRepairId ? newRepairId.trim() : undefined,
-        attachments: newAttachments,
+      const formData = new FormData();
+      formData.append("category", newCategory);
+      formData.append("subject", newSubject.trim());
+      formData.append("message", newMessage.trim());
+      if (newRepairId.trim()) {
+        formData.append("repairId", newRepairId.trim());
+      }
+      newAttachments.forEach((file) => {
+        formData.append("attachments", file);
       });
 
-      const newTix = created?.ticket || created;
-      if (newTix) {
-        setTickets((prev) => [newTix, ...prev]);
-        handleOpenTicket(newTix);
+      const response = await supportService.createTicket(formData);
+      const createdTicket = response?.ticket || response?.data || response;
+
+      toast.success("Support ticket opened successfully!");
+      if (createdTicket && (createdTicket._id || createdTicket.id)) {
+        await handleOpenTicket(createdTicket);
       } else {
         handleBackToList();
       }
@@ -499,98 +530,78 @@ export default function Chatbox({
       console.error("Create ticket error:", err);
       const msg =
         err.response?.data?.message ||
-        err.response?.data?.error?.message ||
-        "Failed to create support ticket. Please try again.";
-      setError(msg);
+        err.message ||
+        "Failed to open support ticket. Please try again.";
+      showAlertModal("Ticket Creation Failed", msg, "danger");
     } finally {
       setSubmittingTicket(false);
     }
   };
 
-  // Typing indicator trigger on reply input
-  const handleReplyInputChange = (e) => {
-    setReplyMessage(e.target.value);
-    if (!activeTicket) return;
-
-    const tid = activeTicket._id || activeTicket.id;
-    supportService.sendTyping(tid, true);
-
-    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
-    typingTimeoutRef.current = setTimeout(() => {
-      supportService.sendTyping(tid, false);
-    }, 1500);
-  };
-
-  // Send message on active ticket
+  // Reply to active ticket
   const handleSendReply = async (e) => {
     e.preventDefault();
     if (!replyMessage.trim() && replyAttachments.length === 0) return;
     if (!activeTicket) return;
 
     const tid = activeTicket._id || activeTicket.id;
-    try {
-      setSendingReply(true);
-      supportService.sendTyping(tid, false);
+    setSendingReply(true);
 
-      const res = await supportService.sendMessage(tid, {
-        text: replyMessage.trim(),
-        message: replyMessage.trim(),
-        attachments: replyAttachments,
+    try {
+      const formData = new FormData();
+      if (replyMessage.trim()) {
+        formData.append("text", replyMessage.trim());
+      }
+      replyAttachments.forEach((f) => {
+        formData.append("attachments", f);
       });
 
-      const savedMsg = res?.message || res?.data || res;
-      if (savedMsg && (savedMsg.text || savedMsg.message || savedMsg.content)) {
+      const res = await supportService.replyTicket(tid, formData);
+      const newMsg = res?.message || res?.data || res;
+
+      if (newMsg && (newMsg._id || newMsg.id || newMsg.text || newMsg.message)) {
         setMessages((prev) => {
-          const mid = savedMsg._id || savedMsg.id;
-          return prev.some((m) => (m._id || m.id) === mid)
-            ? prev
-            : [...prev, savedMsg];
+          const mid = newMsg._id || newMsg.id;
+          const exists = prev.some((m) => (m._id || m.id) === mid);
+          return exists ? prev : [...prev, newMsg];
         });
       }
 
       setReplyMessage("");
       setReplyAttachments([]);
-      if (replyFileInputRef.current) replyFileInputRef.current.value = "";
+
+      supportService.emitTyping({ ticketId: tid, isTyping: false });
     } catch (err) {
-      console.error("Failed to send message:", err);
-      showAlertModal(
-        "Delivery Failed",
-        "Failed to send message. Please retry.",
-        "danger"
+      console.error("Failed to send reply:", err);
+      toast.error(
+        err.response?.data?.message ||
+          "Failed to send message. Please try again."
       );
     } finally {
       setSendingReply(false);
     }
   };
 
-  // Close ticket
+  // Close / Resolve active ticket
   const handleCloseActiveTicket = () => {
     if (!activeTicket) return;
+    const tid = activeTicket._id || activeTicket.id;
+
     showConfirmModal(
-      "Close Support Ticket",
-      "Are you sure you want to resolve this ticket? You can reopen it within 7 days if needed.",
+      "Resolve Support Ticket",
+      "Are you sure you want to mark this support ticket as resolved? You can reopen it within 7 days if you still need help.",
       async () => {
-        const tid = activeTicket._id || activeTicket.id;
         try {
-          setLoading(true);
-          const updated = await supportService.closeTicket(tid);
-          const ticketObj =
-            updated?.ticket || updated || { ...activeTicket, status: "closed" };
-          setActiveTicket(ticketObj);
+          await supportService.closeTicket(tid);
+          setActiveTicket((prev) => ({ ...prev, status: "closed" }));
           setTickets((prev) =>
             prev.map((t) =>
               (t._id || t.id) === tid ? { ...t, status: "closed" } : t
             )
           );
+          toast.success("Support ticket marked as resolved.");
         } catch (err) {
-          console.error("Close ticket error:", err);
-          showAlertModal(
-            "Error",
-            "Failed to close ticket. Please try again.",
-            "danger"
-          );
-        } finally {
-          setLoading(false);
+          toast.error("Failed to resolve ticket.");
         }
       },
       "warning",
@@ -598,31 +609,50 @@ export default function Chatbox({
     );
   };
 
-  // Reopen ticket
-  const handleReopenActiveTicket = async () => {
+  // Reopen active ticket
+  const handleReopenActiveTicket = () => {
     if (!activeTicket) return;
     const tid = activeTicket._id || activeTicket.id;
-    try {
-      setLoading(true);
-      const updated = await supportService.reopenTicket(tid);
-      const ticketObj =
-        updated?.ticket || updated || { ...activeTicket, status: "open" };
-      setActiveTicket(ticketObj);
-      setTickets((prev) =>
-        prev.map((t) =>
-          (t._id || t.id) === tid ? { ...t, status: "open" } : t
-        )
-      );
-    } catch (err) {
-      console.error("Reopen ticket error:", err);
-      const msg =
-        err.response?.data?.message ||
-        "Could not reopen ticket (may have expired 7-day window).";
-      showAlertModal("Reopen Ticket", msg, "danger");
-    } finally {
-      setLoading(false);
-    }
+
+    showConfirmModal(
+      "Reopen Support Ticket",
+      "Would you like to reopen this ticket to continue discussing with support?",
+      async () => {
+        try {
+          await supportService.reopenTicket(tid);
+          setActiveTicket((prev) => ({ ...prev, status: "open" }));
+          setTickets((prev) =>
+            prev.map((t) =>
+              (t._id || t.id) === tid ? { ...t, status: "open" } : t
+            )
+          );
+          toast.success("Support ticket reopened.");
+        } catch (err) {
+          toast.error("Failed to reopen ticket.");
+        }
+      },
+      "warning",
+      "Reopen Ticket"
+    );
   };
+
+  const repairOrderId =
+    activeRepair?.orderId ||
+    (activeRepair?._id ? activeRepair._id.slice(-8).toUpperCase() : null) ||
+    "3EA19933";
+
+  const contextLabel = activeTicket
+    ? activeTicket.repairId?.orderId
+      ? `Repair #${activeTicket.repairId.orderId}`
+      : `Ticket #${(
+          activeTicket.ticketId ||
+          activeTicket._id ||
+          activeTicket.id ||
+          ""
+        )
+          .slice(-8)
+          .toUpperCase()}`
+    : `Repair #${repairOrderId}`;
 
   const activeCount = tickets.filter(
     (t) => (t.status || "").toLowerCase() !== "closed"
@@ -630,334 +660,408 @@ export default function Chatbox({
 
   return (
     <>
-      {/* ===================== FLOATING LAUNCHER BUTTON ===================== */}
+      {/* Floating launcher button when not inline */}
       {!isInline && (
         <button
+          type="button"
+          className={`tnx-chat-bubble-btn tnx-launcher ${
+            isOpen ? "is-open" : ""
+          }`}
           onClick={() => setIsOpen((prev) => !prev)}
-          className={`tnx-launcher ${isOpen ? "is-open" : ""}`}
-          aria-label={isOpen ? "Close TecNurx support" : "Open TecNurx support"}
+          aria-label={
+            isOpen ? "Close TecNurx Assistant" : "Open TecNurx Assistant"
+          }
         >
           <div className="tnx-launcher-icon">
-            {isOpen ? <X size={22} /> : <MessageCircle size={24} />}
+            <MessageSquare size={22} color="#ffffff" />
           </div>
-          {!isOpen && unreadCount > 0 && (
+          {unreadCount > 0 && !isOpen && (
             <span className="tnx-launcher-badge">{unreadCount}</span>
           )}
         </button>
       )}
 
-      {/* ===================== CHAT WIDGET WINDOW ===================== */}
+      {/* Main Assistant Card */}
       {(isOpen || isInline) && (
         <div
-          className={`tnx-chatbox ${isInline ? "is-inline" : ""} ${
-            isMinimized && !isInline ? "is-minimized" : ""
-          }`}
+          className={`tnx-assistant-card ${
+            isInline ? "is-inline" : "is-floating"
+          } ${isMinimized && !isInline ? "is-minimized" : ""}`}
         >
-          {/* HEADER */}
-          <div className="tnx-header">
-            <div className="tnx-header-main">
-              {view !== "list" ? (
-                <button
-                  type="button"
-                  onClick={handleBackToList}
-                  className="tnx-btn-header-back"
-                  aria-label="Back"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-              ) : (
-                <div className="tnx-brand-avatar">
-                  <Headphones size={17} />
-                  <span className="tnx-online-dot"></span>
-                </div>
-              )}
+          {/* Header Controls for floating mode */}
+          {!isInline && (
+            <div className="tnx-floating-controls">
+              <button
+                type="button"
+                onClick={() => setIsMinimized((prev) => !prev)}
+                className="tnx-floating-btn"
+                title={isMinimized ? "Expand" : "Minimize"}
+                aria-label={isMinimized ? "Expand" : "Minimize"}
+              >
+                {isMinimized ? (
+                  <Maximize2 size={16} />
+                ) : (
+                  <Minimize2 size={16} />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="tnx-floating-btn"
+                title="Close chat"
+                aria-label="Close"
+              >
+                <X size={17} />
+              </button>
+            </div>
+          )}
 
-              <div className="tnx-header-text">
-                <h4 className="tnx-header-title">
-                  {view === "detail"
-                    ? activeTicket?.subject || "Support Discussion"
+          {!isMinimized && (
+            <>
+              {/* Header Matching Designer Mockup */}
+              <div className="tnx-assistant-header">
+                <div className="tnx-header-top-row">
+                  <div className="tnx-assistant-icon-box">
+                    <MessageSquare
+                      size={18}
+                      color="#111827"
+                      strokeWidth={2}
+                    />
+                  </div>
+                  {view !== "list" && (
+                    <button
+                      type="button"
+                      onClick={handleBackToList}
+                      className="tnx-btn-header-back-chip"
+                    >
+                      <ChevronLeft size={16} />
+                      <span>All Tickets</span>
+                    </button>
+                  )}
+                </div>
+
+                <h2 className="tnx-assistant-title">
+                  {view === "detail" && activeTicket
+                    ? activeTicket.subject || "Support Discussion"
                     : view === "new"
                     ? "New Support Request"
-                    : "TecNurx Support"}
-                </h4>
-                <p className="tnx-header-subtitle">
-                  {view === "detail" ? (
+                    : "TecNurx Assistant"}
+                </h2>
+
+                <p className="tnx-assistant-subtitle">
+                  {view === "detail" && activeTicket ? (
                     <span
-                      className={`tnx-badge-status status-${(
-                        activeTicket?.status || "open"
-                      ).toLowerCase()}`}
+                      className={`tnx-ticket-status-tag ${
+                        (activeTicket.status || "").toLowerCase() === "closed"
+                          ? "closed"
+                          : "open"
+                      }`}
                     >
-                      {activeTicket?.status === "pending"
-                        ? "Awaiting your reply"
-                        : activeTicket?.status === "closed"
+                      ●{" "}
+                      {(activeTicket.status || "").toLowerCase() === "closed"
                         ? "Resolved"
                         : "In Progress"}
                     </span>
                   ) : (
-                    <span>
-                      <span className="tnx-dot-green"></span> Online • Instant help
-                    </span>
+                    "Ask about your repairs, payments and protection."
                   )}
                 </p>
-              </div>
-            </div>
 
-            {!isInline && (
-              <div className="tnx-header-actions">
-                <button
-                  type="button"
-                  onClick={() => setIsMinimized((prev) => !prev)}
-                  className="tnx-btn-header-action"
-                  title={isMinimized ? "Expand" : "Minimize"}
-                  aria-label={isMinimized ? "Expand" : "Minimize"}
-                >
-                  {isMinimized ? <Maximize2 size={16} /> : <Minimize2 size={16} />}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsOpen(false)}
-                  className="tnx-btn-header-action"
-                  title="Close chat"
-                  aria-label="Close"
-                >
-                  <X size={17} />
-                </button>
+                <div className="tnx-assistant-context-row">
+                  <span className="tnx-context-label">Asking about</span>
+                  <span className="tnx-context-pill">
+                    <span className="tnx-context-dot">●</span>
+                    <span>{contextLabel}</span>
+                  </span>
+                </div>
               </div>
-            )}
-          </div>
 
-          {/* CHAT CONTAINER BODY */}
-          {!isMinimized && (
-            <div className="tnx-body">
+              {/* BODY CONTAINER */}
               {!isLoggedIn ? (
-                /* AUTH REQUIRED STATE */
-                <div className="tnx-empty-box">
-                  <div className="tnx-empty-icon">
-                    <ShieldCheck size={36} />
-                  </div>
+                /* Auth required state */
+                <div className="tnx-auth-state-box">
+                  <ShieldCheck size={36} color="#ffb800" />
                   <h3>Sign in to TecNurx</h3>
                   <p>
-                    Please sign in to open support tickets, chat with our
-                    technicians, and track repairs.
+                    Please sign in to chat with our support technicians and track
+                    your orders.
                   </p>
-                  <a href="/login" className="tnx-btn-primary">
+                  <Link href="/login" className="tnx-btn-auth-link">
                     Sign In
-                  </a>
+                  </Link>
                 </div>
-              ) : view === "list" ? (
-                /* =================== VIEW 1: HOME & TICKETS =================== */
-                <div className="tnx-view-home">
-                  {/* WELCOME / GREETING HERO */}
-                  <div className="tnx-hero-card">
-                    <div className="tnx-hero-badge">
-                      <Sparkles size={13} /> TecNurx Customer Care
-                    </div>
-                    <h3>How can we help today?</h3>
-                    <p>
-                      Get fast answers regarding your repairs, payments, devices,
-                      or account.
-                    </p>
-
-                    <button
-                      type="button"
-                      onClick={handleStartNewTicket}
-                      disabled={activeCount >= 2}
-                      className="tnx-btn-new-ticket"
-                    >
-                      <Plus size={18} />
-                      <span>Start a New Ticket</span>
-                      <ArrowRight size={16} className="tnx-arrow-right" />
-                    </button>
-                    {activeCount >= 2 && (
-                      <span className="tnx-limit-note">
-                        Maximum 2 active tickets reached. Please resolve one to open another.
-                      </span>
-                    )}
-                  </div>
-
-                  {error && <div className="tnx-alert-banner">{error}</div>}
-
-                  {/* CONVERSATIONS LIST */}
-                  <div className="tnx-conversations-section">
-                    <div className="tnx-section-title">
-                      <span>Recent Conversations</span>
-                      {tickets.length > 0 && (
-                        <span className="tnx-count-pill">{tickets.length}</span>
-                      )}
-                    </div>
-
-                    {loading ? (
-                      <div className="tnx-loading-box">
-                        <div className="tnx-spinner"></div>
-                        <p>Loading your conversations...</p>
+              ) : view === "detail" ? (
+                /* =================== VIEW 1: LIVE TICKET CONVERSATION =================== */
+                <div className="tnx-view-conversation">
+                  {/* Messages Stream */}
+                  <div className="tnx-assistant-chat-stream">
+                    {loading && messages.length === 0 ? (
+                      <div className="tnx-stream-loader">
+                        <TecNurxLoader size="sm" />
                       </div>
-                    ) : tickets.length === 0 ? (
-                      <div className="tnx-no-tix-box">
-                        <MessageCircle size={28} />
-                        <h4>No conversations yet</h4>
-                        <p>
-                          Click &ldquo;Start a New Ticket&rdquo; above to chat with our support team.
-                        </p>
+                    ) : messages.length === 0 ? (
+                      <div className="tnx-empty-stream-box">
+                        <Bot size={28} color="#9ca3af" />
+                        <p>Ticket opened. Feel free to type your message below!</p>
                       </div>
                     ) : (
-                      <div className="tnx-ticket-items">
-                        {tickets.map((t) => {
-                          const status = (t.status || "open").toLowerCase();
-                          const isClosed = status === "closed";
-                          const isPending = status === "pending";
-                          const cat =
-                            typeof t.category === "object"
-                              ? t.category?.name
-                              : t.category;
+                      messages.map((msg, index) => {
+                        const isMe =
+                          msg.senderType === "user" ||
+                          msg.senderType === "customer";
+                        const isSystem = msg.senderType === "system";
+                        const text =
+                          msg.text || msg.message || msg.content || "";
+                        const time = msg.createdAt
+                          ? new Date(msg.createdAt).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })
+                          : "";
+                        const attachs = msg.attachments || [];
 
+                        // Skip completely empty items
+                        if (!text && attachs.length === 0 && !isSystem) {
+                          return null;
+                        }
+
+                        if (isSystem) {
                           return (
                             <div
-                              key={t._id || t.id}
-                              className="tnx-ticket-row"
-                              onClick={() => handleOpenTicket(t)}
+                              key={msg._id || msg.id || index}
+                              className="tnx-bubble-system-box"
                             >
-                              <div className="tnx-ticket-row-top">
-                                <span className="tnx-cat-tag">
-                                  {CATEGORY_ICONS[cat] || <HelpCircle size={12} />}
-                                  <span>{cat || "General"}</span>
-                                </span>
-                                <span
-                                  className={`tnx-status-chip chip-${status}`}
-                                >
-                                  {isClosed
-                                    ? "Resolved"
-                                    : isPending
-                                    ? "Waiting on you"
-                                    : "In Progress"}
-                                </span>
-                              </div>
-
-                              <h5 className="tnx-ticket-row-title">{t.subject}</h5>
-
-                              <p className="tnx-ticket-row-snippet">
-                                {t.latestMessage?.text ||
-                                  t.latestMessage?.message ||
-                                  t.latestMessage?.content ||
-                                  t.message ||
-                                  "Click to open conversation..."}
-                              </p>
-
-                              <div className="tnx-ticket-row-footer">
-                                <span>
-                                  <Clock size={12} />{" "}
-                                  {t.updatedAt || t.createdAt
-                                    ? new Date(
-                                        t.updatedAt || t.createdAt
-                                      ).toLocaleDateString([], {
-                                        month: "short",
-                                        day: "numeric",
-                                      })
-                                    : "Recently"}
-                                </span>
-                                <span className="tnx-view-link">
-                                  Open discussion <ArrowRight size={13} />
-                                </span>
-                              </div>
+                              <span className="tnx-system-title">Notice</span>
+                              <p>{text}</p>
+                              {time && <small>{time}</small>}
                             </div>
                           );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ) : view === "new" ? (
-                /* =================== VIEW 2: NEW TICKET FORM =================== */
-                <form
-                  onSubmit={handleCreateTicketSubmit}
-                  className="tnx-view-form"
-                >
-                  <div className="tnx-form-intro">
-                    <h4>Submit a Request</h4>
-                    <p>Describe your issue and we will connect you with a technician.</p>
-                  </div>
-
-                  {error && <div className="tnx-alert-banner">{error}</div>}
-
-                  {/* Category Pills */}
-                  <div className="tnx-form-group">
-                    <label>Issue Category</label>
-                    <div className="tnx-pills-row">
-                      {categories.map((c, i) => {
-                        const val =
-                          typeof c === "string"
-                            ? c
-                            : c.id || c.slug || c.name || c._id;
-                        const label =
-                          typeof c === "string"
-                            ? c.charAt(0).toUpperCase() + c.slice(1)
-                            : c.name || c.label || c.slug || val;
-                        const isSelected = newCategory === val;
+                        }
 
                         return (
-                          <button
-                            key={val || i}
-                            type="button"
-                            onClick={() => setNewCategory(val)}
-                            className={`tnx-pill-btn ${
-                              isSelected ? "is-selected" : ""
+                          <div
+                            key={msg._id || msg.id || index}
+                            className={`tnx-bubble ${
+                              isMe ? "tnx-bubble-user" : "tnx-bubble-assistant"
                             }`}
                           >
-                            {CATEGORY_ICONS[val] || <HelpCircle size={13} />}
-                            <span>{label}</span>
+                            <div className="tnx-bubble-text">{text}</div>
+
+                            {attachs.length > 0 && (
+                              <div className="tnx-bubble-attachments-row">
+                                {attachs.map((att, aIdx) => {
+                                  const src =
+                                    typeof att === "string"
+                                      ? att
+                                      : att.url || att.path;
+                                  return (
+                                    <img
+                                      key={aIdx}
+                                      src={src}
+                                      alt="attachment"
+                                      className="tnx-bubble-thumb-img"
+                                      onClick={() => setPreviewImage(src)}
+                                    />
+                                  );
+                                })}
+                              </div>
+                            )}
+
+                            {time && (
+                              <div className="tnx-bubble-timestamp">{time}</div>
+                            )}
+                          </div>
+                        );
+                      })
+                    )}
+
+                    {typingUser && (
+                      <div className="tnx-bubble tnx-bubble-assistant tnx-bubble-typing">
+                        <span className="tnx-typing-dot"></span>
+                        <span className="tnx-typing-dot"></span>
+                        <span className="tnx-typing-dot"></span>
+                        <small className="tnx-typing-label">
+                          {typingUser} is typing...
+                        </small>
+                      </div>
+                    )}
+
+                    <div ref={messagesEndRef} />
+                  </div>
+
+                  {/* Attachment previews before sending */}
+                  {replyAttachments.length > 0 && (
+                    <div className="tnx-pending-attachments-strip">
+                      {replyAttachments.map((f, i) => (
+                        <div key={i} className="tnx-pending-thumb-card">
+                          <img
+                            src={URL.createObjectURL(f)}
+                            alt={f.name}
+                            className="tnx-pending-thumb-img"
+                          />
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setReplyAttachments((prev) =>
+                                prev.filter((_, idx) => idx !== i)
+                              )
+                            }
+                            className="tnx-pending-thumb-remove"
+                            aria-label="Remove photo"
+                          >
+                            <X size={12} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Live Input Bar or Resolved Notice */}
+                  {(activeTicket?.status || "").toLowerCase() === "closed" ? (
+                    <div className="tnx-resolved-banner-box">
+                      <p>This support ticket is marked as resolved.</p>
+                      <button
+                        type="button"
+                        onClick={handleReopenActiveTicket}
+                        className="tnx-btn-reopen-pill"
+                      >
+                        <RotateCcw size={13} /> Reopen Ticket (Within 7 Days)
+                      </button>
+                    </div>
+                  ) : (
+                    <form
+                      className="tnx-assistant-input-form"
+                      onSubmit={handleSendReply}
+                    >
+                      <input
+                        type="file"
+                        ref={replyFileInputRef}
+                        onChange={handleReplyFilesSelect}
+                        multiple
+                        accept="image/jpeg,image/png,image/webp"
+                        style={{ display: "none" }}
+                      />
+
+                      <div className="tnx-assistant-input-wrap">
+                        <button
+                          type="button"
+                          onClick={() => replyFileInputRef.current?.click()}
+                          className="tnx-paperclip-btn"
+                          title="Attach photo (up to 3)"
+                          disabled={
+                            replyAttachments.length >= MAX_ATTACHMENTS ||
+                            sendingReply
+                          }
+                          aria-label="Attach photo"
+                        >
+                          <Paperclip size={18} color="#64748b" />
+                        </button>
+
+                        <input
+                          type="text"
+                          className="tnx-assistant-input-field"
+                          placeholder="Type your message..."
+                          value={replyMessage}
+                          onChange={(e) => {
+                            setReplyMessage(e.target.value);
+                            if (activeTicket) {
+                              supportService.emitTyping({
+                                ticketId: activeTicket._id || activeTicket.id,
+                                isTyping: Boolean(e.target.value.trim()),
+                              });
+                            }
+                          }}
+                          disabled={sendingReply}
+                        />
+
+                        <button
+                          type="submit"
+                          className="tnx-assistant-send-btn"
+                          disabled={
+                            (!replyMessage.trim() &&
+                              replyAttachments.length === 0) ||
+                            sendingReply
+                          }
+                          aria-label="Send message"
+                        >
+                          {sendingReply ? (
+                            <Loader2
+                              size={18}
+                              className="tnx-spinner-icon"
+                              color="#111827"
+                            />
+                          ) : (
+                            <ArrowRight
+                              size={18}
+                              color="#111827"
+                              strokeWidth={2.4}
+                            />
+                          )}
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </div>
+              ) : view === "new" ? (
+                /* =================== VIEW 2: NEW SUPPORT TICKET =================== */
+                <form
+                  className="tnx-new-ticket-form"
+                  onSubmit={handleCreateTicketSubmit}
+                >
+                  <div className="tnx-form-field">
+                    <label className="tnx-form-label">Category</label>
+                    <div className="tnx-categories-pills-row">
+                      {categories.map((cat) => {
+                        const val =
+                          typeof cat === "string"
+                            ? cat
+                            : cat?.id || cat?.slug || cat?.name;
+                        const isSelected = newCategory === val;
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={() => setNewCategory(val)}
+                            className={`tnx-category-pill ${
+                              isSelected ? "active" : ""
+                            }`}
+                          >
+                            {CATEGORY_LABELS[val] || val}
                           </button>
                         );
                       })}
                     </div>
                   </div>
 
-                  {/* Subject input */}
-                  <div className="tnx-form-group">
-                    <label>Subject</label>
+                  <div className="tnx-form-field">
+                    <label className="tnx-form-label">Subject</label>
                     <input
                       type="text"
-                      className="tnx-input"
-                      placeholder="e.g. Screen still flickering after repair"
+                      className="tnx-form-input"
+                      placeholder="e.g. Question about my repair"
                       value={newSubject}
                       onChange={(e) => setNewSubject(e.target.value)}
                       required
                     />
                   </div>
 
-                  {/* Conditional Repair ID */}
-                  {newCategory === "repair" && (
-                    <div className="tnx-form-group">
-                      <label className="tnx-label-flex">
-                        <span>Repair Order ID</span>
-                        <small>Optional</small>
-                      </label>
-                      <input
-                        type="text"
-                        className="tnx-input"
-                        placeholder="e.g. 64a8fe90a1b2..."
-                        value={newRepairId}
-                        onChange={(e) => setNewRepairId(e.target.value)}
-                      />
-                    </div>
-                  )}
-
-                  {/* Message body */}
-                  <div className="tnx-form-group">
-                    <label>Message Details</label>
+                  <div className="tnx-form-field">
+                    <label className="tnx-form-label">Message Details</label>
                     <textarea
-                      rows={4}
-                      className="tnx-textarea"
-                      placeholder="Explain what happened or what you need assistance with..."
+                      rows={3}
+                      className="tnx-form-textarea"
+                      placeholder="Explain what you need assistance with..."
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       required
                     />
                   </div>
 
-                  {/* Photos Upload with Preview Thumbnails */}
-                  <div className="tnx-form-group">
-                    <div className="tnx-label-flex">
-                      <label>Photo Attachments</label>
-                      <small>Up to 3 images (max 5MB each)</small>
+                  {/* Photo Attachments */}
+                  <div className="tnx-form-field">
+                    <div className="tnx-form-label-row">
+                      <label className="tnx-form-label">Photo Attachments</label>
+                      <span className="tnx-form-hint">Up to 3 images</span>
                     </div>
 
                     <input
@@ -969,13 +1073,13 @@ export default function Chatbox({
                       style={{ display: "none" }}
                     />
 
-                    <div className="tnx-thumbs-grid">
+                    <div className="tnx-thumbs-row">
                       {newAttachments.map((f, idx) => (
-                        <div key={idx} className="tnx-thumb-card">
+                        <div key={idx} className="tnx-pending-thumb-card">
                           <img
                             src={URL.createObjectURL(f)}
                             alt={f.name}
-                            className="tnx-thumb-img"
+                            className="tnx-pending-thumb-img"
                           />
                           <button
                             type="button"
@@ -984,8 +1088,8 @@ export default function Chatbox({
                                 prev.filter((_, i) => i !== idx)
                               )
                             }
-                            className="tnx-thumb-remove"
-                            title="Remove image"
+                            className="tnx-pending-thumb-remove"
+                            aria-label="Remove image"
                           >
                             <X size={12} />
                           </button>
@@ -996,292 +1100,143 @@ export default function Chatbox({
                         <button
                           type="button"
                           onClick={() => fileInputRef.current?.click()}
-                          className="tnx-thumb-add-btn"
+                          className="tnx-add-photo-btn"
                         >
-                          <ImageIcon size={18} />
+                          <ImageIcon size={16} />
                           <span>Attach Photo</span>
                         </button>
                       )}
                     </div>
                   </div>
 
-                  <div className="tnx-form-actions">
+                  <div className="tnx-new-actions-row">
                     <button
                       type="button"
                       onClick={handleBackToList}
-                      className="tnx-btn-secondary"
+                      className="tnx-btn-cancel-flat"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={submittingTicket}
-                      className="tnx-btn-primary"
+                      className="tnx-btn-submit-yellow"
                     >
                       {submittingTicket ? "Submitting..." : "Send Ticket"}
                     </button>
                   </div>
                 </form>
               ) : (
-                /* =================== VIEW 3: LIVE CONVERSATION =================== */
-                <div className="tnx-view-chat">
-                  {/* SUB-HEADER TICKET DETAILS STRIP */}
-                  <div className="tnx-chat-meta-bar">
-                    <div className="tnx-chat-meta-left">
-                      <span className="tnx-meta-title">
-                        {activeTicket?.subject}
-                      </span>
-                      <span className="tnx-meta-id">
-                        #
-                        {(
-                          activeTicket?._id ||
-                          activeTicket?.id ||
-                          ""
-                        ).slice(-8)}
-                      </span>
-                    </div>
-
-                    <div className="tnx-chat-meta-right">
-                      {(activeTicket?.status || "").toLowerCase() ===
-                      "closed" ? (
-                        <button
-                          type="button"
-                          onClick={handleReopenActiveTicket}
-                          className="tnx-btn-resolve reopen"
-                          title="Reopen within 7 days"
-                        >
-                          <RotateCcw size={12} /> Reopen
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={handleCloseActiveTicket}
-                          className="tnx-btn-resolve"
-                          title="Mark as resolved"
-                        >
-                          <CheckCircle2 size={12} /> Resolve
-                        </button>
-                      )}
-                    </div>
+                /* =================== VIEW 3: TICKETS LIST / HOME =================== */
+                <div className="tnx-view-ticket-list">
+                  <div className="tnx-ticket-list-header">
+                    <span className="tnx-list-heading">Recent Conversations</span>
+                    <button
+                      type="button"
+                      onClick={handleStartNewTicket}
+                      disabled={activeCount >= 2}
+                      className="tnx-btn-create-ticket-pill"
+                    >
+                      <Plus size={15} />
+                      <span>New Ticket</span>
+                    </button>
                   </div>
 
-                  {/* MESSAGES FEED */}
-                  <div className="tnx-chat-messages">
-                    {loading && messages.length === 0 ? (
-                      <div className="tnx-loading-box">
-                        <div className="tnx-spinner"></div>
-                        <p>Loading messages...</p>
+                  {error && <div className="tnx-error-box">{error}</div>}
+
+                  <div className="tnx-ticket-cards-scroll">
+                    {loading ? (
+                      <div className="tnx-stream-loader">
+                        <TecNurxLoader size="sm" />
                       </div>
-                    ) : messages.length === 0 ? (
-                      <div className="tnx-empty-chat-state">
-                        <Bot size={28} />
-                        <p>Ticket opened. Feel free to send a message!</p>
+                    ) : tickets.length === 0 ? (
+                      <div className="tnx-no-tickets-box">
+                        <MessageSquare size={32} color="#9ca3af" />
+                        <h4>No conversations yet</h4>
+                        <p>
+                          Click &ldquo;New Ticket&rdquo; above to start a live
+                          conversation with our customer care team.
+                        </p>
                       </div>
                     ) : (
-                      messages.map((msg, index) => {
-                        const isMe =
-                          msg.senderType === "user" ||
-                          msg.senderType === "customer";
-                        const isSystem = msg.senderType === "system";
-                        const isStaff =
-                          msg.senderType === "staff" ||
-                          msg.senderType === "admin";
-                        const text =
-                          msg.text || msg.message || msg.content || "";
-                        const time = msg.createdAt
-                          ? new Date(msg.createdAt).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
+                      tickets.map((t) => {
+                        const isClosed =
+                          (t.status || "").toLowerCase() === "closed";
+                        const isPending =
+                          (t.status || "").toLowerCase() === "pending";
+                        const snippet =
+                          t.latestMessage?.text ||
+                          t.latestMessage?.message ||
+                          t.message ||
+                          "Click to view conversation...";
+                        const dateStr = t.updatedAt
+                          ? new Date(t.updatedAt).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
                             })
                           : "";
-                        const attachs = msg.attachments || [];
-
-                        // 1. SYSTEM BOT GREETING / NOTICE
-                        if (isSystem) {
-                          const isActivityNotice =
-                            /reopened|closed|resolved|assigned|transferred|created this ticket|status changed/i.test(text);
-                          return (
-                            <div
-                              key={msg._id || msg.id || index}
-                              className="tnx-msg-system"
-                            >
-                              <div className="tnx-system-box">
-                                <span className="tnx-system-tag">
-                                  <Sparkles size={11} />{" "}
-                                  {isActivityNotice
-                                    ? "System Notification"
-                                    : "TecNurx Support"}
-                                </span>
-                                <p>{text}</p>
-                                <small>{time}</small>
-                              </div>
-                            </div>
-                          );
-                        }
-
-                        // 2. USER OR STAFF BUBBLE
-                        const senderName = isMe
-                          ? "You"
-                          : msg.senderName
-                          ? `${msg.senderName} (Support)`
-                          : "TecNurx Support";
 
                         return (
                           <div
-                            key={msg._id || msg.id || index}
-                            className={`tnx-msg-row ${
-                              isMe ? "is-user" : "is-staff"
-                            }`}
+                            key={t._id || t.id}
+                            className="tnx-ticket-item-card"
+                            onClick={() => handleOpenTicket(t)}
                           >
-                            <div className="tnx-msg-bubble">
-                              <div className="tnx-msg-author">
-                                {!isMe && <span className="tnx-staff-badge"></span>}
-                                <span>{senderName}</span>
-                              </div>
-
-                              {text && <p className="tnx-msg-text">{text}</p>}
-
-                              {attachs.length > 0 && (
-                                <div className="tnx-msg-photos">
-                                  {attachs.map((att, aIdx) => {
-                                    const src =
-                                      typeof att === "string"
-                                        ? att
-                                        : att.url || att.path;
-                                    return (
-                                      <img
-                                        key={aIdx}
-                                        src={src}
-                                        alt="attachment"
-                                        className="tnx-msg-img"
-                                        onClick={() => setPreviewImage(src)}
-                                      />
-                                    );
-                                  })}
-                                </div>
-                              )}
-
-                              <div className="tnx-msg-time">{time}</div>
+                            <div className="tnx-ticket-item-top">
+                              <span className="tnx-ticket-category-tag">
+                                {CATEGORY_LABELS[t.category] ||
+                                  t.category ||
+                                  "General"}
+                              </span>
+                              <span
+                                className={`tnx-ticket-status-pill ${
+                                  isClosed ? "closed" : "open"
+                                }`}
+                              >
+                                ● {isClosed ? "Resolved" : "Open"}
+                              </span>
                             </div>
+
+                            <h4 className="tnx-ticket-item-subject">
+                              {t.subject || "Support Inquiry"}
+                            </h4>
+
+                            <p className="tnx-ticket-item-snippet">{snippet}</p>
+
+                            {dateStr && (
+                              <span className="tnx-ticket-item-date">
+                                Updated {dateStr}
+                              </span>
+                            )}
                           </div>
                         );
                       })
                     )}
-
-                    {/* LIVE TYPING INDICATOR */}
-                    {typingUser && (
-                      <div className="tnx-typing-box">
-                        <div className="tnx-typing-dots">
-                          <span></span>
-                          <span></span>
-                          <span></span>
-                        </div>
-                        <small>{typingUser} is typing...</small>
-                      </div>
-                    )}
-
-                    <div ref={messagesEndRef} />
                   </div>
-
-                  {/* INPUT / REOPEN FOOTER */}
-                  {(activeTicket?.status || "").toLowerCase() === "closed" ? (
-                    <div className="tnx-closed-bar">
-                      <p>This support ticket is marked as resolved.</p>
-                      <button
-                        type="button"
-                        onClick={handleReopenActiveTicket}
-                        className="tnx-btn-reopen"
-                      >
-                        <RotateCcw size={13} /> Reopen Ticket (Within 7 Days)
-                      </button>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleSendReply} className="tnx-input-area">
-                      {/* Attached file previews above input */}
-                      {replyAttachments.length > 0 && (
-                        <div className="tnx-reply-thumbs">
-                          {replyAttachments.map((f, i) => (
-                            <div key={i} className="tnx-reply-thumb-chip">
-                              <img
-                                src={URL.createObjectURL(f)}
-                                alt={f.name}
-                                className="tnx-mini-thumb"
-                              />
-                              <span className="tnx-mini-name">{f.name}</span>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setReplyAttachments((prev) =>
-                                    prev.filter((_, idx) => idx !== i)
-                                  )
-                                }
-                              >
-                                <X size={12} />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      <div className="tnx-input-wrapper">
-                        <input
-                          type="file"
-                          ref={replyFileInputRef}
-                          onChange={handleReplyFilesSelect}
-                          multiple
-                          accept="image/jpeg,image/png,image/webp"
-                          style={{ display: "none" }}
-                        />
-
-                        <button
-                          type="button"
-                          onClick={() => replyFileInputRef.current?.click()}
-                          className="tnx-btn-paperclip"
-                          title="Attach photo (up to 3)"
-                          disabled={replyAttachments.length >= MAX_ATTACHMENTS}
-                        >
-                          <Paperclip size={18} />
-                        </button>
-
-                        <input
-                          type="text"
-                          className="tnx-chat-input"
-                          placeholder="Type your message..."
-                          value={replyMessage}
-                          onChange={handleReplyInputChange}
-                          disabled={sendingReply}
-                        />
-
-                        <button
-                          type="submit"
-                          disabled={
-                            (!replyMessage.trim() &&
-                              replyAttachments.length === 0) ||
-                            sendingReply
-                          }
-                          className="tnx-btn-send"
-                          title="Send message"
-                        >
-                          <Send size={16} />
-                        </button>
-                      </div>
-                    </form>
-                  )}
                 </div>
               )}
-            </div>
+
+              {/* Disclaimer Footnote */}
+              <p className="tnx-assistant-disclaimer">
+                The assistant can make mistakes. For payments or claim decisions,
+                talk to our team.
+              </p>
+            </>
           )}
         </div>
       )}
 
-      {/* FULL-SCREEN LIGHTBOX MODAL */}
+      {/* Lightbox Modal */}
       {previewImage && (
-        <div className="tnx-lightbox" onClick={() => setPreviewImage(null)}>
-          <div className="tnx-lightbox-container">
-            <img src={previewImage} alt="Attachment full view" />
+        <div
+          className="tnx-lightbox-wrap"
+          onClick={() => setPreviewImage(null)}
+        >
+          <div className="tnx-lightbox-inner">
+            <img src={previewImage} alt="Preview" className="tnx-lightbox-img" />
             <button
               type="button"
-              className="tnx-btn-lightbox-close"
+              className="tnx-lightbox-close"
               onClick={() => setPreviewImage(null)}
             >
               <X size={20} />
@@ -1290,7 +1245,7 @@ export default function Chatbox({
         </div>
       )}
 
-      {/* CONFIRM / ALERT MODAL OVERLAY */}
+      {/* Confirmation Dialog Modal */}
       <ConfirmModal
         isOpen={modalConfig.isOpen}
         title={modalConfig.title}
@@ -1299,7 +1254,6 @@ export default function Chatbox({
         confirmText={modalConfig.confirmText}
         cancelText={modalConfig.cancelText}
         showCancel={modalConfig.showCancel}
-        zIndex={40000}
         onConfirm={modalConfig.onConfirm}
         onCancel={() => setModalConfig((prev) => ({ ...prev, isOpen: false }))}
       />

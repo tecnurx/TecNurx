@@ -127,7 +127,10 @@ const Sidebar = () => {
           <Link
             href="/dashboard/my-account"
             className={
-              pathname.startsWith("/dashboard/my-account") ? "active" : ""
+              pathname.startsWith("/dashboard/my-account") ||
+              pathname.startsWith("/dashboard/notifications")
+                ? "active"
+                : ""
             }
             onClick={closeSidebar}
           >

@@ -1,4 +1,5 @@
 "use client";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -115,14 +116,7 @@ export default function OrderDetails() {
   };
 
   if (loading) {
-    return (
-      <div className="resolve-wrap" style={{ padding: "60px 20px", textAlign: "center" }}>
-        <p style={{ color: "#64748b", fontWeight: "500", marginBottom: "16px" }}>
-          Loading repair details and finding available engineers...
-        </p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   if (error && !availableData) {

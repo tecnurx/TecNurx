@@ -1,4 +1,5 @@
 "use client";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -211,12 +212,7 @@ const RepairDetailsPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading repair details...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   if (error || !repair) {

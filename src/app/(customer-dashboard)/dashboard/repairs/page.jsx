@@ -6,6 +6,7 @@ import { Wrench } from "lucide-react";
 import { repairService } from "../../../../../services/repairs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 const MyOrders = () => {
   const router = useRouter();
@@ -227,12 +228,7 @@ const MyOrders = () => {
   };
 
   if (loading) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   const hasNoRepairs = displayedOrders.length === 0;

@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import "./userid.css"; // we'll define this below
 import { adminService } from "../../../../../../services/admin/admin";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 const UserDetailsPage = () => {
   const { userId } = useParams();
@@ -45,12 +46,7 @@ const UserDetailsPage = () => {
   }, [userId]);
 
   if (loading) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   if (error || !userData) {

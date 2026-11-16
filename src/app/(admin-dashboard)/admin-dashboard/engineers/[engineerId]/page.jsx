@@ -1,4 +1,5 @@
 "use client";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 import React, { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
@@ -108,21 +109,7 @@ export default function EngineerDetailsPage({ params }) {
   };
 
   if (loading) {
-    return (
-      <div
-        className="resolve-wrap"
-        style={{
-          height: "50vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-        }}
-      >
-        <p>Loading engineer details...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   if (error || !engineer) {

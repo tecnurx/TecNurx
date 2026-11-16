@@ -14,6 +14,7 @@ import { repairService } from "../../../../services/repairs";
 import { deviceService } from "../../../../services/devices";
 import { NotificationService } from "../../../../services/notification";
 import { useSearchParams, useRouter } from "next/navigation";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 // Helper to format currency
 const formatNaira = (amount) => {
@@ -455,12 +456,7 @@ const DashboardContent = () => {
   }, [notifications]);
 
   if (loading) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading overview...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   return (
@@ -858,14 +854,7 @@ const DashboardContent = () => {
 
 export default function Dashboard() {
   return (
-    <Suspense
-      fallback={
-        <div className="resolve-wrap">
-          <p>Loading dashboard...</p>
-          <div className="respinner"></div>
-        </div>
-      }
-    >
+    <Suspense fallback={<TecNurxLoader minHeight="65vh" size="lg" />}>
       <DashboardContent />
     </Suspense>
   );

@@ -66,6 +66,26 @@ const Navbar = () => {
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
 
   const countryDropdownRef = useRef(null);
+  const hoverTimeoutRef = useRef(null);
+
+  // Load saved region from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedRegion = localStorage.getItem("selected_region");
+      if (savedRegion) {
+        const found = countries.find(
+          (c) =>
+            c.id.toLowerCase() === savedRegion.toLowerCase() ||
+            c.name.toLowerCase() === savedRegion.toLowerCase()
+        );
+        if (found) {
+          setSelectedCountry(found);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load region from localStorage:", e);
+    }
+  }, []);
 
   // Close country dropdown on outside click
   useEffect(() => {
@@ -85,6 +105,32 @@ const Navbar = () => {
     };
   }, [countryDropdownOpen]);
 
+  // Clean up hover timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleMouseEnter = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    setCountryDropdownOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    hoverTimeoutRef.current = setTimeout(() => {
+      setCountryDropdownOpen(false);
+    }, 180);
+  };
+
   const toggleMobileDropdown = (e) => {
     e.stopPropagation();
     setMobileDropdownOpen((prev) => !prev);
@@ -98,6 +144,14 @@ const Navbar = () => {
   const handleCountrySelect = (country) => {
     setSelectedCountry(country);
     setCountryDropdownOpen(false);
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    try {
+      localStorage.setItem("selected_region", country.id);
+    } catch (e) {
+      console.error("Failed to save region to localStorage:", e);
+    }
   };
 
   const handleBookRepairClick = (e) => {
@@ -171,7 +225,12 @@ const Navbar = () => {
           </Link>
 
           {/* Country Selector */}
-          <div className="country-selector-wrap" ref={countryDropdownRef}>
+          <div
+            className="country-selector-wrap"
+            ref={countryDropdownRef}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
             <button
               type="button"
               className="country-btn"

@@ -208,7 +208,8 @@
   transition: transform 0.2s ease;
 }
 
-.country-chevron.rotated {
+.country-chevron.rotated,
+.country-selector-wrap:hover .country-chevron {
   transform: rotate(180deg);
 }
 
@@ -225,6 +226,16 @@
   overflow: hidden;
   z-index: 1000;
   animation: countryDropFade 0.15s ease-out;
+}
+
+/* Invisible hover bridge to maintain hover over 10px gap */
+.country-dropdown::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 0;
+  right: 0;
+  height: 14px;
 }
 
 @keyframes countryDropFade {

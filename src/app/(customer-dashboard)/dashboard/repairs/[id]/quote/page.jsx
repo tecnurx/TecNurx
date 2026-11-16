@@ -6,6 +6,7 @@ import { Camera, Check, AlertCircle, ArrowLeft, X } from "lucide-react";
 import { repairService } from "../../../../../../../services/repairs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 // Safe helpers
 const formatCost = (val) => {
@@ -126,12 +127,7 @@ export default function RepairQuotePage({ params }) {
   };
 
   if (loading) {
-    return (
-      <div className="quote-loading-wrapper">
-        <p>Loading repair quote...</p>
-        <div className="quote-spinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   return (

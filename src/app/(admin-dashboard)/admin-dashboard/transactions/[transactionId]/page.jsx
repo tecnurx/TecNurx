@@ -1,4 +1,5 @@
 "use client";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 import React, { useState, useEffect, use } from "react";
 import { adminService } from "../../../../../.././services/admin/admin";
@@ -56,21 +57,7 @@ export default function PaymentDetailsPage({ params }) {
   }, [transactionId]);
 
   if (loading) {
-    return (
-      <div
-        className="resolve-wrap"
-        style={{
-          height: "50vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-        }}
-      >
-        <p>Loading payment details...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   if (error) {

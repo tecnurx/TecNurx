@@ -17,6 +17,7 @@ import {
 import { extractUserRole } from "@/lib/roleUtils";
 import { adminAuthService } from "../../../services/admin/adminlogin";
 import { ShieldAlert } from "lucide-react";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 export default function AdminDashboardLayout({ children }) {
   const router = useRouter();
@@ -84,12 +85,7 @@ export default function AdminDashboardLayout({ children }) {
   const isAuthorized = user ? hasAdminAccess(user, pathname) : true;
 
   if (loading) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader fullScreen size="lg" />;
   }
 
   return (

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { extractUserRole, getDashboardForUser } from "@/lib/roleUtils";
+import TecNurxLoader from "@/components/TecNurxLoader";
 import "./resolve.css";
 
 export default function ResolveRole() {
@@ -47,10 +48,5 @@ export default function ResolveRole() {
     return null;
   }
 
-  return (
-    <div className="resolve-wrap">
-      <p>Redirecting to your dashboard...</p>
-      <div className="respinner"></div>
-    </div>
-  );
+  return <TecNurxLoader fullScreen size="lg" />;
 }

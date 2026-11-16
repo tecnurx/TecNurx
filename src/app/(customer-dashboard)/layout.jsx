@@ -7,6 +7,7 @@ import { SidebarProvider } from "../../../context/SidebarContext";
 import Chatbox from "@/components/chatbox/Chatbox";
 import CustomToast from "@/components/CustomToast";
 import SessionExpiry from "@/components/SessionExpiry";
+import TecNurxLoader from "@/components/TecNurxLoader";
 import { useEffect, useState, React, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { extractUserRole } from "@/lib/roleUtils";
@@ -66,12 +67,7 @@ function LayoutContent({ children }) {
   }, [router, searchParams]);
 
   if (isValidating) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader fullScreen size="lg" />;
   }
 
   return (
@@ -99,14 +95,7 @@ function LayoutContent({ children }) {
 
 export default function DashboardLayout({ children }) {
   return (
-    <Suspense
-      fallback={
-        <div className="resolve-wrap">
-          <p>Loading...</p>
-          <div className="respinner"></div>
-        </div>
-      }
-    >
+    <Suspense fallback={<TecNurxLoader fullScreen size="lg" />}>
       <LayoutContent>{children}</LayoutContent>
     </Suspense>
   );

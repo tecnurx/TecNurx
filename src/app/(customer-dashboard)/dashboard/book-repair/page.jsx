@@ -2,6 +2,7 @@
 
 import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 function BookRepairRedirect() {
   const router = useRouter();
@@ -13,16 +14,12 @@ function BookRepairRedirect() {
     router.replace(target);
   }, [router, searchParams]);
 
-  return (
-    <div style={{ padding: "40px 24px", textAlign: "center", color: "#6b7280" }}>
-      Redirecting to Book a Repair...
-    </div>
-  );
+  return <TecNurxLoader minHeight="60vh" size="lg" />;
 }
 
 export default function BookRepairPage() {
   return (
-    <Suspense fallback={<div style={{ padding: "40px", textAlign: "center" }}>Loading...</div>}>
+    <Suspense fallback={<TecNurxLoader minHeight="60vh" size="lg" />}>
       <BookRepairRedirect />
     </Suspense>
   );

@@ -21,95 +21,10 @@ export default function NotificationsPage() {
       setLoading(true);
       const res = await NotificationService.getNotifications();
       const list = res?.data?.notifications || res?.notifications || [];
-      if (list.length > 0) {
-        setNotifications(list);
-      } else {
-        // Fallback default notifications matching designer response
-        setNotifications([
-          {
-            _id: "6ae89c6b4d5632412a5a58ff",
-            userId: "6aa7aeb776af6fd7b631f233",
-            userType: "user",
-            type: "support_ticket_closed",
-            title: "Support ticket closed",
-            message: "Your ticket TCK-694BDBFE has been closed. You can reopen it within 7 days if you still need help.",
-            metadata: {
-              ticketId: "TCK-694BDBFE",
-              subject: "Diagnostic review",
-            },
-            isRead: false,
-            sender: "TecNurx Support",
-            createdAt: new Date().toISOString(),
-          },
-          {
-            _id: "6ae89c4f4d5632412a5a58a8",
-            userId: "6aa7aeb776af6fd7b631f233",
-            userType: "user",
-            type: "support_reply",
-            title: "New reply from support",
-            message: "Support replied to your ticket TCK-694BDBFE: We have updated your repair intake details.",
-            metadata: {
-              ticketId: "TCK-694BDBFE",
-              subject: "Diagnostic review",
-            },
-            isRead: false,
-            sender: "TecNurx Support",
-            createdAt: new Date(Date.now() - 3600000 * 4).toISOString(),
-          },
-          {
-            _id: "6adb2470d02d00ca3ea19938",
-            userId: "6aa7aeb776af6fd7b631f233",
-            userType: "user",
-            type: "repair_submitted",
-            title: "Repair order submitted",
-            message: "Your TecNurx repair request has been received for Mid-range Android. Order ID: 3EA19933",
-            repairId: {
-              _id: "6adb2470d02d00ca3ea19933",
-              issueCategory: "water_damage",
-              status: "pending_quote",
-            },
-            deviceId: {
-              _id: "6adb246fd02d00ca3ea1992b",
-              brand: "Mid-range",
-              model: "Android",
-            },
-            metadata: {
-              deviceName: "Mid-range Android",
-              orderId: "3EA19933",
-            },
-            isRead: false,
-            sender: "TecNurx Support",
-            createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-          },
-          {
-            _id: "6ac95fa5a98f9a16ea393d01",
-            userId: "6aa7aeb776af6fd7b631f233",
-            userType: "user",
-            type: "repair_submitted",
-            title: "Repair order submitted",
-            message: "Your TecNurx repair request has been received for Apple iPhone 12. Order ID: EA393CFC",
-            repairId: {
-              _id: "6ac95fa5a98f9a16ea393cfc",
-              issueCategory: "battery_draining",
-              status: "pending_quote",
-            },
-            deviceId: {
-              _id: "6ac95f66a98f9a16ea393ce5",
-              brand: "Apple",
-              model: "iPhone 12",
-            },
-            metadata: {
-              deviceName: "Apple iPhone 12",
-              orderId: "EA393CFC",
-            },
-            isRead: true,
-            sender: "TecNurx Support",
-            createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
-          },
-        ]);
-      }
+      setNotifications(Array.isArray(list) ? list : []);
     } catch (err) {
       console.error("Failed to load notifications", err);
+      setNotifications([]);
     } finally {
       setLoading(false);
     }

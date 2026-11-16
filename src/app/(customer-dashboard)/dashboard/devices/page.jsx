@@ -19,6 +19,7 @@ import { deviceService } from "../../../../../services/devices";
 import { toast } from "@/components/CustomToast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 const MyDevices = () => {
   const router = useRouter();
@@ -255,7 +256,18 @@ const MyDevices = () => {
           payload.append("purchaseDate", formData.purchaseDate);
         }
         payload.append("condition", formData.condition);
-        if (formData.notes) payload.append("notes", formData.notes);
+        if (formData.notes) {
+          let cleanNotes = formData.notes.trim();
+          const lower = cleanNotes.toLowerCase();
+          if (
+            !lower.startsWith("uk used") &&
+            !lower.startsWith("bought new") &&
+            !lower.startsWith("used in nigeria")
+          ) {
+            cleanNotes = `uk used - ${cleanNotes}`;
+          }
+          payload.append("notes", cleanNotes);
+        }
 
         photos.forEach((photo) => payload.append("photos", photo));
         if (receipt) payload.append("purchaseReceipt", receipt);
@@ -326,12 +338,7 @@ const MyDevices = () => {
   };
 
   if (loading) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading devices...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   const hasNoDevices = displayedDevices.length === 0;

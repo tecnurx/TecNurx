@@ -1,4 +1,5 @@
 "use client";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 import React, { useState, useEffect } from "react";
 import {
@@ -268,12 +269,7 @@ const AdminStaffPage = () => {
   const pendingInvites = staffList.filter((s) => s.inviteAccepted === false || !s.isActive).length;
 
   if (loading) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading staff members...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   return (

@@ -83,7 +83,19 @@ const AdSidebar = () => {
   const { isSidebarOpen, closeSidebar } = useContext(SidebarContext);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => {
+    if (typeof window !== "undefined") {
+      const userJson = localStorage.getItem("staff") || localStorage.getItem("user");
+      if (userJson) {
+        try {
+          return JSON.parse(userJson);
+        } catch (e) {
+          return null;
+        }
+      }
+    }
+    return null;
+  });
   const [unreadSupportCount, setUnreadSupportCount] = useState(0);
   const pathname = usePathname();
   const router = useRouter();
@@ -116,16 +128,22 @@ const AdSidebar = () => {
   }, [pathname]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const userJson = localStorage.getItem("staff") || localStorage.getItem("user");
-      if (userJson) {
-        try {
-          setCurrentUser(JSON.parse(userJson));
-        } catch (err) {
-          console.error("Failed to parse user from localStorage", err);
+    const syncUser = () => {
+      if (typeof window !== "undefined") {
+        const userJson = localStorage.getItem("staff") || localStorage.getItem("user");
+        if (userJson) {
+          try {
+            setCurrentUser(JSON.parse(userJson));
+          } catch (err) {
+            console.error("Failed to parse user from localStorage", err);
+          }
         }
       }
-    }
+    };
+
+    syncUser();
+    window.addEventListener("storage", syncUser);
+    return () => window.removeEventListener("storage", syncUser);
   }, []);
 
   const handleLogout = async () => {
@@ -146,9 +164,17 @@ const AdSidebar = () => {
   };
 
   // Filter links based on current admin permissions
-  const visibleNavItems = sidebarNavItems.filter((item) =>
-    hasAdminAccess(currentUser, item.href)
-  );
+  // Dashboard is ALWAYS visible to all authenticated staff regardless of roles or permissions
+  const visibleNavItems = sidebarNavItems.filter((item) => {
+    if (
+      item.href === "/admin-dashboard" ||
+      item.href === "/dashboard" ||
+      item.label?.toLowerCase() === "dashboard"
+    ) {
+      return true;
+    }
+    return hasAdminAccess(currentUser, item.href);
+  });
 
   return (
     <div>

@@ -1,4 +1,5 @@
 "use client";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 import React, { useState, useEffect } from "react";
 import "./engineer.css";
@@ -150,12 +151,7 @@ const EngineerDashboard = () => {
   ];
 
   if (loading) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   return (
@@ -546,7 +542,7 @@ const EngineerDashboard = () => {
                   gap: "16px",
                 }}
               >
-                <div className="respinner"></div>
+                <TecNurxLoader size="sm" />
                 <h3
                   style={{ fontSize: "18px", fontWeight: "700", color: "#111" }}
                 >

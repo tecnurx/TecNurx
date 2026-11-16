@@ -12,6 +12,7 @@ import {
   Filter,
 } from "lucide-react";
 import "./AdminTable.css";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 /**
  * Resolves a dot-notated string accessor (e.g. "device.brand") or calls function accessor
@@ -288,8 +289,7 @@ export default function AdminTable({
               <tr>
                 <td colSpan={columns.length}>
                   <div className="admin-table-loading">
-                    <div className="respinner" style={{ width: "32px", height: "32px" }}></div>
-                    <span>Loading data...</span>
+                    <TecNurxLoader size="sm" />
                   </div>
                 </td>
               </tr>

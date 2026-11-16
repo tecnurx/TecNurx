@@ -1,4 +1,5 @@
 "use client";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -193,12 +194,7 @@ const ServicebyId = () => {
   }, [offering?.services, searchQuery, statusFilter]);
 
   if (loading) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading service offering details...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   if (error || !offering) {

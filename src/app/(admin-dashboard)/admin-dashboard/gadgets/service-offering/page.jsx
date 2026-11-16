@@ -1,4 +1,5 @@
 "use client";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
@@ -276,12 +277,7 @@ const ServiceOfferingCreate = () => {
   }, [formData.services, searchQuery, statusFilter]);
 
   if (loading) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading issue catalog specifications...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   // Summary Metrics

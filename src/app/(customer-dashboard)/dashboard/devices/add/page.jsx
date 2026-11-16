@@ -78,11 +78,31 @@ export default function AddDevicePage() {
   // Step 2: Identifiers & Details
   const [imei, setImei] = useState("");
   const [source, setSource] = useState("UK used"); // Sent as "notes"
+  const [notes, setNotes] = useState("");
   const [purchaseDate, setPurchaseDate] = useState(
     () => new Date().toISOString().split("T")[0]
   );
   // Conditions must be strictly: excellent, good, fair, poor, not_working
   const [condition, setCondition] = useState("good");
+
+  // Combine acquisition source and notes (e.g. "uk used - my phone has power button issue")
+  const getCombinedNotes = () => {
+    const cleanNotes = notes?.trim() || "";
+    const cleanSource = source?.trim() || "UK used";
+
+    if (!cleanNotes) {
+      return cleanSource;
+    }
+
+    const sourcePrefix = cleanSource.toLowerCase();
+
+    // If user already typed the prefix, don't duplicate it
+    if (cleanNotes.toLowerCase().startsWith(sourcePrefix)) {
+      return cleanNotes;
+    }
+
+    return `${sourcePrefix} - ${cleanNotes}`;
+  };
 
   // Step 2: Photos (4 slots)
   const [photos, setPhotos] = useState({
@@ -196,9 +216,10 @@ export default function AddDevicePage() {
       // Pure condition enum: excellent, good, fair, poor, not_working
       payload.append("condition", condition);
 
-      // Where did you get it is sent strictly as notes
-      if (source?.trim()) {
-        payload.append("notes", source.trim());
+      // Send combined notes with source (e.g. "uk used - my phone has power button issue")
+      const finalNotes = getCombinedNotes();
+      if (finalNotes) {
+        payload.append("notes", finalNotes);
       }
 
       // Attach photos if provided
@@ -500,7 +521,22 @@ export default function AddDevicePage() {
                 </div>
               </div>
 
-              {/* Field 5: Photos (optional) */}
+              {/* Field 5: Notes (Optional) */}
+              <div className="add-device-field">
+                <label className="add-device-label">Notes (Optional)</label>
+                <textarea
+                  className="add-device-textarea"
+                  rows={3}
+                  placeholder="Describe device condition, history, or issues (e.g. my phone has power button issue)..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                />
+                <p className="add-device-hint">
+                  Your acquisition source ({source.toLowerCase()}) will be prefixed to your notes.
+                </p>
+              </div>
+
+              {/* Field 6: Photos (optional) */}
               <div className="add-device-field">
                 <label className="add-device-label">Photos (Optional)</label>
                 <div className="photos-upload-grid">
@@ -654,6 +690,12 @@ export default function AddDevicePage() {
                       <td className="device-review-label">Acquired from</td>
                       <td className="device-review-value">{source}</td>
                     </tr>
+                    {notes?.trim() && (
+                      <tr>
+                        <td className="device-review-label">Notes</td>
+                        <td className="device-review-value">{getCombinedNotes()}</td>
+                      </tr>
+                    )}
                     <tr>
                       <td className="device-review-label">Purchase Date</td>
                       <td className="device-review-value">{purchaseDate}</td>

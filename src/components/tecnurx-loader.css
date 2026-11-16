@@ -1,0 +1,98 @@
+/* =========================================================================
+   TecNurx Animated Brand Loader
+   Canvas-based transparent background loader
+   ========================================================================= */
+
+.tecnurx-loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+/* Fullscreen mode (Layouts, root loading, auth resolution) */
+.tecnurx-loader-container.is-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffffff;
+  z-index: 99999;
+  padding: 24px;
+}
+
+/* Inline mode (Inside pages, dashboard tabs, card bodies) */
+.tecnurx-loader-container.is-inline {
+  width: 100%;
+  padding: 32px 16px;
+}
+
+/* Media wrapper */
+.tecnurx-loader-media-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Canvas rendering element */
+.tecnurx-loader-canvas {
+  display: block;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  pointer-events: none;
+  background: transparent !important;
+}
+
+/* Preset sizes (scaled to compensate for margins in the source video) */
+.tecnurx-loader-container.loader-size-sm .tecnurx-loader-canvas {
+  width: 130px;
+  max-width: 100%;
+}
+
+.tecnurx-loader-container.loader-size-md .tecnurx-loader-canvas {
+  width: 280px;
+  max-width: 100%;
+}
+
+.tecnurx-loader-container.loader-size-lg .tecnurx-loader-canvas {
+  width: 440px;
+  max-width: 100%;
+}
+
+.tecnurx-loader-container.loader-size-xl .tecnurx-loader-canvas {
+  width: 580px;
+  max-width: 100%;
+}
+
+/* Optional text (if explicitly provided) */
+.tecnurx-loader-text {
+  margin-top: 14px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: #64748b;
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+
+/* Responsive adjustment */
+@media (max-width: 640px) {
+  .tecnurx-loader-container.loader-size-sm .tecnurx-loader-canvas {
+    width: 100px;
+  }
+  .tecnurx-loader-container.loader-size-md .tecnurx-loader-canvas {
+    width: 220px;
+  }
+  .tecnurx-loader-container.loader-size-lg .tecnurx-loader-canvas {
+    width: 320px;
+  }
+  .tecnurx-loader-container.loader-size-xl .tecnurx-loader-canvas {
+    width: 360px;
+  }
+}

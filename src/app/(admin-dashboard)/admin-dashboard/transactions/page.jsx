@@ -1,4 +1,5 @@
 "use client";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 import React, { useState, useEffect } from "react";
 import "./adtran.css";
@@ -199,12 +200,7 @@ const AdminTransactions = () => {
   ];
 
   if (loading && payments.length === 0) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading transactions...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   return (

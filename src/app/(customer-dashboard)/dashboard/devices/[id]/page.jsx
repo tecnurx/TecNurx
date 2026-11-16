@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { deviceService } from "../../../../../../services/devices";
 import { toast } from "@/components/CustomToast";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 // Helper to format price in Naira
 const formatPrice = (amount) => {
@@ -231,9 +232,7 @@ export default function DeviceDetailPage({ params }) {
   if (loading) {
     return (
       <div className="device-detail-page">
-        <div style={{ padding: "60px 0", textAlign: "center", color: "#64748b" }}>
-          <p>Loading device details...</p>
-        </div>
+        <TecNurxLoader minHeight="60vh" size="lg" />
       </div>
     );
   }

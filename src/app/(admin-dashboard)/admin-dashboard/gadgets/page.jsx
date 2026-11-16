@@ -1,4 +1,5 @@
 "use client";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 import React, { useState, useEffect } from "react";
 import {
@@ -212,12 +213,7 @@ const AdminGadgets = () => {
   ];
 
   if (loading && offerings.length === 0) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading service catalog...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   if (error && offerings.length === 0) {

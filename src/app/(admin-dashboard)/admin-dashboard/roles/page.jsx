@@ -1,4 +1,5 @@
 "use client";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 import React, { useState, useEffect } from "react";
 import {
@@ -214,12 +215,7 @@ const AdminRolesPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading roles and permissions...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   return (

@@ -50,28 +50,124 @@ export const ROUTE_PERMISSIONS = {
 };
 
 /**
- * Extracts normalized permissions array from user/staff object
+ * Normalizes any role string by stripping spaces, dashes, underscores, and lowercasing.
+ * E.g., "Super Admin", "Super_Admin", "super-admin" -> "superadmin"
+ */
+export const normalizeRoleString = (role) => {
+  if (!role) return "";
+  return String(role)
+    .toLowerCase()
+    .trim()
+    .replace(/[\s_\-]+/g, "");
+};
+
+/**
+ * Extracts normalized permissions array from user/staff object.
+ * Safely aggregates permissions from direct arrays, role objects, and nested staff objects.
  */
 export const getStaffPermissions = (user) => {
   if (!user) return [];
 
-  // 1. Direct permissions array on user
-  if (Array.isArray(user.permissions)) {
-    return user.permissions.map((p) => (typeof p === "string" ? p : p.key || p.name));
+  const rawUser = user.staff || user.user || user.data?.staff || user.data?.user || user;
+  const permissionsSet = new Set();
+
+  const addPermissions = (list) => {
+    if (!Array.isArray(list)) return;
+    list.forEach((p) => {
+      if (!p) return;
+      if (typeof p === "string") {
+        permissionsSet.add(p.trim());
+      } else if (typeof p === "object") {
+        const val = p.key || p.name || p.code || p.permission || p.value || p.slug;
+        if (val && typeof val === "string") {
+          permissionsSet.add(val.trim());
+        }
+      }
+    });
+  };
+
+  // 1. Direct permissions
+  addPermissions(rawUser.permissions);
+  addPermissions(user.permissions);
+
+  // 2. Nested under role
+  if (rawUser.role && typeof rawUser.role === "object") {
+    addPermissions(rawUser.role.permissions);
+  }
+  if (user.role && typeof user.role === "object") {
+    addPermissions(user.role.permissions);
   }
 
-  // 2. Nested under role object
-  if (user.role && typeof user.role === "object" && Array.isArray(user.role.permissions)) {
-    return user.role.permissions.map((p) => (typeof p === "string" ? p : p.key || p.name));
+  // 3. Nested under data
+  if (user.data?.permissions) {
+    addPermissions(user.data.permissions);
   }
 
-  // 3. Nested under data.staff or staff
-  const staffObj = user.staff || user.data?.staff;
-  if (staffObj) {
-    return getStaffPermissions(staffObj);
+  return Array.from(permissionsSet);
+};
+
+/**
+ * Checks whether a staff user is a Super Admin via role name, flags, or wildcard permissions.
+ */
+export const isStaffSuperAdmin = (user) => {
+  if (!user) return false;
+
+  const rawUser = user.staff || user.user || user.data?.staff || user.data?.user || user;
+
+  // 1. Check explicit boolean flags
+  if (
+    rawUser.isSuperAdmin === true ||
+    rawUser.is_super_admin === true ||
+    user.isSuperAdmin === true ||
+    user.is_super_admin === true ||
+    rawUser.role?.isSuperAdmin === true ||
+    rawUser.role?.is_super_admin === true
+  ) {
+    return true;
   }
 
-  return [];
+  // 2. Check all possible role names
+  const roleCandidates = [
+    typeof rawUser.role === "string" ? rawUser.role : null,
+    rawUser.role?.name,
+    rawUser.role?.slug,
+    rawUser.role?.role,
+    rawUser.role?.title,
+    rawUser.roleName,
+    rawUser.adminType,
+    rawUser.adminRole,
+    rawUser.type,
+    typeof user.role === "string" ? user.role : null,
+    user.role?.name,
+    user.role?.slug,
+    user.roleName,
+    user.adminType,
+  ];
+
+  for (const candidate of roleCandidates) {
+    if (!candidate) continue;
+    const clean = normalizeRoleString(candidate);
+    if (
+      clean === "superadmin" ||
+      clean.includes("superadmin") ||
+      (clean.includes("super") && clean.includes("admin"))
+    ) {
+      return true;
+    }
+  }
+
+  // 3. Check wildcard permissions
+  const permissions = getStaffPermissions(user);
+  if (
+    permissions.includes("*") ||
+    permissions.includes("all") ||
+    permissions.includes("super_admin") ||
+    permissions.includes("superadmin")
+  ) {
+    return true;
+  }
+
+  return false;
 };
 
 /**
@@ -79,24 +175,36 @@ export const getStaffPermissions = (user) => {
  */
 export const getStaffRoleName = (user) => {
   if (!user) return "";
-  if (typeof user.role === "string") return user.role.toLowerCase();
-  if (user.role && typeof user.role === "object" && user.role.name) {
-    return user.role.name.toLowerCase();
+
+  if (isStaffSuperAdmin(user)) {
+    return "super_admin";
   }
-  const staffObj = user.staff || user.data?.staff;
-  if (staffObj) {
-    return getStaffRoleName(staffObj);
-  }
-  const legacyRole = user.adminType || user.adminRole || user.type;
-  return legacyRole ? String(legacyRole).toLowerCase() : "";
+
+  const rawUser = user.staff || user.user || user.data?.staff || user.data?.user || user;
+
+  const candidate =
+    (typeof rawUser.role === "string" ? rawUser.role : rawUser.role?.name) ||
+    rawUser.role?.slug ||
+    rawUser.role?.role ||
+    rawUser.roleName ||
+    rawUser.adminType ||
+    rawUser.adminRole ||
+    rawUser.type ||
+    (typeof user.role === "string" ? user.role : user.role?.name) ||
+    user.roleName ||
+    user.adminType ||
+    "";
+
+  return String(candidate).trim().toLowerCase();
 };
 
 /**
  * Helper for user-facing display of active admin type
  */
 export const getAdminType = (user) => {
+  if (isStaffSuperAdmin(user)) return "SUPER ADMIN";
   const roleName = getStaffRoleName(user);
-  if (roleName) return roleName.replace(/_/g, " ").toUpperCase();
+  if (roleName) return roleName.replace(/[_\-]/g, " ").toUpperCase();
   return "ADMIN";
 };
 
@@ -110,13 +218,13 @@ export const getAdminType = (user) => {
 export const hasPermission = (user, permission) => {
   if (!user) return false;
 
-  const roleName = getStaffRoleName(user);
-  if (roleName === "super_admin" || roleName === "superadmin") {
+  // Super admin always has all permissions
+  if (isStaffSuperAdmin(user)) {
     return true;
   }
 
   const userPermissions = getStaffPermissions(user);
-  if (userPermissions.includes("*")) {
+  if (userPermissions.includes("*") || userPermissions.includes("all")) {
     return true;
   }
 
@@ -152,7 +260,7 @@ export const useStaffPermissions = () => {
     currentUser,
     can,
     roleName: getStaffRoleName(currentUser),
-    isSuperAdmin: getStaffRoleName(currentUser) === "super_admin" || can("*"),
+    isSuperAdmin: isStaffSuperAdmin(currentUser),
   };
 };
 
@@ -164,28 +272,31 @@ export const useStaffPermissions = () => {
  * @returns {boolean} True if authorized, false otherwise.
  */
 export const hasAdminAccess = (user, pathname) => {
-  if (!user) return true; // Default allow until auth fully mounts
+  // RULE: Dashboard is ALWAYS accessible to any authenticated user regardless of roles/permissions
+  if (
+    pathname === "/admin-dashboard" ||
+    pathname === "/admin-dashboard/" ||
+    pathname === "/dashboard" ||
+    pathname === "/dashboard/"
+  ) {
+    return true;
+  }
 
-  const roleName = getStaffRoleName(user);
+  if (!user) return true; // Default allow during initial client hydration
 
   // 1. Super admin always has unrestricted access to everything
-  if (roleName === "super_admin" || roleName === "superadmin") {
+  if (isStaffSuperAdmin(user)) {
     return true;
   }
 
   const permissions = getStaffPermissions(user);
 
-  // 2. Wildcard permission ("*") grants full access to everything
-  if (permissions.includes("*")) {
+  // 2. Wildcard permission ("*" or "all") grants full access to everything
+  if (permissions.includes("*") || permissions.includes("all")) {
     return true;
   }
 
-  // 3. Root dashboard overview is accessible to all authenticated staff
-  if (pathname === "/admin-dashboard") {
-    return true;
-  }
-
-  // 4. Find matching route rule (checks exact match or route prefix)
+  // 3. Find matching route rule (checks exact match or route prefix)
   const matchingRouteKey = Object.keys(ROUTE_PERMISSIONS).find(
     (routePrefix) => pathname === routePrefix || pathname.startsWith(routePrefix + "/")
   );
@@ -195,8 +306,10 @@ export const hasAdminAccess = (user, pathname) => {
     return requiredPermissions.some((perm) => permissions.includes(perm));
   }
 
-  // 5. Default fallback for standard 'admin' role if no granular permissions rule is matched
-  if (roleName === "admin") {
+  // 4. Default fallback for standard 'admin' role if no granular permissions rule is matched
+  const roleName = getStaffRoleName(user);
+  const cleanRole = normalizeRoleString(roleName);
+  if (cleanRole === "admin" || cleanRole.includes("admin")) {
     return true;
   }
 

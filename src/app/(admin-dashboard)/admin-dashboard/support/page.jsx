@@ -1,5 +1,6 @@
 // src/app/(admin-dashboard)/admin-dashboard/support/page.jsx
 "use client";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
@@ -771,8 +772,7 @@ export default function AdminSupportPage() {
             <div className="drawer-messages-feed">
               {loadingDetails ? (
                 <div className="feed-loading">
-                  <div className="respinner"></div>
-                  <p>Loading conversation history...</p>
+                  <TecNurxLoader size="sm" />
                 </div>
               ) : messages.length === 0 ? (
                 <div className="feed-empty">

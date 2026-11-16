@@ -9,6 +9,7 @@ import logo from "@/assets/images/logo.png";
 import { authService } from "../../../../../services/auth";
 import { validatePassword, getPasswordRequirements } from "@/lib/passwordValidation";
 import { toast } from "@/components/CustomToast";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 const CreatePasswordContent = () => {
   const router = useRouter();
@@ -469,7 +470,7 @@ const CreatePasswordContent = () => {
 
 export default function CreatePassword() {
   return (
-    <Suspense fallback={<div style={{ padding: "40px", textAlign: "center" }}>Loading...</div>}>
+    <Suspense fallback={<TecNurxLoader fullScreen size="lg" />}>
       <CreatePasswordContent />
     </Suspense>
   );

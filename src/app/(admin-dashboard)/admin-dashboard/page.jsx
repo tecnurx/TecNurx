@@ -7,6 +7,7 @@ import { adminService } from "../../../../services/admin/admin";
 import AdminGraph from "../components/Graph";
 import Link from "next/link";
 import AdminTable from "@/components/AdminTable";
+import TecNurxLoader from "@/components/TecNurxLoader";
 
 const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -92,12 +93,7 @@ const AdminDashboard = () => {
   ];
 
   if (loading) {
-    return (
-      <div className="resolve-wrap">
-        <p>Loading...</p>
-        <div className="respinner"></div>
-      </div>
-    );
+    return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   return (
