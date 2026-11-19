@@ -9,6 +9,55 @@ const PROTECTED_DASHBOARDS = [
 
 export function middleware(request) {
   const { pathname } = request.nextUrl;
+
+  // 1. Always allow Next.js internals, static assets and media files
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/static") ||
+    pathname.startsWith("/api") ||
+    pathname.includes(".")
+  ) {
+    return NextResponse.next();
+  }
+
+  // 2. Secret preview bypass handling (e.g. ?preview=launch2026 or ?exit_preview=true)
+  const secretKey = process.env.PREVIEW_SECRET || "launch2026";
+  const previewParam = request.nextUrl.searchParams.get("preview");
+  const exitParam = request.nextUrl.searchParams.get("exit_preview");
+
+  if (previewParam === secretKey) {
+    // Redirect to clean URL without query param and set preview cookie
+    const cleanUrl = new URL(pathname, request.url);
+    const response = NextResponse.redirect(cleanUrl);
+    response.cookies.set("preview_mode", "true", {
+      path: "/",
+      httpOnly: false, // allow client-side detection for exit badge
+      sameSite: "lax",
+    });
+    return response;
+  }
+
+  if (exitParam === "true") {
+    // Exit preview mode
+    const cleanUrl = new URL("/", request.url);
+    const response = NextResponse.redirect(cleanUrl);
+    response.cookies.delete("preview_mode");
+    return response;
+  }
+
+  const isPreviewMode = request.cookies.get("preview_mode")?.value === "true";
+  const isMaintenanceActive = process.env.MAINTENANCE_MODE !== "false";
+
+  // 3. Maintenance / Coming Soon mode (when active and not in preview mode)
+  if (isMaintenanceActive && !isPreviewMode) {
+    if (pathname === "/coming-soon") {
+      return NextResponse.next();
+    }
+    // Rewrite all routes (including /login, /dashboard, /, etc.) to the coming-soon page
+    return NextResponse.rewrite(new URL("/coming-soon", request.url));
+  }
+
+  // 4. Standard Site Middleware (active when in preview mode or MAINTENANCE_MODE=false)
   const token = request.cookies.get("token")?.value;
   const staffToken = request.cookies.get("staff_jwt")?.value;
 
@@ -16,7 +65,6 @@ export function middleware(request) {
     pathname.startsWith(prefix)
   );
 
-  // 1. Protect all dashboards: no token → redirect to appropriate login
   if (isProtected) {
     // Allow access if there's a ?token= query param (Google redirect flow)
     if (request.nextUrl.searchParams.has("token")) {
@@ -65,24 +113,12 @@ export function middleware(request) {
 
 export const config = {
   matcher: [
-    // Protected dashboards
-    "/dashboard/:path*",
-    "/engineer-dashboard/:path*",
-    "/admin-dashboard/:path*",
-
-    // All login pages
-    "/login",
-    "/not-engineer-login/:path*",
-    "/not-even-admin-login",
-
-    // Other auth pages
-    "/register",
-    "/service-partner/:path*",
-    "/forgot-password",
-    "/create-password/:path*",
-    "/verify-email",
-
-    // CRITICAL: Include resolve-role in matcher
-    "/resolve-role",
+    /*
+     * Match all request paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    "/((?!_next/static|_next/image|favicon.ico).*)",
   ],
 };
