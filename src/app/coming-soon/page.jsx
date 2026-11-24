@@ -78,7 +78,7 @@ export default function ComingSoonPage() {
           <div className="cs-desktop-hero-banner">
             <img
               src="/hero-pc.svg"
-              alt="The Nurx Experience - Official Product Launch"
+              alt="NURX UNVEILED - Official Launch"
               className="cs-desktop-hero-img"
             />
 
@@ -112,15 +112,15 @@ export default function ComingSoonPage() {
               target="_blank"
               rel="noopener noreferrer"
               className="cs-desktop-register-overlay"
-              aria-label="Register Here"
+              aria-label="Join the Waitlist"
             />
           </div>
 
-          {/* Mobile Banner (390x664) */}
+          {/* Mobile Banner (390x681) */}
           <div className="cs-mobile-hero-banner">
             <img
               src="/hero-mobile.svg"
-              alt="The Nurx Experience - Official Product Launch"
+              alt="NURX UNVEILED - Official Launch"
               className="cs-mobile-hero-img"
             />
 
@@ -154,9 +154,8 @@ export default function ComingSoonPage() {
               target="_blank"
               rel="noopener noreferrer"
               className="cs-mobile-register-overlay"
-            >
-              Register Here
-            </a>
+              aria-label="Join the Waitlist"
+            />
           </div>
         </div>
       </section>
