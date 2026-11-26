@@ -186,7 +186,7 @@ const EngineerLogin = () => {
                     Remember me
                   </label>
                 </div>
-                <Link href="/not-engineer-login/forgot-password">Forgot Password?</Link>
+                <Link href="/engineer-login/forgot-password">Forgot Password?</Link>
               </div>
 
               <div className="sign-btn">

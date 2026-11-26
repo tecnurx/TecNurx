@@ -34,9 +34,9 @@ export default function SessionExpiry() {
           const role = extractUserRole(user);
 
           if (role === "engineer") {
-            redirectPath = "/not-engineer-login";
+            redirectPath = "/engineer-login";
           } else if (role === "admin") {
-            redirectPath = "/not-even-admin-login";
+            redirectPath = "/staff-login";
           }
         } catch (e) {
           console.error("SessionExpiry role parsing error:", e);

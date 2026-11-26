@@ -444,7 +444,7 @@ const CreatePasswordContent = () => {
               </button>
 
               <button
-                onClick={() => router.push("/not-engineer-login")}
+                onClick={() => router.push("/engineer-login")}
                 style={{
                   width: "100%",
                   padding: "14px",

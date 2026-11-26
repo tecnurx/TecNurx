@@ -20,7 +20,7 @@ export default function EngineerDashboardLayout({ children }) {
     const token = localStorage.getItem("token");
 
     if (!userJson || !token) {
-      router.replace("/not-engineer-login");
+      router.replace("/engineer-login");
       return;
     }
 

@@ -30,7 +30,7 @@ export default function AdminDashboardLayout({ children }) {
     const token = localStorage.getItem("staff_token") || localStorage.getItem("token");
 
     if (!userJson || !token) {
-      router.replace("/not-even-admin-login");
+      router.replace("/staff-login");
       return;
     }
 

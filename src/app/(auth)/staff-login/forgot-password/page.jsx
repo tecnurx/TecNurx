@@ -58,7 +58,7 @@ export default function StaffForgotPassword() {
                 </p>
                 <div style={{ marginTop: "24px" }}>
                   <Link
-                    href="/not-even-admin-login"
+                    href="/staff-login"
                     style={{ fontSize: "14px", color: "#000", fontWeight: "600", textDecoration: "underline" }}
                   >
                     Return to Login
@@ -96,7 +96,7 @@ export default function StaffForgotPassword() {
 
                 <div style={{ textAlign: "center", marginTop: "16px" }}>
                   <Link
-                    href="/not-even-admin-login"
+                    href="/staff-login"
                     style={{ fontSize: "13px", color: "#666", textDecoration: "none" }}
                   >
                     Remember your password? <strong>Sign In</strong>

@@ -313,7 +313,7 @@ function StaffResetPasswordContent() {
 
             <div style={{ textAlign: "center", marginTop: "8px" }}>
               <Link
-                href="/not-even-admin-login"
+                href="/staff-login"
                 style={{ fontSize: "14px", color: "#6b7280", textDecoration: "none", fontWeight: "500" }}
               >
                 Back to Staff Login

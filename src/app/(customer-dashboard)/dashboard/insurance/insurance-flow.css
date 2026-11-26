@@ -2,7 +2,7 @@
 .ins-page {
   max-width: 1240px;
   margin: 0 auto;
-  padding: 32px 40px 56px 40px;
+  /* padding: 32px 40px 56px 40px; */
   font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   display: flex;
   flex-direction: column;
@@ -653,7 +653,7 @@
 
 @media screen and (max-width: 640px) {
   .ins-page {
-    padding: 20px 16px 40px 16px;
+    /* padding: 20px 16px 40px 16px; */
   }
 
   .ins-title {

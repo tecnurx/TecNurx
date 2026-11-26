@@ -74,7 +74,7 @@ export function middleware(request) {
     // Admin dashboard protection: requires staff_jwt or token
     if (pathname.startsWith("/admin-dashboard")) {
       if (!staffToken && !token) {
-        const loginUrl = new URL("/not-even-admin-login", request.url);
+        const loginUrl = new URL("/staff-login", request.url);
         loginUrl.searchParams.set("redirect", pathname);
         return NextResponse.redirect(loginUrl);
       }
@@ -87,7 +87,7 @@ export function middleware(request) {
         return NextResponse.redirect(new URL("/admin-dashboard", request.url));
       }
       if (!token) {
-        const loginUrl = new URL("/not-engineer-login", request.url);
+        const loginUrl = new URL("/engineer-login", request.url);
         loginUrl.searchParams.set("redirect", pathname);
         return NextResponse.redirect(loginUrl);
       }

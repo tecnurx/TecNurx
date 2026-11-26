@@ -116,7 +116,7 @@ const EngineerForgotPassword = () => {
 
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               <Link
-                href="/not-engineer-login"
+                href="/engineer-login"
                 style={{
                   display: "inline-block",
                   width: "100%",
@@ -222,7 +222,7 @@ const EngineerForgotPassword = () => {
 
             <div style={{ textAlign: "center", marginTop: "8px" }}>
               <Link
-                href="/not-engineer-login"
+                href="/engineer-login"
                 style={{ fontSize: "14px", color: "#6b7280", textDecoration: "none", fontWeight: "500" }}
               >
                 Remember your password? <strong>Sign In</strong>

@@ -221,7 +221,7 @@ const ServicePartnerSignUp = () => {
       });
 
       toast.success("Registration complete!");
-      router.push("/not-engineer-login");
+      router.push("/engineer-login");
     } catch (err) {
       console.error("Service provider profile error:", err);
       toast.error(

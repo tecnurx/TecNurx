@@ -68,9 +68,9 @@ const AdNav = () => {
     setIsLoggingOut(true);
     try {
       await adminAuthService.logout();
-      router.push("/not-even-admin-login");
+      router.push("/staff-login");
     } catch {
-      router.push("/not-even-admin-login");
+      router.push("/staff-login");
     } finally {
       setIsLoggingOut(false);
     }
