@@ -1,8 +1,7 @@
 /* src/app/(admin-dashboard)/admin-dashboard/support/support.css */
 
 .admin-support-page {
-  /* padding: 24px; */
-  max-width: 1400px;
+  max-width: 1140px;
   margin: 0 auto;
 }
 
@@ -30,17 +29,17 @@
 
 .btn-refresh-support {
   background: #ffffff;
-  border: 1px solid #cbd5e1;
-  color: #0f172a;
-  padding: 8px 16px;
-  border-radius: 8px;
+  border: 1.5px solid #e2e8f0;
+  color: #111827;
+  padding: 9px 18px;
+  border-radius: 9999px;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 13.5px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .btn-refresh-support:hover {

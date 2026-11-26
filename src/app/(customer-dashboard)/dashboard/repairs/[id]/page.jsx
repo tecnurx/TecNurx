@@ -141,6 +141,8 @@ export default function RepairDetailPage({ params }) {
 
   const [repair, setRepair] = useState(null);
   const [trackData, setTrackData] = useState(null);
+  const [quoteData, setQuoteData] = useState(null);
+  const [additionalEntries, setAdditionalEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
@@ -149,9 +151,11 @@ export default function RepairDetailPage({ params }) {
       try {
         setLoading(true);
 
-        const [detailRes, trackRes] = await Promise.allSettled([
+        const [detailRes, trackRes, quoteRes, addRes] = await Promise.allSettled([
           repairService.getRepairDetails(repairId),
           repairService.trackRepair(repairId),
+          repairService.getQuote(repairId),
+          repairService.getAdditionalWork(repairId),
         ]);
 
         if (detailRes.status === "fulfilled") {
@@ -164,6 +168,19 @@ export default function RepairDetailPage({ params }) {
 
         if (trackRes.status === "fulfilled") {
           setTrackData(trackRes.value?.data || trackRes.value);
+        }
+
+        if (quoteRes.status === "fulfilled") {
+          setQuoteData(quoteRes.value?.data || quoteRes.value);
+        }
+
+        if (addRes.status === "fulfilled") {
+          const list =
+            addRes.value?.data?.entries ||
+            addRes.value?.entries ||
+            addRes.value?.data ||
+            [];
+          setAdditionalEntries(Array.isArray(list) ? list : []);
         }
       } catch (err) {
         console.warn("Could not load repair detail:", err);
@@ -326,10 +343,16 @@ export default function RepairDetailPage({ params }) {
     repair?.createdAt
   );
 
-  // Cost details from estimatedCost
-  const laborCost = repair?.estimatedCost?.laborCost ?? 20000;
-  const partsCost = repair?.estimatedCost?.partsCost ?? 0;
-  const totalCost = repair?.estimatedCost?.totalCost ?? laborCost + partsCost;
+  // Cost details (prefer GET /repairs/:id/quote, then repair.quote, then estimatedCost)
+  const qParts = quoteData?.breakdown?.find((b) => b.key === "parts")?.amount;
+  const qLabour = quoteData?.breakdown?.find((b) => b.key === "labour")?.amount;
+  const laborCost = qLabour ?? repair?.quote?.labour ?? repair?.estimatedCost?.laborCost ?? 0;
+  const partsCost = qParts ?? repair?.quote?.parts ?? repair?.estimatedCost?.partsCost ?? 0;
+  const totalCost =
+    quoteData?.total ??
+    repair?.quote?.total ??
+    repair?.estimatedCost?.totalCost ??
+    (laborCost + partsCost);
 
   // Status badge label sourced dynamically from backend
   const statusStr = (trackData?.currentStatus || repair?.status || "pending_quote").toLowerCase();
@@ -337,6 +360,15 @@ export default function RepairDetailPage({ params }) {
     statusStr === "quote_ready" ||
     statusStr === "quote_provided" ||
     statusStr === "awaiting_approval";
+  const effectiveAdditionalWork =
+    additionalEntries.length > 0
+      ? additionalEntries
+      : Array.isArray(repair?.additionalWork)
+      ? repair.additionalWork
+      : [];
+  const hasPendingAdditionalWork = effectiveAdditionalWork.some(
+    (e) => (e.status || "").toLowerCase() === "pending" || !e.status
+  );
 
   const badgeLabel =
     statusStr === "pending_quote"
@@ -397,9 +429,10 @@ export default function RepairDetailPage({ params }) {
 
       {/* Two-Column Grid */}
       <div className="repair-detail-grid">
-        {/* Left Column: Progress Timeline Card (Uses same timeline as track repair) */}
-        <div className="detail-card">
-          <h2 className="detail-card-title">Progress</h2>
+        {/* Left Column: Progress Timeline Card + Quote & Engineer Summary */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div className="detail-card">
+            <h2 className="detail-card-title">Progress</h2>
 
           <div className="timeline-container">
             {steps.map((step, idx) => {
@@ -443,12 +476,134 @@ export default function RepairDetailPage({ params }) {
               );
             })}
           </div>
+          </div>
+
+          {/* Quote & Engineer Summary (Left column, under Progress) */}
+          {(repair?.quote ||
+            repair?.engineer ||
+            repair?.engineerNotes ||
+            repair?.partsUsed?.length > 0 ||
+            effectiveAdditionalWork.length > 0) && (
+            <div className="detail-card">
+              <h3 className="detail-card-title" style={{ marginBottom: "16px" }}>
+                Quote &amp; engineer summary
+              </h3>
+
+              <div className="info-key-val-list">
+                {repair?.engineer && typeof repair.engineer === "object" && (
+                  <div className="info-key-val-row">
+                    <span className="info-label">Engineer</span>
+                    <span className="info-value">
+                      {[repair.engineer.fname, repair.engineer.lname]
+                        .filter(Boolean)
+                        .join(" ") || "Assigned"}
+                    </span>
+                  </div>
+                )}
+
+                {repair?.quote?.findings && (
+                  <div className="info-key-val-row">
+                    <span className="info-label">Findings</span>
+                    <span className="info-value" style={{ textAlign: "right", maxWidth: "65%" }}>
+                      {repair.quote.findings}
+                    </span>
+                  </div>
+                )}
+
+                {repair?.engineerNotes && (
+                  <div className="info-key-val-row">
+                    <span className="info-label">Engineer note</span>
+                    <span className="info-value" style={{ textAlign: "right", maxWidth: "65%" }}>
+                      {repair.engineerNotes}
+                    </span>
+                  </div>
+                )}
+
+                {repair?.quote && (
+                  <>
+                    <div className="info-key-val-row">
+                      <span className="info-label">Parts</span>
+                      <span className="info-value">₦{Number(partsCost).toLocaleString()}</span>
+                    </div>
+                    <div className="info-key-val-row">
+                      <span className="info-label">Labour</span>
+                      <span className="info-value">₦{Number(laborCost).toLocaleString()}</span>
+                    </div>
+                    <div className="info-key-val-row">
+                      <span className="info-label">Quote total</span>
+                      <span className="info-value" style={{ fontWeight: 700 }}>
+                        ₦{Number(totalCost).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="info-key-val-row">
+                      <span className="info-label">Amount paid</span>
+                      <span className="info-value">
+                        ₦{Number(repair?.amountPaid ?? 0).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="info-key-val-row">
+                      <span className="info-label">Payment status</span>
+                      <span className="info-value" style={{ textTransform: "capitalize" }}>
+                        {repair?.paymentStatus || "pending"}
+                      </span>
+                    </div>
+                  </>
+                )}
+
+                {repair?.partsUsed?.length > 0 && (
+                  <div className="info-key-val-row">
+                    <span className="info-label">Parts used</span>
+                    <span className="info-value" style={{ textAlign: "right" }}>
+                      {repair.partsUsed
+                        .map(
+                          (p) =>
+                            `${p.partName} × ${p.quantity || 1} (₦${Number(
+                              p.cost || 0
+                            ).toLocaleString()})`
+                        )
+                        .join(", ")}
+                    </span>
+                  </div>
+                )}
+
+                {effectiveAdditionalWork.length > 0 && (
+                  <div className="info-key-val-row">
+                    <span className="info-label">Additional work</span>
+                    <span className="info-value" style={{ textAlign: "right" }}>
+                      {effectiveAdditionalWork
+                        .map(
+                          (a) =>
+                            `${a.note || "Extra work"} · ₦${Number(
+                              a.amount || 0
+                            ).toLocaleString()} (${a.status || "pending"})`
+                        )
+                        .join("; ")}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right Column: Action, Pickup/Delivery, Device Cards */}
         <div className="detail-right-column">
           {/* Card 1: Action needed (Dynamic status) */}
-          {isQuoteState ? (
+          {hasPendingAdditionalWork ? (
+            <div className="action-needed-card">
+              <h3 className="action-needed-title">Additional repair needed</h3>
+              <p className="action-needed-desc">
+                Your engineer found an extra fault during the repair and needs your decision.
+              </p>
+              <button
+                type="button"
+                className="action-needed-btn"
+                onClick={() => router.push(`/dashboard/repairs/${repairId}/additional-repair`)}
+              >
+                Review additional work
+              </button>
+            </div>
+          ) : isQuoteState ? (
             <div className="action-needed-card">
               <h3 className="action-needed-title">Action needed</h3>
               <p className="action-needed-desc">
@@ -460,6 +615,34 @@ export default function RepairDetailPage({ params }) {
                 onClick={() => router.push(`/dashboard/repairs/${repairId}/quote`)}
               >
                 Review quote
+              </button>
+            </div>
+          ) : statusStr === "quote_accepted" ? (
+            <div className="action-needed-card">
+              <h3 className="action-needed-title">Payment needed</h3>
+              <p className="action-needed-desc">
+                You approved the quote. Complete payment so your repair can start.
+              </p>
+              <button
+                type="button"
+                className="action-needed-btn"
+                onClick={() => router.push(`/dashboard/repairs/${repairId}/payment`)}
+              >
+                Pay for repair
+              </button>
+            </div>
+          ) : statusStr === "delivered" || statusStr === "completed" ? (
+            <div className="action-needed-card" style={{ borderColor: "#e2e8f0" }}>
+              <h3 className="action-needed-title">Repair delivered</h3>
+              <p className="action-needed-desc">
+                Confirm your device works as expected and rate your repair experience.
+              </p>
+              <button
+                type="button"
+                className="action-needed-btn"
+                onClick={() => router.push(`/dashboard/repairs/${repairId}/delivered`)}
+              >
+                Confirm &amp; rate repair
               </button>
             </div>
           ) : statusStr === "pending_quote" ? (

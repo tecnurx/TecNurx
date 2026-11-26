@@ -1,4 +1,3 @@
-// app/admin/users/[userId]/page.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -7,15 +6,11 @@ import Image from "next/image";
 import {
   ArrowLeft,
   User,
-  Mail,
-  Phone,
-  Calendar,
   ShieldCheck,
   Clock,
   AlertCircle,
-  Loader2,
 } from "lucide-react";
-import "./userid.css"; // we'll define this below
+import "./userid.css";
 import { adminService } from "../../../../../../services/admin/admin";
 import TecNurxLoader from "@/components/TecNurxLoader";
 
@@ -51,134 +46,196 @@ const UserDetailsPage = () => {
 
   if (error || !userData) {
     return (
-      <div className="error-container">
-        <AlertCircle size={64} className="error-icon" />
-        <h2>{error || "User not found"}</h2>
-        <button onClick={() => router.back()} className="btn-back">
-          Go Back
-        </button>
+      <div className="admin-dashboard">
+        <div className="adcard" style={{ textAlign: "center", padding: "48px 24px" }}>
+          <AlertCircle size={44} color="#ef4444" style={{ margin: "0 auto 12px" }} />
+          <h2 style={{ margin: "0 0 12px", color: "#111827" }}>
+            {error || "User not found"}
+          </h2>
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="admin-btn-outline"
+          >
+            <ArrowLeft size={15} /> Go Back
+          </button>
+        </div>
       </div>
     );
   }
 
   const { user, stats } = userData;
+  const fullName = `${user.fname || ""} ${user.lname || ""}`.trim() || "User";
+  const initials =
+    `${user.fname?.[0] || ""}${user.lname?.[0] || ""}`.toUpperCase() || "US";
 
   return (
-    <div className="user-details-container">
-      {/* Header */}
-      <div className="page-header">
-        <button onClick={() => router.back()} className="btn-back">
-          <ArrowLeft size={20} /> Back to Users
+    <div className="admin-dashboard">
+      {/* Topbar */}
+      <div className="dashboard-header-row" style={{ alignItems: "center" }}>
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="admin-btn-outline"
+        >
+          <ArrowLeft size={16} /> Back to Users
         </button>
-        <h1>User Profile</h1>
+
+        <span className="admin-workspace-tag">
+          <User size={14} />
+          <span>User Profile</span>
+        </span>
       </div>
 
-      <div className="user-profile-card">
-        <div className="user-avatar-section">
-          <div className="avatar-wrapper">
+      {/* Pitch-Black Hero Banner */}
+      <div className="admin-hero-banner">
+        <div className="admin-hero-left">
+          <span className="admin-hero-pill">
+            <span>●</span>
+            <span>{user.isVerified ? "Verified Account" : "Unverified"}</span>
+          </span>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
             {user.photo && user.photo !== "default.jpg" && !imgError ? (
               <Image
                 src={user.photo}
-                alt={`${user.fname} ${user.lname}`}
-                width={120}
-                height={120}
-                className="user-avatar"
+                alt={fullName}
+                width={52}
+                height={52}
                 onError={() => setImgError(true)}
+                style={{
+                  width: "52px",
+                  height: "52px",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  border: "2px solid rgba(255,255,255,0.25)",
+                }}
               />
             ) : (
-              <div className="default-avatar">
-                <User size={60} />
+              <div
+                style={{
+                  width: "52px",
+                  height: "52px",
+                  borderRadius: "50%",
+                  background: "#ffb800",
+                  color: "#000000",
+                  fontWeight: 800,
+                  fontSize: "18px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {initials}
               </div>
             )}
-          </div>
-          <h2 className="user-name">
-            {user.fname} {user.lname}
-          </h2>
-          <span className="user-role">{user.role.toUpperCase()}</span>
-        </div>
 
-        <div className="user-info-grid">
-          <div className="info-item">
-            <Mail size={20} />
             <div>
-              <label>Email</label>
-              <p>{user.email}</p>
-            </div>
-          </div>
-
-          <div className="info-item">
-            <Phone size={20} />
-            <div>
-              <label>Phone Number</label>
-              <p>{user.phoneNumber || "Not provided"}</p>
-            </div>
-          </div>
-
-          <div className="info-item">
-            <Calendar size={20} />
-            <div>
-              <label>Date of Birth</label>
-              <p>
-                {user.dateOfBirth
-                  ? new Date(user.dateOfBirth).toLocaleDateString("en-NG", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })
-                  : "Not provided"}
+              <h1 className="admin-hero-title">{fullName}</h1>
+              <p className="admin-hero-sub" style={{ textTransform: "capitalize" }}>
+                {user.role || "Customer"} · {user.email}
               </p>
-            </div>
-          </div>
-
-          <div className="info-item">
-            <User size={20} />
-            <div>
-              <label>Gender</label>
-              <p className="capitalize">{user.gender || "Not specified"}</p>
-            </div>
-          </div>
-
-          <div className="info-item">
-            <ShieldCheck size={20} />
-            <div>
-              <label>Verification Status</label>
-              <p className={user.isVerified ? "verified" : "not-verified"}>
-                {user.isVerified ? "Verified" : "Not Verified"}
-              </p>
-            </div>
-          </div>
-
-          <div className="info-item">
-            <Clock size={20} />
-            <div>
-              <label>Joined</label>
-              <p>{user.createdAt}</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Stats Card */}
-      <div className="stats-card">
-        <h3>User Activity Summary</h3>
-        <div className="stats-grid">
-          <div className="stat-box">
-            <h4>Total Devices</h4>
-            <p className="stat-value">{stats?.totalDevices}</p>
+      {/* Stats Cards */}
+      <div className="dashboard-cards">
+        <div className="stat-card">
+          <div>
+            <span>Total Devices</span>
+            <h3>{stats?.totalDevices ?? 0}</h3>
           </div>
-          <div className="stat-box">
-            <h4>Total Repairs</h4>
-            <p className="stat-value">{stats?.totalRepairs}</p>
-          </div>
-          <div className="stat-box">
-            <h4>Completed</h4>
-            <p className="stat-value completed">{stats?.completedRepairs}</p>
-          </div>
-          <div className="stat-box">
-            <h4>Pending</h4>
-            <p className="stat-value pending">{stats?.pendingRepairs}</p>
-          </div>
+          <User size={20} />
         </div>
+        <div className="stat-card">
+          <div>
+            <span>Total Repairs</span>
+            <h3>{stats?.totalRepairs ?? 0}</h3>
+          </div>
+          <Clock size={20} />
+        </div>
+        <div className="stat-card">
+          <div>
+            <span>Completed</span>
+            <h3 style={{ color: "#15803d" }}>{stats?.completedRepairs ?? 0}</h3>
+          </div>
+          <ShieldCheck size={20} />
+        </div>
+        <div className="stat-card">
+          <div>
+            <span>Pending</span>
+            <h3 style={{ color: "#b45309" }}>{stats?.pendingRepairs ?? 0}</h3>
+          </div>
+          <Clock size={20} />
+        </div>
+      </div>
+
+      {/* Personal & Account Details Card */}
+      <div className="adcard">
+        <h2
+          style={{
+            fontSize: "18px",
+            fontWeight: 700,
+            color: "#111827",
+            margin: "0 0 18px",
+          }}
+        >
+          Account &amp; Personal Information
+        </h2>
+
+        {[
+          { label: "Email Address", value: user.email || "Not provided" },
+          { label: "Phone Number", value: user.phoneNumber || "Not provided" },
+          {
+            label: "Date of Birth",
+            value: user.dateOfBirth
+              ? new Date(user.dateOfBirth).toLocaleDateString("en-NG", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+              : "Not provided",
+          },
+          {
+            label: "Gender",
+            value: user.gender || "Not specified",
+            capitalize: true,
+          },
+          {
+            label: "Verification Status",
+            value: user.isVerified ? "Verified" : "Not Verified",
+          },
+          {
+            label: "Joined",
+            value: user.createdAt
+              ? new Date(user.createdAt).toLocaleDateString()
+              : "N/A",
+          },
+        ].map((row) => (
+          <div
+            key={row.label}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              gap: "16px",
+              padding: "13px 0",
+              borderBottom: "1px solid #f1f5f9",
+              fontSize: "14px",
+            }}
+          >
+            <span style={{ color: "#64748b" }}>{row.label}</span>
+            <strong
+              style={{
+                color: "#111827",
+                textTransform: row.capitalize ? "capitalize" : "none",
+              }}
+            >
+              {row.value}
+            </strong>
+          </div>
+        ))}
       </div>
     </div>
   );

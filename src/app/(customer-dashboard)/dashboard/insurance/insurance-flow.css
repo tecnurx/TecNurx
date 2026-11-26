@@ -1,0 +1,776 @@
+/* Shared Figma Tokens & Layout for Protection / Insurance Flow */
+.ins-page {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 32px 40px 56px 40px;
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.ins-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ins-title {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 40px;
+  letter-spacing: -1.02px;
+  color: #080808;
+  margin: 0 0 4px 0;
+}
+
+.ins-subtitle {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 23.2px;
+  color: #676e76;
+  margin: 0;
+}
+
+.ins-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* 4-Step Progress Bar */
+.ins-steps-bar {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.ins-step-item {
+  flex: 1 0 0;
+  min-width: 0;
+  border-top: 4px solid #dddde4;
+  padding-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20.3px;
+  color: #676e76;
+}
+
+.ins-step-item.done {
+  border-top-color: #080808;
+  color: #080808;
+}
+
+.ins-step-item.active {
+  border-top-color: #ffc200;
+  font-weight: 800;
+  color: #080808;
+}
+
+/* Billing Toggle Pills */
+.ins-toggle-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ins-toggle-pill {
+  appearance: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20.3px;
+  cursor: pointer;
+  font-family: inherit;
+  border: 1px solid #dddde4;
+  background: #ffffff;
+  color: #080808;
+  transition: all 0.15s ease;
+}
+
+.ins-toggle-pill.active {
+  background: #080808;
+  border-color: #080808;
+  color: #ffffff;
+}
+
+/* 3-Column Plan Grid */
+.ins-plans-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+.ins-plan-card {
+  background: #ffffff;
+  border: 1px solid #dddde4;
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  text-align: left;
+}
+
+.ins-plan-card:hover {
+  border-color: #94a3b8;
+}
+
+.ins-plan-card.selected {
+  border: 2px solid #080808;
+  padding: 23px;
+}
+
+.ins-rec-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffc200;
+  color: #080808;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 18.85px;
+  width: 100%;
+}
+
+.ins-rec-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 3.5px;
+  background: #080808;
+  flex-shrink: 0;
+}
+
+.ins-plan-name {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 26px;
+  letter-spacing: -0.2px;
+  color: #080808;
+  margin: 0;
+}
+
+.ins-plan-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.ins-plan-price {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 30.8px;
+  letter-spacing: -0.84px;
+  color: #080808;
+}
+
+.ins-plan-period {
+  font-size: 14px;
+  font-weight: 500;
+  color: #676e76;
+}
+
+.ins-plan-desc {
+  font-size: 15px;
+  line-height: 21.75px;
+  color: #676e76;
+  margin: 0;
+}
+
+.ins-divider {
+  border-bottom: 1px solid #eceef1;
+  width: 100%;
+  margin: 4px 0;
+}
+
+.ins-benefits-list {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 15px;
+  line-height: 21.75px;
+  color: #3b3f44;
+}
+
+/* 2-Column 3fr / 2fr Layout */
+.ins-two-col {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 24px;
+  align-items: start;
+  width: 100%;
+}
+
+.ins-col-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Standard Card */
+.ins-card {
+  background: #ffffff;
+  border: 1px solid #e4e4ea;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ins-card.highlight-border {
+  border: 2px solid #080808;
+}
+
+.ins-card-title {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 26px;
+  letter-spacing: -0.2px;
+  color: #080808;
+  margin: 0;
+}
+
+/* Radio Option Cards */
+.ins-radio-card {
+  background: #ffffff;
+  border: 1px solid #dddde4;
+  border-radius: 18px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+  width: 100%;
+  text-align: left;
+}
+
+.ins-radio-card.selected {
+  border: 2px solid #080808;
+  padding: 15px 17px;
+}
+
+.ins-radio-card.disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+
+.ins-radio-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  border: 2px solid #b5bac2;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ins-radio-card.selected .ins-radio-circle {
+  border: 7px solid #080808;
+}
+
+.ins-radio-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ins-radio-title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 21.75px;
+  color: #080808;
+  margin: 0;
+}
+
+.ins-radio-sub {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 21.75px;
+  color: #676e76;
+  margin: 0;
+}
+
+/* Status Pills */
+.ins-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 18.85px;
+  width: fit-content;
+  white-space: nowrap;
+}
+
+.ins-pill-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 3.5px;
+  flex-shrink: 0;
+}
+
+.ins-pill-green {
+  background: #e4f5e8;
+  color: #1e7a31;
+}
+.ins-pill-green .ins-pill-dot {
+  background: #1e7a31;
+}
+
+.ins-pill-amber {
+  background: #fff1c2;
+  color: #7a5600;
+}
+.ins-pill-amber .ins-pill-dot {
+  background: #7a5600;
+}
+
+.ins-pill-grey {
+  background: #eceef1;
+  color: #3b3f44;
+}
+.ins-pill-grey .ins-pill-dot {
+  background: #3b3f44;
+}
+
+.ins-pill-red {
+  background: #fde6e6;
+  color: #a11d1d;
+}
+.ins-pill-red .ins-pill-dot {
+  background: #a11d1d;
+}
+
+/* Key-Value Rows */
+.ins-kv-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid #eceef1;
+  width: 100%;
+}
+
+.ins-kv-row:last-child {
+  border-bottom: none;
+}
+
+.ins-kv-label {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 21.75px;
+  color: #676e76;
+}
+
+.ins-kv-val {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 21.75px;
+  color: #080808;
+  text-align: right;
+}
+
+.ins-kv-due-label {
+  font-size: 18px;
+  font-weight: 800;
+  color: #080808;
+}
+
+.ins-kv-due-val {
+  font-size: 18px;
+  font-weight: 900;
+  color: #080808;
+}
+
+/* Info Notice Box */
+.ins-info-box {
+  background: #f4f4f4;
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 20.3px;
+  color: #3b3f44;
+  width: 100%;
+}
+
+/* Form Fields */
+.ins-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.ins-field label {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20.3px;
+  color: #080808;
+}
+
+.ins-input {
+  width: 100%;
+  min-height: 52px;
+  background: #ffffff;
+  border: 1px solid #c4c8ce;
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 15px;
+  color: #080808;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.ins-input:focus {
+  border-color: #080808;
+}
+
+/* Checkbox Row */
+.ins-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #080808;
+  flex-wrap: wrap;
+}
+
+.ins-checkbox-row input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #080808;
+  cursor: pointer;
+}
+
+/* Buttons & Links */
+.ins-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.ins-btn-primary {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 14px 28px;
+  border-radius: 999px;
+  background: #ffc200;
+  color: #080808;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 21.75px;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.ins-btn-primary:hover:not(:disabled) {
+  background: #eab200;
+}
+
+.ins-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ins-btn-primary.full {
+  width: 100%;
+}
+
+.ins-btn-outline {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 14px 28px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #080808;
+  border: 1px solid #080808;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 21.75px;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.ins-btn-outline:hover {
+  background: #f8fafc;
+}
+
+.ins-btn-outline.full {
+  width: 100%;
+}
+
+.ins-link-underlined {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 21.75px;
+  color: #080808;
+  text-decoration: underline;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Numbered Step Rows (What to expect / What happens next) */
+.ins-step-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid #eceef1;
+  width: 100%;
+}
+
+.ins-step-row:last-of-type {
+  border-bottom: none;
+}
+
+.ins-step-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background: #080808;
+  color: #ffc200;
+  font-size: 15px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Confirmed Hero Card */
+.ins-confirmed-hero {
+  background: #ffffff;
+  border: 1px solid #e4e4ea;
+  border-radius: 24px;
+  padding: 48px 28px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.ins-confirmed-icon {
+  width: 88px;
+  height: 88px;
+  border-radius: 24px;
+  background: #ffc200;
+  color: #080808;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Document Row */
+.ins-doc-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid #eceef1;
+  width: 100%;
+}
+
+.ins-doc-row:last-child {
+  border-bottom: none;
+}
+
+.ins-doc-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  color: #080808;
+}
+
+/* Responsive */
+@media screen and (max-width: 960px) {
+  .ins-plans-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ins-two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .ins-photo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .ins-steps-bar.six-steps {
+    flex-wrap: wrap;
+  }
+
+  .ins-steps-bar.six-steps .ins-step-item {
+    flex: 1 1 30%;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .ins-page {
+    padding: 20px 16px 40px 16px;
+  }
+
+  .ins-title {
+    font-size: 26px;
+    line-height: 32px;
+  }
+}
+
+/* Evidence Upload Grid & Dropzones */
+.ins-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.ins-photo-slot {
+  aspect-ratio: 4 / 3;
+  background: #eceef1;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #676e76;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  overflow: hidden;
+  position: relative;
+  transition: border-color 0.15s ease;
+}
+
+.ins-photo-slot:hover {
+  border-color: #94a3b8;
+}
+
+.ins-photo-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ins-dropzone {
+  width: 100%;
+  min-height: 120px;
+  background: #fafafa;
+  border: 2px dashed #c4c8ce;
+  border-radius: 16px;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #080808;
+  transition: border-color 0.15s ease;
+}
+
+.ins-dropzone:hover {
+  border-color: #080808;
+}
+
+.ins-police-box {
+  width: 100%;
+  background: #fffaf0;
+  border: 1px dashed #e4e4ea;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Cancel Policy Modal */
+.ins-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 8, 8, 0.58);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1100;
+  backdrop-filter: blur(3px);
+}
+
+.ins-modal-card {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 32px;
+  width: 100%;
+  max-width: 580px;
+  box-shadow: 0 24px 30px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ins-modal-title {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 30px;
+  letter-spacing: -0.48px;
+  color: #080808;
+  margin: 0;
+}
+
+.ins-modal-sub {
+  font-size: 15px;
+  line-height: 21.75px;
+  color: #676e76;
+  margin: 0;
+}

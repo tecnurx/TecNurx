@@ -137,3 +137,182 @@
   width: 16px;
   height: 16px;
 }
+
+
+/* Drag-and-Drop Permission Board */
+.perm-board-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.perm-board-search {
+  position: relative;
+  flex: 1;
+}
+
+.perm-board-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.perm-board-search input {
+  width: 100%;
+  padding: 8px 12px 8px 34px;
+  border-radius: 9999px;
+  border: 1.5px solid #e2e8f0;
+  font-size: 13px;
+  color: #111827;
+  background: #f8fafc;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.perm-board-search input:focus {
+  border-color: #000000;
+  background: #ffffff;
+}
+
+.perm-dnd-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.perm-dnd-col {
+  background: #f8fafc;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 14px;
+  padding: 12px;
+  min-height: 230px;
+  max-height: 290px;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.perm-dnd-col.drag-over {
+  border-color: #ffb800;
+  background: #fffbeb;
+}
+
+.perm-dnd-col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.perm-dnd-col-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #111827;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.perm-dnd-col-action {
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: #111827;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.perm-dnd-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 2px;
+}
+
+.perm-dnd-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #111827;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+
+.perm-dnd-item:hover {
+  border-color: #94a3b8;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.perm-dnd-item:active {
+  cursor: grabbing;
+}
+
+.perm-dnd-item.assigned {
+  background: #111827;
+  border-color: #111827;
+  color: #ffffff;
+}
+
+.perm-dnd-item-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.perm-dnd-item-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.perm-dnd-move-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(0, 0, 0, 0.06);
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.perm-dnd-item.assigned .perm-dnd-move-btn {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.perm-dnd-empty {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 12.5px;
+  padding: 36px 12px;
+  margin: auto 0;
+}
+
+@media (max-width: 640px) {
+  .perm-dnd-grid {
+    grid-template-columns: 1fr;
+  }
+}

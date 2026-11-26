@@ -1,36 +1,47 @@
 "use client";
-import TecNurxLoader from "@/components/TecNurxLoader";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import "./setup.css";
+import "../engineer.css";
 import {
-  User,
-  Shield,
-  Database,
-  Camera,
-  Check,
-  X,
-  Trash2,
-  Download,
-  Loader2,
+  ShieldCheck,
   Eye,
   EyeOff,
+  X,
+  Loader2,
+  Check,
+  Wrench,
+  Camera,
 } from "lucide-react";
+import TecNurxLoader from "@/components/TecNurxLoader";
+import { toast } from "@/components/CustomToast";
 import { authService } from "../../../../../services/auth";
+import { engineerAuthService } from "../../../../../services/eng/engineerAuth";
 import { validatePassword, getPasswordRequirements } from "@/lib/passwordValidation";
 
 const EngineerAccountSetup = () => {
-  const [activeTab, setActiveTab] = useState("profile");
-  const [profilePic, setProfilePic] = useState(null);
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Load initial current user
-  useEffect(() => {
-    const user = authService.getCurrentUser();
-    setCurrentUser(user);
-    setLoading(false);
-  }, []);
+  // Modals
+  const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Profile Update State
+  const [userUpdateData, setUserUpdateData] = useState({
+    fname: "",
+    lname: "",
+    email: "",
+    phoneNumber: "",
+  });
+  const [userUpdateError, setUserUpdateError] = useState("");
+  const [userUpdateSuccess, setUserUpdateSuccess] = useState("");
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
 
   // Password Form State
   const [passwordData, setPasswordData] = useState({
@@ -38,13 +49,87 @@ const EngineerAccountSetup = () => {
     password: "",
     passwordConfirm: "",
   });
-
   const [passwordError, setPasswordError] = useState("");
   const [passwordSuccess, setPasswordSuccess] = useState("");
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  useEffect(() => {
+    try {
+      const user = authService.getCurrentUser();
+      setCurrentUser(user);
+      if (user) {
+        setUserUpdateData({
+          fname: user.fname || "",
+          lname: user.lname || "",
+          email: user.email || "",
+          phoneNumber: user.phoneNumber || "",
+        });
+      }
+    } catch (err) {
+      console.error("Failed to load engineer account:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setIsUploadingPhoto(true);
+      const res = await authService.updateMyPhoto(file);
+      const updatedUser =
+        res?.data?.user || res?.user || authService.getCurrentUser();
+      if (updatedUser) {
+        setCurrentUser(updatedUser);
+      }
+      toast.success("Profile photo updated!");
+    } catch (err) {
+      toast.error(
+        err?.response?.data?.message || "Failed to update profile photo."
+      );
+    } finally {
+      setIsUploadingPhoto(false);
+      e.target.value = "";
+    }
+  };
+
+  const updateUserInfo = async (e) => {
+    e.preventDefault();
+    setUserUpdateError("");
+    setUserUpdateSuccess("");
+    setIsUpdatingProfile(true);
+
+    try {
+      await authService.updateMe({
+        fname: userUpdateData.fname,
+        lname: userUpdateData.lname,
+        email: userUpdateData.email,
+        phoneNumber: userUpdateData.phoneNumber,
+      });
+
+      setUserUpdateSuccess("Engineer profile updated successfully!");
+      const updatedUser = authService.getCurrentUser();
+      if (updatedUser) {
+        setCurrentUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      }
+      setTimeout(() => {
+        setShowEditProfileModal(false);
+        setUserUpdateSuccess("");
+      }, 900);
+    } catch (err) {
+      const msg =
+        err.response?.data?.message ||
+        "Failed to update profile. Please try again.";
+      setUserUpdateError(msg);
+    } finally {
+      setIsUpdatingProfile(false);
+    }
+  };
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
@@ -53,10 +138,9 @@ const EngineerAccountSetup = () => {
 
     const { passwordCurrent, password, passwordConfirm } = passwordData;
 
-    if (!passwordCurrent)
-      return setPasswordError("Current password is required");
+    if (!passwordCurrent) return setPasswordError("Current password is required");
     if (!password) return setPasswordError("New password is required");
-    
+
     const passwordCheck = validatePassword(password);
     if (!passwordCheck.isValid) {
       return setPasswordError(passwordCheck.message);
@@ -80,6 +164,10 @@ const EngineerAccountSetup = () => {
         password: "",
         passwordConfirm: "",
       });
+      setTimeout(() => {
+        setShowChangePasswordModal(false);
+        setPasswordSuccess("");
+      }, 1000);
     } catch (err) {
       const msg =
         err.response?.data?.message ||
@@ -90,73 +178,21 @@ const EngineerAccountSetup = () => {
     }
   };
 
-  // Profile Update State
-  const [userUpdateError, setUserUpdateError] = useState("");
-  const [userUpdateSuccess, setUserUpdateSuccess] = useState("");
-  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
-  const [userUpdateData, setUserUpdateData] = useState({
-    lname: "",
-    fname: "",
-    email: "",
-    phoneNumber: "",
-  });
-
-  // Populate user data when currentUser updates
-  useEffect(() => {
-    if (currentUser) {
-      setUserUpdateData({
-        fname: currentUser.fname || "",
-        lname: currentUser.lname || "",
-        email: currentUser.email || "",
-        phoneNumber: currentUser.phoneNumber || "",
-      });
-      if (currentUser.photo) {
-        setProfilePic(currentUser.photo);
-      }
-    }
-  }, [currentUser]);
-
-  /*
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfilePic(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-  */
-
-  const updateUserInfo = async (e) => {
-    e.preventDefault();
-    setUserUpdateError("");
-    setUserUpdateSuccess("");
-
-    setIsUpdatingProfile(true);
-
+  const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
     try {
-      await authService.updateMe({
-        fname: userUpdateData.fname,
-        lname: userUpdateData.lname,
-        email: userUpdateData.email,
-        phoneNumber: userUpdateData.phoneNumber,
-        photo: profilePic,
-      });
-
-      setUserUpdateSuccess("Engineer profile updated successfully!");
-      const updatedUser = authService.getCurrentUser();
-      if (updatedUser) {
-        setCurrentUser(updatedUser);
-      }
-    } catch (err) {
-      const msg =
-        err.response?.data?.message ||
-        "Failed to update profile. Please try again.";
-      setUserUpdateError(msg);
+      await engineerAuthService.logout();
+      router.push("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("pendingVerificationEmail");
+      document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+      router.push("/");
     } finally {
-      setIsUpdatingProfile(false);
+      setIsLoggingOut(false);
     }
   };
 
@@ -164,155 +200,340 @@ const EngineerAccountSetup = () => {
     return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
+  const fullName =
+    `${currentUser?.fname || ""} ${currentUser?.lname || ""}`.trim() ||
+    "Service Engineer";
+
   return (
-    <div className="settings-page">
-      <div className="settings-header">
-        <h1>My Account</h1>
-        <p>Manage your engineer profile preferences and security settings</p>
+    <div className="eng-page">
+      {/* Header */}
+      <div className="eng-page-header">
+        <div>
+          <h1 className="eng-page-title">Account Setup</h1>
+          <p className="eng-page-subtitle">
+            Manage your engineer profile, security, and verification status.
+          </p>
+        </div>
+
+        <span className="eng-workspace-tag">
+          <Wrench size={14} />
+          <span>Engineer Account</span>
+        </span>
       </div>
 
-      {/* Tab Navigation */}
-      <div className="settings-tabs">
-        <button
-          className={activeTab === "profile" ? "tab active" : "tab"}
-          onClick={() => setActiveTab("profile")}
-        >
-          <User size={18} />
-          Profile
-        </button>
-        <button
-          className={activeTab === "security" ? "tab active" : "tab"}
-          onClick={() => setActiveTab("security")}
-        >
-          <Shield size={18} />
-          Security
-        </button>
-        {/* <button
-          className={activeTab === "privacy" ? "tab active" : "tab"}
-          onClick={() => setActiveTab("privacy")}
-        >
-          <Database size={18} />
-          Data & Privacy
-        </button> */}
-      </div>
+      {/* 2-Column Customer-Style Grid */}
+      <div className="eng-account-grid">
+        {/* Left Column: Profile & Security */}
+        <div>
+          {/* 1. Profile Card */}
+          <div className="eng-account-card">
+            <div className="eng-account-card-head">
+              <h2 className="eng-account-card-title">Profile</h2>
+              <button
+                type="button"
+                className="eng-account-action-link"
+                onClick={() => {
+                  setUserUpdateData({
+                    fname: currentUser?.fname || "",
+                    lname: currentUser?.lname || "",
+                    email: currentUser?.email || "",
+                    phoneNumber: currentUser?.phoneNumber || "",
+                  });
+                  setUserUpdateError("");
+                  setUserUpdateSuccess("");
+                  setShowEditProfileModal(true);
+                }}
+              >
+                Edit
+              </button>
+            </div>
 
-      <div className="settings-content">
-        {/* 1. Profile Settings */}
-        {activeTab === "profile" && (
-          <div>
-            <form className="profile-tab" onSubmit={updateUserInfo}>
-              <div className="profile-picture-section">
-                <div className="avatar-wrapper">
-                  {/* {profilePic ? (
-                    <img
-                      src={profilePic}
-                      alt="Profile"
-                      className="avatar-img"
-                    />
-                  ) : ( */}
-                  <div className="avatar-placeholder">
-                    <User size={48} />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "16px",
+                paddingBottom: "18px",
+                marginBottom: "6px",
+                borderBottom: "1px solid #f1f5f9",
+              }}
+            >
+              <div style={{ position: "relative", flexShrink: 0 }}>
+                {currentUser?.photo ? (
+                  <img
+                    src={currentUser.photo}
+                    alt={fullName}
+                    style={{
+                      width: "64px",
+                      height: "64px",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      border: "1.5px solid #e5e7eb",
+                      display: "block",
+                    }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      width: "64px",
+                      height: "64px",
+                      borderRadius: "50%",
+                      background: "#111827",
+                      color: "#ffffff",
+                      fontWeight: 700,
+                      fontSize: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {`${currentUser?.fname?.[0] || ""}${
+                      currentUser?.lname?.[0] || ""
+                    }`.toUpperCase() || "EN"}
                   </div>
-                  {/*  )}*/}
-                  {/* Photo upload commented out */}
-                  {/* <label className="upload-btn">
-                    <Camera size={18} />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                    />
-                  </label> */}
+                )}
+              </div>
+
+              <div>
+                <h3 style={{ margin: "0 0 4px", fontSize: "16px", color: "#111827" }}>
+                  {fullName}
+                </h3>
+                <label
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    color: "#111827",
+                    textDecoration: "underline",
+                    cursor: isUploadingPhoto ? "wait" : "pointer",
+                  }}
+                >
+                  {isUploadingPhoto ? (
+                    <>
+                      <Loader2 size={14} className="notif-spinner" />
+                      <span>Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Camera size={14} />
+                      <span>Change photo</span>
+                    </>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    disabled={isUploadingPhoto}
+                    style={{ display: "none" }}
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="eng-account-rows">
+              <div className="eng-account-row">
+                <span className="eng-account-label">Name</span>
+                <span className="eng-account-value">{fullName}</span>
+              </div>
+              <div className="eng-account-row">
+                <span className="eng-account-label">Phone</span>
+                <span className="eng-account-value">
+                  <span>{currentUser?.phoneNumber || "Not set"}</span>
+                </span>
+              </div>
+              <div className="eng-account-row">
+                <span className="eng-account-label">Email</span>
+                <span className="eng-account-value">
+                  <span>{currentUser?.email || "—"}</span>
+                  <span className="eng-pill-verified">• Verified</span>
+                </span>
+              </div>
+              <div className="eng-account-row">
+                <span className="eng-account-label">Role</span>
+                <span className="eng-account-value">Service Engineer</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Security Card */}
+          <div className="eng-account-card">
+            <div className="eng-account-card-head">
+              <h2 className="eng-account-card-title">Security</h2>
+            </div>
+
+            <div className="eng-account-rows">
+              <div className="eng-account-row">
+                <span className="eng-account-label">Password</span>
+                <button
+                  type="button"
+                  className="eng-account-action-link"
+                  onClick={() => {
+                    setPasswordData({
+                      passwordCurrent: "",
+                      password: "",
+                      passwordConfirm: "",
+                    });
+                    setPasswordError("");
+                    setPasswordSuccess("");
+                    setShowChangePasswordModal(true);
+                  }}
+                >
+                  Change
+                </button>
+              </div>
+              <div className="eng-account-row">
+                <span className="eng-account-label">Portal Access</span>
+                <span className="eng-account-value">Engineer Workspace</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Engineer Verification & Logout */}
+        <div>
+          <div className="eng-account-card">
+            <h2 className="eng-account-card-title" style={{ marginBottom: "16px" }}>
+              Verification
+            </h2>
+
+            <div className="eng-verification-banner">
+              <ShieldCheck size={15} />
+              <span>Service Partner Verified</span>
+            </div>
+
+            <p className="eng-verification-desc">
+              Your engineer profile is active and eligible to receive repair
+              assignments and withdraw earnings.
+            </p>
+
+            <Link href="/engineer-dashboard/wallet" className="eng-account-action-link">
+              Manage wallet &amp; payouts
+            </Link>
+          </div>
+
+          <button
+            type="button"
+            className="eng-btn-logout-outline"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+          >
+            {isLoggingOut ? "Logging out..." : "Log out"}
+          </button>
+        </div>
+      </div>
+
+      {/* Edit Profile Modal */}
+      {showEditProfileModal && (
+        <div
+          className="eng-acct-modal-backdrop"
+          onClick={() => setShowEditProfileModal(false)}
+        >
+          <div
+            className="eng-acct-modal-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="eng-acct-modal-head">
+              <div>
+                <h2>Edit profile</h2>
+                <p>Update your engineer contact details</p>
+              </div>
+              <button
+                type="button"
+                className="eng-acct-modal-close"
+                onClick={() => setShowEditProfileModal(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {userUpdateError && (
+              <div className="eng-acct-alert error">
+                <X size={16} />
+                <span>{userUpdateError}</span>
+              </div>
+            )}
+            {userUpdateSuccess && (
+              <div className="eng-acct-alert success">
+                <Check size={16} />
+                <span>{userUpdateSuccess}</span>
+              </div>
+            )}
+
+            <form onSubmit={updateUserInfo}>
+              <div className="eng-acct-form-grid">
+                <div className="eng-acct-field">
+                  <label>First Name</label>
+                  <input
+                    type="text"
+                    className="eng-acct-input"
+                    value={userUpdateData.fname}
+                    onChange={(e) =>
+                      setUserUpdateData({ ...userUpdateData, fname: e.target.value })
+                    }
+                    required
+                  />
                 </div>
-                <div>
-                  <h3>
-                    {currentUser?.fname} {currentUser?.lname}
-                  </h3>
-                  <p>{currentUser?.email}</p>
+                <div className="eng-acct-field">
+                  <label>Last Name</label>
+                  <input
+                    type="text"
+                    className="eng-acct-input"
+                    value={userUpdateData.lname}
+                    onChange={(e) =>
+                      setUserUpdateData({ ...userUpdateData, lname: e.target.value })
+                    }
+                    required
+                  />
                 </div>
               </div>
 
-              {/* Error / Success Messages */}
-              {userUpdateError && (
-                <div className="alert error">
-                  <X size={18} />
-                  {userUpdateError}
-                </div>
-              )}
-              {userUpdateSuccess && (
-                <div className="alert success">
-                  <Check size={18} />
-                  {userUpdateSuccess}
-                </div>
-              )}
+              <div className="eng-acct-field">
+                <label>Email Address</label>
+                <input
+                  type="email"
+                  className="eng-acct-input"
+                  value={userUpdateData.email}
+                  onChange={(e) =>
+                    setUserUpdateData({ ...userUpdateData, email: e.target.value })
+                  }
+                  required
+                />
+              </div>
 
-              <div className="profile-form">
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>First Name</label>
-                    <input
-                      type="text"
-                      value={userUpdateData.fname}
-                      onChange={(e) =>
-                        setUserUpdateData({
-                          ...userUpdateData,
-                          fname: e.target.value,
-                        })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Last Name</label>
-                    <input
-                      type="text"
-                      value={userUpdateData.lname}
-                      onChange={(e) =>
-                        setUserUpdateData({
-                          ...userUpdateData,
-                          lname: e.target.value,
-                        })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Email Address</label>
-                    <input
-                      type="email"
-                      value={userUpdateData.email}
-                      onChange={(e) =>
-                        setUserUpdateData({
-                          ...userUpdateData,
-                          email: e.target.value,
-                        })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Phone Number</label>
-                    <input
-                      type="text"
-                      value={userUpdateData.phoneNumber}
-                      onChange={(e) =>
-                        setUserUpdateData({
-                          ...userUpdateData,
-                          phoneNumber: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                </div>
+              <div className="eng-acct-field">
+                <label>Phone Number</label>
+                <input
+                  type="text"
+                  className="eng-acct-input"
+                  value={userUpdateData.phoneNumber}
+                  onChange={(e) =>
+                    setUserUpdateData({
+                      ...userUpdateData,
+                      phoneNumber: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="eng-acct-modal-actions">
+                <button
+                  type="button"
+                  className="eng-btn-outline"
+                  onClick={() => setShowEditProfileModal(false)}
+                >
+                  Cancel
+                </button>
                 <button
                   type="submit"
-                  className="save-btn"
+                  className="eng-btn-primary"
                   disabled={isUpdatingProfile}
                 >
                   {isUpdatingProfile ? (
                     <>
-                      <Loader2 size={18} className="spin" />
-                      Saving...
+                      <Loader2 size={15} className="notif-spinner" />
+                      <span>Saving...</span>
                     </>
                   ) : (
                     "Save Changes"
@@ -321,189 +542,209 @@ const EngineerAccountSetup = () => {
               </div>
             </form>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* 2. Security Tab */}
-        {activeTab === "security" && (
-          <div className="security-tab">
-            <div className="security-section">
-              <h3>Change Password</h3>
+      {/* Change Password Modal */}
+      {showChangePasswordModal && (
+        <div
+          className="eng-acct-modal-backdrop"
+          onClick={() => setShowChangePasswordModal(false)}
+        >
+          <div
+            className="eng-acct-modal-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="eng-acct-modal-head">
+              <div>
+                <h2>Change password</h2>
+                <p>Keep your engineer account secure</p>
+              </div>
+              <button
+                type="button"
+                className="eng-acct-modal-close"
+                onClick={() => setShowChangePasswordModal(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
 
-              {/* Error / Success Messages */}
-              {passwordError && (
-                <div className="alert error">
-                  <X size={18} />
-                  {passwordError}
+            {passwordError && (
+              <div className="eng-acct-alert error">
+                <X size={16} />
+                <span>{passwordError}</span>
+              </div>
+            )}
+            {passwordSuccess && (
+              <div className="eng-acct-alert success">
+                <Check size={16} />
+                <span>{passwordSuccess}</span>
+              </div>
+            )}
+
+            <form onSubmit={handlePasswordChange}>
+              <div className="eng-acct-field">
+                <label>Current Password</label>
+                <div style={{ position: "relative" }}>
+                  <input
+                    type={showCurrentPassword ? "text" : "password"}
+                    className="eng-acct-input"
+                    style={{ paddingRight: "42px" }}
+                    value={passwordData.passwordCurrent}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        passwordCurrent: e.target.value,
+                      })
+                    }
+                    disabled={isUpdatingPassword}
+                    required
+                  />
+                  <span
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    style={{
+                      position: "absolute",
+                      right: "14px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      cursor: "pointer",
+                      color: "#64748b",
+                      display: "flex",
+                    }}
+                  >
+                    {showCurrentPassword ? <Eye size={17} /> : <EyeOff size={17} />}
+                  </span>
                 </div>
-              )}
-              {passwordSuccess && (
-                <div className="alert success">
-                  <Check size={18} />
-                  {passwordSuccess}
-                </div>
-              )}
+              </div>
 
-              <form className="password-form" onSubmit={handlePasswordChange}>
-                <div className="form-group">
-                  <label>Current Password</label>
-                  <div style={{ position: "relative", width: "100%" }}>
-                    <input
-                      type={showCurrentPassword ? "text" : "password"}
-                      value={passwordData.passwordCurrent}
-                      onChange={(e) =>
-                        setPasswordData({
-                          ...passwordData,
-                          passwordCurrent: e.target.value,
-                        })
-                      }
-                      disabled={isUpdatingPassword}
-                      required
-                      style={{ width: "100%", paddingRight: "44px" }}
-                    />
-                    <span
-                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                      style={{
-                        position: "absolute",
-                        right: "14px",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        color: "#6b7280",
-                      }}
-                    >
-                      {showCurrentPassword ? <Eye size={18} /> : <EyeOff size={18} />}
-                    </span>
-                  </div>
+              <div className="eng-acct-field">
+                <label>New Password</label>
+                <div style={{ position: "relative" }}>
+                  <input
+                    type={showNewPassword ? "text" : "password"}
+                    className="eng-acct-input"
+                    style={{ paddingRight: "42px" }}
+                    value={passwordData.password}
+                    onChange={(e) =>
+                      setPasswordData({ ...passwordData, password: e.target.value })
+                    }
+                    disabled={isUpdatingPassword}
+                    minLength={8}
+                    required
+                  />
+                  <span
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    style={{
+                      position: "absolute",
+                      right: "14px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      cursor: "pointer",
+                      color: "#64748b",
+                      display: "flex",
+                    }}
+                  >
+                    {showNewPassword ? <Eye size={17} /> : <EyeOff size={17} />}
+                  </span>
                 </div>
 
-                <div className="form-group">
-                  <label>New Password</label>
-                  <div style={{ position: "relative", width: "100%" }}>
-                    <input
-                      type={showNewPassword ? "text" : "password"}
-                      value={passwordData.password}
-                      onChange={(e) =>
-                        setPasswordData({
-                          ...passwordData,
-                          password: e.target.value,
-                        })
-                      }
-                      disabled={isUpdatingPassword}
-                      minLength={8}
-                      required
-                      style={{ width: "100%", paddingRight: "44px" }}
-                    />
-                    <span
-                      onClick={() => setShowNewPassword(!showNewPassword)}
-                      style={{
-                        position: "absolute",
-                        right: "14px",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        color: "#6b7280",
-                      }}
-                    >
-                      {showNewPassword ? <Eye size={18} /> : <EyeOff size={18} />}
-                    </span>
-                  </div>
-                  {passwordData.password && (
-                    <div
-                      style={{
-                        background: "#f9fafb",
-                        border: "1px solid #e5e7eb",
-                        borderRadius: "8px",
-                        padding: "10px 12px",
-                        marginTop: "8px",
-                        fontSize: "12px",
-                      }}
-                    >
-                      <p style={{ fontWeight: 600, color: "#374151", marginBottom: "6px" }}>
-                        Password must contain:
-                      </p>
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "4px" }}>
-                        {getPasswordRequirements(passwordData.password).map((req, idx) => (
-                          <div
-                            key={idx}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "6px",
-                              color: req.met ? "#16a34a" : "#6b7280",
-                              transition: "color 0.2s ease",
-                            }}
-                          >
-                            {req.met ? (
-                              <Check size={14} color="#16a34a" strokeWidth={3} />
-                            ) : (
-                              <span
-                                style={{
-                                  width: "6px",
-                                  height: "6px",
-                                  borderRadius: "50%",
-                                  backgroundColor: "#9ca3af",
-                                  display: "inline-block",
-                                  marginLeft: "4px",
-                                  marginRight: "4px",
-                                }}
-                              />
-                            )}
-                            <span>{req.label}</span>
-                          </div>
-                        ))}
-                      </div>
+                {passwordData.password && (
+                  <div
+                    style={{
+                      background: "#f8fafc",
+                      border: "1px solid #e2e8f0",
+                      borderRadius: "10px",
+                      padding: "10px 12px",
+                      marginTop: "6px",
+                      fontSize: "12px",
+                    }}
+                  >
+                    <p style={{ fontWeight: 600, color: "#334155", margin: "0 0 6px" }}>
+                      Password must contain:
+                    </p>
+                    <div style={{ display: "grid", gap: "4px" }}>
+                      {getPasswordRequirements(passwordData.password).map((req, idx) => (
+                        <div
+                          key={idx}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                            color: req.met ? "#16a34a" : "#64748b",
+                          }}
+                        >
+                          {req.met ? (
+                            <Check size={13} color="#16a34a" strokeWidth={3} />
+                          ) : (
+                            <span
+                              style={{
+                                width: "6px",
+                                height: "6px",
+                                borderRadius: "50%",
+                                backgroundColor: "#94a3b8",
+                                display: "inline-block",
+                                margin: "0 3px",
+                              }}
+                            />
+                          )}
+                          <span>{req.label}</span>
+                        </div>
+                      ))}
                     </div>
-                  )}
-                </div>
-
-                <div className="form-group">
-                  <label>Confirm New Password</label>
-                  <div style={{ position: "relative", width: "100%" }}>
-                    <input
-                      type={showConfirmPassword ? "text" : "password"}
-                      value={passwordData.passwordConfirm}
-                      onChange={(e) =>
-                        setPasswordData({
-                          ...passwordData,
-                          passwordConfirm: e.target.value,
-                        })
-                      }
-                      disabled={isUpdatingPassword}
-                      required
-                      style={{ width: "100%", paddingRight: "44px" }}
-                    />
-                    <span
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      style={{
-                        position: "absolute",
-                        right: "14px",
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        color: "#6b7280",
-                      }}
-                    >
-                      {showConfirmPassword ? <Eye size={18} /> : <EyeOff size={18} />}
-                    </span>
                   </div>
-                  {passwordData.password &&
-                    passwordData.passwordConfirm &&
-                    passwordData.password !== passwordData.passwordConfirm && (
-                      <small style={{ color: "#dc2626" }}>
-                        Passwords do not match
-                      </small>
-                    )}
-                </div>
+                )}
+              </div>
 
+              <div className="eng-acct-field">
+                <label>Confirm New Password</label>
+                <div style={{ position: "relative" }}>
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    className="eng-acct-input"
+                    style={{ paddingRight: "42px" }}
+                    value={passwordData.passwordConfirm}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        passwordConfirm: e.target.value,
+                      })
+                    }
+                    disabled={isUpdatingPassword}
+                    required
+                  />
+                  <span
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    style={{
+                      position: "absolute",
+                      right: "14px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      cursor: "pointer",
+                      color: "#64748b",
+                      display: "flex",
+                    }}
+                  >
+                    {showConfirmPassword ? <Eye size={17} /> : <EyeOff size={17} />}
+                  </span>
+                </div>
+                {passwordData.password &&
+                  passwordData.passwordConfirm &&
+                  passwordData.password !== passwordData.passwordConfirm && (
+                    <small style={{ color: "#dc2626" }}>Passwords do not match</small>
+                  )}
+              </div>
+
+              <div className="eng-acct-modal-actions">
+                <button
+                  type="button"
+                  className="eng-btn-outline"
+                  onClick={() => setShowChangePasswordModal(false)}
+                >
+                  Cancel
+                </button>
                 <button
                   type="submit"
-                  className="save-btn"
+                  className="eng-btn-primary"
                   disabled={
                     isUpdatingPassword ||
                     !passwordData.passwordCurrent ||
@@ -515,48 +756,18 @@ const EngineerAccountSetup = () => {
                 >
                   {isUpdatingPassword ? (
                     <>
-                      <Loader2 size={18} className="spin" />
-                      Updating...
+                      <Loader2 size={15} className="notif-spinner" />
+                      <span>Updating...</span>
                     </>
                   ) : (
                     "Update Password"
                   )}
                 </button>
-              </form>
-            </div>
+              </div>
+            </form>
           </div>
-        )}
-
-        {/* 3. Data & Privacy (Commented Out) */}
-        {/* {activeTab === "privacy" && (
-          <div className="privacy-tab">
-            <div className="privacy-actions">
-              <button className="privacy-btn download">
-                <Download size={20} />
-                Download My Data
-                <small>Receive a copy of all your engineer account data</small>
-              </button>
-
-              <button className="privacy-btn delete">
-                <Trash2 size={20} />
-                Delete Account
-                <small>This action is permanent and cannot be undone</small>
-              </button>
-            </div>
-
-            <div className="legal-notices">
-              <h4>Legal & Consent</h4>
-              <p>
-                By using this service as an engineer/partner, you agree to our{" "}
-                <a href="#">Terms of Service</a> and{" "}
-                <a href="#">Privacy Policy</a>. You consent to the collection
-                and processing of your personal data as described.
-              </p>
-              <p>Last updated: December 1, 2025</p>
-            </div>
-          </div>
-        )} */}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

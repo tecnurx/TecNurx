@@ -1,0 +1,351 @@
+/* ==========================================================================
+   Repayment Plan Page Styles - Customer Dashboard Redesign (Figma Matching)
+   ========================================================================== */
+
+.repayment-plan-page {
+  padding: 8px 0 60px 0;
+  max-width: 1160px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Header */
+.repayment-header {
+  margin-bottom: 24px;
+}
+
+.repayment-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.repayment-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.025em;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.repayment-subtitle {
+  font-size: 14.5px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.repayment-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 9999px;
+}
+
+.repayment-badge.on-track {
+  background-color: #ecfdf5;
+  color: #065f46;
+}
+
+.repayment-badge.on-track .dot {
+  color: #10b981;
+  font-size: 9px;
+}
+
+.repayment-badge.overdue {
+  background-color: #fef2f2;
+  color: #b91c1c;
+}
+
+.repayment-badge.overdue .dot {
+  color: #ef4444;
+  font-size: 9px;
+}
+
+/* Overdue Alert Banner */
+.repayment-overdue-banner {
+  background: #ffffff;
+  border: 1.5px solid #111827;
+  border-radius: 24px;
+  padding: 24px 28px;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+}
+
+.repayment-overdue-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 6px 0;
+}
+
+.repayment-overdue-desc {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0 0 18px 0;
+  line-height: 1.45;
+}
+
+.repayment-overdue-support {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  text-decoration: underline;
+}
+
+/* Grid */
+.repayment-grid {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.repayment-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Card */
+.repayment-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  padding: 26px 28px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-sizing: border-box;
+}
+
+.repayment-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 16px 0;
+}
+
+/* Segmented Schedule Progress Bar */
+.repayment-progress-segments {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.repayment-segment {
+  height: 4px;
+  border-radius: 9999px;
+  background-color: #e2e8f0;
+}
+
+.repayment-segment.paid {
+  background-color: #111827;
+}
+
+.repayment-segment.active {
+  background-color: #ffc400;
+}
+
+/* Schedule List */
+.repayment-schedule-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.repayment-schedule-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.repayment-schedule-row:last-child {
+  border-bottom: none;
+  padding-bottom: 4px;
+}
+
+.repayment-schedule-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.repayment-schedule-date {
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.repayment-schedule-amount {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.repayment-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.repayment-status-pill.paid {
+  background-color: #ecfdf5;
+  color: #065f46;
+}
+
+.repayment-status-pill.paid .dot {
+  color: #10b981;
+}
+
+.repayment-status-pill.due-soon {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.repayment-status-pill.due-soon .dot {
+  color: #d97706;
+}
+
+.repayment-status-pill.upcoming {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.repayment-status-pill.upcoming .dot {
+  color: #64748b;
+}
+
+.repayment-status-pill.overdue {
+  background-color: #fef2f2;
+  color: #b91c1c;
+}
+
+.repayment-status-pill.overdue .dot {
+  color: #ef4444;
+}
+
+/* Summary Rows */
+.repayment-summary-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.repayment-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14.5px;
+}
+
+.repayment-summary-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.repayment-summary-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.repayment-summary-val {
+  color: #111827;
+  font-weight: 700;
+}
+
+/* Buttons */
+.btn-repayment-primary {
+  appearance: none;
+  width: 100%;
+  background: #ffc400;
+  border: none;
+  border-radius: 9999px;
+  padding: 13px 24px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #111827;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  font-family: inherit;
+}
+
+.btn-repayment-primary:hover:not(:disabled) {
+  background: #eab308;
+}
+
+.btn-repayment-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-repayment-outline {
+  appearance: none;
+  width: 100%;
+  background: #ffffff;
+  border: 1.5px solid #111827;
+  border-radius: 9999px;
+  padding: 12px 24px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #111827;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: background-color 0.15s ease;
+  font-family: inherit;
+}
+
+.btn-repayment-outline:hover:not(:disabled) {
+  background: #f8fafc;
+}
+
+/* Auto Repayments Card */
+.repayment-auto-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.repayment-auto-desc {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 0 0 14px 0;
+  line-height: 1.45;
+}
+
+.repayment-manage-btn {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  text-decoration: underline;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+@media screen and (max-width: 900px) {
+  .repayment-grid {
+    grid-template-columns: 1fr;
+  }
+}

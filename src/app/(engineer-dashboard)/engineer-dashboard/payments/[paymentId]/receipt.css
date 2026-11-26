@@ -1,0 +1,205 @@
+/* ==========================================================================
+   Engineer Payment Receipt & Print Styles
+   ========================================================================== */
+
+.receipt-print-only {
+  display: none;
+}
+
+@media print {
+  /* Hide dashboard chrome & interactive controls */
+  .eng-sidebar,
+  .dashboard-nav-fixed,
+  .no-print,
+  .tnx-chat-bubble-btn,
+  .eng-hero-actions {
+    display: none !important;
+  }
+
+  body,
+  .dashboard-body,
+  .main-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    min-height: auto !important;
+  }
+
+  .eng-page {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Hide screen-only dashboard layout and show clean receipt sheet */
+  .receipt-screen-only {
+    display: none !important;
+  }
+
+  .receipt-print-only {
+    display: block !important;
+    font-family: "Plus Jakarta Sans", Arial, sans-serif;
+    color: #111827;
+    padding: 32px;
+    max-width: 720px;
+    margin: 0 auto;
+    background: #ffffff;
+  }
+
+  .receipt-sheet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #111827;
+    margin-bottom: 24px;
+  }
+
+  .receipt-brand {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #111827;
+    margin: 0 0 4px 0;
+  }
+
+  .receipt-brand-sub {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+  }
+
+  .receipt-meta-right {
+    text-align: right;
+  }
+
+  .receipt-doc-title {
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 4px 0;
+  }
+
+  .receipt-doc-id {
+    font-size: 12.5px;
+    color: #475569;
+    margin: 0;
+  }
+
+  .receipt-amount-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .receipt-amount-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .receipt-amount-val {
+    font-size: 28px;
+    font-weight: 800;
+    color: #111827;
+  }
+
+  .receipt-status-tag {
+    padding: 5px 12px;
+    border-radius: 9999px;
+    border: 1px solid #111827;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .receipt-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .receipt-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    margin: 0 0 10px 0;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 6px;
+  }
+
+  .receipt-kv {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+    padding: 5px 0;
+  }
+
+  .receipt-kv span {
+    color: #64748b;
+  }
+
+  .receipt-kv strong {
+    color: #111827;
+    text-align: right;
+  }
+
+  .receipt-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+    font-size: 13.5px;
+  }
+
+  .receipt-table th {
+    text-align: left;
+    padding: 10px 12px;
+    background: #f8fafc;
+    border-bottom: 1.5px solid #cbd5e1;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #475569;
+  }
+
+  .receipt-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .receipt-table .num {
+    text-align: right;
+    font-weight: 600;
+  }
+
+  .receipt-total-row td {
+    border-top: 2px solid #111827;
+    border-bottom: none;
+    font-weight: 800;
+    font-size: 15px;
+    padding-top: 14px;
+  }
+
+  .receipt-footer {
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px dashed #cbd5e1;
+    font-size: 12px;
+    color: #64748b;
+    text-align: center;
+  }
+}

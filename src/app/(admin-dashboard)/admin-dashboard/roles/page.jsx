@@ -11,6 +11,9 @@ import {
   X,
   Lock,
   Sparkles,
+  GripVertical,
+  Plus,
+  Search,
 } from "lucide-react";
 import "./roles.css";
 import "../staff/staff.css";
@@ -37,6 +40,9 @@ const AdminRolesPage = () => {
     description: "",
     permissions: [],
   });
+  const [permSearch, setPermSearch] = useState("");
+  const [draggedPerm, setDraggedPerm] = useState(null);
+  const [dragOverZone, setDragOverZone] = useState(null);
 
   // Delete Confirm Modal State
   const [deleteModal, setDeleteModal] = useState({
@@ -113,6 +119,7 @@ const AdminRolesPage = () => {
 
   const openCreateModal = () => {
     setEditingRole(null);
+    setPermSearch("");
     setFormData({
       name: "",
       description: "",
@@ -122,6 +129,8 @@ const AdminRolesPage = () => {
   };
 
   const openEditModal = (role) => {
+    setEditingRole(null);
+    setPermSearch("");
     setEditingRole(role);
     setFormData({
       name: role.name || "",
@@ -135,21 +144,30 @@ const AdminRolesPage = () => {
     setIsModalOpen(true);
   };
 
-  const handleTogglePermission = (perm) => {
-    setFormData((prev) => {
-      const exists = prev.permissions.includes(perm);
-      if (exists) {
-        return {
-          ...prev,
-          permissions: prev.permissions.filter((p) => p !== perm),
-        };
-      } else {
-        return {
-          ...prev,
-          permissions: [...prev.permissions, perm],
-        };
-      }
-    });
+  const assignPermission = (perm) => {
+    setFormData((prev) =>
+      prev.permissions.includes(perm)
+        ? prev
+        : { ...prev, permissions: [...prev.permissions, perm] }
+    );
+  };
+
+  const removePermission = (perm) => {
+    setFormData((prev) => ({
+      ...prev,
+      permissions: prev.permissions.filter((p) => p !== perm),
+    }));
+  };
+
+  const assignAllVisible = (visibleAvailable) => {
+    setFormData((prev) => ({
+      ...prev,
+      permissions: Array.from(new Set([...prev.permissions, ...visibleAvailable])),
+    }));
+  };
+
+  const clearAllAssigned = () => {
+    setFormData((prev) => ({ ...prev, permissions: [] }));
   };
 
   const handleSubmit = async (e) => {
@@ -230,6 +248,31 @@ const AdminRolesPage = () => {
           <button className="staff-btn-primary" onClick={openCreateModal}>
             <ShieldPlus size={16} /> Create Role
           </button>
+        )}
+      </div>
+
+      {/* Hero Banner */}
+      <div className="admin-hero-banner">
+        <div className="admin-hero-left">
+          <span className="admin-hero-pill">
+            <span>●</span>
+            <span>Access Control</span>
+          </span>
+          <h2 className="admin-hero-title">{roles.length} configured roles</h2>
+          <p className="admin-hero-sub">
+            {availablePermissions.length} granular permissions available across admin modules.
+          </p>
+        </div>
+        {canManageRoles && (
+          <div className="admin-hero-actions">
+            <button
+              type="button"
+              className="admin-btn-yellow"
+              onClick={openCreateModal}
+            >
+              <ShieldPlus size={16} /> Create Role
+            </button>
+          </div>
         )}
       </div>
 
@@ -340,7 +383,7 @@ const AdminRolesPage = () => {
         <div className="staff-modal-backdrop" onClick={() => setIsModalOpen(false)}>
           <div
             className="staff-modal-box"
-            style={{ maxWidth: "600px" }}
+            style={{ maxWidth: "780px" }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="staff-modal-header">
@@ -382,35 +425,189 @@ const AdminRolesPage = () => {
 
                 <div className="staff-form-group">
                   <label>
-                    Permissions ({formData.permissions.length} selected)
+                    Permissions ({formData.permissions.length} assigned) — drag &amp; drop or click
                   </label>
-                  <div className="permissions-selection-grid">
-                    {availablePermissions
-                      .filter((perm) => {
-                        const key =
-                          typeof perm === "string" ? perm : perm?.key || perm?.name;
-                        return key && key !== "*";
-                      })
-                      .map((perm) => {
-                        const permKey =
-                          typeof perm === "string" ? perm : perm.key || perm.name;
-                        const isChecked = formData.permissions.includes(permKey);
 
-                        return (
-                          <label
-                            key={permKey}
-                            className="permission-checkbox-label"
-                          >
+                  {(() => {
+                    const allKeys = availablePermissions
+                      .map((p) => (typeof p === "string" ? p : p?.key || p?.name))
+                      .filter((k) => k && k !== "*");
+                    const q = permSearch.trim().toLowerCase();
+                    const unassigned = allKeys.filter(
+                      (k) =>
+                        !formData.permissions.includes(k) &&
+                        (!q || k.toLowerCase().includes(q))
+                    );
+                    const assigned = formData.permissions.filter(
+                      (k) => !q || k.toLowerCase().includes(q)
+                    );
+
+                    return (
+                      <>
+                        <div className="perm-board-toolbar">
+                          <div className="perm-board-search">
+                            <Search size={14} className="perm-board-search-icon" />
                             <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => handleTogglePermission(permKey)}
+                              type="text"
+                              placeholder="Filter permissions (e.g. repairs, users, staff)..."
+                              value={permSearch}
+                              onChange={(e) => setPermSearch(e.target.value)}
                             />
-                            <span>{permKey}</span>
-                          </label>
-                        );
-                      })}
-                  </div>
+                          </div>
+                        </div>
+
+                        <div className="perm-dnd-grid">
+                          {/* Left Column: Available Permissions */}
+                          <div
+                            className={`perm-dnd-col ${
+                              dragOverZone === "available" ? "drag-over" : ""
+                            }`}
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              setDragOverZone("available");
+                            }}
+                            onDragLeave={() => setDragOverZone(null)}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              const key =
+                                e.dataTransfer.getData("text/plain") || draggedPerm;
+                              if (key) removePermission(key);
+                              setDraggedPerm(null);
+                              setDragOverZone(null);
+                            }}
+                          >
+                            <div className="perm-dnd-col-head">
+                              <span className="perm-dnd-col-title">
+                                Available ({unassigned.length})
+                              </span>
+                              {unassigned.length > 0 && (
+                                <button
+                                  type="button"
+                                  className="perm-dnd-col-action"
+                                  onClick={() => assignAllVisible(unassigned)}
+                                >
+                                  Assign all
+                                </button>
+                              )}
+                            </div>
+
+                            <div className="perm-dnd-list">
+                              {unassigned.length === 0 ? (
+                                <p className="perm-dnd-empty">
+                                  No available permissions match.
+                                </p>
+                              ) : (
+                                unassigned.map((permKey) => (
+                                  <div
+                                    key={permKey}
+                                    draggable
+                                    onDragStart={(e) => {
+                                      setDraggedPerm(permKey);
+                                      e.dataTransfer.setData("text/plain", permKey);
+                                    }}
+                                    onDragEnd={() => {
+                                      setDraggedPerm(null);
+                                      setDragOverZone(null);
+                                    }}
+                                    className="perm-dnd-item"
+                                  >
+                                    <span className="perm-dnd-item-left">
+                                      <GripVertical size={14} color="#94a3b8" />
+                                      <span className="perm-dnd-item-label">
+                                        {permKey}
+                                      </span>
+                                    </span>
+                                    <button
+                                      type="button"
+                                      className="perm-dnd-move-btn"
+                                      onClick={() => assignPermission(permKey)}
+                                      title="Assign permission"
+                                    >
+                                      <Plus size={13} />
+                                    </button>
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Right Column: Assigned Permissions */}
+                          <div
+                            className={`perm-dnd-col ${
+                              dragOverZone === "assigned" ? "drag-over" : ""
+                            }`}
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              setDragOverZone("assigned");
+                            }}
+                            onDragLeave={() => setDragOverZone(null)}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              const key =
+                                e.dataTransfer.getData("text/plain") || draggedPerm;
+                              if (key) assignPermission(key);
+                              setDraggedPerm(null);
+                              setDragOverZone(null);
+                            }}
+                          >
+                            <div className="perm-dnd-col-head">
+                              <span className="perm-dnd-col-title">
+                                Assigned ({formData.permissions.length})
+                              </span>
+                              {formData.permissions.length > 0 && (
+                                <button
+                                  type="button"
+                                  className="perm-dnd-col-action"
+                                  onClick={clearAllAssigned}
+                                >
+                                  Clear all
+                                </button>
+                              )}
+                            </div>
+
+                            <div className="perm-dnd-list">
+                              {assigned.length === 0 ? (
+                                <p className="perm-dnd-empty">
+                                  Drag permissions here to assign to this role.
+                                </p>
+                              ) : (
+                                assigned.map((permKey) => (
+                                  <div
+                                    key={permKey}
+                                    draggable
+                                    onDragStart={(e) => {
+                                      setDraggedPerm(permKey);
+                                      e.dataTransfer.setData("text/plain", permKey);
+                                    }}
+                                    onDragEnd={() => {
+                                      setDraggedPerm(null);
+                                      setDragOverZone(null);
+                                    }}
+                                    className="perm-dnd-item assigned"
+                                  >
+                                    <span className="perm-dnd-item-left">
+                                      <GripVertical size={14} color="#9ca3af" />
+                                      <span className="perm-dnd-item-label">
+                                        {permKey}
+                                      </span>
+                                    </span>
+                                    <button
+                                      type="button"
+                                      className="perm-dnd-move-btn"
+                                      onClick={() => removePermission(permKey)}
+                                      title="Remove permission"
+                                    >
+                                      <X size={13} />
+                                    </button>
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
 

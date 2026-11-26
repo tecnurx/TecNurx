@@ -1,0 +1,322 @@
+/* ==========================================================================
+   Repair Delivered Page Styles - Customer Dashboard Redesign (Figma Matching)
+   ========================================================================== */
+
+.repair-delivered-page {
+  padding: 8px 0 60px 0;
+  max-width: 1160px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Header */
+.delivered-page-header {
+  margin-bottom: 28px;
+}
+
+.delivered-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.delivered-page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.025em;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.delivered-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #ecfdf5;
+  color: #065f46;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 9999px;
+}
+
+.delivered-badge-dot {
+  color: #10b981;
+  font-size: 9px;
+}
+
+.delivered-page-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Success Banner */
+.delivered-success-banner {
+  background-color: #ecfdf5;
+  border: 1px solid #10b981;
+  color: #065f46;
+  padding: 14px 18px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Main 2-Column Grid Layout */
+.delivered-page-grid {
+  display: grid;
+  grid-template-columns: 1.18fr 0.82fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Common Card */
+.delivered-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  padding: 28px;
+  box-sizing: border-box;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.delivered-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 20px 0;
+  letter-spacing: -0.01em;
+}
+
+/* Checklist */
+.device-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.custom-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  color: #000000;
+}
+
+.custom-checkbox.checked {
+  border-color: #000000;
+  background-color: #ffffff;
+}
+
+.checklist-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.checklist-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 12px;
+}
+
+.btn-report-problem {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.btn-report-problem:hover {
+  opacity: 0.75;
+}
+
+.btn-confirm-receipt {
+  appearance: none;
+  background-color: #ffc400;
+  color: #000000;
+  border: none;
+  outline: none;
+  border-radius: 9999px;
+  padding: 12px 28px;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  font-family: inherit;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-confirm-receipt:hover:not(:disabled) {
+  background-color: #f5b700;
+  transform: translateY(-1px);
+}
+
+.btn-confirm-receipt:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Warranty Table */
+.warranty-table {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.warranty-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14.5px;
+}
+
+.warranty-label {
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.warranty-value {
+  color: #111827;
+  font-weight: 700;
+}
+
+/* Rating Card */
+.rating-circles-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.rating-circle-btn {
+  appearance: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  color: #111827;
+  font-size: 14.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.rating-circle-btn:hover {
+  border-color: #cbd5e1;
+  background-color: #f9fafb;
+}
+
+.rating-circle-btn.selected {
+  background-color: #ffc400;
+  border-color: #ffc400;
+  color: #000000;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(255, 196, 0, 0.3);
+}
+
+.rating-textarea {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #111827;
+  box-sizing: border-box;
+  resize: vertical;
+  outline: none;
+  margin-bottom: 20px;
+  transition: border-color 0.15s ease;
+}
+
+.rating-textarea:focus {
+  border-color: #000000;
+}
+
+.btn-send-feedback {
+  appearance: none;
+  width: 100%;
+  background-color: #ffc400;
+  color: #000000;
+  border: none;
+  outline: none;
+  border-radius: 9999px;
+  padding: 13px 20px;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  font-family: inherit;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-send-feedback:hover:not(:disabled) {
+  background-color: #f5b700;
+  transform: translateY(-1px);
+}
+
+.btn-send-feedback:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media screen and (max-width: 900px) {
+  .delivered-page-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .delivered-page-title {
+    font-size: 24px;
+  }
+
+  .checklist-actions-row {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .btn-report-problem {
+    text-align: center;
+  }
+
+  .btn-confirm-receipt {
+    width: 100%;
+  }
+}

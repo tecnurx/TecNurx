@@ -1,70 +1,153 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import "./payment.css";
-import { CreditCard, Check, X, AlertCircle, Download } from "lucide-react";
 import { toast } from "@/components/CustomToast";
+import TecNurxLoader from "@/components/TecNurxLoader";
+import { repairService } from "../../../../../services/repairs";
+
+const PURPOSE_FILTERS = [
+  { key: "", label: "All" },
+  { key: "booking_charge", label: "Booking" },
+  { key: "repair_cost", label: "Repair" },
+  { key: "additional_work", label: "Additional" },
+];
+
+const formatPurposeLabel = (purpose) => {
+  switch ((purpose || "").toLowerCase()) {
+    case "booking_charge":
+      return "Booking fee";
+    case "repair_cost":
+      return "Repair payment";
+    case "additional_work":
+      return "Additional work";
+    default:
+      return purpose ? purpose.replace(/_/g, " ") : "Payment";
+  }
+};
+
+const formatStatusMeta = (status) => {
+  const s = (status || "").toLowerCase();
+  if (s === "paid" || s === "success" || s === "completed" || s === "settled") {
+    return { label: "Paid", className: "status-pill-paid" };
+  }
+  if (s === "pending" || s === "initiated") {
+    return { label: "Pending", className: "status-pill-pending" };
+  }
+  if (s === "failed" || s === "cancelled" || s === "expired" || s === "abandoned") {
+    return {
+      label: s.charAt(0).toUpperCase() + s.slice(1),
+      className: "status-pill-failed",
+    };
+  }
+  return {
+    label: status ? status.charAt(0).toUpperCase() + status.slice(1) : "Unknown",
+    className: "status-pill-pending",
+  };
+};
 
 const Payments = () => {
-  const [isAddCardOpen, setIsAddCardOpen] = useState(false);
-  const [isAutoRepayOpen, setIsAutoRepayOpen] = useState(false);
-  const [isAutoRepayActive, setIsAutoRepayActive] = useState(false);
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const router = useRouter();
+  const [drafts, setDrafts] = useState([]);
+  const [resumingDraftId, setResumingDraftId] = useState(null);
+  const [confirmingDiscardId, setConfirmingDiscardId] = useState(null);
+  const [discardingDraftId, setDiscardingDraftId] = useState(null);
 
-  // New Card Form
-  const [cardForm, setCardForm] = useState({
-    cardNumber: "",
-    expiry: "",
-    cvv: "",
-  });
+  // My Payments (History) state
+  const [payments, setPayments] = useState([]);
+  const [paymentsLoading, setPaymentsLoading] = useState(true);
+  const [purposeFilter, setPurposeFilter] = useState("");
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
+  const [summary, setSummary] = useState(null);
 
-  // Active instalment demo data (matching mockup exactly with no brackets)
-  const activeInstalment = {
-    current: 2,
-    total: 3,
-    dueDate: "Nov 18, 2026",
-    amount: "₦25,000",
-  };
-
-  // History items matching mockup
-  const historyItems = [
-    {
-      id: "TNX-4421",
-      service: "Screen replacement",
-      amount: "₦35,000",
-      date: "Nov 4, 2026",
-      status: "Paid",
-    },
-    {
-      id: "TNX-1290",
-      service: "Battery replacement",
-      amount: "₦18,000",
-      date: "Oct 24, 2026",
-      status: "Paid",
-    },
-  ];
-
-  const handlePayNow = () => {
-    setIsProcessingPayment(true);
-    setTimeout(() => {
-      setIsProcessingPayment(false);
-      toast.success("Instalment payment of ₦25,000 processed successfully!");
-    }, 1200);
-  };
-
-  const handleAddCardSubmit = (e) => {
-    e.preventDefault();
-    if (!cardForm.cardNumber || !cardForm.expiry || !cardForm.cvv) {
-      toast.error("Please fill in all card details");
-      return;
+  const fetchPayments = useCallback(async (activePurpose = purposeFilter, activePage = page) => {
+    try {
+      setPaymentsLoading(true);
+      const limit = 8;
+      const res = await repairService.getMyPayments({
+        purpose: activePurpose || undefined,
+        page: activePage,
+        limit,
+      });
+      const payload = res?.data || res || {};
+      const list = Array.isArray(payload.payments)
+        ? payload.payments
+        : Array.isArray(payload)
+        ? payload
+        : [];
+      setPayments(list);
+      setSummary(res?.summary || payload.summary || null);
+      const pag = payload.pagination || res?.pagination || {};
+      const total = res?.totalCount ?? payload.totalCount ?? pag.total ?? list.length;
+      const totalPages = pag.totalPages || pag.pages || Math.max(1, Math.ceil(total / limit));
+      setPagination({
+        page: pag.page || activePage,
+        totalPages,
+        total,
+      });
+    } catch (err) {
+      console.warn("Could not load payment history:", err);
+      setPayments([]);
+    } finally {
+      setPaymentsLoading(false);
     }
-    toast.success("Payment method added successfully!");
-    setIsAddCardOpen(false);
-    setCardForm({ cardNumber: "", expiry: "", cvv: "" });
+  }, [purposeFilter, page]);
+
+  useEffect(() => {
+    const fetchDrafts = async () => {
+      try {
+        const res = await repairService.getDrafts();
+        const list = res?.data?.drafts || res?.drafts || res?.data || [];
+        setDrafts(Array.isArray(list) ? list : []);
+      } catch (err) {
+        console.warn("Could not load unpaid booking drafts:", err);
+      }
+    };
+    fetchDrafts();
+  }, []);
+
+  useEffect(() => {
+    fetchPayments(purposeFilter, page);
+  }, [purposeFilter, page, fetchPayments]);
+
+  const handleResumeDraft = async (draftId) => {
+    try {
+      setResumingDraftId(draftId);
+      const res = await repairService.initiateBookingPayment(draftId);
+      const data = res?.data || res;
+      if (data?.paymentLink) {
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("pending_booking_repair_id", draftId);
+          if (data.reference) {
+            sessionStorage.setItem("pending_booking_reference", data.reference);
+          }
+          window.location.href = data.paymentLink;
+        }
+      } else {
+        router.push(`/dashboard/repairs/book?repairId=${draftId}`);
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Could not resume draft payment.");
+    } finally {
+      setResumingDraftId(null);
+    }
   };
 
-  const handleDownloadReceipts = () => {
-    toast.success("Downloading payment receipts as PDF...");
+  const handleDiscardDraft = async (draftId) => {
+    try {
+      setDiscardingDraftId(draftId);
+      await repairService.deleteDraft(draftId);
+      setDrafts((prev) => prev.filter((d) => (d._id || d.id) !== draftId));
+      setConfirmingDiscardId(null);
+      toast.success("Draft discarded");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Could not discard draft.");
+    } finally {
+      setDiscardingDraftId(null);
+    }
   };
 
   return (
@@ -72,9 +155,7 @@ const Payments = () => {
       {/* Header */}
       <div className="payments-header">
         <h1 className="payments-title">Payments</h1>
-        <p className="payments-subtitle">
-          Instalments, payment methods and receipts.
-        </p>
+        <p className="payments-subtitle">Instalments and payment receipts.</p>
       </div>
 
       {/* 2-Column Grid */}
@@ -88,328 +169,290 @@ const Payments = () => {
               <span>Pay Later</span>
             </div>
 
-            <h2 className="instalment-title">
-              Payment {activeInstalment.current} of {activeInstalment.total}
+            <h2 className="instalment-title" style={{ marginBottom: "8px" }}>
+              No current payment plan
             </h2>
-            <p className="instalment-due-date">Due {activeInstalment.dueDate}</p>
-
-            <div className="instalment-amount">{activeInstalment.amount}</div>
-
-            <button
-              type="button"
-              className="btn-pay-now-full"
-              onClick={handlePayNow}
-              disabled={isProcessingPayment}
+            <p
+              className="instalment-due-date"
+              style={{ marginBottom: 0, lineHeight: 1.5 }}
             >
-              {isProcessingPayment ? "Processing payment..." : "Pay now"}
-            </button>
+              You don&apos;t have any active instalment plans right now. When
+              you split a repair payment with <b>"Repair Now, Pay Later"</b>; your
+              schedule will appear here.
+            </p>
           </div>
 
           {/* Card 2: History */}
-          <div className="payment-card">
-            <h2 className="payment-card-title">History</h2>
+          <div className="payment-card history-card">
+            <div className="history-card-top">
+              <h2 className="payment-card-title" style={{ marginBottom: 0 }}>
+                History
+              </h2>
+              {summary && (
+                <span className="history-summary-pill">
+                  Total paid: ₦
+                  {Number(
+                    summary.totalPaid ??
+                      summary.paidAmount ??
+                      summary.totalAmount ??
+                      0,
+                  ).toLocaleString()}
+                </span>
+              )}
+            </div>
 
-            <div className="history-list">
-              {historyItems.map((item) => (
-                <div key={item.id} className="history-item-row">
-                  <div className="history-item-info">
-                    <h3 className="history-item-title">
-                      Repair #{item.id} · {item.service}
-                    </h3>
-                    <p className="history-item-sub">
-                      {item.amount} · {item.date}
-                    </p>
-                  </div>
-
-                  <span className="status-pill-paid">
-                    <span className="status-dot">●</span>
-                    <span>{item.status}</span>
-                  </span>
-                </div>
+            {/* Purpose Filters */}
+            <div className="history-filter-row">
+              {PURPOSE_FILTERS.map((f) => (
+                <button
+                  key={f.key || "all"}
+                  type="button"
+                  className={`history-filter-pill ${
+                    purposeFilter === f.key ? "active" : ""
+                  }`}
+                  onClick={() => {
+                    setPurposeFilter(f.key);
+                    setPage(1);
+                  }}
+                >
+                  {f.label}
+                </button>
               ))}
             </div>
 
-            <button
-              type="button"
-              className="download-receipts-link"
-              onClick={handleDownloadReceipts}
-            >
-              Download receipts
-            </button>
+            {paymentsLoading ? (
+              <TecNurxLoader
+                minHeight="180px"
+                size="md"
+                text="Loading payments..."
+              />
+            ) : payments.length === 0 ? (
+              <div className="history-empty-state">
+                No payments found
+                {purposeFilter
+                  ? ` for ${formatPurposeLabel(purposeFilter).toLowerCase()}`
+                  : ""}
+                .
+              </div>
+            ) : (
+              <div className="history-list">
+                {payments.map((item) => {
+                  const pId = item._id || item.id || item.paymentId;
+                  const repairObj =
+                    typeof item.repair === "object" ? item.repair : null;
+                  const repairId =
+                    repairObj?._id ||
+                    repairObj?.id ||
+                    item.repair ||
+                    item.repairId;
+                  const shortRepair = repairId
+                    ? String(repairId).slice(-6).toUpperCase()
+                    : String(pId || "")
+                        .slice(-6)
+                        .toUpperCase();
+                  const devName = [
+                    repairObj?.device?.brand,
+                    repairObj?.device?.model,
+                  ]
+                    .filter(Boolean)
+                    .join(" ");
+                  const purposeLabel = formatPurposeLabel(item.purpose);
+                  const amount = Number(item.amount ?? 0);
+                  const dateValue =
+                    item.paidAt || item.initiatedAt || item.createdAt;
+                  const dateLabel = dateValue
+                    ? new Date(dateValue).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })
+                    : "—";
+                  const statusMeta = formatStatusMeta(item.status);
+                  const isPending =
+                    (item.status || "").toLowerCase() === "pending";
+
+                  return (
+                    <div
+                      key={pId}
+                      className="history-item-row history-item-clickable"
+                      onClick={() => router.push(`/dashboard/payments/${pId}`)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          router.push(`/dashboard/payments/${pId}`);
+                        }
+                      }}
+                    >
+                      <div className="history-item-info">
+                        <h3 className="history-item-title">
+                          {purposeLabel} · #{shortRepair}
+                          {devName ? ` (${devName})` : ""}
+                        </h3>
+                        <p className="history-item-sub">
+                          ₦{amount.toLocaleString()} · {dateLabel}
+                        </p>
+                      </div>
+
+                      <div
+                        className="history-item-right"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {isPending && item.paymentLink && (
+                          <a
+                            href={item.paymentLink}
+                            className="btn-history-resume"
+                          >
+                            Resume
+                          </a>
+                        )}
+                        <span className={statusMeta.className}>
+                          <span className="status-dot">●</span>
+                          <span>{statusMeta.label}</span>
+                        </span>
+                        <Link
+                          href={`/dashboard/payments/${pId}`}
+                          className="btn-history-details"
+                        >
+                          View details
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {pagination.totalPages > 1 && (
+              <div className="history-pagination">
+                <button
+                  type="button"
+                  className="history-page-btn"
+                  disabled={page <= 1 || paymentsLoading}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                >
+                  Previous
+                </button>
+                <span className="history-page-info">
+                  Page {pagination.page} of {pagination.totalPages}
+                </span>
+                <button
+                  type="button"
+                  className="history-page-btn"
+                  disabled={page >= pagination.totalPages || paymentsLoading}
+                  onClick={() => setPage((p) => p + 1)}
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Right Column: Payment Methods & Automatic Repayments */}
+        {/* Right Column: Pending Booking Payments (Drafts) */}
         <div className="payments-right-col">
-          {/* Card 1: Payment methods */}
-          <div className="payment-card">
-            <h2 className="payment-card-title">Payment methods</h2>
+          <div className="payment-card pending-drafts-card">
+            <h2 className="payment-card-title">Pending booking payments</h2>
 
-            <div className="saved-card-row">
-              <div className="saved-card-meta">
-                <div className="card-icon-box">
-                  <CreditCard size={20} />
-                </div>
-                <div className="card-number-exp">
-                  <span className="card-number-label">
-                    Mastercard •••• 4242
-                  </span>
-                  <span className="card-exp-label">Expires 12/28</span>
-                </div>
+            {drafts.length === 0 ? (
+              <div className="history-empty-state">
+                No pending booking payments.
               </div>
+            ) : (
+              <div className="drafts-list">
+                {drafts.map((draft) => {
+                  const dId = draft._id || draft.id;
+                  const shortId =
+                    String(dId).length > 8
+                      ? String(dId).slice(-8).toUpperCase()
+                      : String(dId).toUpperCase();
+                  const devName =
+                    [draft.device?.brand, draft.device?.model]
+                      .filter(Boolean)
+                      .join(" ") || "Device";
+                  const rawIssue = (draft.issueCategory || "Repair").replace(
+                    /_/g,
+                    " ",
+                  );
+                  const issueName =
+                    rawIssue.charAt(0).toUpperCase() + rawIssue.slice(1);
+                  const total = draft?.bookingCharge?.total ?? 0;
+                  const expiryText = draft?.draftExpiresAt
+                    ? new Date(draft.draftExpiresAt).toLocaleDateString(
+                        "en-US",
+                        {
+                          month: "short",
+                          day: "numeric",
+                        },
+                      )
+                    : null;
 
-              <span className="pill-default-badge">
-                <span className="dot">●</span>
-                Default
-              </span>
-            </div>
+                  return (
+                    <div key={dId} className="draft-item-row">
+                      <div className="draft-item-info">
+                        <h3 className="draft-item-title">
+                          {devName} · {issueName}
+                        </h3>
+                        <p className="draft-item-sub">
+                          #{shortId}
+                          {expiryText ? ` · Expires ${expiryText}` : ""}
+                        </p>
+                      </div>
 
-            <button
-              type="button"
-              className="btn-outline-action"
-              onClick={() => setIsAddCardOpen(true)}
-            >
-              Add payment method
-            </button>
-          </div>
-
-          {/* Card 2: Automatic repayments */}
-          <div className="payment-card">
-            <div className="auto-repayments-header">
-              <h2 className="auto-repayments-title">Automatic repayments</h2>
-              <span
-                className={
-                  isAutoRepayActive ? "pill-status-on" : "pill-status-off"
-                }
-              >
-                <span className="dot">●</span>
-                {isAutoRepayActive ? "On" : "Off"}
-              </span>
-            </div>
-
-            <p className="auto-repayments-desc">
-              Pay each instalment automatically when it is due.
-            </p>
-
-            <button
-              type="button"
-              className="btn-outline-action"
-              onClick={() => setIsAutoRepayOpen(true)}
-            >
-              {isAutoRepayActive ? "Manage" : "Set up"}
-            </button>
+                      <div className="draft-item-actions">
+                        {confirmingDiscardId === dId ? (
+                          <>
+                            <button
+                              type="button"
+                              className="btn-draft-discard"
+                              disabled={discardingDraftId === dId}
+                              onClick={() => setConfirmingDiscardId(null)}
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              type="button"
+                              className="btn-draft-confirm-discard"
+                              disabled={discardingDraftId === dId}
+                              onClick={() => handleDiscardDraft(dId)}
+                            >
+                              {discardingDraftId === dId
+                                ? "Discarding..."
+                                : "Confirm discard"}
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              type="button"
+                              className="btn-draft-discard"
+                              disabled={resumingDraftId === dId}
+                              onClick={() => setConfirmingDiscardId(dId)}
+                            >
+                              Discard
+                            </button>
+                            <button
+                              type="button"
+                              className="btn-draft-pay"
+                              disabled={resumingDraftId === dId}
+                              onClick={() => handleResumeDraft(dId)}
+                            >
+                              {resumingDraftId === dId
+                                ? "Loading..."
+                                : `Pay ₦${Number(total).toLocaleString()}`}
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {/* MODAL 1: ADD PAYMENT METHOD */}
-      {isAddCardOpen && (
-        <div
-          className="payment-modal-backdrop"
-          onClick={() => setIsAddCardOpen(false)}
-        >
-          <div
-            className="payment-modal-card"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="payment-modal-head">
-              <h2>Add payment method</h2>
-              <button
-                type="button"
-                className="payment-modal-close"
-                onClick={() => setIsAddCardOpen(false)}
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <form onSubmit={handleAddCardSubmit}>
-              <div style={{ marginBottom: "16px" }}>
-                <label
-                  style={{
-                    display: "block",
-                    fontSize: "13.5px",
-                    fontWeight: 600,
-                    marginBottom: "6px",
-                  }}
-                >
-                  Card number
-                </label>
-                <input
-                  type="text"
-                  placeholder="1234 5678 9012 3456"
-                  maxLength={19}
-                  value={cardForm.cardNumber}
-                  onChange={(e) =>
-                    setCardForm({ ...cardForm, cardNumber: e.target.value })
-                  }
-                  style={{
-                    width: "100%",
-                    padding: "10px 14px",
-                    borderRadius: "10px",
-                    border: "1px solid #d1d5db",
-                    fontSize: "14px",
-                    boxBox: "border-box",
-                  }}
-                  required
-                />
-              </div>
-
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "14px",
-                  marginBottom: "20px",
-                }}
-              >
-                <div>
-                  <label
-                    style={{
-                      display: "block",
-                      fontSize: "13.5px",
-                      fontWeight: 600,
-                      marginBottom: "6px",
-                    }}
-                  >
-                    Expiry date
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="MM/YY"
-                    maxLength={5}
-                    value={cardForm.expiry}
-                    onChange={(e) =>
-                      setCardForm({ ...cardForm, expiry: e.target.value })
-                    }
-                    style={{
-                      width: "100%",
-                      padding: "10px 14px",
-                      borderRadius: "10px",
-                      border: "1px solid #d1d5db",
-                      fontSize: "14px",
-                    }}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label
-                    style={{
-                      display: "block",
-                      fontSize: "13.5px",
-                      fontWeight: 600,
-                      marginBottom: "6px",
-                    }}
-                  >
-                    CVV
-                  </label>
-                  <input
-                    type="password"
-                    placeholder="123"
-                    maxLength={4}
-                    value={cardForm.cvv}
-                    onChange={(e) =>
-                      setCardForm({ ...cardForm, cvv: e.target.value })
-                    }
-                    style={{
-                      width: "100%",
-                      padding: "10px 14px",
-                      borderRadius: "10px",
-                      border: "1px solid #d1d5db",
-                      fontSize: "14px",
-                    }}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="payment-modal-actions">
-                <button
-                  type="button"
-                  className="btn-modal-cancel"
-                  onClick={() => setIsAddCardOpen(false)}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="btn-modal-submit">
-                  Save card
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL 2: AUTOMATIC REPAYMENTS SETUP */}
-      {isAutoRepayOpen && (
-        <div
-          className="payment-modal-backdrop"
-          onClick={() => setIsAutoRepayOpen(false)}
-        >
-          <div
-            className="payment-modal-card"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="payment-modal-head">
-              <h2>Set up automatic repayments</h2>
-              <button
-                type="button"
-                className="payment-modal-close"
-                onClick={() => setIsAutoRepayOpen(false)}
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <p style={{ fontSize: "14px", color: "#4b5563", lineHeight: 1.5 }}>
-              When enabled, your scheduled repair instalments will be debited
-              from your default payment method on the due date automatically.
-            </p>
-
-            <div
-              style={{
-                background: "#f9fafb",
-                padding: "16px",
-                borderRadius: "14px",
-                margin: "18px 0",
-              }}
-            >
-              <div style={{ fontSize: "13.5px", color: "#64748b" }}>
-                Default card:
-              </div>
-              <strong style={{ fontSize: "15px", color: "#111827" }}>
-                Mastercard •••• 4242
-              </strong>
-            </div>
-
-            <div className="payment-modal-actions">
-              <button
-                type="button"
-                className="btn-modal-cancel"
-                onClick={() => setIsAutoRepayOpen(false)}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="btn-modal-submit"
-                onClick={() => {
-                  setIsAutoRepayActive(!isAutoRepayActive);
-                  setIsAutoRepayOpen(false);
-                  toast.success(
-                    isAutoRepayActive
-                      ? "Automatic repayments turned off"
-                      : "Automatic repayments enabled!"
-                  );
-                }}
-              >
-                {isAutoRepayActive ? "Turn off" : "Enable automatic debits"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

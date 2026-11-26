@@ -205,8 +205,29 @@ const AdminTransactions = () => {
 
   return (
     <div className="admin-dashboard">
-      <div className="dashboard-header">
-        <h1>Transactions</h1>
+      <div className="dashboard-header-row">
+        <div className="dashboard-header">
+          <h1>Transactions</h1>
+          <p>Monitor incoming customer payments and settlement records.</p>
+        </div>
+
+        <span className="admin-workspace-tag">
+          <span>Financial Ledger</span>
+        </span>
+      </div>
+
+      {/* Hero Banner */}
+      <div className="admin-hero-banner">
+        <div className="admin-hero-left">
+          <span className="admin-hero-pill">
+            <span>●</span>
+            <span>Financial Ledger</span>
+          </span>
+          <h2 className="admin-hero-title">{payments.length} recorded transactions</h2>
+          <p className="admin-hero-sub">
+            Audit customer repair payments, booking fees, and settlement status.
+          </p>
+        </div>
       </div>
 
       {/* Stats Cards */}

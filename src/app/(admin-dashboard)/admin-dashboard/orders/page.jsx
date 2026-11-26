@@ -244,8 +244,29 @@ const AdminOrders = () => {
 
   return (
     <div className="admin-dashboard">
-      <div className="dashboard-header">
-        <h1>All Orders</h1>
+      <div className="dashboard-header-row">
+        <div className="dashboard-header">
+          <h1>All Orders</h1>
+          <p>Search, filter, and inspect gadget repair orders across the platform.</p>
+        </div>
+
+        <span className="admin-workspace-tag">
+          <span>Repair Operations</span>
+        </span>
+      </div>
+
+      {/* Hero Banner */}
+      <div className="admin-hero-banner">
+        <div className="admin-hero-left">
+          <span className="admin-hero-pill">
+            <span>●</span>
+            <span>Repair Operations</span>
+          </span>
+          <h2 className="admin-hero-title">{repairs.length} total repair orders</h2>
+          <p className="admin-hero-sub">
+            Monitor active assignments, quotes, and completed device repairs.
+          </p>
+        </div>
       </div>
 
       {/* Stats Cards */}

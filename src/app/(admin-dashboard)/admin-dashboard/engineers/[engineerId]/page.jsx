@@ -136,232 +136,283 @@ export default function EngineerDetailsPage({ params }) {
   }
 
   const isApproved = serviceProvider?.isApproved || false;
+  const fullName = `${engineer.fname || ""} ${engineer.lname || ""}`.trim() || "Engineer";
+  const initials = `${engineer.fname?.[0] || ""}${engineer.lname?.[0] || ""}`.toUpperCase() || "EN";
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.titleGroup}>
-          <button
-            onClick={() => router.back()}
-            className={styles.subtitle}
-            style={{
-              marginBottom: "16px",
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              color: "#3b82f6",
-              fontWeight: 500,
-              padding: 0,
-            }}
-          >
-            <ArrowLeft size={16} /> Back to Engineers
-          </button>
-          <h1>Engineer Profile</h1>
-          <div className={styles.subtitle}>
-            <Calendar size={16} /> Joined: {engineer.createdAt || "N/A"}
-            <span style={{ margin: "0 8px" }}>•</span>
-            <span
-              className={`${styles.badge} ${isApproved ? styles.badgeSuccess : styles.badgeFailed}`}
-            >
-              {isApproved ? (
-                <ShieldCheck size={14} />
-              ) : (
-                <ShieldAlert size={14} />
-              )}
-              {isApproved ? "Approved" : "Not Approved"}
-            </span>
+    <div className="admin-dashboard">
+      {/* Topbar */}
+      <div className="dashboard-header-row" style={{ alignItems: "center" }}>
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="admin-btn-outline"
+        >
+          <ArrowLeft size={16} /> Back to Engineers
+        </button>
+
+        <span className="admin-workspace-tag">
+          <Briefcase size={14} />
+          <span>Engineer Profile</span>
+        </span>
+      </div>
+
+      {/* Pitch-Black Hero Banner */}
+      <div className="admin-hero-banner">
+        <div className="admin-hero-left">
+          <span className="admin-hero-pill">
+            <span>●</span>
+            <span>{isApproved ? "Approved Partner" : "Pending Approval"}</span>
+          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+            {engineer.photo && engineer.photo !== "default.jpg" ? (
+              <img
+                src={engineer.photo}
+                alt={fullName}
+                style={{
+                  width: "52px",
+                  height: "52px",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  border: "2px solid rgba(255,255,255,0.25)",
+                }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: "52px",
+                  height: "52px",
+                  borderRadius: "50%",
+                  background: "#ffb800",
+                  color: "#000000",
+                  fontWeight: 800,
+                  fontSize: "18px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {initials}
+              </div>
+            )}
+            <div>
+              <h1 className="admin-hero-title">{fullName}</h1>
+              <p className="admin-hero-sub">
+                {engineer.designation || "Service Engineer"} · Joined{" "}
+                {engineer.createdAt
+                  ? new Date(engineer.createdAt).toLocaleDateString()
+                  : "N/A"}
+              </p>
+            </div>
           </div>
         </div>
-        <div style={{ display: "flex", gap: "12px" }}>
+
+        <div className="admin-hero-actions">
           {!isApproved && canVerify && (
             <button
-              className={styles.actionPrimary}
+              type="button"
+              className="admin-btn-yellow"
               onClick={handleVerify}
               disabled={isVerifying || isDeleting}
             >
               <ShieldCheck size={16} />
-              {isVerifying ? "Verifying..." : "Approve Service Partner"}
+              <span>{isVerifying ? "Verifying..." : "Approve Service Partner"}</span>
             </button>
           )}
-          {/* <button
-            className={styles.actionPrimary}
-            style={{ background: "#dc2626", borderColor: "#dc2626" }}
-            onClick={handleDelete}
-            disabled={isVerifying || isDeleting}
-          >
-            <Trash2 size={16} />
-            {isDeleting ? "Deleting..." : "Delete Service Partner"}
-          </button> */}
         </div>
       </div>
 
-      <div className={styles.grid}>
-        <div className={styles.card} style={{ gridColumn: "span 2" }}>
-          <div className={styles.profileFlex}>
-            <img
-              src={
-                engineer.photo && engineer.photo !== "default.jpg"
-                  ? engineer.photo
-                  : "/default-avatar.png"
-              }
-              alt="Engineer"
-              className={styles.avatar}
-            />
+      {/* Stats Cards */}
+      {stats && (
+        <div className="dashboard-cards">
+          <div className="stat-card">
             <div>
-              <div className={styles.profileName}>
-                {engineer.fname} {engineer.lname}
-              </div>
-              <div
-                className={styles.profileSub}
-                style={{ display: "flex", alignItems: "center", gap: "6px" }}
-              >
-                <Briefcase size={14} /> {engineer.designation || "Engineer"}
-              </div>
+              <span>Total Assigned</span>
+              <h3>{stats.totalRepairs || 0}</h3>
             </div>
+            <Activity size={20} />
           </div>
-
-          <div className={styles.kvGrid}>
-            <div className={styles.kvItem}>
-              <span className={styles.kvKey}>
-                <Mail
-                  size={14}
-                  style={{
-                    display: "inline",
-                    marginRight: "4px",
-                    verticalAlign: "text-bottom",
-                  }}
-                />{" "}
-                Email Address
-              </span>
-              <span className={styles.kvVal}>{engineer.email}</span>
+          <div className="stat-card">
+            <div>
+              <span>Completed</span>
+              <h3 style={{ color: "#15803d" }}>{stats.completed || 0}</h3>
             </div>
-            <div className={styles.kvItem}>
-              <span className={styles.kvKey}>
-                <Phone
-                  size={14}
-                  style={{
-                    display: "inline",
-                    marginRight: "4px",
-                    verticalAlign: "text-bottom",
-                  }}
-                />{" "}
-                Phone Number
-              </span>
-              <span className={styles.kvVal}>
-                {engineer.phoneNumber || "N/A"}
-              </span>
+            <ShieldCheck size={20} />
+          </div>
+          <div className="stat-card">
+            <div>
+              <span>In Progress</span>
+              <h3 style={{ color: "#0369a1" }}>{stats.inProgress || 0}</h3>
             </div>
+            <Briefcase size={20} />
+          </div>
+          <div className="stat-card">
+            <div>
+              <span>Pending</span>
+              <h3 style={{ color: "#b45309" }}>{stats.pending || 0}</h3>
+            </div>
+            <ShieldAlert size={20} />
           </div>
         </div>
+      )}
 
-        {stats && (
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <div className={`${styles.cardIcon} ${styles.iconBlue}`}>
-                <Activity size={24} />
-              </div>
-            </div>
-            <div className={styles.cardLabel}>Total Repairs Assigned</div>
-            <div className={styles.cardValue}>{stats.totalRepairs || 0}</div>
+      {/* 2-Column Details Grid */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1.45fr 1fr",
+          gap: "24px",
+          alignItems: "start",
+        }}
+      >
+        {/* Left: Professional Information */}
+        {serviceProvider ? (
+          <div className="adcard">
+            <h2
+              style={{
+                fontSize: "18px",
+                fontWeight: 700,
+                color: "#111827",
+                margin: "0 0 18px",
+              }}
+            >
+              Professional &amp; Partner Details
+            </h2>
 
-            <div className={styles.statsGrid} style={{ marginTop: "20px" }}>
-              <div className={styles.statItem}>
-                <span>Completed</span>
-                <strong style={{ color: "#059669" }}>
-                  {stats.completed || 0}
-                </strong>
+            {[
+              { label: "Full Name", value: serviceProvider.fullname || fullName },
+              { label: "Partner Email", value: serviceProvider.email || engineer.email || "N/A" },
+              { label: "Phone Number", value: serviceProvider.phoneNumber || engineer.phoneNumber || "N/A" },
+              { label: "Years of Experience", value: serviceProvider.yearsOfExperience || "N/A" },
+              { label: "Gadget Type", value: serviceProvider.gadgetType || "N/A" },
+              { label: "Home Address", value: serviceProvider.address || "N/A" },
+              { label: "Service Center", value: serviceProvider.serviceCenter ? "Yes" : "No" },
+              { label: "Previous Employment", value: serviceProvider.previousEmployment ? "Yes" : "No" },
+              {
+                label: "Tools & Equipment",
+                value: Array.isArray(serviceProvider.toolsUsed)
+                  ? serviceProvider.toolsUsed.join(", ")
+                  : serviceProvider.toolsUsed || "N/A",
+              },
+            ].map((row) => (
+              <div
+                key={row.label}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: "16px",
+                  padding: "12px 0",
+                  borderBottom: "1px solid #f1f5f9",
+                  fontSize: "14px",
+                }}
+              >
+                <span style={{ color: "#64748b", flexShrink: 0 }}>{row.label}</span>
+                <strong style={{ color: "#111827", textAlign: "right" }}>{row.value}</strong>
               </div>
-              <div className={styles.statItem}>
-                <span>In Progress</span>
-                <strong style={{ color: "#2563eb" }}>
-                  {stats.inProgress || 0}
+            ))}
+
+            {serviceProvider.whyPartner && (
+              <div
+                style={{
+                  marginTop: "14px",
+                  padding: "14px 16px",
+                  background: "#f8fafc",
+                  borderRadius: "12px",
+                  border: "1px solid #f1f5f9",
+                  fontSize: "13.5px",
+                  color: "#334155",
+                }}
+              >
+                <strong style={{ display: "block", color: "#111827", marginBottom: "4px" }}>
+                  Why Partner with TecNurx?
                 </strong>
+                {serviceProvider.whyPartner}
               </div>
-              <div className={styles.statItem}>
-                <span>Pending</span>
-                <strong style={{ color: "#d97706" }}>
-                  {stats.pending || 0}
-                </strong>
+            )}
+
+            {(serviceProvider.certificate || serviceProvider.resume) && (
+              <div style={{ display: "flex", gap: "10px", marginTop: "16px", flexWrap: "wrap" }}>
+                {serviceProvider.certificate &&
+                  (!Array.isArray(serviceProvider.certificate) ||
+                    serviceProvider.certificate.length > 0) && (
+                    <a
+                      href={
+                        Array.isArray(serviceProvider.certificate)
+                          ? serviceProvider.certificate[0]
+                          : serviceProvider.certificate
+                      }
+                      target="_blank"
+                      rel="noreferrer"
+                      className="admin-btn-outline"
+                    >
+                      View Certificate
+                    </a>
+                  )}
+                {serviceProvider.resume &&
+                  (!Array.isArray(serviceProvider.resume) ||
+                    serviceProvider.resume.length > 0) && (
+                    <a
+                      href={
+                        Array.isArray(serviceProvider.resume)
+                          ? serviceProvider.resume[0]
+                          : serviceProvider.resume
+                      }
+                      target="_blank"
+                      rel="noreferrer"
+                      className="admin-btn-outline"
+                    >
+                      View Resume
+                    </a>
+                  )}
               </div>
-              <div className={styles.statItem}>
-                <span>Cancelled</span>
-                <strong style={{ color: "#dc2626" }}>
-                  {stats.cancelled || 0}
-                </strong>
-              </div>
-            </div>
+            )}
+          </div>
+        ) : (
+          <div className="adcard">
+            <h2 style={{ fontSize: "18px", fontWeight: 700, margin: "0 0 10px" }}>
+              Partner Application
+            </h2>
+            <p style={{ margin: 0, color: "#64748b", fontSize: "14px" }}>
+              No service partner profile submitted yet.
+            </p>
           </div>
         )}
 
-        {serviceProvider && (
-          <div className={styles.card} style={{ gridColumn: "span 2" }}>
-            <div className={styles.cardHeader}>
-              <div className={`${styles.cardIcon} ${styles.iconBlue}`} style={{ marginBottom: "16px" }}>
-                <Briefcase size={24} />
-              </div>
-              <h3 style={{ fontSize: "18px", fontWeight: 600, color: "#111827", margin: 0 }}>Professional Information</h3>
+        {/* Right: Account Contact Card */}
+        <div className="adcard">
+          <h2
+            style={{
+              fontSize: "18px",
+              fontWeight: 700,
+              color: "#111827",
+              margin: "0 0 18px",
+            }}
+          >
+            Account &amp; Contact
+          </h2>
+
+          {[
+            { label: "Email Address", value: engineer.email || "N/A" },
+            { label: "Phone Number", value: engineer.phoneNumber || "N/A" },
+            { label: "Designation", value: engineer.designation || "Engineer" },
+            { label: "Cancelled Jobs", value: stats?.cancelled || 0 },
+          ].map((row) => (
+            <div
+              key={row.label}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: "12px",
+                padding: "12px 0",
+                borderBottom: "1px solid #f1f5f9",
+                fontSize: "14px",
+              }}
+            >
+              <span style={{ color: "#64748b" }}>{row.label}</span>
+              <strong style={{ color: "#111827" }}>{row.value}</strong>
             </div>
-            
-            <div className={styles.kvGrid} style={{ marginTop: "16px" }}>
-              <div className={styles.kvItem}>
-                <span className={styles.kvKey}>Full Name</span>
-                <span className={styles.kvVal}>{serviceProvider.fullname || "N/A"}</span>
-              </div>
-              <div className={styles.kvItem}>
-                <span className={styles.kvKey}>Email</span>
-                <span className={styles.kvVal}>{serviceProvider.email || "N/A"}</span>
-              </div>
-              <div className={styles.kvItem}>
-                <span className={styles.kvKey}>Phone Number</span>
-                <span className={styles.kvVal}>{serviceProvider.phoneNumber || "N/A"}</span>
-              </div>
-              <div className={styles.kvItem}>
-                <span className={styles.kvKey}>Previous Employment</span>
-                <span className={styles.kvVal}>{serviceProvider.previousEmployment ? "Yes" : "No"}</span>
-              </div>
-              <div className={styles.kvItem}>
-                <span className={styles.kvKey}>Home Address</span>
-                <span className={styles.kvVal}>{serviceProvider.address || "N/A"}</span>
-              </div>
-              <div className={styles.kvItem}>
-                <span className={styles.kvKey}>Years of Experience</span>
-                <span className={styles.kvVal}>{serviceProvider.yearsOfExperience || "N/A"}</span>
-              </div>
-              <div className={styles.kvItem}>
-                <span className={styles.kvKey}>Gadget Type</span>
-                <span className={styles.kvVal}>{serviceProvider.gadgetType || "N/A"}</span>
-              </div>
-              <div className={styles.kvItem}>
-                <span className={styles.kvKey}>Service Center</span>
-                <span className={styles.kvVal}>{serviceProvider.serviceCenter ? "Yes" : "No"}</span>
-              </div>
-              <div className={styles.kvItem} style={{ gridColumn: "1 / -1" }}>
-                <span className={styles.kvKey}>Tools & Equipment</span>
-                <span className={styles.kvVal}>
-                  {Array.isArray(serviceProvider.toolsUsed) 
-                    ? serviceProvider.toolsUsed.join(", ") 
-                    : (serviceProvider.toolsUsed || "N/A")}
-                </span>
-              </div>
-              <div className={styles.kvItem} style={{ gridColumn: "1 / -1" }}>
-                <span className={styles.kvKey}>Why Partner with us?</span>
-                <span className={styles.kvVal}>{serviceProvider.whyPartner || "N/A"}</span>
-              </div>
-              {serviceProvider.certificate && (!Array.isArray(serviceProvider.certificate) || serviceProvider.certificate.length > 0) && (
-                <div className={styles.kvItem}>
-                  <span className={styles.kvKey}>Certificate</span>
-                  <a href={Array.isArray(serviceProvider.certificate) ? serviceProvider.certificate[0] : serviceProvider.certificate} target="_blank" rel="noreferrer" style={{ color: "#3b82f6", textDecoration: "underline" }}>View Document</a>
-                </div>
-              )}
-              {serviceProvider.resume && (!Array.isArray(serviceProvider.resume) || serviceProvider.resume.length > 0) && (
-                <div className={styles.kvItem}>
-                  <span className={styles.kvKey}>Resume</span>
-                  <a href={Array.isArray(serviceProvider.resume) ? serviceProvider.resume[0] : serviceProvider.resume} target="_blank" rel="noreferrer" style={{ color: "#3b82f6", textDecoration: "underline" }}>View Document</a>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
+          ))}
+        </div>
       </div>
 
       {/* Delete Engineer Confirm Modal */}

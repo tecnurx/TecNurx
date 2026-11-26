@@ -21,6 +21,7 @@ import {
 import { deviceService } from "../../../../../../services/devices";
 import { toast } from "@/components/CustomToast";
 import TecNurxLoader from "@/components/TecNurxLoader";
+import ImageLightbox from "@/components/ImageLightbox";
 
 // Helper to format price in Naira
 const formatPrice = (amount) => {
@@ -114,6 +115,7 @@ export default function DeviceDetailPage({ params }) {
   const [repairs, setRepairs] = useState([]);
   const [insurance, setInsurance] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
 
   // Edit Device Modal State
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -383,7 +385,18 @@ export default function DeviceDetailPage({ params }) {
                 </h4>
                 <div className="device-photos-grid">
                   {device.photos.map((url, idx) => (
-                    <div key={idx} className="device-photo-item">
+                    <div
+                      key={idx}
+                      className="device-photo-item"
+                      onClick={() => setLightboxIndex(idx)}
+                      style={{ cursor: "zoom-in" }}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") setLightboxIndex(idx);
+                      }}
+                      title="Click to enlarge"
+                    >
                       <img src={url} alt={`${deviceTitle} photo ${idx + 1}`} />
                     </div>
                   ))}
@@ -684,6 +697,13 @@ export default function DeviceDetailPage({ params }) {
           </div>
         </div>
       )}
+
+      <ImageLightbox
+        images={device?.photos || []}
+        currentIndex={lightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+        onChangeIndex={setLightboxIndex}
+      />
     </div>
   );
 }

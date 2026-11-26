@@ -228,18 +228,39 @@ const AdminGadgets = () => {
 
   return (
     <div className="admin-dashboard">
-      <div className="dashboard-header gadget-header">
-        <div>
+      <div className="dashboard-header-row">
+        <div className="dashboard-header">
           <h1>Gadget Service Catalog</h1>
-          <p style={{ margin: "4px 0 0", fontSize: "14px", color: "#64748b" }}>
+          <p>
             Manage supported device brands, repair models, and pricing catalog.
           </p>
         </div>
 
         {canManageCatalog && (
-          <Link href={"/admin-dashboard/gadgets/service-offering"} className="create-service-btn">
-            Create Service <PlusIcon size={20} />
+          <Link href={"/admin-dashboard/gadgets/service-offering"} className="admin-btn-primary">
+            <PlusIcon size={16} /> Create Service
           </Link>
+        )}
+      </div>
+
+      {/* Hero Banner */}
+      <div className="admin-hero-banner">
+        <div className="admin-hero-left">
+          <span className="admin-hero-pill">
+            <span>●</span>
+            <span>Service Catalog</span>
+          </span>
+          <h2 className="admin-hero-title">{offerings.length} device offerings</h2>
+          <p className="admin-hero-sub">
+            Configure supported device models, repair categories, and pricing.
+          </p>
+        </div>
+        {canManageCatalog && (
+          <div className="admin-hero-actions">
+            <Link href="/admin-dashboard/gadgets/service-offering" className="admin-btn-yellow">
+              <PlusIcon size={16} /> Create Service
+            </Link>
+          </div>
         )}
       </div>
 

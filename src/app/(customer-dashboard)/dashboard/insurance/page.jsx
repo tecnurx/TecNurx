@@ -96,13 +96,13 @@ const DashboardInsurance = () => {
           */}
 
           {viewState === "normal" && (
-            <button
-              type="button"
+            <Link
+              href="/dashboard/insurance/buy"
               className="btn-find-plan-header"
-              onClick={() => toast.success("Browsing available protection plans...")}
+              style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}
             >
               Find a plan
-            </button>
+            </Link>
           )}
         </div>
       </div>
@@ -158,20 +158,20 @@ const DashboardInsurance = () => {
               </div>
 
               <div className="protection-actions-row">
-                <button
-                  type="button"
+                <Link
+                  href="/dashboard/insurance/policies/POL-1029"
                   className="btn-view-policy"
-                  onClick={() => setIsPolicyModalOpen(true)}
+                  style={{ textDecoration: "none", textAlign: "center" }}
                 >
                   View policy
-                </button>
-                <button
-                  type="button"
+                </Link>
+                <Link
+                  href="/dashboard/insurance/claims/new"
                   className="btn-start-claim"
-                  onClick={() => setIsClaimModalOpen(true)}
+                  style={{ textDecoration: "none", textAlign: "center" }}
                 >
                   Start a claim
-                </button>
+                </Link>
               </div>
             </div>
           </div>

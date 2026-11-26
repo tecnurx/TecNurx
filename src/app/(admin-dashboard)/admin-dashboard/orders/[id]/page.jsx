@@ -155,89 +155,45 @@ export default function OrderDetails() {
     : null;
 
   return (
-    <div className="admin-dashboard" style={{ padding: "24px", maxWidth: "1200px", margin: "0 auto" }}>
+    <div className="admin-dashboard">
       {/* Top Navigation */}
-      <button
-        onClick={() => router.back()}
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "8px",
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          color: "#64748b",
-          marginBottom: "16px",
-          fontWeight: "600",
-          fontSize: "14px",
-        }}
-      >
-        <ArrowLeft size={18} /> Back to Orders
-      </button>
+      <div className="dashboard-header-row" style={{ alignItems: "center" }}>
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="admin-btn-outline"
+        >
+          <ArrowLeft size={16} /> Back to Orders
+        </button>
 
-      {/* Header Bar */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: "12px",
-          marginBottom: "20px",
-        }}
-      >
-        <div>
-          <h1 style={{ fontSize: "24px", fontWeight: "700", color: "#0f172a", margin: "0 0 4px" }}>
-            Repair Order #{id?.slice(-8) || id}
+        <span className="admin-workspace-tag">
+          <span>Order Inspection</span>
+        </span>
+      </div>
+
+      {/* Pitch-Black Hero Banner */}
+      <div className="admin-hero-banner">
+        <div className="admin-hero-left">
+          <span className="admin-hero-pill" style={{ textTransform: "capitalize" }}>
+            <span>●</span>
+            <span>
+              {repairDetails?.status
+                ? repairDetails.status.replace(/_/g, " ")
+                : "Repair Order"}
+            </span>
+          </span>
+          <h1 className="admin-hero-title">
+            {repairDetails?.device?.brand
+              ? `${repairDetails.device.brand.toUpperCase()} ${repairDetails.device.model || ""}`.trim()
+              : `Repair Order #${id?.slice(-8)?.toUpperCase() || id}`}
           </h1>
-          <p style={{ margin: 0, fontSize: "13px", color: "#64748b" }}>
-            Full Repair ID: <code style={{ color: "#334155" }}>{id}</code>
+          <p className="admin-hero-sub">
+            Order #{id?.slice(-8)?.toUpperCase() || id}
+            {repairDetails?.issueCategory
+              ? ` · ${repairDetails.issueCategory.replace(/_/g, " ")}`
+              : ""}
+            {serviceLocation?.type ? ` · ${serviceLocation.type.toUpperCase()}` : ""}
           </p>
-        </div>
-
-        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          {serviceLocation?.type && (
-            <span
-              style={{
-                padding: "6px 14px",
-                borderRadius: "20px",
-                fontSize: "13px",
-                fontWeight: "600",
-                textTransform: "uppercase",
-                background: "#e0f2fe",
-                color: "#0369a1",
-                border: "1px solid #bae6fd",
-              }}
-            >
-              {serviceLocation.type}
-            </span>
-          )}
-
-          {repairDetails?.status && (
-            <span
-              style={{
-                padding: "6px 14px",
-                borderRadius: "20px",
-                fontSize: "13px",
-                fontWeight: "600",
-                textTransform: "uppercase",
-                background:
-                  repairDetails.status === "completed"
-                    ? "#dcfce7"
-                    : repairDetails.status === "in_progress"
-                    ? "#fef3c7"
-                    : "#f1f5f9",
-                color:
-                  repairDetails.status === "completed"
-                    ? "#15803d"
-                    : repairDetails.status === "in_progress"
-                    ? "#b45309"
-                    : "#475569",
-              }}
-            >
-              {repairDetails.status.replace(/_/g, " ")}
-            </span>
-          )}
         </div>
       </div>
 
@@ -295,15 +251,7 @@ export default function OrderDetails() {
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           {/* Repair Details Card (If available) */}
           {repairDetails && (
-            <div
-              style={{
-                background: "#ffffff",
-                padding: "24px",
-                borderRadius: "12px",
-                border: "1px solid #e2e8f0",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-              }}
-            >
+            <div className="adcard">
               <h2
                 style={{
                   fontSize: "17px",
@@ -372,15 +320,7 @@ export default function OrderDetails() {
           )}
 
           {/* Service Location Info Card */}
-          <div
-            style={{
-              background: "#ffffff",
-              padding: "24px",
-              borderRadius: "12px",
-              border: "1px solid #e2e8f0",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-            }}
-          >
+          <div className="adcard">
             <div
               style={{
                 display: "flex",
@@ -495,15 +435,7 @@ export default function OrderDetails() {
 
         {/* Right Column: Available Engineers & Reassignment */}
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-          <div
-            style={{
-              background: "#ffffff",
-              padding: "24px",
-              borderRadius: "12px",
-              border: "1px solid #e2e8f0",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-            }}
-          >
+          <div className="adcard">
             <div
               style={{
                 display: "flex",
@@ -666,23 +598,15 @@ export default function OrderDetails() {
 
                 {/* Reassign Action Button */}
                 <button
+                  type="button"
                   onClick={() => handleReassign()}
                   disabled={!selectedEngineerId || reassigning}
+                  className="admin-btn-primary"
                   style={{
                     width: "100%",
-                    padding: "13px",
-                    background: !selectedEngineerId || reassigning ? "#94a3b8" : "#0f172a",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "8px",
-                    fontWeight: "600",
-                    fontSize: "14px",
+                    padding: "13px 20px",
+                    opacity: !selectedEngineerId || reassigning ? 0.55 : 1,
                     cursor: !selectedEngineerId || reassigning ? "not-allowed" : "pointer",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: "8px",
-                    transition: "background 0.2s",
                   }}
                 >
                   {reassigning && <RefreshCw size={16} className="spin-animation" />}

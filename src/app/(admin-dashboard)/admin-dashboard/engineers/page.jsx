@@ -314,35 +314,45 @@ const AdminEngineers = () => {
 
   return (
     <div className="admin-dashboard">
-      <div
-        className="dashboard-header"
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <h1>Engineers / Service Partners</h1>
+      <div className="dashboard-header-row">
+        <div className="dashboard-header">
+          <h1>Engineers &amp; Partners</h1>
+          <p>Manage registered repair engineers, applications, and verification.</p>
+        </div>
+
         {canManageEngineers && (
           <button
+            type="button"
+            className="admin-btn-primary"
             onClick={() => setIsModalOpen(true)}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              background: "#111827",
-              color: "white",
-              border: "none",
-              padding: "10px 20px",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: 600,
-              fontSize: "14px",
-            }}
           >
-            <Plus size={18} /> Create Engineer
+            <Plus size={16} /> Create Engineer
           </button>
+        )}
+      </div>
+
+      {/* Hero Banner */}
+      <div className="admin-hero-banner">
+        <div className="admin-hero-left">
+          <span className="admin-hero-pill">
+            <span>●</span>
+            <span>Service Partners</span>
+          </span>
+          <h2 className="admin-hero-title">{engineers.length} registered engineers</h2>
+          <p className="admin-hero-sub">
+            Onboard, verify, and manage certified repair engineers across zones.
+          </p>
+        </div>
+        {canManageEngineers && (
+          <div className="admin-hero-actions">
+            <button
+              type="button"
+              className="admin-btn-yellow"
+              onClick={() => setIsModalOpen(true)}
+            >
+              <Plus size={16} /> Create Engineer
+            </button>
+          </div>
         )}
       </div>
 
@@ -438,7 +448,8 @@ const AdminEngineers = () => {
             render: (eng) => (
               <Link
                 href={`/admin-dashboard/engineers/${eng._id || eng.id}`}
-                className="view-repair"
+                className="admin-btn-primary"
+                style={{ padding: "6px 14px", fontSize: "12.5px" }}
               >
                 View
               </Link>

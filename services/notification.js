@@ -1,8 +1,10 @@
 import axios from "../lib/axios";
 
 export const NotificationService = {
-  getNotifications: async () => {
-    const response = await axios.get("/notifications/");
+  getNotifications: async (category = "all") => {
+    const response = await axios.get("/notifications", {
+      params: { category },
+    });
     return response.data;
   },
   getUnreadCount: async () => {
@@ -14,7 +16,11 @@ export const NotificationService = {
     return response.data;
   },
   markOneasRead: async (_id) => {
-    const response = await axios.patch(`/notifications/${_id}`);
+    const response = await axios.patch(`/notifications/${_id}/read`);
+    return response.data;
+  },
+  deleteNotification: async (_id) => {
+    const response = await axios.delete(`/notifications/${_id}`);
     return response.data;
   },
 };

@@ -221,4 +221,15 @@ export const adminService = {
     );
     return response.data;
   },
+
+  // Fee Configuration (Admin)
+  getFees: async () => {
+    const response = await axios.get("/admin/fees");
+    return response.data;
+  },
+
+  updateFees: async (payload) => {
+    const response = await axios.patch("/admin/fees", payload);
+    return response.data;
+  },
 };

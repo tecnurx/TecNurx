@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "@/components/CustomToast";
 import { X, ArrowRight, Wallet } from "lucide-react";
 import { engineerAuthService } from "../../../../services/eng/engineerAuth";
+import { formatMoneyInput, sanitizeMoneyInput } from "@/lib/formatMoneyInput";
 
 const WithdrawModal = ({ isOpen, onClose, walletBalance = 0, onSuccess }) => {
   const [withdrawAmount, setWithdrawAmount] = useState("");
@@ -146,10 +147,11 @@ const WithdrawModal = ({ isOpen, onClose, walletBalance = 0, onSuccess }) => {
               Amount to Withdraw (₦)
             </label>
             <input
-              type="number"
-              value={withdrawAmount}
-              onChange={(e) => setWithdrawAmount(e.target.value)}
-              placeholder="e.g. 50000"
+              type="text"
+              inputMode="numeric"
+              value={formatMoneyInput(withdrawAmount)}
+              onChange={(e) => setWithdrawAmount(sanitizeMoneyInput(e.target.value))}
+              placeholder="e.g. 50,000"
               required
               style={{
                 padding: "14px",

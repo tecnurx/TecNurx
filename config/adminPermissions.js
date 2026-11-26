@@ -47,6 +47,7 @@ export const ROUTE_PERMISSIONS = {
     "support:manage",
     "support:read",
   ],
+  "/admin-dashboard/fees": ["fees:manage"],
 };
 
 /**

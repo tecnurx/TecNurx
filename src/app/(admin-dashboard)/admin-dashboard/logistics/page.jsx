@@ -340,11 +340,31 @@ const AdminLogistics = () => {
 
   return (
     <div className="admin-dashboard">
-      <div className="dashboard-header">
-        <h1>Logistics & Dispatch</h1>
-        <p style={{ margin: 0, fontSize: "14px", color: "#64748b", fontStyle: "normal" }}>
-          Track gadget pickup requests, dispatches, and delivery status across all repair orders.
-        </p>
+      <div className="dashboard-header-row">
+        <div className="dashboard-header">
+          <h1>Logistics &amp; Dispatch</h1>
+          <p>
+            Track gadget pickup requests, dispatches, and delivery status across all repair orders.
+          </p>
+        </div>
+
+        <span className="admin-workspace-tag">
+          <span>Dispatch Operations</span>
+        </span>
+      </div>
+
+      {/* Hero Banner */}
+      <div className="admin-hero-banner">
+        <div className="admin-hero-left">
+          <span className="admin-hero-pill">
+            <span>●</span>
+            <span>Dispatch Operations</span>
+          </span>
+          <h2 className="admin-hero-title">{logisticsList.length} tracked shipments</h2>
+          <p className="admin-hero-sub">
+            Coordinate device pickups, transit status, and return deliveries.
+          </p>
+        </div>
       </div>
 
       {/* Stats Cards */}

@@ -1,0 +1,293 @@
+/* ==========================================================================
+   Cancel Repair Modal Styles - Customer Dashboard Redesign (Figma Matching)
+   ========================================================================== */
+
+.cancel-repair-page-wrap {
+  position: relative;
+  min-height: calc(100vh - 120px);
+  padding: 8px 0 60px 0;
+  max-width: 1160px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Background Dimmed Simulation */
+.cancel-page-bg-preview {
+  opacity: 0.28;
+  filter: blur(1.5px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.bg-preview-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.bg-device-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 6px 0;
+}
+
+.bg-device-sub {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+}
+
+.bg-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #fef3c7;
+  color: #b45309;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 9999px;
+}
+
+.bg-badge-dot {
+  color: #f59e0b;
+  font-size: 9px;
+}
+
+.bg-card-skeleton {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  padding: 28px;
+  height: 240px;
+}
+
+.bg-skeleton-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 20px 0;
+}
+
+.bg-skeleton-line {
+  height: 14px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  width: 60%;
+}
+
+.bg-skeleton-line.short {
+  width: 40%;
+}
+
+/* Modal Overlay & Card */
+.cancel-modal-container {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 20;
+}
+
+.cancel-modal-card {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 36px 32px;
+  max-width: 540px;
+  width: 100%;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
+  animation: modalFadeIn 0.2s ease-out;
+  box-sizing: border-box;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.cancel-modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.015em;
+}
+
+.cancel-modal-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0 0 20px 0;
+  line-height: 1.45;
+}
+
+/* Fee Table */
+.cancel-fee-table {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 0;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 22px;
+}
+
+.cancel-fee-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  gap: 16px;
+}
+
+.cancel-fee-row .fee-label {
+  color: #64748b;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.cancel-fee-row .fee-value {
+  color: #111827;
+  font-weight: 700;
+  text-align: right;
+}
+
+.cancel-fee-row .fee-value.device-status {
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Reasons */
+.cancel-reason-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 14px 0;
+}
+
+.cancel-reasons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.cancel-reason-card {
+  border: 1.5px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background: #ffffff;
+}
+
+.cancel-reason-card:hover {
+  border-color: #cbd5e1;
+}
+
+.cancel-reason-card.selected {
+  border-color: #000000;
+}
+
+.cancel-radio-circle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cancel-reason-card:not(.selected) .cancel-radio-circle {
+  border-color: #cbd5e1;
+}
+
+.cancel-radio-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #000000;
+}
+
+.cancel-reason-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Actions */
+.cancel-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-keep-repair {
+  appearance: none;
+  background-color: #ffc400;
+  color: #000000;
+  border: none;
+  border-radius: 9999px;
+  padding: 12px 28px;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.btn-keep-repair:hover {
+  background-color: #f5b700;
+}
+
+.btn-confirm-cancel {
+  appearance: none;
+  background: #ffffff;
+  border: 1.5px solid #111827;
+  border-radius: 9999px;
+  padding: 12px 28px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #111827;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.btn-confirm-cancel:hover {
+  background: #f8fafc;
+}
+
+/* Responsive */
+@media screen and (max-width: 600px) {
+  .cancel-modal-card {
+    padding: 24px 18px;
+  }
+
+  .cancel-modal-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-keep-repair,
+  .btn-confirm-cancel {
+    width: 100%;
+    text-align: center;
+  }
+}

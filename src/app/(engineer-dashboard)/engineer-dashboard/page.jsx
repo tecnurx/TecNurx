@@ -1,35 +1,52 @@
 "use client";
-import TecNurxLoader from "@/components/TecNurxLoader";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import "./engineer.css";
 import { engService } from "../../../../services/eng/eng";
+import { engineerAuthService } from "../../../../services/eng/engineerAuth";
+import Link from "next/link";
 import {
   Banknote,
   CheckCircle2,
-  Clock,
   Wrench,
-  AlertCircle,
-  Calendar,
-  Smartphone,
-  User,
+  XCircle,
   Wallet,
-  XCircleIcon,
-  X,
   Search,
   ArrowRight,
-  ArrowUpRight,
-  Eye,
+  Smartphone,
+  UserPen,
+  AlertCircle,
+  X,
 } from "lucide-react";
-import { engineerAuthService } from "../../../../services/eng/engineerAuth";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import TecNurxLoader from "@/components/TecNurxLoader";
 import { toast } from "@/components/CustomToast";
 import WithdrawModal from "../components/WithdrawModal";
-import DataTable from "@/components/DataTable";
+
+const formatNaira = (amount) => {
+  return `₦${Number(amount || 0).toLocaleString()}`;
+};
+
+const formatOrderId = (id) => {
+  if (!id) return "N/A";
+  const str = String(id);
+  return str.length > 8 ? str.slice(-8).toUpperCase() : str.toUpperCase();
+};
+
+const getStatusBadge = (statusRaw) => {
+  const s = (statusRaw || "pending").toLowerCase();
+  if (s === "completed" || s === "fixed" || s === "delivered") {
+    return { label: s.replace(/_/g, " "), className: "success" };
+  }
+  if (s.includes("progress") || s === "diagnosing" || s === "repairing" || s === "in_repair") {
+    return { label: s.replace(/_/g, " "), className: "pending" };
+  }
+  if (s === "cancelled" || s === "rejected") {
+    return { label: s.replace(/_/g, " "), className: "danger" };
+  }
+  return { label: s.replace(/_/g, " "), className: "warning" };
+};
 
 const EngineerDashboard = () => {
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [repairs, setRepairs] = useState([]);
@@ -39,7 +56,7 @@ const EngineerDashboard = () => {
   const [paymentStats, setPaymentStats] = useState({});
 
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
-  
+
   // Search repair by ID state
   const [searchId, setSearchId] = useState("");
   const [showSearchModal, setShowSearchModal] = useState(false);
@@ -47,44 +64,47 @@ const EngineerDashboard = () => {
   const [searchResult, setSearchResult] = useState(null);
   const [searchError, setSearchError] = useState(null);
 
-  const walletBalance = 150000; // Mock balance
+  const walletBalance = 150000;
 
-  // Fetch initial data
   useEffect(() => {
-    const fetchRepairs = async () => {
+    const fetchDashboardData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Get current user
         const user = engineerAuthService.getCurrentUser();
         setCurrentUser(user);
 
-        // Fetch repairs
-        const res = await engService.getEngineerRepairs();
-        const data = res.data?.repairs || res.repairs || [];
-        setRepairs(data);
+        const [repairsRes, statsRes, paymentRes] = await Promise.allSettled([
+          engService.getEngineerRepairs(),
+          engService.getEngineerStats(),
+          engService.getEngineerPayments(),
+        ]);
 
-        // Fetch engineer stats
-        const stats = await engService.getEngineerStats();
-        setEngStats(stats?.data?.stats || {});
+        if (repairsRes.status === "fulfilled") {
+          const data = repairsRes.value?.data?.repairs || repairsRes.value?.repairs || [];
+          setRepairs(Array.isArray(data) ? data : []);
+        }
 
-        // Fetch payments
-        const paymentResponse = await engService.getEngineerPayments();
-        setPayments(paymentResponse.data?.payments || []);
-        setPaymentStats(paymentResponse.stats || {});
+        if (statsRes.status === "fulfilled") {
+          setEngStats(statsRes.value?.data?.stats || {});
+        }
+
+        if (paymentRes.status === "fulfilled") {
+          setPayments(paymentRes.value?.data?.payments || []);
+          setPaymentStats(paymentRes.value?.stats || {});
+        }
       } catch (err) {
-        console.error("Failed to load repairs:", err);
-        setError(err.message || "Failed to load your repairs.");
+        console.error("Failed to load engineer dashboard:", err);
+        setError(err.message || "Failed to load dashboard data.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRepairs();
+    fetchDashboardData();
   }, []);
 
-  // Search Repair Handler
   const handleSearchRepair = async (e) => {
     if (e) e.preventDefault();
     const query = searchId.trim();
@@ -121,683 +141,444 @@ const EngineerDashboard = () => {
     }
   };
 
-  const totalEarnings = paymentStats?.completedAmount;
+  const activeRepair = useMemo(() => {
+    return (
+      repairs.find((r) => {
+        const s = (r.status || "").toLowerCase();
+        return s !== "completed" && s !== "delivered" && s !== "cancelled" && s !== "rejected";
+      }) || null
+    );
+  }, [repairs]);
 
-  const stats = [
-    {
-      id: 1,
-      title: "Total Earnings",
-      value: `₦${(totalEarnings || 0).toLocaleString()}`,
-      icon: <Banknote size={24} />,
-    },
-    {
-      id: 2,
-      title: "Active Repairs",
-      value: engStats?.activeRepairs || "0",
-      icon: <Wrench size={24} />,
-    },
-    {
-      id: 3,
-      title: "Completed Repairs",
-      value: engStats?.completedRepairs || "0",
-      icon: <CheckCircle2 size={24} />,
-    },
-    {
-      id: 4,
-      title: "Cancelled Repairs",
-      value: engStats?.cancelledRepairs || "0",
-      icon: <XCircleIcon size={24} />,
-    },
-  ];
+  const recentRepairs = useMemo(() => repairs.slice(0, 5), [repairs]);
+  const recentPayments = useMemo(() => payments.slice(0, 4), [payments]);
+
+  const totalEarnings = paymentStats?.completedAmount || 0;
+  const firstName = currentUser?.fname || "Engineer";
 
   if (loading) {
     return <TecNurxLoader minHeight="65vh" size="lg" />;
   }
 
   return (
-    <div className="dashboard-overview">
-      <div className="engdashboard-header">
-        <h1>Welcome, {currentUser?.fname || "Engineer"}!</h1>
+    <div className="eng-page">
+      {/* Header */}
+      <div className="eng-page-header">
+        <div>
+          <h1 className="eng-page-title">Welcome back, {firstName}</h1>
+          <p className="eng-page-subtitle">
+            Manage your assigned repairs, diagnostics, and payouts.
+          </p>
+        </div>
+
+        <span className="eng-workspace-tag">
+          <Wrench size={14} />
+          <span>Engineer Workspace</span>
+        </span>
       </div>
 
-      {/* Stats Cards */}
-      <div className="dashboard-cards">
-        {stats.map((item) => (
-          <div key={item.id} className="stat-card">
-            <div>
-              <span>{item.title}</span>
-              <h3>{item.value}</h3>
-            </div>
-            {item.icon}
-          </div>
-        ))}
+      {/* Error Notice */}
+      {error && (
+        <div
+          className="eng-card"
+          style={{
+            marginBottom: "20px",
+            borderColor: "#fecaca",
+            background: "#fef2f2",
+            color: "#b91c1c",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            padding: "16px 20px",
+          }}
+        >
+          <AlertCircle size={18} />
+          <span style={{ fontSize: "14px", fontWeight: 600 }}>{error}</span>
+        </div>
+      )}
+
+      {/* Pitch-Black Hero Banner (Distinctly Engineer: Wallet + Active Workload) */}
+      <div className="eng-hero-banner">
+        <div className="eng-hero-left">
+          <span className="eng-hero-pill">
+            <span>●</span>
+            <span>Available Payout Balance</span>
+          </span>
+          <h2 className="eng-hero-title">{formatNaira(walletBalance)} ready to withdraw</h2>
+          <p className="eng-hero-sub">
+            Total earnings: {formatNaira(totalEarnings)} · {engStats?.activeRepairs || 0} active{" "}
+            {Number(engStats?.activeRepairs) === 1 ? "job" : "jobs"} ·{" "}
+            {engStats?.completedRepairs || 0} completed
+          </p>
+        </div>
+
+        <div className="eng-hero-actions">
+          <button
+            type="button"
+            className="eng-btn-yellow"
+            onClick={() => setShowWithdrawModal(true)}
+          >
+            <Wallet size={16} />
+            <span>Withdraw funds</span>
+          </button>
+          <Link href="/engineer-dashboard/repairs" className="eng-btn-dark-outline">
+            <span>View repair queue</span>
+            <ArrowRight size={15} />
+          </Link>
+        </div>
       </div>
 
-      {/* Redesigned Wallet & Search Hero Area */}
-      <div className="dashboard-hero-section">
-        {/* Wallet Balance Card */}
-        <div className="hero-wallet-card">
-          <div className="hero-card-header">
-            <div className="hero-card-title">
-              <span className="hero-badge">Engineer Wallet</span>
-              <h3>Available Balance</h3>
-            </div>
-            <div className="hero-card-icon">
-              <Wallet size={22} />
-            </div>
+      {/* 4 Crisp Stat Cards */}
+      <div className="eng-stats-grid">
+        <div className="eng-stat-card">
+          <div className="eng-stat-info">
+            <span className="eng-stat-label">Total Earnings</span>
+            <h3 className="eng-stat-value">{formatNaira(totalEarnings)}</h3>
           </div>
-
-          <div className="hero-wallet-body">
-            <div className="hero-balance-value">
-              ₦{walletBalance.toLocaleString()}
-            </div>
-            <span className="hero-balance-sub">Ready for withdrawal to your bank account</span>
-          </div>
-
-          <div className="hero-wallet-actions">
-            <button
-              className="hero-btn-withdraw"
-              onClick={() => setShowWithdrawModal(true)}
-            >
-              <ArrowUpRight size={16} /> Withdraw Funds
-            </button>
-            <Link href="/engineer-dashboard/wallet" className="hero-btn-secondary">
-              View History
-            </Link>
+          <div className="eng-stat-icon">
+            <Banknote size={20} />
           </div>
         </div>
 
-        {/* Quick Repair Search Card */}
-        <div className="hero-search-card">
-          <div className="hero-card-header">
-            <div className="hero-card-title">
-              <span className="hero-badge search-badge">Quick Lookup</span>
-              <h3>Find Assigned Repair</h3>
+        <div className="eng-stat-card">
+          <div className="eng-stat-info">
+            <span className="eng-stat-label">Active Repairs</span>
+            <h3 className="eng-stat-value">{engStats?.activeRepairs || 0}</h3>
+          </div>
+          <div className="eng-stat-icon">
+            <Wrench size={20} />
+          </div>
+        </div>
+
+        <div className="eng-stat-card">
+          <div className="eng-stat-info">
+            <span className="eng-stat-label">Completed</span>
+            <h3 className="eng-stat-value">{engStats?.completedRepairs || 0}</h3>
+          </div>
+          <div className="eng-stat-icon">
+            <CheckCircle2 size={20} />
+          </div>
+        </div>
+
+        <div className="eng-stat-card">
+          <div className="eng-stat-info">
+            <span className="eng-stat-label">Cancelled</span>
+            <h3 className="eng-stat-value">{engStats?.cancelledRepairs || 0}</h3>
+          </div>
+          <div className="eng-stat-icon">
+            <XCircle size={20} />
+          </div>
+        </div>
+      </div>
+
+      {/* 2-Column Grid (Matches Customer Dashboard) */}
+      <div className="eng-overview-grid">
+        {/* Left Column: Active Assignment + Assigned Repairs */}
+        <div className="eng-col-left">
+          {/* Card 1: Current Active Assignment */}
+          <div className="eng-card">
+            <div className="eng-card-head">
+              <h2 className="eng-card-title">Current assignment</h2>
+              <Link href="/engineer-dashboard/repairs" className="eng-card-link">
+                View all repairs
+              </Link>
             </div>
-            <div className="hero-card-icon">
-              <Search size={22} />
-            </div>
+
+            {activeRepair ? (
+              <>
+                <div className="eng-active-job-meta">
+                  <div>
+                    <h3 className="eng-job-device">
+                      {activeRepair.device?.brand?.toUpperCase()}{" "}
+                      {activeRepair.device?.model || "Device"}
+                    </h3>
+                    <p className="eng-job-sub">
+                      {activeRepair.issueCategory
+                        ? activeRepair.issueCategory.replace(/_/g, " ")
+                        : "Diagnostic assessment"}{" "}
+                      · Order #{formatOrderId(activeRepair._id)}
+                    </p>
+                  </div>
+
+                  {(() => {
+                    const badge = getStatusBadge(activeRepair.status);
+                    return (
+                      <span className={`eng-status-pill ${badge.className}`}>
+                        <span>●</span>
+                        <span>{badge.label}</span>
+                      </span>
+                    );
+                  })()}
+                </div>
+
+                <div className="eng-job-footer">
+                  <div>
+                    <span style={{ fontSize: "12px", color: "#64748b", display: "block" }}>
+                      Estimated Quote
+                    </span>
+                    <strong style={{ fontSize: "16px", color: "#111827" }}>
+                      {formatNaira(activeRepair.estimatedCost?.totalCost || 0)}
+                    </strong>
+                  </div>
+
+                  <Link
+                    href={`/engineer-dashboard/repairs/${activeRepair._id}`}
+                    className="eng-btn-primary"
+                  >
+                    <span>Inspect &amp; update</span>
+                    <ArrowRight size={15} />
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <div className="eng-empty-state" style={{ padding: "18px 8px" }}>
+                <h3>No active assignment right now</h3>
+                <p>New repair jobs assigned to you will appear here.</p>
+                <Link href="/engineer-dashboard/repairs" className="eng-btn-outline">
+                  Browse repair history
+                </Link>
+              </div>
+            )}
           </div>
 
-          <p className="hero-search-desc">
-            Instantly search any repair order by ID to update progress, log diagnostic parts, or inspect details.
-          </p>
+          {/* Card 2: Recent Assigned Repairs */}
+          <div className="eng-card">
+            <div className="eng-card-head">
+              <h2 className="eng-card-title">Assigned repairs</h2>
+              <Link href="/engineer-dashboard/repairs" className="eng-card-link">
+                Manage
+              </Link>
+            </div>
 
-          <form onSubmit={handleSearchRepair} className="hero-search-form">
-            <div className="hero-input-wrapper">
-              <Search size={18} className="hero-input-icon" />
+            {recentRepairs.length > 0 ? (
+              <div className="eng-list">
+                {recentRepairs.map((r) => {
+                  const badge = getStatusBadge(r.status);
+                  const deviceName = `${r.device?.brand || ""} ${r.device?.model || "Device"}`.trim();
+                  const issue = r.issueCategory
+                    ? r.issueCategory.replace(/_/g, " ")
+                    : "General repair";
+
+                  return (
+                    <div key={r._id} className="eng-list-row">
+                      <div className="eng-list-left">
+                        <div className="eng-list-icon">
+                          <Smartphone size={18} />
+                        </div>
+                        <div style={{ minWidth: 0 }}>
+                          <h4 className="eng-list-title">
+                            <Link
+                              href={`/engineer-dashboard/repairs/${r._id}`}
+                              style={{ color: "inherit", textDecoration: "none" }}
+                            >
+                              {deviceName}
+                            </Link>
+                          </h4>
+                          <p className="eng-list-sub" style={{ textTransform: "capitalize" }}>
+                            #{formatOrderId(r._id)} · {issue}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <span className={`eng-status-pill ${badge.className}`}>
+                          {badge.label}
+                        </span>
+                        <Link
+                          href={`/engineer-dashboard/repairs/${r._id}`}
+                          className="eng-card-link"
+                          style={{ fontSize: "13px" }}
+                        >
+                          View
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="eng-empty-state" style={{ padding: "18px 8px" }}>
+                <p style={{ margin: 0 }}>No repairs assigned yet.</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Column: Repair Lookup + Quick Actions + Recent Payouts */}
+        <div className="eng-col-right">
+          {/* Card 1: Quick Repair Lookup & Actions */}
+          <div className="eng-card">
+            <h2 className="eng-card-title" style={{ marginBottom: "14px" }}>
+              Quick lookup &amp; actions
+            </h2>
+
+            <form onSubmit={handleSearchRepair} className="eng-lookup-form">
               <input
                 type="text"
+                className="eng-lookup-input"
+                placeholder="Enter Repair ID..."
                 value={searchId}
                 onChange={(e) => setSearchId(e.target.value)}
-                placeholder="Enter repair ID or order #..."
               />
+              <button type="submit" className="eng-btn-primary">
+                <Search size={15} />
+                <span>Find</span>
+              </button>
+            </form>
+
+            <div className="eng-quick-actions-list">
+              <Link href="/engineer-dashboard/repairs" className="eng-quick-action-row">
+                <span className="eng-quick-action-left">
+                  <Wrench size={17} />
+                  <span>Open repair queue</span>
+                </span>
+                <ArrowRight size={16} />
+              </Link>
+
+              <button
+                type="button"
+                className="eng-quick-action-row"
+                onClick={() => setShowWithdrawModal(true)}
+              >
+                <span className="eng-quick-action-left">
+                  <Wallet size={17} />
+                  <span>Request withdrawal</span>
+                </span>
+                <ArrowRight size={16} />
+              </button>
+
+              <Link href="/engineer-dashboard/account-setup" className="eng-quick-action-row">
+                <span className="eng-quick-action-left">
+                  <UserPen size={17} />
+                  <span>Account &amp; security</span>
+                </span>
+                <ArrowRight size={16} />
+              </Link>
             </div>
-            <button type="submit" className="hero-btn-search">
-              Search
-            </button>
-          </form>
+          </div>
+
+          {/* Card 2: Recent Payments */}
+          <div className="eng-card">
+            <div className="eng-card-head">
+              <h2 className="eng-card-title">Recent payouts</h2>
+              <Link href="/engineer-dashboard/payments" className="eng-card-link">
+                View all
+              </Link>
+            </div>
+
+            {recentPayments.length > 0 ? (
+              <div className="eng-list">
+                {recentPayments.map((p) => {
+                  const amt =
+                    p.amount !== undefined
+                      ? p.amount
+                      : p.repairId?.estimatedCost?.totalCost || 0;
+                  const badge = getStatusBadge(p.status);
+                  const dateVal = p.dateInitiated || p.createdAt;
+                  return (
+                    <div key={p._id} className="eng-list-row">
+                      <div style={{ minWidth: 0 }}>
+                        <h4 className="eng-list-title">
+                          #{p.transactionId || formatOrderId(p._id)}
+                        </h4>
+                        <p className="eng-list-sub">
+                          {dateVal ? new Date(dateVal).toLocaleDateString() : "Recent"}
+                        </p>
+                      </div>
+                      <div style={{ textAlign: "right" }}>
+                        <div style={{ fontWeight: 700, fontSize: "14px", color: "#111827" }}>
+                          {formatNaira(amt)}
+                        </div>
+                        <span
+                          className={`eng-status-pill ${badge.className}`}
+                          style={{ padding: "2px 8px", fontSize: "11px", marginTop: "4px" }}
+                        >
+                          {badge.label}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="eng-empty-state" style={{ padding: "18px 8px" }}>
+                <p style={{ margin: 0 }}>No payout records yet.</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Main Sections */}
-      <div className="sections-grid" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-        {/* Recent Repairs */}
-        <DataTable
-          title="Recent Repairs"
-          subtitle={`Latest assigned repair orders (${repairs.length} total)`}
-          data={repairs}
-          columns={[
-            {
-              header: "Order No.",
-              accessor: "_id",
-              sortable: true,
-              render: (r) => (
-                <span style={{ fontWeight: "700", color: "#0f172a" }}>
-                  #{r._id ? r._id.slice(-8) : "N/A"}
-                </span>
-              ),
-            },
-            {
-              header: "Date Assigned",
-              accessor: "assignedAt",
-              sortable: true,
-              render: (r) => {
-                const rawDate = r.assignedAt || r.createdAt;
-                return (
-                  <span style={{ color: "#64748b", fontSize: "13px" }}>
-                    {rawDate ? new Date(rawDate).toLocaleDateString() : "—"}
-                  </span>
-                );
-              },
-            },
-            {
-              header: "Fault Fixed",
-              accessor: "issueCategory",
-              render: (r) => (
-                <span>
-                  <strong>{r.device?.brand?.toUpperCase()} {r.device?.model}</strong>{" "}
-                  - {r.issueCategory?.replace(/_/g, " ")}
-                </span>
-              ),
-            },
-            {
-              header: "Repair Status",
-              accessor: "status",
-              sortable: true,
-              render: (r) => {
-                const status = (r.status || "pending").toLowerCase();
-                const isCompleted = status === "completed" || status === "fixed";
-                const isInProgress = status.includes("progress") || status === "diagnosing";
-                const isCancelled = status === "cancelled";
-                return (
-                  <span
-                    style={{
-                      padding: "3px 9px",
-                      borderRadius: "12px",
-                      fontSize: "12px",
-                      fontWeight: "600",
-                      textTransform: "capitalize",
-                      background: isCompleted ? "#dcfce7" : isInProgress ? "#e0f2fe" : isCancelled ? "#fee2e2" : "#fef3c7",
-                      color: isCompleted ? "#15803d" : isInProgress ? "#0369a1" : isCancelled ? "#b91c1c" : "#b45309",
-                    }}
-                  >
-                    {r.status?.replace(/_/g, " ") || "Pending"}
-                  </span>
-                );
-              },
-            },
-            {
-              header: "Amount",
-              accessor: "estimatedCost.totalCost",
-              sortable: true,
-              render: (r) => (
-                <span style={{ fontWeight: "700", color: "#0f172a" }}>
-                  ₦{(r.estimatedCost?.totalCost || 0).toLocaleString()}
-                </span>
-              ),
-            },
-            {
-              header: "Action",
-              align: "center",
-              render: (r) => (
-                <Link
-                  href={`/engineer-dashboard/repairs/${r._id}`}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "4px",
-                    padding: "4px 10px",
-                    background: "#0f172a",
-                    color: "#ffffff",
-                    borderRadius: "6px",
-                    fontSize: "12px",
-                    fontWeight: "600",
-                    textDecoration: "none",
-                  }}
-                >
-                  <Eye size={12} />
-                  <span>View</span>
-                </Link>
-              ),
-            },
-          ]}
-          actions={
-            <Link
-              href="/engineer-dashboard/repairs"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-                padding: "6px 12px",
-                background: "#f1f5f9",
-                color: "#0f172a",
-                borderRadius: "6px",
-                fontSize: "13px",
-                fontWeight: "600",
-                textDecoration: "none",
-              }}
-            >
-              <span>View All</span>
-              <ArrowRight size={13} />
-            </Link>
-          }
-          initialPageSize={5}
-          pageSizeOptions={[5, 10, 20]}
-          searchPlaceholder="Filter recent repairs..."
-          searchKeys={["_id", "status", "issueCategory", "device.brand", "device.model"]}
-          emptyMessage="No repairs assigned yet."
-        />
-
-        {/* Recent Payments */}
-        <DataTable
-          title="Recent Payments"
-          subtitle={`Latest payouts and settlement activities (${payments.length} total)`}
-          data={payments}
-          columns={[
-            {
-              header: "Order / Txn ID",
-              accessor: "transactionId",
-              sortable: true,
-              render: (p) => (
-                <span style={{ fontWeight: "700", color: "#0f172a" }}>
-                  #{p.transactionId || (p._id ? p._id.slice(-8) : "N/A")}
-                </span>
-              ),
-            },
-            {
-              header: "Fault Fixed",
-              accessor: "repairId.issueCategory",
-              render: (p) => (
-                <span>
-                  <strong>{p.repairId?.device?.brand} {p.repairId?.device?.model}</strong>{" "}
-                  - {p.repairId?.issueCategory?.replace(/_/g, " ")}
-                </span>
-              ),
-            },
-            {
-              header: "Date Initiated",
-              accessor: "dateInitiated",
-              sortable: true,
-              render: (p) => (
-                <span style={{ color: "#64748b", fontSize: "13px" }}>
-                  {p.dateInitiated ? new Date(p.dateInitiated).toLocaleString() : "—"}
-                </span>
-              ),
-            },
-            {
-              header: "Payment Status",
-              accessor: "status",
-              sortable: true,
-              render: (p) => {
-                const status = (p.status || "pending").toLowerCase();
-                const isSuccess = status === "paid" || status === "completed" || status === "success";
-                const isFailed = status === "failed";
-                return (
-                  <span
-                    style={{
-                      padding: "3px 9px",
-                      borderRadius: "12px",
-                      fontSize: "12px",
-                      fontWeight: "600",
-                      textTransform: "capitalize",
-                      background: isSuccess ? "#dcfce7" : isFailed ? "#fee2e2" : "#fef3c7",
-                      color: isSuccess ? "#15803d" : isFailed ? "#b91c1c" : "#b45309",
-                    }}
-                  >
-                    {p.status || "Pending"}
-                  </span>
-                );
-              },
-            },
-            {
-              header: "Amount",
-              accessor: "amount",
-              sortable: true,
-              render: (p) => (
-                <span style={{ fontWeight: "700", color: "#0f172a" }}>
-                  ₦{(p.repairId?.estimatedCost?.totalCost || p.amount || 0).toLocaleString()}
-                </span>
-              ),
-            },
-          ]}
-          actions={
-            <Link
-              href="/engineer-dashboard/payments"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-                padding: "6px 12px",
-                background: "#f1f5f9",
-                color: "#0f172a",
-                borderRadius: "6px",
-                fontSize: "13px",
-                fontWeight: "600",
-                textDecoration: "none",
-              }}
-            >
-              <span>View All</span>
-              <ArrowRight size={13} />
-            </Link>
-          }
-          initialPageSize={5}
-          pageSizeOptions={[5, 10, 20]}
-          searchPlaceholder="Filter recent payments..."
-          searchKeys={["transactionId", "_id", "status", "repairId.issueCategory"]}
-          emptyMessage="No payments yet."
-        />
-      </div>
-
-      {/* Shared Withdraw Modal */}
+      {/* Withdraw Modal */}
       <WithdrawModal
         isOpen={showWithdrawModal}
         onClose={() => setShowWithdrawModal(false)}
         walletBalance={walletBalance}
       />
 
-      {/* Search Repair Modal */}
+      {/* Search Repair Result Modal */}
       {showSearchModal && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "rgba(0,0,0,0.6)",
-            backdropFilter: "blur(4px)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
-            padding: "20px",
-          }}
-        >
-          <div
-            style={{
-              background: "#fff",
-              padding: "32px",
-              borderRadius: "24px",
-              width: "100%",
-              maxWidth: "520px",
-              boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "20px",
-              position: "relative",
-              fontFamily: "Plus Jakarta Sans, sans-serif",
-            }}
-          >
-            {/* Close Button */}
-            <button
-              onClick={() => setShowSearchModal(false)}
-              style={{
-                position: "absolute",
-                top: "20px",
-                right: "20px",
-                background: "#f1f5f9",
-                border: "none",
-                borderRadius: "50%",
-                width: "36px",
-                height: "36px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                color: "#64748b",
-              }}
-            >
-              <X size={20} />
-            </button>
+        <div className="eng-modal-backdrop" onClick={() => setShowSearchModal(false)}>
+          <div className="eng-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="eng-modal-header">
+              <h3 className="eng-modal-title">Repair lookup</h3>
+              <button
+                type="button"
+                className="eng-modal-close"
+                onClick={() => setShowSearchModal(false)}
+                aria-label="Close modal"
+              >
+                <X size={16} />
+              </button>
+            </div>
 
-            {/* Loading State */}
             {isSearching ? (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  padding: "36px 0",
-                  gap: "16px",
-                }}
-              >
-                <TecNurxLoader size="sm" />
-                <h3
-                  style={{ fontSize: "18px", fontWeight: "700", color: "#111" }}
-                >
-                  Searching...
-                </h3>
-                <p style={{ color: "#64748b", fontSize: "14px" }}>
-                  Fetching repair details for #{searchId}...
-                </p>
-              </div>
+              <TecNurxLoader
+                minHeight="160px"
+                size="md"
+                text={`Searching for repair #${searchId}...`}
+              />
             ) : searchError ? (
-              /* Error State */
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  padding: "20px 0",
-                  gap: "16px",
-                  textAlign: "center",
-                }}
-              >
-                <div
-                  style={{
-                    width: "56px",
-                    height: "56px",
-                    borderRadius: "50%",
-                    background: "#fef2f2",
-                    color: "#dc2626",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <AlertCircle size={32} />
-                </div>
-                <div>
-                  <h3
-                    style={{
-                      fontSize: "20px",
-                      fontWeight: "700",
-                      color: "#111",
-                      marginBottom: "6px",
-                    }}
-                  >
-                    Repair Not Found
-                  </h3>
-                  <p
-                    style={{
-                      color: "#64748b",
-                      fontSize: "14px",
-                      lineHeight: "1.5",
-                    }}
-                  >
-                    {searchError}
-                  </p>
-                </div>
-                <button
-                  onClick={() => setShowSearchModal(false)}
-                  style={{
-                    width: "100%",
-                    padding: "14px",
-                    background: "#000",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "60px",
-                    fontWeight: "600",
-                    fontSize: "15px",
-                    cursor: "pointer",
-                    marginTop: "8px",
-                  }}
-                >
-                  Close & Try Again
-                </button>
+              <div className="eng-empty-state">
+                <AlertCircle size={28} color="#ef4444" style={{ margin: "0 auto" }} />
+                <h3>Not found</h3>
+                <p>{searchError}</p>
               </div>
             ) : searchResult ? (
-              /* Success State */
-              <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                    borderBottom: "1px solid #f1f5f9",
-                    paddingBottom: "16px",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: "48px",
-                      height: "48px",
-                      borderRadius: "14px",
-                      background: "#fffbe6",
-                      border: "1.5px solid #ffc400",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Wrench size={24} style={{ color: "#000" }} />
-                  </div>
+              <div>
+                <div className="eng-active-job-meta">
                   <div>
-                    <h2
-                      style={{ fontSize: "20px", fontWeight: "700", color: "#111" }}
-                    >
-                      Repair Details
-                    </h2>
-                    <span style={{ fontSize: "13px", color: "#64748b" }}>
-                      ID: #{searchResult._id || searchResult.id}
-                    </span>
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "12px",
-                    background: "#f8fafc",
-                    padding: "18px",
-                    borderRadius: "16px",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <span style={{ color: "#64748b", fontSize: "14px" }}>
-                      Device
-                    </span>
-                    <strong style={{ color: "#000", fontSize: "14px" }}>
+                    <h4 className="eng-job-device">
                       {searchResult.device?.brand?.toUpperCase()}{" "}
-                      {searchResult.device?.model}
-                    </strong>
+                      {searchResult.device?.model || "Device"}
+                    </h4>
+                    <p className="eng-job-sub">
+                      Order #{formatOrderId(searchResult._id || searchResult.id)}
+                    </p>
                   </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
+                  <span
+                    className={`eng-status-pill ${getStatusBadge(searchResult.status).className}`}
                   >
-                    <span style={{ color: "#64748b", fontSize: "14px" }}>
-                      Fault / Issue
-                    </span>
-                    <strong style={{ color: "#000", fontSize: "14px" }}>
-                      {searchResult.issueCategory?.replace(/_/g, " ")}
-                    </strong>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <span style={{ color: "#64748b", fontSize: "14px" }}>
-                      Status
-                    </span>
-                    <span
-                      style={{
-                        padding: "4px 12px",
-                        borderRadius: "20px",
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        background: "#dcfce7",
-                        color: "#166534",
-                      }}
-                    >
-                      {searchResult.status?.replace(/_/g, " ")}
-                    </span>
-                  </div>
-
-                  {searchResult.user && (
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span style={{ color: "#64748b", fontSize: "14px" }}>
-                        Customer
-                      </span>
-                      <strong style={{ color: "#000", fontSize: "14px" }}>
-                        {searchResult.user.fname} {searchResult.user.lname}
-                      </strong>
-                    </div>
-                  )}
-
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <span style={{ color: "#64748b", fontSize: "14px" }}>
-                      Estimated Cost
-                    </span>
-                    <strong style={{ color: "#000", fontSize: "16px" }}>
-                      ₦
-                      {(
-                        searchResult.estimatedCost?.totalCost ||
-                        searchResult.cost ||
-                        0
-                      ).toLocaleString()}
-                    </strong>
-                  </div>
+                    {getStatusBadge(searchResult.status).label}
+                  </span>
                 </div>
 
-                <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>
-                  <button
+                <div className="eng-job-footer">
+                  <span style={{ fontSize: "13.5px", color: "#64748b" }}>
+                    Estimated:{" "}
+                    <strong style={{ color: "#111827" }}>
+                      {formatNaira(searchResult.estimatedCost?.totalCost || 0)}
+                    </strong>
+                  </span>
+
+                  <Link
+                    href={`/engineer-dashboard/repairs/${searchResult._id || searchResult.id}`}
+                    className="eng-btn-primary"
                     onClick={() => setShowSearchModal(false)}
-                    style={{
-                      flex: 1,
-                      padding: "14px",
-                      background: "#f1f5f9",
-                      border: "none",
-                      borderRadius: "60px",
-                      fontWeight: "600",
-                      fontSize: "14px",
-                      color: "#475569",
-                      cursor: "pointer",
-                    }}
                   >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowSearchModal(false);
-                      router.push(
-                        `/engineer-dashboard/repairs/${
-                          searchResult._id || searchResult.id
-                        }`
-                      );
-                    }}
-                    style={{
-                      flex: 1,
-                      padding: "14px",
-                      background: "#000",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: "60px",
-                      fontWeight: "600",
-                      fontSize: "14px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    View Full Repair
-                  </button>
+                    <span>Open repair</span>
+                    <ArrowRight size={15} />
+                  </Link>
                 </div>
               </div>
             ) : null}

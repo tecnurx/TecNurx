@@ -1,7 +1,7 @@
 /* Create Service Offering Styling - Matching Edit Page (servid.css) */
 .serv-create-container {
-  padding: 24px;
-  max-width: 1300px;
+  padding: 4px 0 60px 0;
+  max-width: 1140px;
   margin: 0 auto;
   font-family: inherit;
 }

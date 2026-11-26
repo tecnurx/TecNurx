@@ -173,8 +173,29 @@ const AdminUsers = () => {
 
   return (
     <div className="admin-dashboard">
-      <div className="dashboard-header">
-        <h1>Users</h1>
+      <div className="dashboard-header-row">
+        <div className="dashboard-header">
+          <h1>Users</h1>
+          <p>Manage customer, engineer, and administrator accounts.</p>
+        </div>
+
+        <span className="admin-workspace-tag">
+          <span>User Directory</span>
+        </span>
+      </div>
+
+      {/* Hero Banner */}
+      <div className="admin-hero-banner">
+        <div className="admin-hero-left">
+          <span className="admin-hero-pill">
+            <span>●</span>
+            <span>User Directory</span>
+          </span>
+          <h2 className="admin-hero-title">{users.length} registered accounts</h2>
+          <p className="admin-hero-sub">
+            Inspect customer profiles, verification status, and account activity.
+          </p>
+        </div>
       </div>
 
       {/* Stats Cards */}

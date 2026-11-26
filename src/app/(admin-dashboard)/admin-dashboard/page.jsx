@@ -2,7 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import "./admin.css";
-import { UserCog, User, CircleCheck, CreditCard, ArrowRight } from "lucide-react";
+import {
+  UserCog,
+  User,
+  CircleCheck,
+  CreditCard,
+  ArrowRight,
+  ShieldCheck,
+  LifeBuoy,
+} from "lucide-react";
 import { adminService } from "../../../../services/admin/admin";
 import AdminGraph from "../components/Graph";
 import Link from "next/link";
@@ -17,7 +25,6 @@ const AdminDashboard = () => {
   const [engStats, setEngStats] = useState({});
   const [completedRepairsCount, setCompletedRepairsCount] = useState(0);
 
-  // Fetch data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -30,7 +37,10 @@ const AdminDashboard = () => {
 
         if (payRes.status === "fulfilled") {
           const pData = payRes.value;
-          const pList = pData?.data?.payments || pData?.payments || (Array.isArray(pData?.data) ? pData.data : []);
+          const pList =
+            pData?.data?.payments ||
+            pData?.payments ||
+            (Array.isArray(pData?.data) ? pData.data : []);
           setPayments(Array.isArray(pList) ? pList : []);
           setPayStats(pData?.stats || pData?.data?.stats || {});
         }
@@ -45,7 +55,10 @@ const AdminDashboard = () => {
 
         if (repairRes.status === "fulfilled") {
           const rData = repairRes.value;
-          const repairs = rData?.data?.repairs || rData?.repairs || (Array.isArray(rData?.data) ? rData.data : []);
+          const repairs =
+            rData?.data?.repairs ||
+            rData?.repairs ||
+            (Array.isArray(rData?.data) ? rData.data : []);
           const completedCount = Array.isArray(repairs)
             ? repairs.filter((r) => r.status === "completed").length
             : rData?.stats?.completed || 0;
@@ -70,25 +83,25 @@ const AdminDashboard = () => {
       id: 1,
       title: "Total Transaction",
       value: "₦" + Number(totalRevenue).toLocaleString(),
-      icon: <CreditCard size={24} />,
+      icon: <CreditCard size={20} />,
     },
     {
       id: 2,
       title: "Completed Repairs",
       value: completedRepairsCount || "0",
-      icon: <CircleCheck size={24} />,
+      icon: <CircleCheck size={20} />,
     },
     {
       id: 3,
       title: "Users",
       value: userCount,
-      icon: <User size={24} />,
+      icon: <User size={20} />,
     },
     {
       id: 4,
       title: "Engineers",
       value: engCount,
-      icon: <UserCog size={24} />,
+      icon: <UserCog size={20} />,
     },
   ];
 
@@ -98,9 +111,45 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-dashboard">
-      <div className="dashboard-header">
-        <h1>Welcome, Admin!</h1>
-        <p>Here’s a quick summary.</p>
+      {/* Header */}
+      <div className="dashboard-header-row">
+        <div className="dashboard-header">
+          <h1>Welcome, Admin</h1>
+          <p>Monitor platform revenue, repairs, users, and engineer operations.</p>
+        </div>
+
+        <span className="admin-workspace-tag">
+          <ShieldCheck size={14} />
+          <span>Admin Workspace</span>
+        </span>
+      </div>
+
+      {/* Pitch-Black Platform Hero Banner */}
+      <div className="admin-hero-banner">
+        <div className="admin-hero-left">
+          <span className="admin-hero-pill">
+            <span>●</span>
+            <span>Live Operations</span>
+          </span>
+          <h2 className="admin-hero-title">
+            ₦{Number(totalRevenue).toLocaleString()} total platform volume
+          </h2>
+          <p className="admin-hero-sub">
+            {completedRepairsCount || 0} completed repairs · {userCount} customers ·{" "}
+            {engCount} engineers
+          </p>
+        </div>
+
+        <div className="admin-hero-actions">
+          <Link href="/admin-dashboard/orders" className="admin-btn-yellow">
+            <span>Manage Repairs</span>
+            <ArrowRight size={15} />
+          </Link>
+          <Link href="/admin-dashboard/support" className="admin-btn-dark-outline">
+            <LifeBuoy size={15} />
+            <span>Support Tickets</span>
+          </Link>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -111,7 +160,20 @@ const AdminDashboard = () => {
               <span>{item.title}</span>
               <h3>{item.value}</h3>
             </div>
-            {item.icon}
+            <div
+              style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "12px",
+                backgroundColor: "#f8fafc",
+                border: "1px solid #f1f5f9",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {item.icon}
+            </div>
           </div>
         ))}
       </div>
@@ -130,7 +192,7 @@ const AdminDashboard = () => {
             sortable: true,
             render: (t) => (
               <span style={{ fontWeight: "700", color: "#0f172a" }}>
-                #{t._id ? t._id.slice(-8) : "N/A"}
+                #{t._id ? t._id.slice(-8).toUpperCase() : "N/A"}
               </span>
             ),
           },
@@ -174,18 +236,27 @@ const AdminDashboard = () => {
             sortable: true,
             render: (t) => {
               const status = (t.status || "completed").toLowerCase();
-              const isSuccess = status === "success" || status === "completed" || status === "paid";
+              const isSuccess =
+                status === "success" || status === "completed" || status === "paid";
               const isFailed = status === "failed";
               return (
                 <span
                   style={{
-                    padding: "3px 9px",
-                    borderRadius: "12px",
+                    padding: "4px 10px",
+                    borderRadius: "9999px",
                     fontSize: "12px",
                     fontWeight: "600",
                     textTransform: "capitalize",
-                    background: isSuccess ? "#dcfce7" : isFailed ? "#fee2e2" : "#fef3c7",
-                    color: isSuccess ? "#15803d" : isFailed ? "#b91c1c" : "#b45309",
+                    background: isSuccess
+                      ? "#dcfce7"
+                      : isFailed
+                      ? "#fee2e2"
+                      : "#fef3c7",
+                    color: isSuccess
+                      ? "#15803d"
+                      : isFailed
+                      ? "#b91c1c"
+                      : "#b45309",
                   }}
                 >
                   {t.status || "Completed"}
@@ -195,10 +266,7 @@ const AdminDashboard = () => {
           },
         ]}
         actions={
-          <Link
-            href="/admin-dashboard/transactions"
-            className="view-all-tx-btn"
-          >
+          <Link href="/admin-dashboard/transactions" className="view-all-tx-btn">
             <span>View All Transactions</span>
             <ArrowRight size={14} />
           </Link>

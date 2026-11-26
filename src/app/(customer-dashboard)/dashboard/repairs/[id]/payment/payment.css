@@ -1,0 +1,428 @@
+/* ==========================================================================
+   Repair Payment Page Styles - Customer Dashboard Redesign (Figma Matching)
+   ========================================================================== */
+
+.repair-payment-page {
+  padding: 8px 0 60px 0;
+  max-width: 1160px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Header */
+.payment-page-header {
+  margin-bottom: 28px;
+}
+
+.payment-page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.025em;
+  margin: 0 0 6px 0;
+  line-height: 1.25;
+}
+
+.payment-page-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Main 2-Column Grid Layout */
+.payment-page-grid {
+  display: grid;
+  grid-template-columns: 1.18fr 0.82fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Common Card */
+.payment-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  padding: 28px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.payment-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 20px 0;
+  letter-spacing: -0.01em;
+}
+
+/* Breakdown Table */
+.cost-breakdown-table {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.cost-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 15px;
+}
+
+.cost-label {
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.cost-value {
+  color: #111827;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.cost-value.diagnostic-paid {
+  color: #111827;
+  font-weight: 500;
+}
+
+.cost-divider {
+  border: none;
+  border-top: 1px solid #f1f5f9;
+  margin: 6px 0;
+}
+
+.cost-total-row .cost-total-label {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.cost-total-row .cost-total-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+}
+
+/* Button: Continue to secure payment */
+.btn-continue-payment {
+  appearance: none;
+  width: 100%;
+  background-color: #ffc400;
+  color: #000000;
+  border: none;
+  outline: none;
+  border-radius: 9999px;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  font-family: inherit;
+  margin-top: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-continue-payment:hover:not(:disabled) {
+  background-color: #f5b700;
+  transform: translateY(-1px);
+}
+
+.btn-continue-payment:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* What to Expect Card */
+.what-to-expect-card {
+  position: sticky;
+  top: 96px;
+}
+
+.what-to-expect-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin-bottom: 28px;
+}
+
+.expect-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.expect-step-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #000000;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.expect-step-content {
+  flex: 1;
+}
+
+.expect-step-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 3px 0;
+  line-height: 1.35;
+}
+
+.expect-step-desc {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* Security Notice */
+.payment-security-notice {
+  background-color: #f8fafc;
+  border-radius: 14px;
+  padding: 13px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.security-lock-icon {
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   SCREEN 2: PAYMENT SUCCESSFUL (media_1795526654428_b5c23428.png)
+   ========================================================================== */
+
+.payment-success-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 28px;
+  padding: 72px 24px 64px 24px;
+  max-width: 860px;
+  margin: 20px auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+  animation: successFadeIn 0.25s ease-out;
+}
+
+@keyframes successFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.payment-success-badge {
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  background-color: #ffc400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 14px rgba(255, 196, 0, 0.25);
+}
+
+.payment-check-icon {
+  color: #000000;
+}
+
+.payment-success-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px 0;
+  line-height: 1.25;
+}
+
+.payment-success-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0 0 32px 0;
+  line-height: 1.4;
+}
+
+/* Receipt Details Box */
+.payment-receipt-box {
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 24px 26px;
+  width: 100%;
+  max-width: 440px;
+  box-sizing: border-box;
+  margin-bottom: 36px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.receipt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14.5px;
+}
+
+.receipt-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.receipt-value {
+  color: #111827;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* Success Actions */
+.payment-success-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-download-receipt {
+  appearance: none;
+  background: #ffffff;
+  border: 1.5px solid #111827;
+  border-radius: 9999px;
+  padding: 12px 28px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #111827;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  text-decoration: none;
+}
+
+.btn-download-receipt:hover {
+  background: #f8fafc;
+}
+
+.btn-back-to-repair {
+  appearance: none;
+  background-color: #ffc400;
+  border: none;
+  border-radius: 9999px;
+  padding: 12px 28px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #000000;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-back-to-repair:hover {
+  background-color: #f5b700;
+  transform: translateY(-1px);
+}
+
+/* Payment Warning / Failed State Styles */
+.payment-warning-badge {
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  background-color: #fef3c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.payment-warning-icon {
+  color: #000000;
+}
+
+.payment-failed-ref {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 0 0 32px 0;
+  font-weight: 500;
+}
+
+.payment-back-review-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.payment-back-review-link:hover {
+  opacity: 0.75;
+}
+
+/* Responsive */
+@media screen and (max-width: 900px) {
+  .payment-page-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .what-to-expect-card {
+    position: static;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .payment-page-title {
+    font-size: 24px;
+  }
+
+  .payment-success-card {
+    padding: 48px 16px 40px 16px;
+  }
+
+  .payment-receipt-box {
+    padding: 20px 18px;
+  }
+
+  .payment-success-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-download-receipt,
+  .btn-back-to-repair {
+    width: 100%;
+    text-align: center;
+  }
+}

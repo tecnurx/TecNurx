@@ -45,6 +45,23 @@ export const engService = {
     return response.data;
   },
 
+  sendQuote: async (repairId, { parts, labour, findings }) => {
+    const response = await axios.patch(`/repairs/engineer/${repairId}/quote`, {
+      parts,
+      labour,
+      findings,
+    });
+    return response.data;
+  },
+
+  raiseAdditionalWork: async (repairId, { note, amount }) => {
+    const response = await axios.post(
+      `/repairs/engineer/${repairId}/additional-work`,
+      { note, amount },
+    );
+    return response.data;
+  },
+
   getEngineerPayments: async () => {
     const response = await axios.get("/payment/engineer/payments");
     return response.data;

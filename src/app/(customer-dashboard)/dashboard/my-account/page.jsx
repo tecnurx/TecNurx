@@ -11,10 +11,12 @@ import {
   X,
   Loader2,
   Check,
+  Camera,
 } from "lucide-react";
 import { authService } from "../../../../../services/auth";
 import { addressService } from "../../../../../services/address";
 import { validatePassword, getPasswordRequirements } from "@/lib/passwordValidation";
+import { toast } from "@/components/CustomToast";
 
 export default function AccountPage() {
   const router = useRouter();
@@ -34,6 +36,7 @@ export default function AccountPage() {
     phoneNumber: "",
   });
   const [profileSaving, setProfileSaving] = useState(false);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [profileError, setProfileError] = useState("");
   const [profileSuccess, setProfileSuccess] = useState("");
 
@@ -104,6 +107,28 @@ export default function AccountPage() {
   useEffect(() => {
     fetchAddresses();
   }, []);
+
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setIsUploadingPhoto(true);
+      const res = await authService.updateMyPhoto(file);
+      const updated =
+        res?.data?.user || res?.user || authService.getCurrentUser();
+      if (updated) {
+        setCurrentUser(updated);
+      }
+      toast.success("Profile photo updated!");
+    } catch (err) {
+      toast.error(
+        err?.response?.data?.message || "Failed to update profile photo."
+      );
+    } finally {
+      setIsUploadingPhoto(false);
+      e.target.value = "";
+    }
+  };
 
   // Update Profile Info
   const handleProfileSubmit = async (e) => {
@@ -291,24 +316,105 @@ export default function AccountPage() {
               </button>
             </div>
 
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "16px",
+                paddingBottom: "18px",
+                marginBottom: "6px",
+                borderBottom: "1px solid #f1f5f9",
+              }}
+            >
+              <div style={{ flexShrink: 0 }}>
+                {currentUser?.photo ? (
+                  <img
+                    src={currentUser.photo}
+                    alt={fullName}
+                    style={{
+                      width: "64px",
+                      height: "64px",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      border: "1.5px solid #e5e7eb",
+                      display: "block",
+                    }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      width: "64px",
+                      height: "64px",
+                      borderRadius: "50%",
+                      background: "#111827",
+                      color: "#ffffff",
+                      fontWeight: 700,
+                      fontSize: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {`${currentUser?.fname?.[0] || ""}${
+                      currentUser?.lname?.[0] || ""
+                    }`.toUpperCase() || "TN"}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <h3 style={{ margin: "0 0 4px", fontSize: "16px", color: "#111827" }}>
+                  {fullName}
+                </h3>
+                <label
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    color: "#111827",
+                    textDecoration: "underline",
+                    cursor: isUploadingPhoto ? "wait" : "pointer",
+                  }}
+                >
+                  {isUploadingPhoto ? (
+                    <>
+                      <Loader2 size={14} className="btn-inline-spinner" />
+                      <span>Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Camera size={14} />
+                      <span>Change photo</span>
+                    </>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    disabled={isUploadingPhoto}
+                    style={{ display: "none" }}
+                  />
+                </label>
+              </div>
+            </div>
+
             <div className="account-info-rows">
               <div className="account-info-row">
                 <span className="account-info-label">Name</span>
                 <span className="account-info-value">{fullName}</span>
               </div>
               <div className="account-info-row">
-                <span className="account-info-label">Email</span>
-                <div className="account-info-value">
-                  <span>{userEmail}</span>
-                  <span className="pill-verified-inline">
-                    <span className="dot">•</span> Verified
-                  </span>
-                </div>
-              </div>
-              <div className="account-info-row">
                 <span className="account-info-label">Phone</span>
                 <div className="account-info-value">
                   <span>{userPhone}</span>
+                </div>
+              </div>
+              <div className="account-info-row">
+                <span className="account-info-label">Email</span>
+                <div className="account-info-value">
+                  <span>{userEmail}</span>
                   <span className="pill-verified-inline">
                     <span className="dot">•</span> Verified
                   </span>
@@ -407,7 +513,7 @@ export default function AccountPage() {
               </div>
               <div className="security-row">
                 <span className="security-label">Sign-in methods</span>
-                <span className="security-value">Google · Phone OTP</span>
+                <span className="security-value">Google</span>
               </div>
             </div>
           </div>

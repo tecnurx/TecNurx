@@ -1,14 +1,29 @@
 "use client";
 
-import React, { use, useState, useRef } from "react";
+import React, { use, useState, useRef, useEffect } from "react";
 import "./claim-tracker.css";
+import "../../insurance-flow.css";
 import Link from "next/link";
-import { Upload, FileText, X, Check, ArrowLeft } from "lucide-react";
+import { Upload, FileText, X, Check, ArrowLeft, Info } from "lucide-react";
 import { toast } from "@/components/CustomToast";
 
 export default function ClaimTrackerPage({ params }) {
   const resolvedParams = use(params);
   const claimId = (resolvedParams?.id || "CLM-0192").toUpperCase();
+
+  // Supports ?outcome=approved (Screen 16) and ?outcome=declined (Screen 17)
+  const [outcome, setOutcome] = useState(null);
+  const [settlementChoice, setSettlementChoice] = useState("repair"); // "repair" | "other"
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const sp = new URLSearchParams(window.location.search);
+      const out = sp.get("outcome");
+      if (out === "approved" || out === "declined") {
+        setOutcome(out);
+      }
+    }
+  }, []);
 
   // Attached document state for the insurer request
   const [attachedFile, setAttachedFile] = useState(null);
@@ -42,6 +57,164 @@ export default function ClaimTrackerPage({ params }) {
       );
     }, 1000);
   };
+
+  if (outcome === "approved") {
+    return (
+      <div className="ins-page">
+        <div className="ins-header">
+          <div>
+            <h1 className="ins-title">Claim approved</h1>
+            <p className="ins-subtitle">
+              Claim #{claimId} · iPhone 13 Pro
+            </p>
+          </div>
+
+          <span className="ins-pill ins-pill-green">
+            <span className="ins-pill-dot" />
+            <span>Approved</span>
+          </span>
+        </div>
+
+        <div className="ins-two-col">
+          <div className="ins-card">
+            <h2 className="ins-card-title">Choose your settlement</h2>
+
+            <button
+              type="button"
+              className={`ins-radio-card ${
+                settlementChoice === "repair" ? "selected" : ""
+              }`}
+              onClick={() => setSettlementChoice("repair")}
+            >
+              <div className="ins-radio-circle" />
+              <div className="ins-radio-body">
+                <p className="ins-radio-title">Repair through TecNurx</p>
+                <p className="ins-radio-sub">
+                  We coordinate the repair. You may pay an excess of ₦3,500.
+                </p>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              className={`ins-radio-card ${
+                settlementChoice === "other" ? "selected" : ""
+              }`}
+              onClick={() => setSettlementChoice("other")}
+            >
+              <div className="ins-radio-circle" />
+              <div className="ins-radio-body">
+                <p className="ins-radio-title">Other approved settlement</p>
+                <p className="ins-radio-sub">
+                  Cash payout or partner replacement option
+                </p>
+              </div>
+            </button>
+
+            <div className="ins-actions-row">
+              <Link
+                href="/dashboard/insurance?state=normal"
+                className="ins-btn-outline"
+              >
+                Back
+              </Link>
+              <button
+                type="button"
+                className="ins-btn-primary"
+                onClick={() =>
+                  toast.success(
+                    settlementChoice === "repair"
+                      ? "Repair settlement selected. We will coordinate your repair."
+                      : "Alternative settlement selected."
+                  )
+                }
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+
+          <div className="ins-card">
+            <h2 className="ins-card-title">Claim summary</h2>
+            <div>
+              <div className="ins-kv-row">
+                <span className="ins-kv-label">Approved amount</span>
+                <span className="ins-kv-val">₦120,000</span>
+              </div>
+              <div className="ins-kv-row">
+                <span className="ins-kv-label">Excess</span>
+                <span className="ins-kv-val">₦3,500</span>
+              </div>
+            </div>
+            <div className="ins-info-box">
+              <Info size={18} style={{ flexShrink: 0, marginTop: "2px" }} />
+              <span>The insurer decides coverage and the outcome.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (outcome === "declined") {
+    return (
+      <div className="ins-page">
+        <div className="ins-header">
+          <div>
+            <h1 className="ins-title">Claim declined</h1>
+            <p className="ins-subtitle">
+              Claim #{claimId} · iPhone 13 Pro
+            </p>
+          </div>
+
+          <span className="ins-pill ins-pill-red">
+            <span className="ins-pill-dot" />
+            <span>Declined</span>
+          </span>
+        </div>
+
+        <div className="ins-two-col">
+          <div className="ins-card">
+            <h2 className="ins-card-title">Why</h2>
+            <p className="ins-radio-title" style={{ fontWeight: 400 }}>
+              The reported damage falls outside the covered events for this
+              policy period.
+            </p>
+
+            <div className="ins-kv-row">
+              <span className="ins-kv-label">Policy clause</span>
+              <span className="ins-kv-val">Section 4.2 · Exclusions</span>
+            </div>
+
+            <div className="ins-header-actions">
+              <button
+                type="button"
+                className="ins-btn-outline"
+                onClick={() =>
+                  toast.info("Review request will be sent once live.")
+                }
+              >
+                Request a review
+              </button>
+              <Link href="/dashboard/support" className="ins-btn-outline">
+                Contact support
+              </Link>
+            </div>
+          </div>
+
+          <div className="ins-card">
+            <h2 className="ins-card-title">Other options</h2>
+            <p className="ins-radio-sub">
+              You can still book a normal repair and pay for it yourself.
+            </p>
+            <Link href="/dashboard/repairs/book" className="ins-btn-primary full">
+              Book a repair
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="claim-tracker-page">

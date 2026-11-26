@@ -1,0 +1,844 @@
+/* ==========================================================================
+   Repair Now, Pay Later (RNPL) - Customer Dashboard Redesign (Figma Matching)
+   ========================================================================== */
+
+.pay-later-page {
+  padding: 8px 0 60px 0;
+  max-width: 1160px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Header */
+.pay-later-header {
+  margin-bottom: 24px;
+}
+
+.pay-later-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.pay-later-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.025em;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.pay-later-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Status Badges */
+.pl-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 9999px;
+}
+
+.pl-badge.not-approved {
+  background-color: #fef2f2;
+  color: #b91c1c;
+}
+
+.pl-badge.not-approved .pl-badge-dot {
+  color: #ef4444;
+}
+
+.pl-badge.more-info {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.pl-badge.more-info .pl-badge-dot {
+  color: #f59e0b;
+}
+
+.pl-badge-dot {
+  font-size: 9px;
+}
+
+/* ==========================================================================
+   Horizontal Stepper Bar
+   ========================================================================== */
+
+.rnpl-stepper-bar {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 32px;
+  border-bottom: 2px solid transparent;
+}
+
+.rnpl-step-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 3px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.rnpl-step-item.done {
+  border-bottom-color: #000000;
+}
+
+.rnpl-step-item.active {
+  border-bottom-color: #ffc400;
+}
+
+.rnpl-step-label {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+.rnpl-step-item.done .rnpl-step-label {
+  color: #111827;
+}
+
+.rnpl-step-item.active .rnpl-step-label {
+  color: #111827;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   2-Column Layout
+   ========================================================================== */
+
+.pay-later-grid {
+  display: grid;
+  grid-template-columns: 1.18fr 0.82fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Card */
+.rnpl-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  padding: 28px;
+  box-sizing: border-box;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.rnpl-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.01em;
+}
+
+/* Steps list (How it works & What happens next) */
+.rnpl-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rnpl-step-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.rnpl-step-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #000000;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.rnpl-step-content {
+  flex: 1;
+}
+
+.rnpl-step-heading {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 3px 0;
+  line-height: 1.35;
+}
+
+.rnpl-step-desc {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* Before you start Card */
+.rnpl-before-desc {
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+}
+
+/* Checkbox Label */
+.rnpl-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 13.5px;
+  color: #374151;
+  line-height: 1.45;
+  margin-bottom: 24px;
+}
+
+.rnpl-custom-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #000000;
+}
+
+.rnpl-custom-checkbox.checked {
+  border-color: #000000;
+  background-color: #ffffff;
+}
+
+/* Form Fields */
+.rnpl-form-group {
+  margin-bottom: 22px;
+}
+
+.rnpl-input-label {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.rnpl-text-input {
+  width: 100%;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 13px 16px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #111827;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.rnpl-text-input:focus {
+  border-color: #000000;
+}
+
+/* Dashed Upload Box */
+.rnpl-upload-box {
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 18px;
+  padding: 32px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-bottom: 20px;
+}
+
+.rnpl-upload-box:hover {
+  border-color: #000000;
+  background-color: #fbfbfb;
+}
+
+.rnpl-upload-icon {
+  font-size: 22px;
+  margin-bottom: 6px;
+  color: #111827;
+}
+
+.rnpl-upload-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px 0;
+}
+
+.rnpl-upload-sub {
+  font-size: 12.5px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Security Notice Box */
+.rnpl-security-box {
+  background-color: #f8fafc;
+  border-radius: 14px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 26px;
+}
+
+.rnpl-lock-icon {
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+/* Buttons */
+.btn-rnpl-primary {
+  appearance: none;
+  width: 100%;
+  background-color: #ffc400;
+  color: #000000;
+  border: none;
+  border-radius: 9999px;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  font-family: inherit;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.btn-rnpl-primary:hover:not(:disabled) {
+  background-color: #f5b700;
+  transform: translateY(-1px);
+}
+
+.btn-rnpl-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-rnpl-white {
+  appearance: none;
+  background: #ffffff;
+  border: 1.5px solid #111827;
+  border-radius: 9999px;
+  padding: 12px 28px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #111827;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-rnpl-white:hover {
+  background: #f8fafc;
+}
+
+.link-rnpl-outright {
+  display: block;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  text-decoration: underline;
+  margin-top: 16px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.link-rnpl-outright:hover {
+  opacity: 0.75;
+}
+
+.rnpl-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.rnpl-actions-row .btn-rnpl-primary {
+  flex: 1;
+}
+
+/* Sidebar Card */
+.rnpl-sidebar-card {
+  position: sticky;
+  top: 96px;
+}
+
+.rnpl-sidebar-text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #4b5563;
+  margin: 0 0 20px 0;
+}
+
+.rnpl-info-notice {
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.info-icon {
+  color: #64748b;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ==========================================================================
+   Screen 3: Review Details Table
+   ========================================================================== */
+
+.rnpl-review-table {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 22px;
+}
+
+.rnpl-review-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14.5px;
+}
+
+.rnpl-review-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.rnpl-review-value {
+  color: #111827;
+  font-weight: 700;
+}
+
+.rnpl-uploaded-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #ecfdf5;
+  color: #065f46;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 9999px;
+}
+
+.rnpl-uploaded-badge .dot {
+  color: #10b981;
+  font-size: 9px;
+}
+
+/* ==========================================================================
+   Screen 4: Result - Not Approved Centered Card
+   ========================================================================== */
+
+.rnpl-centered-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 28px;
+  padding: 64px 24px 56px 24px;
+  max-width: 860px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.rnpl-centered-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  background-color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 22px;
+  color: #111827;
+}
+
+.rnpl-centered-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.015em;
+}
+
+.rnpl-centered-desc {
+  font-size: 14.5px;
+  color: #64748b;
+  margin: 0 0 28px 0;
+  max-width: 500px;
+}
+
+.rnpl-centered-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.rnpl-centered-reason {
+  font-size: 13px;
+  color: #9ca3af;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Part 2: Offer, Accept, Confirmed Styles
+   ========================================================================== */
+
+.rnpl-offer-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rnpl-offer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14.5px;
+}
+
+.rnpl-offer-row-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.rnpl-offer-row-value {
+  color: #111827;
+  font-weight: 700;
+}
+
+.rnpl-offer-total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0 14px 0;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 14px;
+}
+
+.rnpl-offer-total-label {
+  font-size: 17px;
+  font-weight: 700;
+  color: #4b5563;
+}
+
+.rnpl-offer-total-value {
+  font-size: 17px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.rnpl-terms-note {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0 0 18px 0;
+}
+
+/* Repayment Tracker Sidebar */
+.rnpl-tracker-subtitle {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: -10px 0 18px 0;
+}
+
+.rnpl-tracker-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.rnpl-tracker-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.rnpl-tracker-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.rnpl-tracker-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rnpl-tracker-date {
+  font-size: 13.5px;
+  color: #4b5563;
+}
+
+.rnpl-tracker-amount {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.rnpl-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.rnpl-status-pill.paid {
+  background-color: #ecfdf5;
+  color: #065f46;
+}
+
+.rnpl-status-pill.paid .dot {
+  color: #10b981;
+}
+
+.rnpl-status-pill.due-soon {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.rnpl-status-pill.due-soon .dot {
+  color: #d97706;
+}
+
+.rnpl-status-pill.upcoming {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.rnpl-status-pill.upcoming .dot {
+  color: #64748b;
+}
+
+.rnpl-status-pill.overdue {
+  background-color: #fef2f2;
+  color: #b91c1c;
+}
+
+.rnpl-status-pill.overdue .dot {
+  color: #ef4444;
+}
+
+/* Accept Offer Radio Cards */
+.rnpl-radio-section-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #111827;
+  margin: 22px 0 12px 0;
+}
+
+.rnpl-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.rnpl-radio-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1.5px solid #e5e7eb;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  text-align: left;
+}
+
+.rnpl-radio-card.selected {
+  border-color: #111827;
+}
+
+.rnpl-radio-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  border: 1.5px solid #d1d5db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.rnpl-radio-card.selected .rnpl-radio-circle {
+  border: 6px solid #111827;
+}
+
+.rnpl-radio-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 3px 0;
+}
+
+.rnpl-radio-desc {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 0;
+}
+
+.rnpl-agreement-link {
+  color: #111827;
+  font-weight: 600;
+  text-decoration: underline;
+  margin-left: 6px;
+  cursor: pointer;
+}
+
+/* Confirmed Screen */
+.rnpl-confirmed-badge {
+  width: 68px;
+  height: 68px;
+  border-radius: 20px;
+  background-color: #ffc400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  color: #111827;
+  box-shadow: 0 4px 14px rgba(255, 196, 0, 0.25);
+}
+
+.rnpl-confirmed-summary {
+  width: 100%;
+  max-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 22px 0 28px 0;
+}
+
+.rnpl-confirmed-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+}
+
+.rnpl-confirmed-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.rnpl-confirmed-label {
+  color: #64748b;
+}
+
+.rnpl-confirmed-val {
+  color: #111827;
+  font-weight: 700;
+}
+
+/* Responsive */
+@media screen and (max-width: 900px) {
+  .pay-later-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rnpl-sidebar-card {
+    position: static;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .pay-later-title {
+    font-size: 24px;
+  }
+
+  .rnpl-stepper-bar {
+    grid-template-columns: repeat(3, 1fr);
+    overflow-x: auto;
+  }
+
+  .rnpl-actions-row {
+    flex-direction: column-reverse;
+  }
+
+  .rnpl-actions-row .btn-rnpl-white,
+  .rnpl-actions-row .btn-rnpl-primary {
+    width: 100%;
+    text-align: center;
+  }
+
+  .rnpl-centered-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .rnpl-centered-actions .btn-rnpl-primary,
+  .rnpl-centered-actions .btn-rnpl-white {
+    width: 100%;
+  }
+}

@@ -1,0 +1,173 @@
+/* ==========================================================================
+   Problem Reported Styles - Customer Dashboard Redesign (Figma Matching)
+   ========================================================================== */
+
+.problem-reported-page {
+  padding: 8px 0 60px 0;
+  max-width: 1160px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Header */
+.problem-reported-header {
+  margin-bottom: 28px;
+}
+
+.reported-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.problem-reported-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.025em;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.under-review-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #fef3c7;
+  color: #b45309;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 9999px;
+}
+
+.review-badge-dot {
+  color: #f59e0b;
+  font-size: 9px;
+}
+
+.problem-reported-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Top Banner Card */
+.reported-banner-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 28px;
+  padding: 56px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.reported-badge-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 20px;
+  background-color: #ffc400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 14px rgba(255, 196, 0, 0.25);
+}
+
+.reported-check-icon {
+  color: #000000;
+}
+
+.reported-banner-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 6px 0;
+}
+
+.reported-banner-subtitle {
+  font-size: 14.5px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Bottom Card: What happens next */
+.what-happens-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  padding: 28px 32px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.what-happens-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 24px 0;
+}
+
+.happens-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.happens-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.happens-step-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: #000000;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.happens-step-content {
+  flex: 1;
+}
+
+.happens-step-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 3px 0;
+  line-height: 1.35;
+}
+
+.happens-step-desc {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* Responsive */
+@media screen and (max-width: 600px) {
+  .problem-reported-title {
+    font-size: 24px;
+  }
+
+  .what-happens-card {
+    padding: 24px 18px;
+  }
+}

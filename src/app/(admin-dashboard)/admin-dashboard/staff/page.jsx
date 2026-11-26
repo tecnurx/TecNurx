@@ -295,6 +295,39 @@ const AdminStaffPage = () => {
         )}
       </div>
 
+      {/* Hero Banner */}
+      <div className="admin-hero-banner">
+        <div className="admin-hero-left">
+          <span className="admin-hero-pill">
+            <span>●</span>
+            <span>Team Directory</span>
+          </span>
+          <h2 className="admin-hero-title">{totalStaff} staff members</h2>
+          <p className="admin-hero-sub">
+            {activeStaff} active accounts · Invite staff and manage role assignments.
+          </p>
+        </div>
+        {canManageStaff && (
+          <div className="admin-hero-actions">
+            <button
+              type="button"
+              className="admin-btn-yellow"
+              onClick={() => {
+                if (roles.length > 0 && !inviteForm.roleId) {
+                  setInviteForm((prev) => ({
+                    ...prev,
+                    roleId: roles[0]._id || roles[0].id || "",
+                  }));
+                }
+                setIsInviteOpen(true);
+              }}
+            >
+              <UserPlus size={16} /> Add Staff Member
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* Stats Cards */}
       <div className="dashboard-cards">
         <div className="stat-card">

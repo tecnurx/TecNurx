@@ -110,6 +110,23 @@ export const authService = {
     return response.data;
   },
 
+  updateMyPhoto: async (fileOrFormData) => {
+    const formData =
+      fileOrFormData instanceof FormData ? fileOrFormData : new FormData();
+    if (!(fileOrFormData instanceof FormData)) {
+      formData.append("photo", fileOrFormData);
+    }
+    const response = await axios.patch("/users/updateMyPhoto", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    const updatedUser = response?.data?.data?.user || response?.data?.user;
+    if (updatedUser && typeof window !== "undefined") {
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      window.dispatchEvent(new Event("user-updated"));
+    }
+    return response.data;
+  },
+
   googleOauth: async () => {
     const response = await axios.get("/users/auth/google");
     return response.data;

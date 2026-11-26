@@ -1,0 +1,185 @@
+/* ==========================================================================
+   Payment Not Completed Page Styles - Customer Dashboard Redesign (Figma Matching)
+   ========================================================================== */
+
+.payment-not-completed-page {
+  padding: 8px 0 60px 0;
+  max-width: 1160px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Header */
+.payment-not-completed-header {
+  margin-bottom: 28px;
+}
+
+.payment-not-completed-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.025em;
+  margin: 0 0 6px 0;
+  line-height: 1.25;
+}
+
+.payment-not-completed-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Centered Card */
+.payment-not-completed-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 28px;
+  padding: 64px 32px;
+  max-width: 900px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+  animation: failFadeIn 0.25s ease-out;
+}
+
+@keyframes failFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Soft Yellow Alert Badge */
+.payment-warning-badge {
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  background-color: #fef3c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.payment-warning-icon {
+  color: #000000;
+}
+
+.card-payment-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.015em;
+  margin: 0 0 10px 0;
+  line-height: 1.3;
+}
+
+.card-payment-desc {
+  font-size: 14.5px;
+  color: #64748b;
+  max-width: 500px;
+  line-height: 1.5;
+  margin: 0 0 16px 0;
+}
+
+.card-payment-ref {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 0 0 32px 0;
+  font-weight: 500;
+}
+
+/* Actions */
+.card-payment-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.btn-try-again {
+  appearance: none;
+  background-color: #ffc400;
+  color: #000000;
+  border: none;
+  border-radius: 9999px;
+  padding: 12px 32px;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.btn-try-again:hover {
+  background-color: #f5b700;
+  transform: translateY(-1px);
+}
+
+.btn-contact-support {
+  appearance: none;
+  background: #ffffff;
+  border: 1.5px solid #111827;
+  border-radius: 9999px;
+  padding: 12px 30px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #111827;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-contact-support:hover {
+  background: #f8fafc;
+}
+
+.link-back-review {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.link-back-review:hover {
+  opacity: 0.75;
+}
+
+/* Responsive */
+@media screen and (max-width: 600px) {
+  .payment-not-completed-title {
+    font-size: 24px;
+  }
+
+  .payment-not-completed-card {
+    padding: 48px 16px 40px 16px;
+  }
+
+  .card-payment-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-try-again,
+  .btn-contact-support {
+    width: 100%;
+    text-align: center;
+  }
+}

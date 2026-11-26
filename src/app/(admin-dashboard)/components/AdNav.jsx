@@ -1,27 +1,24 @@
 "use client";
 
 import React, { useContext, useEffect, useState, useRef } from "react";
-import Image from "next/image";
-import logo from "@/assets/images/logo.png";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Menu,
-  CircleUserRound,
   X,
-  ChevronDown,
   KeyRound,
   LogOut,
   ShieldCheck,
-  Mail,
 } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { SidebarContext } from "../../../../context/SidebarContext";
 import { adminAuthService } from "../../../../services/admin/adminlogin";
 import ChangePasswordModal from "./ChangePasswordModal";
+import "@/components/dashboard/dashcomp.css";
 
 const AdNav = () => {
   const { isSidebarOpen, toggleSidebar } = useContext(SidebarContext);
   const router = useRouter();
+  const pathname = usePathname();
 
   const [staff, setStaff] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -30,7 +27,6 @@ const AdNav = () => {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    // Read cached staff info
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("staff") || localStorage.getItem("user");
       if (stored) {
@@ -42,7 +38,6 @@ const AdNav = () => {
       }
     }
 
-    // Also fetch fresh details from /staff/me
     adminAuthService
       .getMe()
       .then((res) => {
@@ -58,7 +53,6 @@ const AdNav = () => {
       });
   }, []);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -88,21 +82,68 @@ const AdNav = () => {
       : staff?.name || "Admin";
 
   const roleName =
-    staff?.role?.name || (typeof staff?.role === "string" ? staff.role : "staff");
+    staff?.role?.name || (typeof staff?.role === "string" ? staff.role : "Admin");
+
+  const getInitials = () => {
+    if (staff?.fname && staff?.lname) {
+      return `${staff.fname[0]}${staff.lname[0]}`.toUpperCase();
+    }
+    if (displayName) {
+      return displayName.slice(0, 2).toUpperCase();
+    }
+    return "AD";
+  };
+
+  const renderBreadcrumb = () => {
+    const segments = (pathname || "").replace(/^\/admin-dashboard\/?/, "").split("/").filter(Boolean);
+    if (segments.length === 0) {
+      return <span className="topbar-title">Overview</span>;
+    }
+
+    const labelMap = {
+      staff: "Staff Members",
+      roles: "Roles & Permissions",
+      engineers: "Engineers",
+      users: "Users",
+      orders: "Repairs (Orders)",
+      logistics: "Logistics",
+      transactions: "Transactions",
+      gadgets: "Gadgets List",
+      support: "Support Tickets",
+      fees: "Fee Config",
+      "service-offering": "Service Offering",
+    };
+
+    const rootKey = segments[0];
+    const rootLabel = labelMap[rootKey] || rootKey;
+
+    if (segments.length === 1) {
+      return <span className="topbar-title">{rootLabel}</span>;
+    }
+
+    const subRaw = segments[segments.length - 1];
+    const subLabel =
+      labelMap[subRaw] ||
+      (subRaw.length > 8 ? `#${subRaw.slice(-8).toUpperCase()}` : subRaw);
+
+    return (
+      <div className="topbar-breadcrumb">
+        <Link href={`/admin-dashboard/${rootKey}`} className="breadcrumb-link breadcrumb-root">
+          {rootLabel}
+        </Link>
+        <span className="breadcrumb-sep breadcrumb-sub">/</span>
+        <span className="breadcrumb-current breadcrumb-sub">{subLabel}</span>
+      </div>
+    );
+  };
 
   return (
-    <div>
-      <header className="engheader">
-        {/* Desktop Logo */}
-        <Link href="/admin-dashboard" className="engnavonelogo">
-          <Image src={logo} alt="logo" width={120} />
-        </Link>
-
-        {/* Mobile Menu */}
-        <div className="engside-logo-menu">
+    <>
+      <div className="topbar-container">
+        <div className="topbar-left">
           <button
             type="button"
-            className="menu-toggle-btn"
+            className="mobile-sidebar-toggle"
             onClick={toggleSidebar}
             aria-label="Toggle navigation menu"
           >
@@ -112,176 +153,64 @@ const AdNav = () => {
               <Menu size={20} color="#111111" strokeWidth={2.2} />
             )}
           </button>
-          <Link href="/admin-dashboard" style={{ display: "flex", alignItems: "center" }}>
-            <Image src={logo} alt="TecNurx" width={115} height={28} priority />
-          </Link>
+
+          {renderBreadcrumb()}
         </div>
 
-        {/* Staff Profile Dropdown Trigger */}
-        <div style={{ position: "relative" }} ref={dropdownRef}>
-          <div
-            className="eng-head-icon ad-user-trigger"
-            onClick={() => setDropdownOpen(!dropdownOpen)}
-            style={{
-              cursor: "pointer",
-              padding: "6px 10px",
-              borderRadius: "8px",
-              backgroundColor: dropdownOpen ? "#e5e7eb" : "transparent",
-              transition: "background-color 0.2s ease",
-              userSelect: "none",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            <CircleUserRound size={24} color="#ffc400" style={{ flexShrink: 0 }} />
-            <div className="ad-user-details" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", lineHeight: "1.2", minWidth: 0 }}>
-              <span
-                style={{
-                  fontSize: "14px",
-                  fontWeight: "700",
-                  color: "#111827",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  maxWidth: "120px",
-                }}
-              >
-                {displayName}
-              </span>
-              <span
-                style={{
-                  fontSize: "11px",
-                  color: "#6b7280",
-                  textTransform: "capitalize",
-                  fontWeight: "500",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  maxWidth: "120px",
-                }}
-              >
-                {roleName}
-              </span>
-            </div>
-            <ChevronDown size={14} color="#6b7280" className="ad-user-chevron" style={{ flexShrink: 0 }} />
-          </div>
+        <div className="topbar-right">
+          <span className="eng-topbar-role-pill" title={`Signed in as ${roleName}`}>
+            <ShieldCheck size={13} />
+            <span style={{ textTransform: "capitalize" }}>{roleName}</span>
+          </span>
 
-          {/* Profile Dropdown Menu */}
-          {dropdownOpen && (
-            <div
-              style={{
-                position: "absolute",
-                right: 0,
-                top: "100%",
-                marginTop: "8px",
-                width: "250px",
-                maxWidth: "calc(100vw - 24px)",
-                backgroundColor: "#ffffff",
-                borderRadius: "12px",
-                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.04)",
-                border: "1px solid #e5e7eb",
-                overflow: "hidden",
-                zIndex: 1100,
-                animation: "scaleIn 0.15s ease-out",
-              }}
+          <div className="topbar-profile" ref={dropdownRef}>
+            <button
+              type="button"
+              className="user-avatar-badge"
+              onClick={() => setDropdownOpen((prev) => !prev)}
+              aria-label="Admin account menu"
             >
-              {/* Profile Card Header */}
-              <div style={{ padding: "14px 16px", borderBottom: "1px solid #f3f4f6", backgroundColor: "#fafafa" }}>
-                <p style={{ margin: 0, fontSize: "14px", fontWeight: "700", color: "#111827" }}>
-                  {displayName}
-                </p>
-                {staff?.email && (
-                  <p style={{ margin: "2px 0 0 0", fontSize: "12px", color: "#6b7280", wordBreak: "break-all" }}>
-                    {staff.email}
-                  </p>
-                )}
-                <div style={{ marginTop: "8px" }}>
-                  <span
-                    style={{
-                      display: "inline-block",
-                      padding: "2px 8px",
-                      borderRadius: "6px",
-                      fontSize: "11px",
-                      fontWeight: "600",
-                      backgroundColor: "#fef3c7",
-                      color: "#92400e",
-                      textTransform: "capitalize",
-                    }}
-                  >
-                    Role: {roleName}
-                  </span>
-                </div>
-              </div>
+              {getInitials()}
+            </button>
 
-              {/* Menu Actions */}
-              <div style={{ padding: "6px" }}>
+            {dropdownOpen && (
+              <div className="dropdown-menu">
+                <div className="dropdown-user-info">
+                  <strong>{displayName}</strong>
+                  <span>{staff?.email || roleName}</span>
+                </div>
+                <hr className="dropdown-divider" />
                 <button
                   type="button"
+                  className="dropdown-item"
                   onClick={() => {
                     setDropdownOpen(false);
                     setPasswordModalOpen(true);
                   }}
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    padding: "10px 12px",
-                    borderRadius: "6px",
-                    border: "none",
-                    backgroundColor: "transparent",
-                    color: "#374151",
-                    fontSize: "13px",
-                    fontWeight: "500",
-                    cursor: "pointer",
-                    textAlign: "left",
-                    transition: "background-color 0.15s ease",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f3f4f6")}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                 >
-                  <KeyRound size={15} color="#d97706" /> Change Password
+                  <KeyRound size={15} /> Change Password
                 </button>
-
+                <hr className="dropdown-divider" />
                 <button
                   type="button"
                   onClick={handleLogout}
                   disabled={isLoggingOut}
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    padding: "10px 12px",
-                    borderRadius: "6px",
-                    border: "none",
-                    backgroundColor: "transparent",
-                    color: "#dc2626",
-                    fontSize: "13px",
-                    fontWeight: "500",
-                    cursor: isLoggingOut ? "not-allowed" : "pointer",
-                    textAlign: "left",
-                    transition: "background-color 0.15s ease",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#fef2f2")}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                  className="dropdown-item log-out-item"
                 >
-                  <LogOut size={15} color="#dc2626" />
+                  <LogOut size={15} />
                   {isLoggingOut ? "Logging out..." : "Logout"}
                 </button>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </header>
+      </div>
 
-      {/* Change Password Modal */}
       <ChangePasswordModal
         isOpen={passwordModalOpen}
         onClose={() => setPasswordModalOpen(false)}
       />
-    </div>
+    </>
   );
 };
 

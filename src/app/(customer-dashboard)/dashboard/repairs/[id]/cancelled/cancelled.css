@@ -1,0 +1,187 @@
+/* ==========================================================================
+   Repair Cancelled Page Styles - Customer Dashboard Redesign (Figma Matching)
+   ========================================================================== */
+
+.repair-cancelled-page {
+  padding: 8px 0 60px 0;
+  max-width: 1160px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Header */
+.cancelled-page-header {
+  margin-bottom: 28px;
+}
+
+.cancelled-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.cancelled-page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.025em;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.cancelled-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #fef2f2;
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 9999px;
+}
+
+.cancelled-badge-dot {
+  color: #ef4444;
+  font-size: 9px;
+}
+
+.cancelled-page-subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Top Banner Card */
+.cancelled-banner-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 28px;
+  padding: 56px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.cancelled-badge-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 20px;
+  background-color: #ffc400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 14px rgba(255, 196, 0, 0.25);
+}
+
+.cancelled-check-icon {
+  color: #000000;
+}
+
+.cancelled-banner-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 6px 0;
+}
+
+.cancelled-banner-subtitle {
+  font-size: 14.5px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Bottom Grid */
+.cancelled-page-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.cancelled-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  padding: 28px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.cancelled-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 20px 0;
+}
+
+.cancelled-details-table {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cancelled-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14.5px;
+}
+
+.cancelled-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.cancelled-value {
+  color: #111827;
+  font-weight: 700;
+}
+
+.cancelled-device-text {
+  font-size: 14.5px;
+  color: #4b5563;
+  line-height: 1.5;
+  margin: 0 0 24px 0;
+  flex: 1;
+}
+
+.btn-arrange-return {
+  appearance: none;
+  background-color: #ffc400;
+  color: #000000;
+  border: none;
+  border-radius: 9999px;
+  padding: 13px 24px;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  font-family: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-arrange-return:hover {
+  background-color: #f5b700;
+  transform: translateY(-1px);
+}
+
+/* Responsive */
+@media screen and (max-width: 800px) {
+  .cancelled-page-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -592,6 +592,29 @@ export default function AdminSupportPage() {
         </button>
       </div>
 
+      {/* Hero Banner */}
+      <div className="admin-hero-banner" style={{ marginBottom: "24px" }}>
+        <div className="admin-hero-left">
+          <span className="admin-hero-pill">
+            <span>●</span>
+            <span>Support Desk</span>
+          </span>
+          <h2 className="admin-hero-title">{totalCount} support tickets</h2>
+          <p className="admin-hero-sub">
+            {openCount} waiting on support · Respond to customer and engineer inquiries.
+          </p>
+        </div>
+        <div className="admin-hero-actions">
+          <button
+            type="button"
+            className="admin-btn-yellow"
+            onClick={fetchData}
+          >
+            <RefreshCw size={15} /> Refresh Desk
+          </button>
+        </div>
+      </div>
+
       {/* Metrics Row */}
       <div className="support-stats-grid">
         <div className="support-stat-card">

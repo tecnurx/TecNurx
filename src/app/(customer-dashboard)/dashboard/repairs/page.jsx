@@ -7,19 +7,42 @@ import { repairService } from "../../../../../services/repairs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import TecNurxLoader from "@/components/TecNurxLoader";
+import { toast } from "@/components/CustomToast";
 
 const MyOrders = () => {
   const router = useRouter();
   const [orders, setOrders] = useState([]);
+  const [drafts, setDrafts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("active"); // "active" | "completed" | "all"
+  const [resumingDraftId, setResumingDraftId] = useState(null);
+  const [confirmingDiscardId, setConfirmingDiscardId] = useState(null);
+  const [discardingDraftId, setDiscardingDraftId] = useState(null);
 
   useEffect(() => {
     const fetchUserRepairs = async () => {
       try {
-        const res = await repairService.getUserRepairs();
-        const repairsList = res?.data?.repairs || res?.repairs || [];
-        setOrders(repairsList);
+        const [repairsRes, draftsRes] = await Promise.allSettled([
+          repairService.getUserRepairs(),
+          repairService.getDrafts(),
+        ]);
+
+        if (repairsRes.status === "fulfilled") {
+          const repairsList =
+            repairsRes.value?.data?.repairs || repairsRes.value?.repairs || [];
+          setOrders(repairsList);
+        } else {
+          setOrders([]);
+        }
+
+        if (draftsRes.status === "fulfilled") {
+          const draftsList =
+            draftsRes.value?.data?.drafts ||
+            draftsRes.value?.drafts ||
+            draftsRes.value?.data ||
+            [];
+          setDrafts(Array.isArray(draftsList) ? draftsList : []);
+        }
       } catch (err) {
         console.error("Failed to fetch user repairs:", err);
         setOrders([]);
@@ -29,6 +52,44 @@ const MyOrders = () => {
     };
     fetchUserRepairs();
   }, []);
+
+  const handleResumeDraft = async (draftId) => {
+    try {
+      setResumingDraftId(draftId);
+      const res = await repairService.initiateBookingPayment(draftId);
+      const data = res?.data || res;
+      if (data?.paymentLink) {
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("pending_booking_repair_id", draftId);
+          if (data.reference) {
+            sessionStorage.setItem("pending_booking_reference", data.reference);
+          }
+          window.location.href = data.paymentLink;
+        }
+      } else {
+        toast.info("Redirecting to booking...");
+        router.push(`/dashboard/repairs/book?repairId=${draftId}`);
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Could not resume draft payment.");
+    } finally {
+      setResumingDraftId(null);
+    }
+  };
+
+  const handleDiscardDraft = async (draftId) => {
+    try {
+      setDiscardingDraftId(draftId);
+      await repairService.deleteDraft(draftId);
+      setDrafts((prev) => prev.filter((d) => (d._id || d.id) !== draftId));
+      setConfirmingDiscardId(null);
+      toast.success("Draft discarded");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Could not discard draft.");
+    } finally {
+      setDiscardingDraftId(null);
+    }
+  };
 
   // Displayed repairs list - pure dynamic from backend
   const displayedOrders = useMemo(() => {
@@ -144,37 +205,33 @@ const MyOrders = () => {
     if (
       status === "in_progress" ||
       status === "in_repair" ||
-      status === "repairing"
+      status === "repairing" ||
+      status === "awaiting_parts"
     ) {
       return {
         currentStep: 5,
         totalSteps: 6,
-        stepText: "Step 5 of 6: device is being repaired",
+        stepText:
+          status === "awaiting_parts"
+            ? "Step 5 of 6: awaiting replacement parts"
+            : "Step 5 of 6: device is being repaired",
         actionText: "Track repair",
-        badgeText: "In progress",
+        badgeText: status === "awaiting_parts" ? "Awaiting parts" : "In progress",
         badgeType: "badge-warning",
       };
     }
 
-    if (status === "engineer_assigned") {
+    if (status === "quote_accepted" || status === "scheduled" || status === "approved") {
       return {
         currentStep: 4,
         totalSteps: 6,
-        stepText: "Step 4 of 6: engineer assigned to device",
-        actionText: "Track repair",
-        badgeText: "Engineer assigned",
+        stepText:
+          status === "quote_accepted"
+            ? "Step 4 of 6: quote accepted · payment needed"
+            : "Step 4 of 6: repair scheduled",
+        actionText: status === "quote_accepted" ? "Pay for repair" : "Track repair",
+        badgeText: status === "quote_accepted" ? "Quote accepted" : "Scheduled",
         badgeType: "badge-info",
-      };
-    }
-
-    if (status === "pending_quote") {
-      return {
-        currentStep: 1,
-        totalSteps: 6,
-        stepText: "Step 1 of 6: quote requested",
-        actionText: "Track repair",
-        badgeText: "Quote requested",
-        badgeType: "badge-warning",
       };
     }
 
@@ -185,23 +242,37 @@ const MyOrders = () => {
 
     if (hasQuoteReady) {
       return {
-        currentStep: 2,
+        currentStep: 3,
         totalSteps: 6,
-        stepText: "Step 2 of 6: your quote needs approval",
+        stepText: "Step 3 of 6: your quote needs approval",
         actionText: "Review quote",
         badgeText: "Quote ready",
         badgeType: "badge-warning",
       };
     }
 
-    if (status === "scheduled" || status === "approved") {
+    if (status === "engineer_assigned") {
       return {
-        currentStep: 3,
+        currentStep: 2,
         totalSteps: 6,
-        stepText: "Step 3 of 6: repair scheduled",
+        stepText: "Step 2 of 6: engineer assigned to device",
         actionText: "Track repair",
-        badgeText: "Scheduled",
+        badgeText: "Engineer assigned",
         badgeType: "badge-info",
+      };
+    }
+
+    if (status === "pending_quote" || status === "booked") {
+      return {
+        currentStep: 1,
+        totalSteps: 6,
+        stepText:
+          status === "booked"
+            ? "Step 1 of 6: booking confirmed"
+            : "Step 1 of 6: quote requested",
+        actionText: "Track repair",
+        badgeText: status === "booked" ? "Booked" : "Quote requested",
+        badgeType: "badge-warning",
       };
     }
 
@@ -246,6 +317,120 @@ const MyOrders = () => {
           Book a repair
         </Link>
       </div>
+
+      {/* Unpaid Resumable Drafts */}
+      {drafts.length > 0 && (
+        <div style={{ marginBottom: "24px", display: "flex", flexDirection: "column", gap: "12px" }}>
+          {drafts.map((draft) => {
+            const dId = draft._id || draft.id;
+            const total = draft?.bookingCharge?.total ?? 0;
+            return (
+              <div
+                key={dId}
+                className="past-repairs-card"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: "16px",
+                  flexWrap: "wrap",
+                  padding: "18px 24px",
+                  border: "1.5px solid #ffc400",
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: "12px", fontWeight: 700, color: "#92400e", marginBottom: "4px" }}>
+                    UNPAID DRAFT · #{formatRepairId(dId)}
+                  </div>
+                  <div style={{ fontSize: "15.5px", fontWeight: 700, color: "#111827" }}>
+                    {formatDeviceName(draft.device)} · {formatIssue(draft.issueDescription, draft.issueCategory)}
+                  </div>
+                  <div style={{ fontSize: "13px", color: "#64748b", marginTop: "2px" }}>
+                    Booking charge: ₦{Number(total).toLocaleString()}
+                  </div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  {confirmingDiscardId === dId ? (
+                    <>
+                      <button
+                        type="button"
+                        disabled={discardingDraftId === dId}
+                        onClick={() => setConfirmingDiscardId(null)}
+                        style={{
+                          background: "#ffffff",
+                          border: "1.5px solid #cbd5e1",
+                          borderRadius: "9999px",
+                          padding: "8px 16px",
+                          fontSize: "13px",
+                          fontWeight: 600,
+                          color: "#475569",
+                          cursor: discardingDraftId === dId ? "not-allowed" : "pointer",
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        disabled={discardingDraftId === dId}
+                        onClick={() => handleDiscardDraft(dId)}
+                        style={{
+                          background: "#fef2f2",
+                          border: "1.5px solid #fecaca",
+                          borderRadius: "9999px",
+                          padding: "8px 18px",
+                          fontSize: "13px",
+                          fontWeight: 700,
+                          color: "#b91c1c",
+                          cursor: discardingDraftId === dId ? "not-allowed" : "pointer",
+                        }}
+                      >
+                        {discardingDraftId === dId ? "Discarding..." : "Confirm discard"}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        disabled={resumingDraftId === dId}
+                        onClick={() => setConfirmingDiscardId(dId)}
+                        style={{
+                          background: "#ffffff",
+                          border: "1.5px solid #111827",
+                          borderRadius: "9999px",
+                          padding: "8px 18px",
+                          fontSize: "13px",
+                          fontWeight: 600,
+                          color: "#111827",
+                          cursor: resumingDraftId === dId ? "not-allowed" : "pointer",
+                        }}
+                      >
+                        Discard
+                      </button>
+                      <button
+                        type="button"
+                        disabled={resumingDraftId === dId}
+                        onClick={() => handleResumeDraft(dId)}
+                        style={{
+                          background: "#ffc400",
+                          border: "none",
+                          borderRadius: "9999px",
+                          padding: "9px 20px",
+                          fontSize: "13px",
+                          fontWeight: 700,
+                          color: "#111827",
+                          cursor: resumingDraftId === dId ? "not-allowed" : "pointer",
+                        }}
+                      >
+                        {resumingDraftId === dId ? "Loading..." : "Resume payment"}
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* 2. REPAIRS PAGE EMPTY (Design 2) */}
       {hasNoRepairs ? (

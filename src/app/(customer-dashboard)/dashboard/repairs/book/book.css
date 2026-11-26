@@ -1,12 +1,12 @@
 /* ==========================================================================
-   Book a Repair Styles (Images 1-5 Specification)
+   Book a Repair Styles - Figma Specification (Images 1 - 5)
    ========================================================================== */
 
 .book-repair-page {
-  max-width: 1120px;
+  max-width: 1140px;
   margin: 0 auto;
   padding: 8px 0 54px;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: inherit;
   color: #111827;
 }
 
@@ -19,17 +19,17 @@
   font-size: 32px;
   font-weight: 800;
   color: #0f172a;
-  margin: 0 0 4px 0;
+  margin: 0 0 6px 0;
   letter-spacing: -0.025em;
 }
 
 .book-step-sub {
-  font-size: 15px;
+  font-size: 14.5px;
   color: #64748b;
   margin: 0;
 }
 
-/* Stepper Progress Bar */
+/* 4-Step Stepper Progress Bar */
 .book-stepper-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -44,7 +44,7 @@
 }
 
 .stepper-bar {
-  height: 4px;
+  height: 3.5px;
   border-radius: 9999px;
   background-color: #e2e8f0;
   transition: all 0.2s ease;
@@ -55,7 +55,7 @@
 }
 
 .stepper-bar.active {
-  background-color: #ffb800;
+  background-color: #ffc400;
 }
 
 .stepper-label {
@@ -71,6 +71,7 @@
 
 .stepper-label.completed {
   color: #0f172a;
+  font-weight: 700;
 }
 
 /* 2-Column Layout */
@@ -84,9 +85,9 @@
 /* Main Form Card */
 .book-card {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1.5px solid #edf2f7;
   border-radius: 20px;
-  padding: 28px;
+  padding: 28px 28px 32px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
@@ -98,7 +99,7 @@
   letter-spacing: -0.015em;
 }
 
-/* Radio Selection Cards (Step 1 Device, Step 2 Quality, Step 3 Address) */
+/* Radio Selection Cards (Step 1 Device, Step 2 Quality, Step 3 Handover & Address) */
 .selection-list {
   display: flex;
   flex-direction: column;
@@ -107,20 +108,20 @@
 }
 
 .selection-card {
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid #edf2f7;
   border-radius: 16px;
-  padding: 18px 20px;
+  padding: 16px 20px;
   display: flex;
   align-items: flex-start;
   gap: 14px;
   cursor: pointer;
   background: #ffffff;
-  transition: all 0.18s ease;
+  transition: all 0.15s ease;
 }
 
 .selection-card:hover {
   border-color: #cbd5e1;
-  background: #f8fafc;
+  background: #fbfbfc;
 }
 
 .selection-card.selected {
@@ -129,6 +130,7 @@
   box-shadow: 0 0 0 1px #000000;
 }
 
+/* Custom Radio Dot */
 .custom-radio {
   width: 20px;
   height: 20px;
@@ -157,19 +159,12 @@
   flex: 1;
 }
 
-.selection-card-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 4px;
-  flex-wrap: wrap;
-}
-
 .selection-item-name {
   font-size: 15.5px;
   font-weight: 700;
   color: #0f172a;
   margin: 0;
+  line-height: 1.35;
 }
 
 .selection-pill-row {
@@ -178,17 +173,17 @@
   align-items: center;
 }
 
+/* Status Badge Pills in Device Card */
 .status-badge-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   padding: 3.5px 11px;
   border-radius: 9999px;
   font-size: 11.5px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.2;
   white-space: nowrap;
-  letter-spacing: -0.01em;
 }
 
 .status-badge-pill .dot {
@@ -196,35 +191,29 @@
   line-height: 1;
 }
 
-.status-badge-pill.success,
 .status-badge-pill.pill-verified {
   background-color: #ecfdf5;
   color: #047857;
 }
 
-.status-badge-pill.success .dot,
 .status-badge-pill.pill-verified .dot {
   color: #10b981;
 }
 
-.status-badge-pill.pending,
 .status-badge-pill.pill-pending {
   background-color: #f1f5f9;
   color: #475569;
 }
 
-.status-badge-pill.pending .dot,
 .status-badge-pill.pill-pending .dot {
   color: #64748b;
 }
 
-.status-badge-pill.warning,
 .status-badge-pill.pill-review {
   background-color: #fef3c7;
   color: #b45309;
 }
 
-.status-badge-pill.warning .dot,
 .status-badge-pill.pill-review .dot {
   color: #f59e0b;
 }
@@ -232,37 +221,39 @@
 .selection-item-sub {
   font-size: 13.5px;
   color: #64748b;
-  margin: 0;
+  margin: 2px 0 0;
+  line-height: 1.4;
 }
 
+/* Add New Device / Address Card */
 .add-new-btn-card {
-  border: 1.5px dashed #cbd5e1;
+  border: 1.5px solid #edf2f7;
   border-radius: 16px;
-  padding: 16px 20px;
+  padding: 14px 20px;
   display: flex;
   align-items: center;
   gap: 14px;
   cursor: pointer;
-  background: #fafafa;
+  background: #ffffff;
   transition: all 0.15s ease;
   color: #0f172a;
 }
 
 .add-new-btn-card:hover {
-  border-color: #94a3b8;
-  background: #f4f4f5;
+  border-color: #cbd5e1;
+  background: #fbfbfc;
 }
 
-.add-plus-circle {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #e4e4e7;
+.add-plus-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #f3f4f6;
+  color: #111827;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  font-weight: 600;
+  flex-shrink: 0;
 }
 
 .add-card-text h4 {
@@ -277,13 +268,22 @@
   margin: 0;
 }
 
-/* Step 2 Problem Screen */
+.selection-empty-notice {
+  padding: 16px 4px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* ==========================================================================
+   Step 2 Problem Screen Styles
+   ========================================================================== */
+
 .device-header-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background-color: #fef3c7;
-  color: #854d0e;
+  background-color: #ffc400;
+  color: #000000;
   font-size: 12.5px;
   font-weight: 700;
   padding: 5px 14px;
@@ -293,14 +293,14 @@
 
 .device-header-pill .dot {
   font-size: 8px;
-  color: #d97706;
+  color: #000000;
 }
 
 .problem-section-title {
   font-size: 15px;
   font-weight: 700;
   color: #0f172a;
-  margin: 0 0 12px 0;
+  margin: 0 0 14px 0;
 }
 
 .category-pills-row {
@@ -311,14 +311,16 @@
 }
 
 .category-chip {
-  padding: 9px 18px;
+  padding: 8px 18px;
   border-radius: 9999px;
-  border: 1px solid #e2e8f0;
+  border: 1.5px solid #edf2f7;
   background: #ffffff;
   color: #0f172a;
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
+  outline: none;
+  font-family: inherit;
   transition: all 0.15s ease;
 }
 
@@ -331,9 +333,9 @@
   background: #000000;
   border-color: #000000;
   color: #ffffff;
+  font-weight: 700;
 }
 
-/* Part Quality Options */
 .quality-price-tag {
   font-size: 16px;
   font-weight: 800;
@@ -341,7 +343,10 @@
   margin: 4px 0 2px 0;
 }
 
-/* Step 3 Pickup Screen */
+/* ==========================================================================
+   Step 3 Handover Screen Styles
+   ========================================================================== */
+
 .day-cards-row {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -350,9 +355,9 @@
 }
 
 .day-picker-card {
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 14px 8px;
+  border: 1.5px solid #edf2f7;
+  border-radius: 12px;
+  padding: 12px 6px;
   text-align: center;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -370,11 +375,12 @@
 }
 
 .day-picker-card.selected .day-name-sub {
-  color: #9ca3af;
+  color: #ffffff;
+  opacity: 0.85;
 }
 
 .day-number {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 800;
   margin-bottom: 2px;
 }
@@ -393,14 +399,16 @@
 }
 
 .time-slot-chip {
-  padding: 10px 18px;
+  padding: 9px 18px;
   border-radius: 9999px;
-  border: 1px solid #e2e8f0;
+  border: 1.5px solid #edf2f7;
   background: #ffffff;
   font-size: 13.5px;
   font-weight: 600;
   color: #0f172a;
   cursor: pointer;
+  outline: none;
+  font-family: inherit;
   transition: all 0.15s ease;
 }
 
@@ -412,24 +420,26 @@
   background: #000000;
   border-color: #000000;
   color: #ffffff;
+  font-weight: 700;
 }
 
 .input-group-row {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .contact-text-input {
   width: 100%;
   padding: 12px 16px;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  font-size: 14.5px;
+  border: 1.5px solid #edf2f7;
+  font-size: 14px;
   outline: none;
   font-family: inherit;
   box-sizing: border-box;
+  color: #0f172a;
   transition: border-color 0.15s ease;
 }
 
@@ -437,7 +447,10 @@
   border-color: #000000;
 }
 
-/* Step 4 Review Screen */
+/* ==========================================================================
+   Step 4 Review Screen Styles
+   ========================================================================== */
+
 .review-table {
   display: flex;
   flex-direction: column;
@@ -461,7 +474,7 @@
 .review-label {
   color: #64748b;
   font-weight: 500;
-  width: 120px;
+  width: 130px;
   flex-shrink: 0;
 }
 
@@ -476,7 +489,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 0 20px 0;
+  padding: 12px 0 20px 0;
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
@@ -490,7 +503,10 @@
   cursor: pointer;
 }
 
-/* Bottom Action Buttons */
+/* ==========================================================================
+   Form Bottom Action Buttons
+   ========================================================================== */
+
 .form-actions-row {
   display: flex;
   align-items: center;
@@ -499,66 +515,75 @@
   margin-top: 16px;
 }
 
+.btn-form-cancel,
 .btn-form-back {
   background: #ffffff;
-  border: 1.5px solid #0f172a;
-  color: #0f172a;
+  border: 1.5px solid #000000;
+  color: #000000;
   font-size: 14px;
   font-weight: 600;
-  padding: 11px 28px;
+  padding: 10px 28px;
   border-radius: 9999px;
   cursor: pointer;
+  outline: none;
+  font-family: inherit;
   transition: all 0.15s ease;
 }
 
+.btn-form-cancel:hover,
 .btn-form-back:hover {
   background: #f8fafc;
 }
 
 .btn-form-continue {
-  background-color: #ffb800;
+  background-color: #ffc400;
   border: none;
   color: #000000;
   font-size: 14px;
   font-weight: 700;
-  padding: 12px 34px;
+  padding: 11px 32px;
   border-radius: 9999px;
   cursor: pointer;
+  outline: none;
+  font-family: inherit;
   transition: all 0.15s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.btn-form-continue:hover {
+.btn-form-continue:hover:not(:disabled) {
   background-color: #e6a600;
 }
 
 .btn-form-continue:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
-/* Right Side Cards */
+/* ==========================================================================
+   Right Side Column Cards
+   ========================================================================== */
+
 .side-card {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1.5px solid #edf2f7;
   border-radius: 20px;
-  padding: 28px;
+  padding: 26px 26px 28px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
   margin-bottom: 20px;
 }
 
 .side-card-title {
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 800;
   color: #0f172a;
   margin: 0 0 20px 0;
+  letter-spacing: -0.01em;
 }
 
-/* How It Works Steps */
+/* Numbered Steps List ("How it works" & "What happens next") */
 .how-it-works-list {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 20px;
 }
 
 .how-step-item {
@@ -568,8 +593,8 @@
 }
 
 .how-step-num {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background: #000000;
   color: #ffffff;
@@ -586,7 +611,7 @@
   font-size: 14.5px;
   font-weight: 700;
   color: #0f172a;
-  margin: 0 0 3px 0;
+  margin: 0 0 2px 0;
 }
 
 .how-step-text p {
@@ -598,7 +623,7 @@
 
 /* Estimate Card */
 .estimate-price-banner {
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 800;
   color: #0f172a;
   margin: 0 0 8px 0;
@@ -612,26 +637,316 @@
   margin: 0 0 18px 0;
 }
 
+/* Gray Callout Box with Checkmark */
 .estimate-info-box {
-  background-color: #f8fafc;
+  background-color: #f3f4f6;
   border-radius: 12px;
   padding: 14px 16px;
   display: flex;
   align-items: flex-start;
   gap: 10px;
   font-size: 13px;
-  color: #334155;
+  color: #4b5563;
   line-height: 1.45;
 }
 
 .estimate-info-box .icon {
-  color: #059669;
+  color: #4b5563;
   font-weight: 700;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+/* Fees Table (Steps 3 & 4) */
+.fees-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.fee-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
   font-size: 14px;
 }
 
+.fee-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.fee-val {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.fee-divider {
+  height: 1px;
+  background-color: #f1f5f9;
+  margin: 6px 0;
+}
+
+.fee-row.total {
+  padding-top: 12px;
+}
+
+.fee-label-total {
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.fee-val-total {
+  color: #0f172a;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* ==========================================================================
+   Screen 5: Booking Confirmed (Figma Image 5)
+   ========================================================================== */
+
+.confirmed-hero-card {
+  background: #ffffff;
+  border: 1.5px solid #edf2f7;
+  border-radius: 20px;
+  padding: 38px 24px;
+  text-align: center;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.confirmed-check-box {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background-color: #ffc400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.confirmed-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.02em;
+}
+
+.confirmed-subtitle {
+  font-size: 14.5px;
+  color: #64748b;
+  margin: 0 0 24px 0;
+}
+
+.confirmed-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.btn-confirmed-view {
+  background-color: #ffc400;
+  border: none;
+  color: #000000;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 11px 32px;
+  border-radius: 9999px;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.btn-confirmed-view:hover {
+  background-color: #e6a600;
+}
+
+.btn-confirmed-receipt {
+  background-color: #ffffff;
+  border: 1.5px solid #000000;
+  color: #000000;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 26px;
+  border-radius: 9999px;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.btn-confirmed-receipt:hover {
+  background-color: #f8fafc;
+}
+
+.confirmed-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.receipt-rows-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  font-size: 14px;
+}
+
+.receipt-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.receipt-val {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.receipt-divider {
+  height: 1px;
+  background-color: #f1f5f9;
+  margin: 8px 0;
+}
+
+.receipt-row.total {
+  padding: 14px 0;
+}
+
+.receipt-label-total {
+  color: #0f172a;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.receipt-val-total {
+  color: #0f172a;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+/* ==========================================================================
+   Add New Address Modal
+   ========================================================================== */
+
+.book-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+  animation: modalFadeIn 0.15s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.book-modal-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 28px;
+  max-width: 460px;
+  width: 100%;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+}
+
+.book-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.book-modal-head h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.btn-modal-close {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.modal-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.modal-field input {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1.5px solid #edf2f7;
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+  color: #0f172a;
+}
+
+.modal-field input:focus {
+  border-color: #000000;
+}
+
+.modal-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
 @media (max-width: 860px) {
   .book-grid {
+    grid-template-columns: 1fr;
+  }
+  .confirmed-bottom-grid {
     grid-template-columns: 1fr;
   }
   .book-stepper-row {
@@ -670,6 +985,7 @@
     gap: 12px;
   }
 
+  .btn-form-cancel,
   .btn-form-back {
     padding: 10px 20px;
     font-size: 13.5px;

@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
-import logo from "@/assets/images/logo.png";
+import sidebarLogo from "@/assets/images/sidebar-logo.png";
 import {
   ArrowLeftRight,
   Bike,
@@ -18,6 +18,7 @@ import {
   ShieldCheck,
   KeyRound,
   LifeBuoy,
+  Banknote,
 } from "lucide-react";
 import "./adsidebar.css";
 import { SidebarContext } from "../../../../../context/SidebarContext";
@@ -29,53 +30,58 @@ const sidebarNavItems = [
   {
     href: "/admin-dashboard",
     label: "Dashboard",
-    icon: <LayoutGridIcon size={14} />,
+    icon: <LayoutGridIcon size={16} />,
     exact: true,
   },
   {
     href: "/admin-dashboard/staff",
     label: "Staff Members",
-    icon: <Users size={14} />,
+    icon: <Users size={16} />,
   },
   {
     href: "/admin-dashboard/roles",
     label: "Roles & Permissions",
-    icon: <ShieldCheck size={14} />,
+    icon: <ShieldCheck size={16} />,
   },
   {
     href: "/admin-dashboard/engineers",
     label: "Engineers",
-    icon: <UserCog size={14} />,
+    icon: <UserCog size={16} />,
   },
   {
     href: "/admin-dashboard/users",
     label: "Users",
-    icon: <UserCircle size={14} />,
+    icon: <UserCircle size={16} />,
   },
   {
     href: "/admin-dashboard/orders",
     label: "Repairs (Orders)",
-    icon: <File size={14} />,
+    icon: <File size={16} />,
   },
   {
     href: "/admin-dashboard/logistics",
     label: "Logistics",
-    icon: <Bike size={14} />,
+    icon: <Bike size={16} />,
   },
   {
     href: "/admin-dashboard/transactions",
     label: "Transactions",
-    icon: <ArrowLeftRight size={14} />,
+    icon: <ArrowLeftRight size={16} />,
   },
   {
     href: "/admin-dashboard/gadgets",
     label: "Gadgets List",
-    icon: <Cog size={14} />,
+    icon: <Cog size={16} />,
   },
   {
     href: "/admin-dashboard/support",
     label: "Support Tickets",
-    icon: <LifeBuoy size={14} />,
+    icon: <LifeBuoy size={16} />,
+  },
+  {
+    href: "/admin-dashboard/fees",
+    label: "Fee Config",
+    icon: <Banknote size={16} />,
   },
 ];
 
@@ -102,7 +108,6 @@ const AdSidebar = () => {
 
   useEffect(() => {
     const handleUnread = (e) => {
-      // If currently on support tickets page, never show an unread badge
       if (pathname === "/admin-dashboard/support") {
         setUnreadSupportCount(0);
         return;
@@ -163,8 +168,6 @@ const AdSidebar = () => {
     }
   };
 
-  // Filter links based on current admin permissions
-  // Dashboard is ALWAYS visible to all authenticated staff regardless of roles or permissions
   const visibleNavItems = sidebarNavItems.filter((item) => {
     if (
       item.href === "/admin-dashboard" ||
@@ -177,8 +180,7 @@ const AdSidebar = () => {
   });
 
   return (
-    <div>
-      {/* Overlay for mobile */}
+    <>
       {isSidebarOpen && (
         <div
           className="adsidebar-open-overlay active"
@@ -187,86 +189,105 @@ const AdSidebar = () => {
         />
       )}
 
-      <div className={`adsidebar ${isSidebarOpen ? "open" : "collapsed"}`}>
-        <div className="adsidebar-links">
-          <div className="ad-divider">
-            {visibleNavItems.map((item) => {
-              const isActive = item.exact
-                ? pathname === item.href
-                : pathname === item.href || pathname?.startsWith(item.href);
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={isActive ? "active" : ""}
-                  onClick={() => {
-                    closeSidebar();
-                    if (item.href === "/admin-dashboard/support") {
-                      setUnreadSupportCount(0);
-                    }
-                  }}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    {item.icon} {item.label}
-                  </span>
-                  {item.href === "/admin-dashboard/support" &&
-                    unreadSupportCount > 0 && (
-                      <span
-                        style={{
-                          background: "#ef4444",
-                          color: "#ffffff",
-                          fontSize: "10px",
-                          fontWeight: "800",
-                          minWidth: "18px",
-                          height: "18px",
-                          borderRadius: "9px",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          padding: "0 5px",
-                          boxShadow: "0 2px 6px rgba(239, 68, 68, 0.4)",
-                          lineHeight: "1",
-                        }}
-                      >
-                        {unreadSupportCount}
-                      </span>
-                    )}
-                </Link>
-              );
-            })}
-          </div>
-
-          <div className="ad-divider">
-            <button
-              type="button"
-              onClick={() => {
-                closeSidebar();
-                setIsPasswordModalOpen(true);
-              }}
-              style={{ marginBottom: "8px" }}
-            >
-              <KeyRound size={14} />
-              Change Password
-            </button>
-            <button type="button" onClick={handleLogout} disabled={isLoggingOut}>
-              <LogOut size={14} />
-              {isLoggingOut ? "Logging out..." : "Logout"}
-            </button>
-          </div>
+      <aside className={`ad-sidebar ${isSidebarOpen ? "open" : "collapsed"}`}>
+        {/* Brand Logo + Admin Portal Badge */}
+        <div className="ad-sidebar-logo">
+          <Link href="/admin-dashboard" onClick={closeSidebar}>
+            <Image
+              src={sidebarLogo}
+              alt="TecNurx"
+              width={140}
+              height={27}
+              priority
+              style={{ width: "140px", height: "auto", display: "block" }}
+            />
+          </Link>
+          <span className="ad-portal-badge">
+            <ShieldCheck size={12} />
+            <span>Admin Portal</span>
+          </span>
         </div>
-      </div>
+
+        {/* Navigation Links */}
+        <nav className="ad-sidebar-links">
+          {visibleNavItems.map((item) => {
+            const isActive = item.exact
+              ? pathname === item.href
+              : pathname === item.href || pathname?.startsWith(item.href);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={isActive ? "active" : ""}
+                onClick={() => {
+                  closeSidebar();
+                  if (item.href === "/admin-dashboard/support") {
+                    setUnreadSupportCount(0);
+                  }
+                }}
+              >
+                <span style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  {item.icon}
+                  <span>{item.label}</span>
+                </span>
+
+                {item.href === "/admin-dashboard/support" &&
+                  unreadSupportCount > 0 && (
+                    <span
+                      style={{
+                        background: "#ef4444",
+                        color: "#ffffff",
+                        fontSize: "10px",
+                        fontWeight: "800",
+                        minWidth: "18px",
+                        height: "18px",
+                        borderRadius: "9px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: "0 5px",
+                      }}
+                    >
+                      {unreadSupportCount}
+                    </span>
+                  )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Footer Actions */}
+        <div className="ad-sidebar-footer">
+          <button
+            type="button"
+            className="ad-sidebar-footer-btn"
+            onClick={() => {
+              closeSidebar();
+              setIsPasswordModalOpen(true);
+            }}
+          >
+            <KeyRound size={15} />
+            <span>Change Password</span>
+          </button>
+
+          <button
+            type="button"
+            className="ad-sidebar-footer-btn logout"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+          >
+            <LogOut size={15} />
+            <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
+          </button>
+        </div>
+      </aside>
 
       <ChangePasswordModal
         isOpen={isPasswordModalOpen}
         onClose={() => setIsPasswordModalOpen(false)}
       />
-    </div>
+    </>
   );
 };
 
