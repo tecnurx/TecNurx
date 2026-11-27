@@ -104,6 +104,12 @@
   align-items: flex-start;
 }
 
+.detail-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 /* --------------------------------------------------------------------------
    Left Column: Progress Timeline Card
    -------------------------------------------------------------------------- */
@@ -543,6 +549,27 @@
 @media screen and (max-width: 900px) {
   .repair-detail-grid {
     grid-template-columns: 1fr;
+  }
+
+  .detail-left-column,
+  .detail-right-column {
+    display: contents;
+  }
+
+  .detail-progress-card {
+    order: 1;
+  }
+
+  .detail-right-column .action-needed-card {
+    order: 2;
+  }
+
+  .detail-summary-card {
+    order: 3;
+  }
+
+  .detail-right-column .detail-card {
+    order: 4;
   }
 
   .repair-detail-header {

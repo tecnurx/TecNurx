@@ -83,7 +83,7 @@ export default function PaymentDetailPage() {
 
   const handleCheckStatus = async () => {
     if (!payment) return;
-    const txId = payment.id || payment._id;
+    const txId = payment.transactionId || payment.reference || payment.id || payment._id;
     const repairId =
       typeof payment.repair === "object"
         ? payment.repair?._id || payment.repair?.id

@@ -234,6 +234,19 @@
   border: 2px solid #080808;
 }
 
+.ins-card.danger-border {
+  border: 2px solid #a11d1d;
+}
+
+.ins-pill-red {
+  background: #fde6e6;
+  color: #a11d1d;
+}
+
+.ins-pill-red .ins-pill-dot {
+  background: #a11d1d;
+}
+
 .ins-card-title {
   font-size: 20px;
   font-weight: 700;

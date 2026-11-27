@@ -54,10 +54,24 @@ export const engService = {
     return response.data;
   },
 
-  raiseAdditionalWork: async (repairId, { note, amount }) => {
+  raiseAdditionalWork: async (repairId, { note, parts = 0, labour = 0, photos = [] }) => {
+    const formData = new FormData();
+    formData.append("note", note);
+    formData.append("parts", String(Number(parts || 0)));
+    formData.append("labour", String(Number(labour || 0)));
+    if (Array.isArray(photos)) {
+      photos.slice(0, 4).forEach((file) => {
+        if (file) {
+          formData.append("photos", file);
+        }
+      });
+    }
     const response = await axios.post(
       `/repairs/engineer/${repairId}/additional-work`,
-      { note, amount },
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      },
     );
     return response.data;
   },

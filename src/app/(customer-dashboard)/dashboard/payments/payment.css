@@ -583,6 +583,33 @@
   }
 }
 
+@media screen and (max-width: 640px) {
+  .payments-page {
+    padding: 16px 12px 48px;
+  }
+
+  .payment-card {
+    padding: 20px 16px;
+  }
+
+  .history-item-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .history-item-right {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .draft-item-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
 /* History Filters, Summary & Status Variants */
 .history-card-top {
   display: flex;
@@ -677,6 +704,32 @@
 
 .btn-history-resume:hover {
   background: #e6a600;
+}
+
+.btn-history-verify {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid #cbd5e1;
+  border-radius: 9999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.btn-history-verify:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.btn-history-verify:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .btn-history-details {

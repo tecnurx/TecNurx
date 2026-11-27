@@ -350,29 +350,44 @@ function BookRepairContent() {
 
   // Fee preview from backend
   const [previewCharge, setPreviewCharge] = useState(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [addressServiceability, setAddressServiceability] = useState({});
 
   useEffect(() => {
     if (step < 3) return;
     const needsAddress = handoverMethod === "pickup" || returnMethod === "delivery";
-    if (needsAddress && !selectedAddress) return;
+    const addrId = selectedAddress?._id || selectedAddress?.id;
+    if (needsAddress && !addrId) return;
 
     let cancelled = false;
     const fetchPreview = async () => {
       try {
+        setPreviewLoading(true);
         const res = await repairService.previewBookingCharges({
           paymentOption: "pay_after_quote",
           handoverType: handoverMethod === "pickup" ? "pickup" : "office_dropoff",
           returnMethod,
-          addressId: needsAddress ? (selectedAddress?._id || selectedAddress?.id) : undefined,
+          addressId: needsAddress ? addrId : undefined,
           deviceId: selectedDevice?._id || selectedDevice?.id,
           issueCategory: selectedIssue?.category,
         });
         if (!cancelled) {
           const data = res?.data || res;
           setPreviewCharge(data);
+          if (handoverMethod === "pickup" && addrId && typeof data?.serviceable === "boolean") {
+            setAddressServiceability((prev) => ({
+              ...prev,
+              [addrId]: {
+                serviceable: data.serviceable,
+                zoneLabel: data.zoneLabel || null,
+              },
+            }));
+          }
         }
       } catch (err) {
         console.warn("Could not preview booking charges:", err);
+      } finally {
+        if (!cancelled) setPreviewLoading(false);
       }
     };
 
@@ -511,8 +526,11 @@ function BookRepairContent() {
           if (payData?.paymentLink) {
             if (typeof window !== "undefined") {
               sessionStorage.setItem("pending_booking_repair_id", createdId);
+              localStorage.setItem("pending_booking_repair_id", createdId);
               if (payData.reference) {
                 sessionStorage.setItem("pending_booking_reference", payData.reference);
+                localStorage.setItem("pending_booking_reference", payData.reference);
+                localStorage.setItem(`draft_ref_${createdId}`, payData.reference);
               }
               window.location.href = payData.paymentLink;
               return;
@@ -1144,12 +1162,13 @@ function BookRepairContent() {
                   <div className="selection-list">
                     {addresses.length > 0 ? (
                       addresses.map((addr) => {
+                        const addrId = addr._id || addr.id;
                         const isAddrSelected =
-                          (selectedAddress?._id || selectedAddress?.id) ===
-                          (addr._id || addr.id);
+                          (selectedAddress?._id || selectedAddress?.id) === addrId;
+                        const addrStatus = addressServiceability[addrId];
                         return (
                           <div
-                            key={addr._id || addr.id}
+                            key={addrId}
                             className={`selection-card ${isAddrSelected ? "selected" : ""}`}
                             onClick={() => setSelectedAddress(addr)}
                           >
@@ -1160,12 +1179,40 @@ function BookRepairContent() {
                               <h4 className="selection-item-name">
                                 {formatAddressLine1(addr)}
                               </h4>
-                              <div className="selection-pill-row">
-                                <span className="status-badge-pill pill-verified">
-                                  <span className="dot">●</span>
-                                  Pickup available
-                                </span>
-                              </div>
+                              {(isAddrSelected && previewLoading) || addrStatus ? (
+                                <div className="selection-pill-row">
+                                  {isAddrSelected && previewLoading ? (
+                                    <span className="status-badge-pill pill-pending">
+                                      <span className="dot">●</span>
+                                      Checking availability...
+                                    </span>
+                                  ) : addrStatus?.serviceable === true ? (
+                                    <span className="status-badge-pill pill-verified">
+                                      <span className="dot">●</span>
+                                      Pickup available
+                                      {addrStatus.zoneLabel
+                                        ? ` · ${addrStatus.zoneLabel}`
+                                        : ""}
+                                    </span>
+                                  ) : addrStatus?.serviceable === false ? (
+                                    <span
+                                      className="status-badge-pill"
+                                      style={{
+                                        background: "#fef2f2",
+                                        color: "#b91c1c",
+                                      }}
+                                    >
+                                      <span
+                                        className="dot"
+                                        style={{ color: "#ef4444" }}
+                                      >
+                                        ●
+                                      </span>
+                                      Pickup unavailable
+                                    </span>
+                                  ) : null}
+                                </div>
+                              ) : null}
                               <p className="selection-item-sub">
                                 {formatAddressSub(addr)}
                               </p>

@@ -54,6 +54,8 @@ const Payments = () => {
   const [resumingDraftId, setResumingDraftId] = useState(null);
   const [confirmingDiscardId, setConfirmingDiscardId] = useState(null);
   const [discardingDraftId, setDiscardingDraftId] = useState(null);
+  const [verifyingDraftId, setVerifyingDraftId] = useState(null);
+  const [verifyingPaymentId, setVerifyingPaymentId] = useState(null);
 
   // My Payments (History) state
   const [payments, setPayments] = useState([]);
@@ -121,8 +123,11 @@ const Payments = () => {
       if (data?.paymentLink) {
         if (typeof window !== "undefined") {
           sessionStorage.setItem("pending_booking_repair_id", draftId);
+          localStorage.setItem("pending_booking_repair_id", draftId);
           if (data.reference) {
             sessionStorage.setItem("pending_booking_reference", data.reference);
+            localStorage.setItem("pending_booking_reference", data.reference);
+            localStorage.setItem(`draft_ref_${draftId}`, data.reference);
           }
           window.location.href = data.paymentLink;
         }
@@ -147,6 +152,78 @@ const Payments = () => {
       toast.error(err?.response?.data?.message || "Could not discard draft.");
     } finally {
       setDiscardingDraftId(null);
+    }
+  };
+
+  const handleVerifyPaymentRow = async (item) => {
+    const pId = item._id || item.id || item.paymentId;
+    const txId = item.transactionId || item.reference || pId;
+    if (!txId) return;
+    try {
+      setVerifyingPaymentId(pId);
+      const res = await repairService.verifyPayment(txId);
+      const data = res?.data || res;
+      const newStatus = (data?.status || data?.payment?.status || "").toLowerCase();
+      if (newStatus === "paid" || newStatus === "success" || newStatus === "completed") {
+        toast.success("Payment verified and settled!");
+      } else {
+        toast.info(`Payment status: ${newStatus || "pending"}`);
+      }
+      await fetchPayments(purposeFilter, page);
+      const dRes = await repairService.getDrafts();
+      const dList = dRes?.data?.drafts || dRes?.drafts || dRes?.data || [];
+      setDrafts(Array.isArray(dList) ? dList : []);
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Could not verify payment yet.");
+    } finally {
+      setVerifyingPaymentId(null);
+    }
+  };
+
+  const handleVerifyDraft = async (draftId) => {
+    try {
+      setVerifyingDraftId(draftId);
+      let txRef =
+        typeof window !== "undefined"
+          ? localStorage.getItem(`draft_ref_${draftId}`)
+          : null;
+
+      if (!txRef) {
+        const match = payments.find(
+          (p) =>
+            (p.repair?._id || p.repair?.id || p.repair) === draftId &&
+            (p.status || "").toLowerCase() === "pending"
+        );
+        txRef = match?.transactionId || match?.reference || match?.id;
+      }
+
+      if (txRef) {
+        try {
+          await repairService.verifyPayment(txRef);
+        } catch {
+          // fallback to getPaymentStatus below
+        }
+      }
+      const statusRes = await repairService.getPaymentStatus(draftId, "booking_charge");
+      const statusData = statusRes?.data || statusRes;
+      if (
+        statusData?.bookingPlaced ||
+        statusData?.paymentStatus === "completed" ||
+        statusData?.outcome === "already_resolved"
+      ) {
+        toast.success("Booking payment verified!");
+        setDrafts((prev) => prev.filter((d) => (d._id || d.id) !== draftId));
+        if (typeof window !== "undefined") {
+          localStorage.removeItem(`draft_ref_${draftId}`);
+        }
+        await fetchPayments(purposeFilter, page);
+      } else {
+        toast.info("Payment is still pending. If you have already paid, try again in a moment.");
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Could not verify draft payment.");
+    } finally {
+      setVerifyingDraftId(null);
     }
   };
 
@@ -299,6 +376,16 @@ const Payments = () => {
                         className="history-item-right"
                         onClick={(e) => e.stopPropagation()}
                       >
+                        {isPending && (
+                          <button
+                            type="button"
+                            className="btn-history-verify"
+                            disabled={verifyingPaymentId === pId}
+                            onClick={() => handleVerifyPaymentRow(item)}
+                          >
+                            {verifyingPaymentId === pId ? "Verifying..." : "Verify"}
+                          </button>
+                        )}
                         {isPending && item.paymentLink && (
                           <a
                             href={item.paymentLink}
@@ -427,21 +514,31 @@ const Payments = () => {
                             <button
                               type="button"
                               className="btn-draft-discard"
-                              disabled={resumingDraftId === dId}
+                              disabled={resumingDraftId === dId || verifyingDraftId === dId}
                               onClick={() => setConfirmingDiscardId(dId)}
                             >
                               Discard
                             </button>
-                            <button
-                              type="button"
-                              className="btn-draft-pay"
-                              disabled={resumingDraftId === dId}
-                              onClick={() => handleResumeDraft(dId)}
-                            >
-                              {resumingDraftId === dId
-                                ? "Loading..."
-                                : `Pay ₦${Number(total).toLocaleString()}`}
-                            </button>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                              <button
+                                type="button"
+                                className="btn-history-verify"
+                                disabled={resumingDraftId === dId || verifyingDraftId === dId}
+                                onClick={() => handleVerifyDraft(dId)}
+                              >
+                                {verifyingDraftId === dId ? "Verifying..." : "I've paid · Verify"}
+                              </button>
+                              <button
+                                type="button"
+                                className="btn-draft-pay"
+                                disabled={resumingDraftId === dId || verifyingDraftId === dId}
+                                onClick={() => handleResumeDraft(dId)}
+                              >
+                                {resumingDraftId === dId
+                                  ? "Loading..."
+                                  : `Pay ₦${Number(total).toLocaleString()}`}
+                              </button>
+                            </div>
                           </>
                         )}
                       </div>

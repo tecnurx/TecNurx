@@ -143,6 +143,8 @@ export default function RepairDetailPage({ params }) {
   const [trackData, setTrackData] = useState(null);
   const [quoteData, setQuoteData] = useState(null);
   const [additionalEntries, setAdditionalEntries] = useState([]);
+  const [repairPayments, setRepairPayments] = useState([]);
+  const [payingAdditionalWork, setPayingAdditionalWork] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
@@ -151,11 +153,12 @@ export default function RepairDetailPage({ params }) {
       try {
         setLoading(true);
 
-        const [detailRes, trackRes, quoteRes, addRes] = await Promise.allSettled([
+        const [detailRes, trackRes, quoteRes, addRes, payRes] = await Promise.allSettled([
           repairService.getRepairDetails(repairId),
           repairService.trackRepair(repairId),
           repairService.getQuote(repairId),
           repairService.getAdditionalWork(repairId),
+          repairService.getMyPayments({ limit: 50 }),
         ]);
 
         if (detailRes.status === "fulfilled") {
@@ -176,11 +179,30 @@ export default function RepairDetailPage({ params }) {
 
         if (addRes.status === "fulfilled") {
           const list =
+            addRes.value?.data?.items ||
+            addRes.value?.items ||
             addRes.value?.data?.entries ||
             addRes.value?.entries ||
-            addRes.value?.data ||
-            [];
+            (Array.isArray(addRes.value?.data) ? addRes.value.data : []);
           setAdditionalEntries(Array.isArray(list) ? list : []);
+        }
+
+        if (payRes.status === "fulfilled") {
+          const allPayments =
+            payRes.value?.data?.payments ||
+            payRes.value?.payments ||
+            [];
+          if (Array.isArray(allPayments)) {
+            setRepairPayments(
+              allPayments.filter((p) => {
+                const pRepairId =
+                  typeof p?.repair === "object"
+                    ? p.repair?._id || p.repair?.id
+                    : p?.repair;
+                return String(pRepairId || "") === String(repairId);
+              })
+            );
+          }
         }
       } catch (err) {
         console.warn("Could not load repair detail:", err);
@@ -343,14 +365,24 @@ export default function RepairDetailPage({ params }) {
     repair?.createdAt
   );
 
-  // Cost details (prefer GET /repairs/:id/quote, then repair.quote, then estimatedCost)
+  // Cost details (prefer GET /repairs/:id/quote, then actualCost, then repair.quote, then bookingCharge, then estimatedCost)
   const qParts = quoteData?.breakdown?.find((b) => b.key === "parts")?.amount;
   const qLabour = quoteData?.breakdown?.find((b) => b.key === "labour")?.amount;
-  const laborCost = qLabour ?? repair?.quote?.labour ?? repair?.estimatedCost?.laborCost ?? 0;
-  const partsCost = qParts ?? repair?.quote?.parts ?? repair?.estimatedCost?.partsCost ?? 0;
+  const laborCost =
+    (qLabour > 0 ? qLabour : null) ??
+    (repair?.quote?.labour > 0 ? repair.quote.labour : null) ??
+    repair?.estimatedCost?.laborCost ??
+    0;
+  const partsCost =
+    (qParts > 0 ? qParts : null) ??
+    (repair?.quote?.parts > 0 ? repair.quote.parts : null) ??
+    repair?.estimatedCost?.partsCost ??
+    0;
   const totalCost =
-    quoteData?.total ??
-    repair?.quote?.total ??
+    (quoteData?.total > 0 ? quoteData.total : null) ??
+    (repair?.actualCost?.totalCost > 0 ? repair.actualCost.totalCost : null) ??
+    (repair?.quote?.total > 0 ? repair.quote.total : null) ??
+    (repair?.bookingCharge?.total > 0 ? repair.bookingCharge.total : null) ??
     repair?.estimatedCost?.totalCost ??
     (laborCost + partsCost);
 
@@ -360,6 +392,30 @@ export default function RepairDetailPage({ params }) {
     statusStr === "quote_ready" ||
     statusStr === "quote_provided" ||
     statusStr === "awaiting_approval";
+  const hasBookingFeePending =
+    (repair?.bookingCharge?.status || "").toLowerCase() === "pending" &&
+    Number(repair?.bookingCharge?.total || 0) > 0;
+  const isBookingPaymentState =
+    statusStr === "awaiting_booking_payment" ||
+    statusStr === "draft" ||
+    (hasBookingFeePending &&
+      statusStr === "engineer_assigned" &&
+      (repair?.quote?.decision || "").toLowerCase() !== "accepted" &&
+      !isQuoteState);
+  const isQuoteAccepted =
+    statusStr === "quote_accepted" ||
+    ((repair?.quote?.decision || "").toLowerCase() === "accepted" &&
+      !["paid", "completed"].includes((repair?.paymentStatus || "pending").toLowerCase()) &&
+      ![
+        "in_progress",
+        "in_repair",
+        "quality_check",
+        "repaired",
+        "out_for_delivery",
+        "delivered",
+        "completed",
+        "cancelled",
+      ].includes(statusStr));
   const effectiveAdditionalWork =
     additionalEntries.length > 0
       ? additionalEntries
@@ -369,6 +425,52 @@ export default function RepairDetailPage({ params }) {
   const hasPendingAdditionalWork = effectiveAdditionalWork.some(
     (e) => (e.status || "").toLowerCase() === "pending" || !e.status
   );
+  const pendingAdditionalPayment = repairPayments.find(
+    (p) =>
+      p.purpose === "additional_work" &&
+      (p.status || "").toLowerCase() === "pending"
+  );
+  const completedAdditionalPayment = repairPayments.find(
+    (p) =>
+      p.purpose === "additional_work" &&
+      (p.status || "").toLowerCase() === "completed"
+  );
+  const approvedAdditionalEntry = effectiveAdditionalWork.find(
+    (e) => (e.status || "").toLowerCase() === "approved"
+  );
+  const hasUnpaidApprovedAdditionalWork =
+    (Boolean(approvedAdditionalEntry) || Boolean(pendingAdditionalPayment)) &&
+    !completedAdditionalPayment;
+
+  const handlePayAdditionalWork = async () => {
+    const entryId = approvedAdditionalEntry?.id || approvedAdditionalEntry?._id;
+    if (pendingAdditionalPayment?.paymentLink) {
+      window.location.href = pendingAdditionalPayment.paymentLink;
+      return;
+    }
+    if (!entryId) {
+      router.push("/dashboard/payments");
+      return;
+    }
+    try {
+      setPayingAdditionalWork(true);
+      const payRes = await repairService.initiateAdditionalWorkPayment(
+        repairId,
+        entryId
+      );
+      const payData = payRes?.data || payRes;
+      if (payData?.paymentLink) {
+        window.location.href = payData.paymentLink;
+        return;
+      }
+      router.push("/dashboard/payments");
+    } catch (err) {
+      console.warn("Failed to initiate additional work payment:", err);
+      router.push("/dashboard/payments");
+    } finally {
+      setPayingAdditionalWork(false);
+    }
+  };
 
   const badgeLabel =
     statusStr === "pending_quote"
@@ -430,8 +532,8 @@ export default function RepairDetailPage({ params }) {
       {/* Two-Column Grid */}
       <div className="repair-detail-grid">
         {/* Left Column: Progress Timeline Card + Quote & Engineer Summary */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          <div className="detail-card">
+        <div className="detail-left-column">
+          <div className="detail-card detail-progress-card">
             <h2 className="detail-card-title">Progress</h2>
 
           <div className="timeline-container">
@@ -484,7 +586,7 @@ export default function RepairDetailPage({ params }) {
             repair?.engineerNotes ||
             repair?.partsUsed?.length > 0 ||
             effectiveAdditionalWork.length > 0) && (
-            <div className="detail-card">
+            <div className="detail-card detail-summary-card">
               <h3 className="detail-card-title" style={{ marginBottom: "16px" }}>
                 Quote &amp; engineer summary
               </h3>
@@ -603,6 +705,74 @@ export default function RepairDetailPage({ params }) {
                 Review additional work
               </button>
             </div>
+          ) : hasUnpaidApprovedAdditionalWork ? (
+            <div className="action-needed-card">
+              <h3 className="action-needed-title">Additional work payment needed</h3>
+              <p className="action-needed-desc">
+                You approved the additional work (₦
+                {Number(
+                  pendingAdditionalPayment?.amount ??
+                    approvedAdditionalEntry?.amount ??
+                    0
+                ).toLocaleString()}
+                ). Complete payment so your engineer can proceed.
+                {isQuoteAccepted
+                  ? " Your original repair quote is also awaiting payment."
+                  : ""}
+                {hasBookingFeePending
+                  ? ` Your booking fee (₦${Number(
+                      repair?.bookingCharge?.total || 0
+                    ).toLocaleString()}) is also pending.`
+                  : ""}
+              </p>
+              <button
+                type="button"
+                className="action-needed-btn"
+                disabled={payingAdditionalWork}
+                onClick={handlePayAdditionalWork}
+              >
+                {payingAdditionalWork
+                  ? "Opening payment..."
+                  : `Pay additional cost (₦${Number(
+                      pendingAdditionalPayment?.amount ??
+                        approvedAdditionalEntry?.amount ??
+                        0
+                    ).toLocaleString()})`}
+              </button>
+              {isQuoteAccepted && (
+                <button
+                  type="button"
+                  className="action-needed-btn"
+                  style={{
+                    marginTop: "8px",
+                    backgroundColor: "#ffffff",
+                    color: "#0f172a",
+                    border: "1px solid #cbd5e1",
+                  }}
+                  onClick={() => router.push(`/dashboard/repairs/${repairId}/payment`)}
+                >
+                  Pay for repair (₦{Number(totalCost).toLocaleString()})
+                </button>
+              )}
+              {hasBookingFeePending && (
+                <button
+                  type="button"
+                  className="action-needed-btn"
+                  style={{
+                    marginTop: "8px",
+                    backgroundColor: "#ffffff",
+                    color: "#0f172a",
+                    border: "1px solid #cbd5e1",
+                  }}
+                  onClick={() =>
+                    router.push(`/dashboard/repairs/book/payment?repairId=${repairId}`)
+                  }
+                >
+                  Pay booking fee (₦
+                  {Number(repair?.bookingCharge?.total || 0).toLocaleString()})
+                </button>
+              )}
+            </div>
           ) : isQuoteState ? (
             <div className="action-needed-card">
               <h3 className="action-needed-title">Action needed</h3>
@@ -617,11 +787,28 @@ export default function RepairDetailPage({ params }) {
                 Review quote
               </button>
             </div>
-          ) : statusStr === "quote_accepted" ? (
+          ) : isBookingPaymentState ? (
+            <div className="action-needed-card">
+              <h3 className="action-needed-title">Booking payment needed</h3>
+              <p className="action-needed-desc">
+                Complete your booking fee (₦{Number(repair?.bookingCharge?.total || 0).toLocaleString()}) to confirm this repair.
+              </p>
+              <button
+                type="button"
+                className="action-needed-btn"
+                onClick={() => router.push(`/dashboard/repairs/book/payment?repairId=${repairId}`)}
+              >
+                Pay booking fee
+              </button>
+            </div>
+          ) : isQuoteAccepted ? (
             <div className="action-needed-card">
               <h3 className="action-needed-title">Payment needed</h3>
               <p className="action-needed-desc">
                 You approved the quote. Complete payment so your repair can start.
+                {hasBookingFeePending
+                  ? ` Note: your booking fee (₦${Number(repair?.bookingCharge?.total || 0).toLocaleString()}) is also still pending.`
+                  : ""}
               </p>
               <button
                 type="button"
@@ -630,6 +817,16 @@ export default function RepairDetailPage({ params }) {
               >
                 Pay for repair
               </button>
+              {hasBookingFeePending && (
+                <button
+                  type="button"
+                  className="action-needed-btn"
+                  style={{ marginTop: "8px", backgroundColor: "#ffffff", color: "#0f172a", border: "1px solid #cbd5e1" }}
+                  onClick={() => router.push(`/dashboard/repairs/book/payment?repairId=${repairId}`)}
+                >
+                  Pay booking fee (₦{Number(repair?.bookingCharge?.total || 0).toLocaleString()})
+                </button>
+              )}
             </div>
           ) : statusStr === "delivered" || statusStr === "completed" ? (
             <div className="action-needed-card" style={{ borderColor: "#e2e8f0" }}>

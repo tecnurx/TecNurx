@@ -162,11 +162,19 @@ const AdminOrders = () => {
       header: "Cost",
       accessor: "estimatedCost.totalCost",
       sortable: true,
-      render: (r) => (
-        <span style={{ fontWeight: "600" }}>
-          ₦{(r.estimatedCost?.totalCost || 0).toLocaleString()}
-        </span>
-      ),
+      render: (r) => {
+        const displayCost =
+          (r.actualCost?.totalCost > 0 ? r.actualCost.totalCost : null) ??
+          (r.quote?.total > 0 ? r.quote.total : null) ??
+          (r.bookingCharge?.total > 0 ? r.bookingCharge.total : null) ??
+          r.estimatedCost?.totalCost ??
+          0;
+        return (
+          <span style={{ fontWeight: "600" }}>
+            ₦{Number(displayCost).toLocaleString()}
+          </span>
+        );
+      },
     },
     {
       header: "Date",

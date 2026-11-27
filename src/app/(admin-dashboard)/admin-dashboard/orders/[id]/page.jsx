@@ -315,6 +315,32 @@ export default function OrderDetails() {
                     </p>
                   </div>
                 )}
+
+                <div>
+                  <p style={{ margin: "0 0 4px", fontSize: "12px", color: "#64748b" }}>
+                    {repairDetails.actualCost?.totalCost > 0
+                      ? "Actual Cost"
+                      : repairDetails.quote?.total > 0
+                      ? "Quoted Total"
+                      : repairDetails.bookingCharge?.total > 0
+                      ? "Booking Charge"
+                      : "Estimated Cost"}
+                  </p>
+                  <p style={{ margin: 0, fontWeight: "700", color: "#0f172a" }}>
+                    ₦{Number(
+                      (repairDetails.actualCost?.totalCost > 0 ? repairDetails.actualCost.totalCost : null) ??
+                        (repairDetails.quote?.total > 0 ? repairDetails.quote.total : null) ??
+                        (repairDetails.bookingCharge?.total > 0 ? repairDetails.bookingCharge.total : null) ??
+                        repairDetails.estimatedCost?.totalCost ??
+                        0
+                    ).toLocaleString()}
+                  </p>
+                  {repairDetails.bookingCharge?.total > 0 && (
+                    <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#64748b" }}>
+                      Pickup: ₦{Number(repairDetails.bookingCharge.deliveryFee || 0).toLocaleString()} · Return: ₦{Number(repairDetails.bookingCharge.returnFee || 0).toLocaleString()} · Diagnostic: ₦{Number(repairDetails.bookingCharge.diagnosticFee || 0).toLocaleString()}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           )}

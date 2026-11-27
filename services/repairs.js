@@ -93,6 +93,16 @@ export const repairService = {
     return response.data;
   },
 
+  submitPayLaterEligibility: async (repairId) => {
+    const response = await axios.post(`/repairs/${repairId}/pay-later/eligibility`);
+    return response.data;
+  },
+
+  getPayLaterApplication: async (repairId) => {
+    const response = await axios.get(`/repairs/${repairId}/pay-later/application`);
+    return response.data;
+  },
+
   getAdditionalWork: async (repairId) => {
     const response = await axios.get(`/repairs/${repairId}/additional-work`);
     return response.data;

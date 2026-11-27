@@ -22,6 +22,7 @@ function AdditionalRepairContent({ params }) {
 
   const [repair, setRepair] = useState(null);
   const [additionalEntries, setAdditionalEntries] = useState([]);
+  const [originalQuoteFromApi, setOriginalQuoteFromApi] = useState(null);
   const [loading, setLoading] = useState(true);
   const [decision, setDecision] = useState("approve"); // "approve" | "continue_without" | "stop"
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,11 +45,14 @@ function AdditionalRepairContent({ params }) {
             setRepair(data);
           }
           if (addRes.status === "fulfilled") {
+            const oq = addRes.value?.data?.originalQuote ?? addRes.value?.originalQuote;
+            if (typeof oq === "number") setOriginalQuoteFromApi(oq);
             const list =
+              addRes.value?.data?.items ||
+              addRes.value?.items ||
               addRes.value?.data?.entries ||
               addRes.value?.entries ||
-              addRes.value?.data ||
-              [];
+              (Array.isArray(addRes.value?.data) ? addRes.value.data : []);
             setAdditionalEntries(Array.isArray(list) ? list : []);
           }
         }
@@ -73,10 +77,15 @@ function AdditionalRepairContent({ params }) {
     effectiveEntries[effectiveEntries.length - 1] ||
     null;
   const entryId = activeEntry?._id || activeEntry?.id;
+  const isAlreadyApproved =
+    (activeEntry?.status || "").toLowerCase() === "approved";
 
   // Costs
   const originalQuoteCost =
-    repair?.quote?.total ?? repair?.estimatedCost?.totalCost ?? 0;
+    originalQuoteFromApi ??
+    repair?.quote?.total ??
+    repair?.estimatedCost?.totalCost ??
+    0;
   const additionalCost =
     activeEntry?.amount ??
     repair?.additionalRepair?.cost ??
@@ -116,11 +125,11 @@ function AdditionalRepairContent({ params }) {
       const apiDecision =
         decision === "continue_without" ? "skip" : decision; // "approve" | "skip" | "stop"
 
-      if (entryId) {
+      if (entryId && !isAlreadyApproved) {
         await repairService.decideAdditionalWork(repairId, entryId, apiDecision);
       }
 
-      if (decision === "approve") {
+      if (decision === "approve" || isAlreadyApproved) {
         if (entryId) {
           try {
             const payRes = await repairService.initiateAdditionalWorkPayment(
@@ -341,7 +350,13 @@ function AdditionalRepairContent({ params }) {
               onClick={handleConfirmDecision}
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Updating repair..." : "Confirm decision"}
+              {isSubmitting
+                ? isAlreadyApproved
+                  ? "Opening payment..."
+                  : "Updating repair..."
+                : isAlreadyApproved
+                ? `Pay additional cost (₦${formatCost(additionalCost)})`
+                : "Confirm decision"}
             </button>
           </div>
         </div>

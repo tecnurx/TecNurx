@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { FileText, Smartphone } from "lucide-react";
+import { FileText, Smartphone, AlertTriangle } from "lucide-react";
 import "../../insurance-flow.css";
 import { toast } from "@/components/CustomToast";
 
@@ -18,13 +18,104 @@ export default function PolicyDetailPage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const sp = new URLSearchParams(window.location.search);
-      if (sp.get("status") === "awaiting_verification") {
+      const st = sp.get("status");
+      if (st === "awaiting_verification") {
         setPolicyStatus("awaiting_verification");
+      } else if (st === "overdue" || st === "payment_overdue") {
+        setPolicyStatus("overdue");
+      } else if (st === "lapsed") {
+        setPolicyStatus("lapsed");
       }
     }
   }, []);
 
   const isAwaiting = policyStatus === "awaiting_verification";
+  const isOverdue = policyStatus === "overdue";
+  const isLapsed = policyStatus === "lapsed";
+
+  if (isLapsed) {
+    return (
+      <div className="ins-page">
+        <div className="ins-header">
+          <div>
+            <h1 className="ins-title">Plus</h1>
+            <p className="ins-subtitle">
+              Policy #{String(policyId).toUpperCase()} · iPhone 13 Pro
+            </p>
+          </div>
+
+          <span className="ins-pill ins-pill-red">
+            <span className="ins-pill-dot" />
+            <span>Lapsed</span>
+          </span>
+        </div>
+
+        <div
+          className="ins-card"
+          style={{
+            alignItems: "center",
+            textAlign: "center",
+            padding: "48px 24px",
+            gap: "14px",
+          }}
+        >
+          <div
+            style={{
+              width: "56px",
+              height: "56px",
+              borderRadius: "16px",
+              background: "#fde6e6",
+              color: "#a11d1d",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginBottom: "4px",
+            }}
+          >
+            <AlertTriangle size={24} strokeWidth={2} />
+          </div>
+
+          <h2 className="ins-card-title" style={{ fontSize: "22px" }}>
+            Your cover has lapsed
+          </h2>
+
+          <p className="ins-plan-desc" style={{ maxWidth: "460px", margin: 0 }}>
+            Premiums were not received, so you cannot make a claim.
+            Reinstatement may require a new device inspection depending on your
+            plan.
+          </p>
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "12px",
+              marginTop: "8px",
+            }}
+          >
+            <Link
+              href={`/dashboard/insurance/policies/${policyId}/renew`}
+              className="ins-btn-primary"
+              style={{ minWidth: "180px" }}
+            >
+              Reinstate cover
+            </Link>
+            <Link
+              href="/dashboard/insurance/buy"
+              className="ins-btn-outline"
+              style={{ minWidth: "180px" }}
+            >
+              Buy a new plan
+            </Link>
+            <Link href="/dashboard/support" className="ins-link-underlined">
+              Contact support
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="ins-page">
@@ -40,21 +131,56 @@ export default function PolicyDetailPage() {
         <div className="ins-header-actions">
           <span
             className={`ins-pill ${
-              isAwaiting ? "ins-pill-amber" : "ins-pill-green"
+              isOverdue
+                ? "ins-pill-red"
+                : isAwaiting
+                ? "ins-pill-amber"
+                : "ins-pill-green"
             }`}
           >
             <span className="ins-pill-dot" />
-            <span>{isAwaiting ? "Awaiting Verification" : "Active"}</span>
+            <span>
+              {isOverdue
+                ? "Payment Overdue"
+                : isAwaiting
+                ? "Awaiting Verification"
+                : "Active"}
+            </span>
           </span>
 
-          <Link
-            href="/dashboard/insurance/claims/new"
-            className={isAwaiting ? "ins-btn-outline" : "ins-btn-primary"}
-          >
-            Start a claim
-          </Link>
+          {!isOverdue && (
+            <Link
+              href="/dashboard/insurance/claims/new"
+              className={isAwaiting ? "ins-btn-outline" : "ins-btn-primary"}
+            >
+              Start a claim
+            </Link>
+          )}
         </div>
       </div>
+
+      {/* Screen: Missed Premium / Payment Overdue Callout Banner */}
+      {isOverdue && (
+        <div className="ins-card danger-border">
+          <h2 className="ins-card-title">Your premium is overdue</h2>
+          <p className="ins-plan-desc" style={{ margin: 0 }}>
+            ₦4,500 was due Dec 4, 2026. Pay now to keep your cover active. Your
+            cover is paused during the grace period until payment is received.
+          </p>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+            <button
+              type="button"
+              className="ins-btn-primary"
+              onClick={() => toast.info("Opening partner payment portal...")}
+            >
+              Pay now
+            </button>
+            <Link href="/dashboard/support" className="ins-link-underlined">
+              Contact support
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Screen 10 Awaiting Verification Callout Banner */}
       {isAwaiting && (
@@ -176,7 +302,9 @@ export default function PolicyDetailPage() {
                 <span className="ins-kv-val">₦4,500/month</span>
               </div>
               <div className="ins-kv-row">
-                <span className="ins-kv-label">Next payment</span>
+                <span className="ins-kv-label">
+                  {isOverdue ? "Overdue since" : "Next payment"}
+                </span>
                 <span className="ins-kv-val">Dec 4, 2026</span>
               </div>
             </div>
@@ -195,8 +323,17 @@ export default function PolicyDetailPage() {
           <div className="ins-card">
             <h2 className="ins-card-title">Manage</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "12px", alignItems: "flex-start" }}>
-              <Link href="/dashboard/insurance/buy" className="ins-link-underlined">
+              <Link
+                href={`/dashboard/insurance/policies/${policyId}/change-plan`}
+                className="ins-link-underlined"
+              >
                 Change plan
+              </Link>
+              <Link
+                href={`/dashboard/insurance/policies/${policyId}/renew`}
+                className="ins-link-underlined"
+              >
+                Renew policy
               </Link>
               <button
                 type="button"

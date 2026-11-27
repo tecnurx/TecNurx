@@ -14,10 +14,13 @@ import {
   Check,
   Wrench,
   Camera,
+  MapPin,
+  Trash2,
 } from "lucide-react";
 import TecNurxLoader from "@/components/TecNurxLoader";
 import { toast } from "@/components/CustomToast";
 import { authService } from "../../../../../services/auth";
+import { addressService } from "../../../../../services/address";
 import { engineerAuthService } from "../../../../../services/eng/engineerAuth";
 import { validatePassword, getPasswordRequirements } from "@/lib/passwordValidation";
 
@@ -29,7 +32,25 @@ const EngineerAccountSetup = () => {
   // Modals
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const [showAddAddressModal, setShowAddAddressModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Address State
+  const [addresses, setAddresses] = useState([]);
+  const [loadingAddresses, setLoadingAddresses] = useState(true);
+  const [addressForm, setAddressForm] = useState({
+    type: "pickup",
+    label: "",
+    streetAddress: "",
+    city: "",
+    state: "Lagos",
+    postalCode: "",
+    country: "Nigeria",
+    isDefault: false,
+  });
+  const [savingAddress, setSavingAddress] = useState(false);
+  const [addressError, setAddressError] = useState("");
+  const [addressSuccess, setAddressSuccess] = useState("");
 
   // Profile Update State
   const [userUpdateData, setUserUpdateData] = useState({
@@ -74,6 +95,98 @@ const EngineerAccountSetup = () => {
       setLoading(false);
     }
   }, []);
+
+  const fetchAddresses = async () => {
+    try {
+      setLoadingAddresses(true);
+      const res = await addressService.getUserAddresses();
+      const list = res?.data?.addresses || res?.addresses || [];
+      setAddresses(Array.isArray(list) ? list : []);
+    } catch (err) {
+      console.error("Failed to load engineer addresses:", err);
+    } finally {
+      setLoadingAddresses(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAddresses();
+  }, []);
+
+  const isServiceableAddress = (addr) => {
+    const loc = `${addr.state || ""} ${addr.city || ""} ${addr.streetAddress || ""}`.toLowerCase();
+    return (
+      loc.includes("lagos") ||
+      loc.includes("ikeja") ||
+      loc.includes("lekki") ||
+      loc.includes("victoria")
+    );
+  };
+
+  const handleAddressSubmit = async (e) => {
+    e.preventDefault();
+    setAddressError("");
+    setAddressSuccess("");
+
+    if (!addressForm.label?.trim()) {
+      return setAddressError("Address label is required");
+    }
+    if (!addressForm.streetAddress?.trim()) {
+      return setAddressError("Street address is required");
+    }
+    if (!addressForm.city?.trim()) {
+      return setAddressError("City is required");
+    }
+
+    setSavingAddress(true);
+    try {
+      await addressService.createAddress({
+        type: addressForm.type || "pickup",
+        label: addressForm.label.trim(),
+        streetAddress: addressForm.streetAddress.trim(),
+        city: addressForm.city.trim(),
+        state: addressForm.state?.trim() || "",
+        postalCode: addressForm.postalCode?.trim() || "",
+        country: addressForm.country || "Nigeria",
+        isDefault: Boolean(addressForm.isDefault),
+      });
+
+      await fetchAddresses();
+      setAddressSuccess("Address added successfully!");
+      toast.success("Address added successfully!");
+      setAddressForm({
+        type: "pickup",
+        label: "",
+        streetAddress: "",
+        city: "",
+        state: "Lagos",
+        postalCode: "",
+        country: "Nigeria",
+        isDefault: false,
+      });
+      setTimeout(() => {
+        setShowAddAddressModal(false);
+        setAddressSuccess("");
+      }, 900);
+    } catch (err) {
+      setAddressError(
+        err.response?.data?.message || "Failed to save address. Please try again."
+      );
+    } finally {
+      setSavingAddress(false);
+    }
+  };
+
+  const handleDeleteAddress = async (addrId) => {
+    if (!addrId) return;
+    try {
+      await addressService.deleteAddress(addrId);
+      setAddresses((prev) => prev.filter((a) => (a._id || a.id) !== addrId));
+      toast.success("Address removed");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to remove address");
+    }
+  };
 
   const handlePhotoChange = async (e) => {
     const file = e.target.files?.[0];
@@ -357,7 +470,134 @@ const EngineerAccountSetup = () => {
             </div>
           </div>
 
-          {/* 2. Security Card */}
+          {/* 2. Addresses Card */}
+          <div className="eng-account-card">
+            <div className="eng-account-card-head">
+              <h2 className="eng-account-card-title">Addresses</h2>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "18px" }}>
+              {loadingAddresses ? (
+                <p style={{ margin: 0, fontSize: "14px", color: "#64748b" }}>
+                  Loading addresses...
+                </p>
+              ) : addresses.length > 0 ? (
+                addresses.map((addr, idx) => {
+                  const serviceable = isServiceableAddress(addr);
+                  const displayCity = addr.city || addr.state || "Lagos";
+                  const addrId = addr._id || addr.id;
+                  return (
+                    <div
+                      key={addrId || idx}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "14px 16px",
+                        background: "#ffffff",
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "14px",
+                        gap: "12px",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0 }}>
+                        <div
+                          style={{
+                            width: "38px",
+                            height: "38px",
+                            borderRadius: "10px",
+                            background: "#f8fafc",
+                            border: "1px solid #e2e8f0",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "#111827",
+                            flexShrink: 0,
+                          }}
+                        >
+                          <MapPin size={18} />
+                        </div>
+                        <div style={{ minWidth: 0 }}>
+                          <h4 style={{ margin: "0 0 2px", fontSize: "14px", fontWeight: 700, color: "#111827" }}>
+                            {addr.streetAddress || addr.label || "Address line"}
+                          </h4>
+                          <p style={{ margin: 0, fontSize: "13px", color: "#64748b" }}>
+                            {addr.label ? `${addr.label} · ` : ""}{displayCity}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+                        <span
+                          className="eng-pill-verified"
+                          style={
+                            serviceable
+                              ? undefined
+                              : { backgroundColor: "#fef3c7", color: "#b45309" }
+                          }
+                        >
+                          • {serviceable ? "Serviceable" : "Outside coverage"}
+                        </span>
+                        {addrId && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteAddress(addrId)}
+                            title="Delete address"
+                            style={{
+                              background: "none",
+                              border: "none",
+                              color: "#94a3b8",
+                              cursor: "pointer",
+                              padding: "4px",
+                              display: "flex",
+                            }}
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    padding: "14px 16px",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "14px",
+                  }}
+                >
+                  <MapPin size={18} color="#64748b" />
+                  <div>
+                    <h4 style={{ margin: "0 0 2px", fontSize: "14px", color: "#111827" }}>
+                      No address added yet
+                    </h4>
+                    <p style={{ margin: 0, fontSize: "13px", color: "#64748b" }}>
+                      Add your workshop or pickup address for repair dispatches.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <button
+              type="button"
+              className="eng-btn-outline"
+              style={{ width: "100%" }}
+              onClick={() => {
+                setAddressError("");
+                setAddressSuccess("");
+                setShowAddAddressModal(true);
+              }}
+            >
+              Add address
+            </button>
+          </div>
+
+          {/* 3. Security Card */}
           <div className="eng-account-card">
             <div className="eng-account-card-head">
               <h2 className="eng-account-card-title">Security</h2>
@@ -761,6 +1001,198 @@ const EngineerAccountSetup = () => {
                     </>
                   ) : (
                     "Update Password"
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Address Modal */}
+      {showAddAddressModal && (
+        <div
+          className="eng-acct-modal-backdrop"
+          onClick={() => setShowAddAddressModal(false)}
+        >
+          <div
+            className="eng-acct-modal-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="eng-acct-modal-head">
+              <div>
+                <h2>Add new address</h2>
+                <p>Add your workshop or dispatch address for repair assignments</p>
+              </div>
+              <button
+                type="button"
+                className="eng-acct-modal-close"
+                onClick={() => setShowAddAddressModal(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {addressError && (
+              <div className="eng-acct-alert error">
+                <X size={16} />
+                <span>{addressError}</span>
+              </div>
+            )}
+            {addressSuccess && (
+              <div className="eng-acct-alert success">
+                <Check size={16} />
+                <span>{addressSuccess}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleAddressSubmit}>
+              <div className="eng-acct-form-grid">
+                <div className="eng-acct-field">
+                  <label>Address Label *</label>
+                  <input
+                    type="text"
+                    className="eng-acct-input"
+                    value={addressForm.label}
+                    onChange={(e) =>
+                      setAddressForm({ ...addressForm, label: e.target.value })
+                    }
+                    placeholder="e.g. Workshop, Office"
+                    required
+                  />
+                </div>
+
+                <div className="eng-acct-field">
+                  <label>Type</label>
+                  <select
+                    className="eng-acct-input"
+                    value={addressForm.type}
+                    onChange={(e) =>
+                      setAddressForm({ ...addressForm, type: e.target.value })
+                    }
+                  >
+                    <option value="pickup">Pickup</option>
+                    <option value="dropoff">Dropoff</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="eng-acct-field">
+                <label>Street Address *</label>
+                <input
+                  type="text"
+                  className="eng-acct-input"
+                  value={addressForm.streetAddress}
+                  onChange={(e) =>
+                    setAddressForm({
+                      ...addressForm,
+                      streetAddress: e.target.value,
+                    })
+                  }
+                  placeholder="House number, street name"
+                  required
+                />
+              </div>
+
+              <div className="eng-acct-form-grid">
+                <div className="eng-acct-field">
+                  <label>City *</label>
+                  <input
+                    type="text"
+                    className="eng-acct-input"
+                    value={addressForm.city}
+                    onChange={(e) =>
+                      setAddressForm({ ...addressForm, city: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="eng-acct-field">
+                  <label>State</label>
+                  <input
+                    type="text"
+                    className="eng-acct-input"
+                    value={addressForm.state}
+                    onChange={(e) =>
+                      setAddressForm({ ...addressForm, state: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="eng-acct-form-grid">
+                <div className="eng-acct-field">
+                  <label>Postal Code</label>
+                  <input
+                    type="text"
+                    className="eng-acct-input"
+                    value={addressForm.postalCode}
+                    onChange={(e) =>
+                      setAddressForm({
+                        ...addressForm,
+                        postalCode: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="eng-acct-field">
+                  <label>Country</label>
+                  <input
+                    type="text"
+                    className="eng-acct-input"
+                    value={addressForm.country || "Nigeria"}
+                    readOnly
+                    style={{ backgroundColor: "#f1f5f9", cursor: "default" }}
+                  />
+                </div>
+              </div>
+
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  fontSize: "13.5px",
+                  color: "#334155",
+                  cursor: "pointer",
+                  marginTop: "4px",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={addressForm.isDefault}
+                  onChange={(e) =>
+                    setAddressForm({
+                      ...addressForm,
+                      isDefault: e.target.checked,
+                    })
+                  }
+                />
+                <span>Set as default address</span>
+              </label>
+
+              <div className="eng-acct-modal-actions">
+                <button
+                  type="button"
+                  className="eng-btn-outline"
+                  onClick={() => setShowAddAddressModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="eng-btn-primary"
+                  disabled={savingAddress}
+                >
+                  {savingAddress ? (
+                    <>
+                      <Loader2 size={15} className="notif-spinner" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    "Save address"
                   )}
                 </button>
               </div>

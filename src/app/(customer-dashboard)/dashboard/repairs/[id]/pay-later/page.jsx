@@ -7,6 +7,7 @@ import { repairService } from "../../../../../../../services/repairs";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import TecNurxLoader from "@/components/TecNurxLoader";
+import { toast } from "@/components/CustomToast";
 
 function PayLaterContent({ params }) {
   const resolvedParams = use(params);
@@ -31,14 +32,13 @@ function PayLaterContent({ params }) {
   const [step, setStep] = useState(stepParam || getPathStep());
 
   const [repair, setRepair] = useState(null);
+  const [quoteData, setQuoteData] = useState(null);
+  const [application, setApplication] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [checkingStatus, setCheckingStatus] = useState(false);
 
   // Form states
   const [agreedStart, setAgreedStart] = useState(false);
-  const [nin, setNin] = useState("");
-  const [bvn, setBvn] = useState("");
-  const [idFileName, setIdFileName] = useState("National_ID_Card.jpg");
-  const [agreedReview, setAgreedReview] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [moreInfoFile, setMoreInfoFile] = useState(null);
 
@@ -49,33 +49,125 @@ function PayLaterContent({ params }) {
   const [isAccepting, setIsAccepting] = useState(false);
 
   // Lending partner name
-  const lendingPartner = repair?.lendingPartner || "CredPal";
+  const lendingPartner = repair?.lendingPartner || "our partner";
   const paymentGateway = repair?.paymentGateway || "Bank78";
 
   useEffect(() => {
     if (stepParam) {
-      setStep(stepParam);
+      setStep(stepParam === "identity" ? "start" : stepParam);
+    } else if (getPathStep() === "identity") {
+      setStep("start");
     }
-  }, [stepParam]);
+  }, [stepParam, pathname]);
 
   useEffect(() => {
-    const fetchRepair = async () => {
+    const fetchPayLaterData = async () => {
       try {
         setLoading(true);
         if (repairId) {
-          const res = await repairService.getRepairDetails(repairId);
-          const data = res?.data?.repair || res?.repair || res?.data;
-          setRepair(data);
+          const [devRes, qRes, appRes] = await Promise.allSettled([
+            repairService.getRepairDetails(repairId),
+            repairService.getQuote(repairId),
+            repairService.getPayLaterApplication(repairId),
+          ]);
+
+          if (devRes.status === "fulfilled") {
+            const data = devRes.value?.data?.repair || devRes.value?.repair || devRes.value?.data;
+            setRepair(data || null);
+          }
+
+          if (qRes.status === "fulfilled") {
+            setQuoteData(qRes.value?.data || qRes.value || null);
+          }
+
+          if (appRes.status === "fulfilled") {
+            const appData =
+              appRes.value?.data?.application ||
+              appRes.value?.application ||
+              appRes.value?.data ||
+              appRes.value;
+            if (appData && appData.status) {
+              setApplication(appData);
+              const s = appData.status.toLowerCase();
+              const currentPathStep = stepParam || getPathStep();
+              if (currentPathStep === "start" || currentPathStep === "identity") {
+                if (s === "pending") setStep("review");
+                else if (s === "not_approved") setStep("result");
+                else if (s === "approved") setStep("offer");
+                else if (s === "more_info_needed") setStep("more-info");
+              }
+            }
+          }
         }
       } catch (err) {
-        console.warn("Could not fetch repair details for pay later:", err);
+        console.warn("Could not fetch pay later data:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRepair();
+    fetchPayLaterData();
   }, [repairId]);
+
+  const handleSubmitEligibility = async () => {
+    try {
+      setIsSubmitting(true);
+      const res = await repairService.submitPayLaterEligibility(repairId);
+      const appData =
+        res?.data?.application || res?.application || res?.data || res;
+      if (appData) {
+        setApplication(appData);
+      }
+      const s = (appData?.status || "pending").toLowerCase();
+      if (res?.resumed) {
+        toast.info("Loaded your existing Pay Later request.");
+      } else {
+        toast.success("Pay Later availability request submitted.");
+      }
+      if (s === "not_approved") {
+        setStep("result");
+      } else if (s === "approved") {
+        setStep("offer");
+      } else if (s === "more_info_needed") {
+        setStep("more-info");
+      } else {
+        setStep("review");
+      }
+    } catch (err) {
+      toast.error(
+        err?.response?.data?.message ||
+          "Could not submit Pay Later check. You can still pay outright."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCheckApplicationStatus = async () => {
+    try {
+      setCheckingStatus(true);
+      const res = await repairService.getPayLaterApplication(repairId);
+      const appData =
+        res?.data?.application || res?.application || res?.data || res;
+      if (appData) {
+        setApplication(appData);
+        const s = (appData.status || "").toLowerCase();
+        if (s === "not_approved") {
+          setStep("result");
+        } else if (s === "approved") {
+          setStep("offer");
+        } else if (s === "more_info_needed") {
+          setStep("more-info");
+        } else {
+          toast.info("Your request is still pending review.");
+        }
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Could not refresh status.");
+    } finally {
+      setCheckingStatus(false);
+    }
+  };
 
   const displayId =
     repairId.length > 8 ? repairId.slice(-8).toUpperCase() : repairId.toUpperCase();
@@ -88,27 +180,18 @@ function PayLaterContent({ params }) {
   // User details
   const userName =
     repair?.user?.name ||
+    [repair?.user?.fname, repair?.user?.lname].filter(Boolean).join(" ") ||
     repair?.customerName ||
-    "Tunde Oladipo";
+    "Customer";
   const userPhone =
+    repair?.user?.phoneNumber ||
     repair?.user?.phone ||
     repair?.contactNumber ||
-    "+234 812 345 6789";
+    "—";
   const userEmail =
     repair?.user?.email ||
     repair?.customerEmail ||
-    "tunde@example.com";
-
-  // Masked NIN and BVN
-  const maskedNin = useMemo(() => {
-    if (!nin) return "•••• 5821";
-    return `•••• ${nin.slice(-4)}`;
-  }, [nin]);
-
-  const maskedBvn = useMemo(() => {
-    if (!bvn) return "•••• 9043";
-    return `•••• ${bvn.slice(-4)}`;
-  }, [bvn]);
+    "—";
 
   // Navigate to outright payment
   const handlePayOutright = () => {
@@ -151,8 +234,15 @@ function PayLaterContent({ params }) {
     </div>
   );
 
-  // Offer calculations (derived from repair quote or defaults)
-  const repairTotalNum = Number(repair?.quote?.total ?? repair?.estimatedCost ?? 75000);
+  // Offer calculations (derived from quote / application / repair)
+  const repairTotalNum = Number(
+    application?.amount ??
+      quoteData?.balanceDue ??
+      quoteData?.total ??
+      repair?.quote?.total ??
+      repair?.estimatedCost?.totalCost ??
+      0
+  );
   const depositNum = Number(repair?.rnplOffer?.deposit ?? 0);
   const feesAndInterestNum = Number(repair?.rnplOffer?.fees ?? 0);
   const totalToRepayNum = repairTotalNum + feesAndInterestNum;
@@ -531,17 +621,21 @@ function PayLaterContent({ params }) {
   }
 
   // ==========================================
-  // SCREEN 4: RESULT - NOT APPROVED (media_1795527822990_25d41116.png)
+  // SCREEN 4: RESULT - NOT APPROVED
   // ==========================================
   if (step === "result" || step === "not-approved") {
+    const decisionReason =
+      application?.decisionReason ||
+      quoteData?.payLater?.reason ||
+      "Repair Now, Pay Later isn't available yet.";
     return (
       <div className="pay-later-page">
         <div className="pay-later-header">
           <div className="pay-later-title-row">
-            <h1 className="pay-later-title">Pay Later result</h1>
+            <h1 className="pay-later-title">Pay Later status</h1>
             <span className="pl-badge not-approved">
               <span className="pl-badge-dot">●</span>
-              Not Approved
+              Not Available
             </span>
           </div>
           <p className="pay-later-subtitle">
@@ -556,10 +650,10 @@ function PayLaterContent({ params }) {
             <Info size={32} />
           </div>
           <h2 className="rnpl-centered-title">
-            We could not offer Pay Later this time
+            {decisionReason}
           </h2>
           <p className="rnpl-centered-desc">
-            This is the lender’s decision. Your repair quote has not changed.
+            Your repair quote has not changed. You can pay in full now to get your repair started.
           </p>
 
           <div className="rnpl-centered-actions">
@@ -572,16 +666,12 @@ function PayLaterContent({ params }) {
               Pay outright
             </button>
             <Link
-              href={`/dashboard/support?issue=rnpl_rejected&repairId=${repairId}`}
+              href={`/dashboard/support?issue=rnpl_unavailable&repairId=${repairId}`}
               className="btn-rnpl-white"
             >
               Contact support
             </Link>
           </div>
-
-          <p className="rnpl-centered-reason">
-            [Credit evaluation by {lendingPartner} did not meet criteria for this order value]
-          </p>
         </div>
       </div>
     );
@@ -673,14 +763,39 @@ function PayLaterContent({ params }) {
   }
 
   // ==========================================
-  // SCREEN 3: REVIEW YOUR APPLICATION (media_1795527754667_b52c4e8f.png)
+  // SCREEN 3: PENDING / APPLICATION STATUS
   // ==========================================
   if (step === "review") {
+    const submittedAtText = application?.submittedAt
+      ? new Date(application.submittedAt).toLocaleString("en-US", {
+          month: "short",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+        })
+      : "Just now";
+    const decideAfterText = application?.decideAfter
+      ? new Date(application.decideAfter).toLocaleString("en-US", {
+          month: "short",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+        })
+      : "Shortly";
+
     return (
       <div className="pay-later-page">
         <div className="pay-later-header">
-          <h1 className="pay-later-title">Review your application</h1>
-          <p className="pay-later-subtitle">Step 3 of 3</p>
+          <div className="pay-later-title-row">
+            <h1 className="pay-later-title">Checking availability</h1>
+            <span className="pl-badge more-info">
+              <span className="pl-badge-dot">●</span>
+              Pending
+            </span>
+          </div>
+          <p className="pay-later-subtitle">
+            Repair #{displayId} · {deviceName}
+          </p>
         </div>
 
         {renderStepper()}
@@ -689,7 +804,7 @@ function PayLaterContent({ params }) {
           {/* Left Column */}
           <div className="rnpl-left-col">
             <div className="rnpl-card">
-              <h2 className="rnpl-card-title">Your details</h2>
+              <h2 className="rnpl-card-title">Request summary</h2>
 
               <div className="rnpl-review-table">
                 <div className="rnpl-review-row">
@@ -697,71 +812,38 @@ function PayLaterContent({ params }) {
                   <span className="rnpl-review-value">{userName}</span>
                 </div>
                 <div className="rnpl-review-row">
-                  <span className="rnpl-review-label">Phone</span>
-                  <span className="rnpl-review-value">{userPhone}</span>
-                </div>
-                <div className="rnpl-review-row">
                   <span className="rnpl-review-label">Email</span>
                   <span className="rnpl-review-value">{userEmail}</span>
                 </div>
                 <div className="rnpl-review-row">
-                  <span className="rnpl-review-label">NIN</span>
-                  <span className="rnpl-review-value">{maskedNin}</span>
+                  <span className="rnpl-review-label">Amount</span>
+                  <span className="rnpl-review-value">{formatNaira(repairTotalNum)}</span>
                 </div>
                 <div className="rnpl-review-row">
-                  <span className="rnpl-review-label">BVN</span>
-                  <span className="rnpl-review-value">{maskedBvn}</span>
+                  <span className="rnpl-review-label">Submitted</span>
+                  <span className="rnpl-review-value">{submittedAtText}</span>
                 </div>
                 <div className="rnpl-review-row">
-                  <span className="rnpl-review-label">ID document</span>
-                  <span className="rnpl-uploaded-badge">
-                    <span className="dot">●</span>
-                    Uploaded
-                  </span>
+                  <span className="rnpl-review-label">Decision expected</span>
+                  <span className="rnpl-review-value">{decideAfterText}</span>
                 </div>
               </div>
 
-              {/* Agreement checkbox */}
-              <label
-                className="rnpl-checkbox-label"
-                onClick={() => setAgreedReview(!agreedReview)}
-              >
-                <div
-                  className={`rnpl-custom-checkbox ${
-                    agreedReview ? "checked" : ""
-                  }`}
-                >
-                  {agreedReview && <Check size={13} strokeWidth={3} />}
-                </div>
-                <span>
-                  I confirm these details are correct and agree to share them with{" "}
-                  {lendingPartner}.
-                </span>
-              </label>
-
-              {/* Action Buttons */}
-              <div className="rnpl-actions-row">
+              <div className="rnpl-actions-row" style={{ marginTop: "16px" }}>
                 <button
                   type="button"
                   className="btn-rnpl-white"
-                  onClick={() => setStep("identity")}
+                  onClick={handlePayOutright}
                 >
-                  Back
+                  Pay in full instead
                 </button>
                 <button
                   type="button"
                   className="btn-rnpl-primary"
-                  disabled={!agreedReview || isSubmitting}
-                  onClick={() => {
-                    setIsSubmitting(true);
-                    setTimeout(() => {
-                      setIsSubmitting(false);
-                      // Move to result or more info for demo
-                      setStep("result");
-                    }, 800);
-                  }}
+                  disabled={checkingStatus}
+                  onClick={handleCheckApplicationStatus}
                 >
-                  {isSubmitting ? "Submitting..." : "Submit application"}
+                  {checkingStatus ? "Checking..." : "Check status"}
                 </button>
               </div>
             </div>
@@ -775,27 +857,25 @@ function PayLaterContent({ params }) {
                 <div className="rnpl-step-row">
                   <div className="rnpl-step-circle">1</div>
                   <div className="rnpl-step-content">
-                    <h3 className="rnpl-step-heading">
-                      We send it to {lendingPartner}
-                    </h3>
-                    <p className="rnpl-step-desc">Securely.</p>
+                    <h3 className="rnpl-step-heading">Availability check</h3>
+                    <p className="rnpl-step-desc">We are checking if Pay Later is available for this repair.</p>
                   </div>
                 </div>
 
                 <div className="rnpl-step-row">
                   <div className="rnpl-step-circle">2</div>
                   <div className="rnpl-step-content">
-                    <h3 className="rnpl-step-heading">They review it</h3>
-                    <p className="rnpl-step-desc">This can take a few minutes.</p>
+                    <h3 className="rnpl-step-heading">Email &amp; in-app update</h3>
+                    <p className="rnpl-step-desc">We will email you as soon as an update is ready.</p>
                   </div>
                 </div>
 
                 <div className="rnpl-step-row">
                   <div className="rnpl-step-circle">3</div>
                   <div className="rnpl-step-content">
-                    <h3 className="rnpl-step-heading">You get a result here</h3>
+                    <h3 className="rnpl-step-heading">Pay outright anytime</h3>
                     <p className="rnpl-step-desc">
-                      Approved, more information needed, or not approved.
+                      You can still pay in full at any time to start your repair immediately.
                     </p>
                   </div>
                 </div>
@@ -922,14 +1002,14 @@ function PayLaterContent({ params }) {
   }
 
   // ==========================================
-  // SCREEN 1: START (media_1795527729198_cb9cd45d.jpg)
+  // SCREEN 1: START (NO NIN/BVN CAPTURE)
   // ==========================================
   return (
     <div className="pay-later-page">
       <div className="pay-later-header">
         <h1 className="pay-later-title">Repair Now, Pay Later</h1>
         <p className="pay-later-subtitle">
-          Check if you can spread the cost of this repair.
+          Check if Repair Now, Pay Later is available for this repair.
         </p>
       </div>
 
@@ -945,10 +1025,9 @@ function PayLaterContent({ params }) {
               <div className="rnpl-step-row">
                 <div className="rnpl-step-circle">1</div>
                 <div className="rnpl-step-content">
-                  <h3 className="rnpl-step-heading">Tell us a bit more</h3>
+                  <h3 className="rnpl-step-heading">Submit an availability check</h3>
                   <p className="rnpl-step-desc">
-                    Identity details so {lendingPartner} can check your
-                    eligibility.
+                    No NIN, BVN, or extra identity documents are needed.
                   </p>
                 </div>
               </div>
@@ -956,9 +1035,9 @@ function PayLaterContent({ params }) {
               <div className="rnpl-step-row">
                 <div className="rnpl-step-circle">2</div>
                 <div className="rnpl-step-content">
-                  <h3 className="rnpl-step-heading">Wait for a decision</h3>
+                  <h3 className="rnpl-step-heading">Wait for an update</h3>
                   <p className="rnpl-step-desc">
-                    Not instant. We tell you as soon as {lendingPartner} replies.
+                    We check availability and notify you by email and here.
                   </p>
                 </div>
               </div>
@@ -966,19 +1045,9 @@ function PayLaterContent({ params }) {
               <div className="rnpl-step-row">
                 <div className="rnpl-step-circle">3</div>
                 <div className="rnpl-step-content">
-                  <h3 className="rnpl-step-heading">See your offer</h3>
+                  <h3 className="rnpl-step-heading">Pay outright anytime</h3>
                   <p className="rnpl-step-desc">
-                    Terms are shown before you decide.
-                  </p>
-                </div>
-              </div>
-
-              <div className="rnpl-step-row">
-                <div className="rnpl-step-circle">4</div>
-                <div className="rnpl-step-content">
-                  <h3 className="rnpl-step-heading">Accept and repay</h3>
-                  <p className="rnpl-step-desc">
-                    Your repair starts after you accept.
+                    You can still pay in full at any time to start your repair immediately.
                   </p>
                 </div>
               </div>
@@ -989,7 +1058,7 @@ function PayLaterContent({ params }) {
           <div className="rnpl-card">
             <h2 className="rnpl-card-title">Before you start</h2>
             <p className="rnpl-before-desc">
-              [You will need your BVN, NIN, and a valid government-issued ID card]
+              We only check availability for Repair #{displayId} ({formatNaira(repairTotalNum)}). No identity documents are collected.
             </p>
 
             <label
@@ -1004,18 +1073,17 @@ function PayLaterContent({ params }) {
                 {agreedStart && <Check size={13} strokeWidth={3} />}
               </div>
               <span>
-                I agree to share my details with {lendingPartner} to check my
-                eligibility.
+                I would like to check if Repair Now, Pay Later is available for this repair.
               </span>
             </label>
 
             <button
               type="button"
               className="btn-rnpl-primary"
-              disabled={!agreedStart}
-              onClick={() => setStep("identity")}
+              disabled={!agreedStart || isSubmitting}
+              onClick={handleSubmitEligibility}
             >
-              Check my eligibility
+              {isSubmitting ? "Submitting..." : "Check availability"}
             </button>
 
             <button
@@ -1029,17 +1097,16 @@ function PayLaterContent({ params }) {
           </div>
         </div>
 
-        {/* Right Column: Provided by */}
+        {/* Right Column: Info */}
         <div className="rnpl-right-col">
           <div className="rnpl-card rnpl-sidebar-card">
-            <h2 className="rnpl-card-title">Provided by {lendingPartner}</h2>
+            <h2 className="rnpl-card-title">Availability check</h2>
             <p className="rnpl-sidebar-text">
-              Pay Later is provided by a licensed lender. TecNurx manages your
-              repair and tracks your payments.
+              TecNurx manages your repair and lets you know if instalment plans are currently available for your order.
             </p>
             <div className="rnpl-info-notice">
               <Info size={16} className="info-icon" />
-              <span>If you have already been verified, we skip repeat checks.</span>
+              <span>We do not ask for BVN, NIN, or ID uploads for this check.</span>
             </div>
           </div>
         </div>

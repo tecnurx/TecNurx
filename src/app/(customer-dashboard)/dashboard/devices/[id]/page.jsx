@@ -16,6 +16,7 @@ import {
   Clock,
   ArrowLeft,
   Edit3,
+  Trash2,
   X,
 } from "lucide-react";
 import { deviceService } from "../../../../../../services/devices";
@@ -120,7 +121,10 @@ export default function DeviceDetailPage({ params }) {
   // Edit Device Modal State
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
+  const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
   const [editFormData, setEditFormData] = useState({
+    deviceType: "phone",
     brand: "",
     model: "",
     serialNumber: "",
@@ -132,6 +136,7 @@ export default function DeviceDetailPage({ params }) {
   const openEditModal = () => {
     if (!device) return;
     setEditFormData({
+      deviceType: device.deviceType || "phone",
       brand: device.brand || "",
       model: device.model || "",
       serialNumber: device.serialNumber || "",
@@ -140,6 +145,24 @@ export default function DeviceDetailPage({ params }) {
       notes: device.notes || "",
     });
     setIsEditModalOpen(true);
+  };
+
+  const handleRemoveDevice = async () => {
+    if (repairs.length > 0) {
+      toast.error("Devices with repair history cannot be removed.");
+      return;
+    }
+    setIsRemoving(true);
+    try {
+      await deviceService.deleteDevice({ deviceId });
+      toast.success("Device removed successfully");
+      setIsRemoveModalOpen(false);
+      router.push("/dashboard/devices");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Could not remove device.");
+    } finally {
+      setIsRemoving(false);
+    }
   };
 
   const handleUpdateDevice = async (e) => {
@@ -292,6 +315,18 @@ export default function DeviceDetailPage({ params }) {
             <Edit3 size={15} />
             <span>Edit device</span>
           </button>
+
+          {repairs.length === 0 && (
+            <button
+              type="button"
+              className="btn-device-action-outline"
+              style={{ borderColor: "#fecaca", color: "#b91c1c" }}
+              onClick={() => setIsRemoveModalOpen(true)}
+            >
+              <Trash2 size={15} />
+              <span>Remove</span>
+            </button>
+          )}
 
           <Link
             href={`/dashboard/repairs/book?deviceId=${deviceId}`}
@@ -593,6 +628,27 @@ export default function DeviceDetailPage({ params }) {
 
             <form onSubmit={handleUpdateDevice} className="add-device-form">
               <div className="form-grid">
+                <div className="form-grouup full">
+                  <label>Device Type *</label>
+                  <select
+                    value={editFormData.deviceType}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        deviceType: e.target.value,
+                      })
+                    }
+                    required
+                  >
+                    <option value="phone">Phone</option>
+                    <option value="tablet">Tablet</option>
+                    <option value="laptop">Laptop</option>
+                    <option value="desktop">Desktop</option>
+                    <option value="camera">Camera</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
                 <div className="form-grouup">
                   <label>Brand *</label>
                   <input
@@ -694,6 +750,58 @@ export default function DeviceDetailPage({ params }) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Remove Device Confirmation Modal */}
+      {isRemoveModalOpen && (
+        <div
+          className="device-modal-backdrop"
+          onClick={() => !isRemoving && setIsRemoveModalOpen(false)}
+        >
+          <div
+            className="device-modal-card"
+            style={{ maxWidth: "440px" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="device-modal-header">
+              <div>
+                <h2>Remove device?</h2>
+                <p>
+                  This will remove {formatDeviceTitle(device)} from your saved
+                  devices.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="device-modal-close-btn"
+                disabled={isRemoving}
+                onClick={() => setIsRemoveModalOpen(false)}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="device-form-actions">
+              <button
+                type="button"
+                className="btn-modal-cancel"
+                disabled={isRemoving}
+                onClick={() => setIsRemoveModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn-modal-submit"
+                style={{ background: "#dc2626", color: "#ffffff" }}
+                disabled={isRemoving}
+                onClick={handleRemoveDevice}
+              >
+                {isRemoving ? "Removing..." : "Confirm remove"}
+              </button>
+            </div>
           </div>
         </div>
       )}

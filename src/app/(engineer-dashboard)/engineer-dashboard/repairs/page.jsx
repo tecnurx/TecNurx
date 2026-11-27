@@ -248,7 +248,12 @@ const RepairsPage = () => {
               ? r.issueCategory.replace(/_/g, " ")
               : "General repair";
             const dateStr = r.assignedAt || r.createdAt;
-            const amount = r.estimatedCost?.totalCost || 0;
+            const amount =
+              (r.actualCost?.totalCost > 0 ? r.actualCost.totalCost : null) ??
+              (r.quote?.total > 0 ? r.quote.total : null) ??
+              (r.bookingCharge?.total > 0 ? r.bookingCharge.total : null) ??
+              r.estimatedCost?.totalCost ??
+              0;
 
             return (
               <div key={r._id} className="eng-item-row">

@@ -51,7 +51,9 @@ const RepairDetailsPage = () => {
   const [quoteSending, setQuoteSending] = useState(false);
   const [extraWorkForm, setExtraWorkForm] = useState({
     note: "",
-    amount: "",
+    parts: "",
+    labour: "",
+    photos: [],
   });
   const [extraWorkSending, setExtraWorkSending] = useState(false);
 
@@ -125,19 +127,66 @@ const RepairDetailsPage = () => {
     }
   };
 
+  const handleExtraWorkPhotosChange = (e) => {
+    const selected = Array.from(e.target.files || []);
+    if (!selected.length) return;
+
+    const validTypes = ["image/jpeg", "image/png"];
+    const maxBytes = 5 * 1024 * 1024;
+    const nextPhotos = [...extraWorkForm.photos];
+
+    for (const file of selected) {
+      if (nextPhotos.length >= 4) {
+        toast.error("You can attach up to 4 photos.");
+        break;
+      }
+      if (!validTypes.includes(file.type)) {
+        toast.error(`${file.name}: only JPEG or PNG images are allowed.`);
+        continue;
+      }
+      if (file.size > maxBytes) {
+        toast.error(`${file.name}: file must be 5MB or smaller.`);
+        continue;
+      }
+      nextPhotos.push(file);
+    }
+
+    setExtraWorkForm((prev) => ({ ...prev, photos: nextPhotos }));
+    e.target.value = "";
+  };
+
+  const handleRemoveExtraWorkPhoto = (index) => {
+    setExtraWorkForm((prev) => ({
+      ...prev,
+      photos: prev.photos.filter((_, i) => i !== index),
+    }));
+  };
+
   const handleRaiseAdditionalWork = async () => {
+    const partsNum = Number(extraWorkForm.parts || 0);
+    const labourNum = Number(extraWorkForm.labour || 0);
+
     if (!extraWorkForm.note.trim()) {
       toast.error("Please describe the additional fault found.");
+      return;
+    }
+    if (partsNum + labourNum <= 0) {
+      toast.error("Parts + labour must be greater than ₦0.");
       return;
     }
     try {
       setExtraWorkSending(true);
       await engService.raiseAdditionalWork(repairId, {
         note: extraWorkForm.note.trim(),
-        amount: Number(extraWorkForm.amount || 0),
+        parts: partsNum,
+        labour: labourNum,
+        photos: extraWorkForm.photos,
       });
+      setRepair((prev) =>
+        prev ? { ...prev, status: "awaiting_customer_approval" } : prev
+      );
       toast.success("Additional work request sent to customer!");
-      setExtraWorkForm({ note: "", amount: "" });
+      setExtraWorkForm({ note: "", parts: "", labour: "", photos: [] });
     } catch (err) {
       toast.error(err?.response?.data?.message || "Failed to raise additional work");
     } finally {
@@ -348,9 +397,23 @@ const RepairDetailsPage = () => {
                 </span>
               </div>
               <div className="eng-kv-row">
-                <span className="eng-kv-label">Estimated cost</span>
+                <span className="eng-kv-label">
+                  {repair.actualCost?.totalCost > 0
+                    ? "Actual cost"
+                    : repair.quote?.total > 0
+                    ? "Quoted total"
+                    : repair.bookingCharge?.total > 0
+                    ? "Booking charge"
+                    : "Estimated cost"}
+                </span>
                 <span className="eng-kv-value">
-                  ₦{Number(repair.estimatedCost?.totalCost || 0).toLocaleString()}
+                  ₦{Number(
+                    (repair.actualCost?.totalCost > 0 ? repair.actualCost.totalCost : null) ??
+                      (repair.quote?.total > 0 ? repair.quote.total : null) ??
+                      (repair.bookingCharge?.total > 0 ? repair.bookingCharge.total : null) ??
+                      repair.estimatedCost?.totalCost ??
+                      0
+                  ).toLocaleString()}
                 </span>
               </div>
             </div>
@@ -650,21 +713,63 @@ const RepairDetailsPage = () => {
               <span>Request additional work</span>
             </h2>
 
-            <div className="eng-field">
-              <label>Additional amount (₦)</label>
-              <input
-                type="text"
-                inputMode="numeric"
-                className="eng-input"
-                value={formatMoneyInput(extraWorkForm.amount)}
-                onChange={(e) =>
-                  setExtraWorkForm((prev) => ({
-                    ...prev,
-                    amount: sanitizeMoneyInput(e.target.value),
-                  }))
-                }
-                placeholder="0"
-              />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+              <div className="eng-field">
+                <label>Parts cost (₦)</label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  className="eng-input"
+                  value={formatMoneyInput(extraWorkForm.parts)}
+                  onChange={(e) =>
+                    setExtraWorkForm((prev) => ({
+                      ...prev,
+                      parts: sanitizeMoneyInput(e.target.value),
+                    }))
+                  }
+                  placeholder="0"
+                />
+              </div>
+
+              <div className="eng-field">
+                <label>Labour cost (₦)</label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  className="eng-input"
+                  value={formatMoneyInput(extraWorkForm.labour)}
+                  onChange={(e) =>
+                    setExtraWorkForm((prev) => ({
+                      ...prev,
+                      labour: sanitizeMoneyInput(e.target.value),
+                    }))
+                  }
+                  placeholder="0"
+                />
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                fontSize: "13px",
+                color: "#475569",
+                marginBottom: "12px",
+                padding: "8px 12px",
+                backgroundColor: "#f8fafc",
+                borderRadius: "8px",
+              }}
+            >
+              <span>Total additional cost</span>
+              <strong style={{ color: "#0f172a" }}>
+                ₦
+                {(
+                  Number(extraWorkForm.parts || 0) +
+                  Number(extraWorkForm.labour || 0)
+                ).toLocaleString()}
+              </strong>
             </div>
 
             <div className="eng-field">
@@ -678,6 +783,71 @@ const RepairDetailsPage = () => {
                 }
                 placeholder="Explain the extra fault discovered mid-repair..."
               />
+            </div>
+
+            <div className="eng-field">
+              <label>Photos (optional, up to 4 · JPEG/PNG, max 5MB each)</label>
+              <input
+                type="file"
+                accept="image/jpeg,image/png"
+                multiple
+                onChange={handleExtraWorkPhotosChange}
+                disabled={extraWorkForm.photos.length >= 4}
+                className="eng-input"
+                style={{ padding: "8px" }}
+              />
+              {extraWorkForm.photos.length > 0 && (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "6px",
+                    marginTop: "8px",
+                  }}
+                >
+                  {extraWorkForm.photos.map((file, idx) => (
+                    <div
+                      key={`${file.name}-${idx}`}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: "8px",
+                        fontSize: "12px",
+                        padding: "6px 10px",
+                        backgroundColor: "#f8fafc",
+                        borderRadius: "6px",
+                        border: "1px solid #e2e8f0",
+                      }}
+                    >
+                      <span
+                        style={{
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {file.name}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveExtraWorkPhoto(idx)}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          color: "#64748b",
+                          display: "inline-flex",
+                          alignItems: "center",
+                        }}
+                        title="Remove photo"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <button

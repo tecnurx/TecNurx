@@ -11,15 +11,15 @@ export default function ClaimTrackerPage({ params }) {
   const resolvedParams = use(params);
   const claimId = (resolvedParams?.id || "CLM-0192").toUpperCase();
 
-  // Supports ?outcome=approved (Screen 16) and ?outcome=declined (Screen 17)
+  // Supports ?outcome=approved (Screen 16), ?outcome=declined (Screen 17), and ?outcome=closed (or ?status=closed)
   const [outcome, setOutcome] = useState(null);
   const [settlementChoice, setSettlementChoice] = useState("repair"); // "repair" | "other"
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const sp = new URLSearchParams(window.location.search);
-      const out = sp.get("outcome");
-      if (out === "approved" || out === "declined") {
+      const out = (sp.get("outcome") || sp.get("status") || "").toLowerCase();
+      if (out === "approved" || out === "declined" || out === "closed") {
         setOutcome(out);
       }
     }
@@ -210,6 +210,125 @@ export default function ClaimTrackerPage({ params }) {
             <Link href="/dashboard/repairs/book" className="ins-btn-primary full">
               Book a repair
             </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (outcome === "closed") {
+    const closedTimeline = [
+      { label: "Claim Submitted", date: "Nov 2, 2026" },
+      { label: "Documentation Review", date: "Nov 4, 2026" },
+      { label: "Assessment", date: "Nov 6, 2026" },
+      { label: "Outcome: Approved", date: "Nov 8, 2026" },
+      { label: "Repair or settlement", date: "Nov 16, 2026" },
+      { label: "Closed", date: "Nov 18, 2026" },
+    ];
+
+    return (
+      <div className="ins-page">
+        <div className="ins-header">
+          <div>
+            <h1 className="ins-title">Claim closed</h1>
+            <p className="ins-subtitle">
+              Claim #{claimId} · iPhone 13 Pro
+            </p>
+          </div>
+
+          <span className="ins-pill ins-pill-grey">
+            <span className="ins-pill-dot" />
+            <span>Closed</span>
+          </span>
+        </div>
+
+        <div className="ins-two-col">
+          {/* Left Column: Claim Summary & Documents */}
+          <div className="ins-col-stack">
+            <div className="ins-card">
+              <h2 className="ins-card-title">Claim summary</h2>
+              <div>
+                <div className="ins-kv-row">
+                  <span className="ins-kv-label">Outcome</span>
+                  <span className="ins-kv-val">Approved</span>
+                </div>
+                <div className="ins-kv-row">
+                  <span className="ins-kv-label">Settlement</span>
+                  <span className="ins-kv-val">Repair through TecNurx</span>
+                </div>
+                <div className="ins-kv-row">
+                  <span className="ins-kv-label">Amount</span>
+                  <span className="ins-kv-val">₦120,000</span>
+                </div>
+                <div className="ins-kv-row" style={{ borderBottom: "none", paddingBottom: 0 }}>
+                  <span className="ins-kv-label">Closed on</span>
+                  <span className="ins-kv-val">Nov 18, 2026</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="ins-card">
+              <h2 className="ins-card-title">Documents</h2>
+              <div>
+                {["Decision letter", "Repair receipt"].map((docName, idx) => (
+                  <div
+                    key={docName}
+                    className="ins-doc-row"
+                    style={
+                      idx === 1 ? { borderBottom: "none", paddingBottom: 0 } : undefined
+                    }
+                  >
+                    <div className="ins-doc-left">
+                      <FileText size={18} />
+                      <span>{docName}</span>
+                    </div>
+                    <button
+                      type="button"
+                      className="ins-link-underlined"
+                      onClick={() =>
+                        toast.info(`Downloading ${docName.toLowerCase()}...`)
+                      }
+                    >
+                      Download
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Timeline */}
+          <div className="ins-card">
+            <h2 className="ins-card-title">Timeline</h2>
+
+            <div className="claim-timeline">
+              {closedTimeline.map((item, idx) => (
+                <div key={item.label} className="claim-timeline-step">
+                  <div className="claim-step-indicator">
+                    <div
+                      className="claim-step-dot completed"
+                      style={{ background: "#080808", borderColor: "#080808" }}
+                    />
+                    {idx < closedTimeline.length - 1 && (
+                      <div className="claim-step-line" />
+                    )}
+                  </div>
+                  <div className="claim-step-content">
+                    <p className="claim-step-title">{item.label}</p>
+                    <p className="claim-step-meta">{item.date}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div>
+              <Link
+                href="/dashboard/insurance/claims/new"
+                className="ins-link-underlined"
+              >
+                Start another claim
+              </Link>
+            </div>
           </div>
         </div>
       </div>

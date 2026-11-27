@@ -12,12 +12,14 @@ import { toast } from "@/components/CustomToast";
 const MyOrders = () => {
   const router = useRouter();
   const [orders, setOrders] = useState([]);
+  const [trackMap, setTrackMap] = useState({});
   const [drafts, setDrafts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("active"); // "active" | "completed" | "all"
   const [resumingDraftId, setResumingDraftId] = useState(null);
   const [confirmingDiscardId, setConfirmingDiscardId] = useState(null);
   const [discardingDraftId, setDiscardingDraftId] = useState(null);
+  const [verifyingDraftId, setVerifyingDraftId] = useState(null);
 
   useEffect(() => {
     const fetchUserRepairs = async () => {
@@ -31,6 +33,29 @@ const MyOrders = () => {
           const repairsList =
             repairsRes.value?.data?.repairs || repairsRes.value?.repairs || [];
           setOrders(repairsList);
+
+          const activeList = repairsList.filter((order) => {
+            const status = (order?.status || "").toLowerCase();
+            return (
+              status !== "completed" &&
+              status !== "delivered" &&
+              !status.includes("cancel")
+            );
+          });
+
+          if (activeList.length > 0) {
+            const trackResults = await Promise.allSettled(
+              activeList.map((r) => repairService.trackRepair(r._id || r.id))
+            );
+            const nextMap = {};
+            trackResults.forEach((res, idx) => {
+              if (res.status === "fulfilled") {
+                const rId = activeList[idx]._id || activeList[idx].id;
+                nextMap[rId] = res.value?.data || res.value;
+              }
+            });
+            setTrackMap(nextMap);
+          }
         } else {
           setOrders([]);
         }
@@ -61,8 +86,11 @@ const MyOrders = () => {
       if (data?.paymentLink) {
         if (typeof window !== "undefined") {
           sessionStorage.setItem("pending_booking_repair_id", draftId);
+          localStorage.setItem("pending_booking_repair_id", draftId);
           if (data.reference) {
             sessionStorage.setItem("pending_booking_reference", data.reference);
+            localStorage.setItem("pending_booking_reference", data.reference);
+            localStorage.setItem(`draft_ref_${draftId}`, data.reference);
           }
           window.location.href = data.paymentLink;
         }
@@ -88,6 +116,63 @@ const MyOrders = () => {
       toast.error(err?.response?.data?.message || "Could not discard draft.");
     } finally {
       setDiscardingDraftId(null);
+    }
+  };
+
+  const handleVerifyDraft = async (draftId) => {
+    try {
+      setVerifyingDraftId(draftId);
+      let txRef =
+        typeof window !== "undefined"
+          ? localStorage.getItem(`draft_ref_${draftId}`)
+          : null;
+
+      if (!txRef) {
+        try {
+          const pRes = await repairService.getMyPayments({
+            purpose: "booking_charge",
+            limit: 20,
+          });
+          const pList = pRes?.data?.payments || pRes?.payments || [];
+          const match = pList.find(
+            (p) =>
+              (p.repair?._id || p.repair?.id || p.repair) === draftId &&
+              (p.status || "").toLowerCase() === "pending"
+          );
+          txRef = match?.transactionId || match?.reference || match?.id;
+        } catch {
+          // ignore lookup failure and fall back to getPaymentStatus
+        }
+      }
+
+      if (txRef) {
+        try {
+          await repairService.verifyPayment(txRef);
+        } catch {
+          // fallback to getPaymentStatus below
+        }
+      }
+      const statusRes = await repairService.getPaymentStatus(draftId, "booking_charge");
+      const statusData = statusRes?.data || statusRes;
+      if (
+        statusData?.bookingPlaced ||
+        statusData?.paymentStatus === "completed" ||
+        statusData?.outcome === "already_resolved"
+      ) {
+        toast.success("Booking payment verified!");
+        setDrafts((prev) => prev.filter((d) => (d._id || d.id) !== draftId));
+        if (typeof window !== "undefined") {
+          localStorage.removeItem(`draft_ref_${draftId}`);
+        }
+        const repairsRes = await repairService.getUserRepairs();
+        setOrders(repairsRes?.data?.repairs || repairsRes?.repairs || []);
+      } else {
+        toast.info("Payment is still pending. If you have already paid, try again in a moment.");
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Could not verify draft payment.");
+    } finally {
+      setVerifyingDraftId(null);
     }
   };
 
@@ -177,8 +262,90 @@ const MyOrders = () => {
     });
   };
 
-  const getProgressInfo = (order) => {
-    const status = (order?.status || "").toLowerCase();
+  const getProgressInfo = (order, trackData = null) => {
+    const repairId = order?._id || order?.id;
+    const status = (trackData?.currentStatus || order?.status || "").toLowerCase();
+
+    if (
+      trackData?.timeline &&
+      Array.isArray(trackData.timeline) &&
+      trackData.timeline.length > 0 &&
+      !status.includes("cancel")
+    ) {
+      const timeline = trackData.timeline;
+      const totalSteps = timeline.length;
+      const activeIdx = timeline.findIndex(
+        (item, idx) =>
+          !item.completed && (idx === 0 || timeline[idx - 1]?.completed)
+      );
+      const allCompleted = timeline.every((item) => Boolean(item.completed));
+      const currentStep = allCompleted
+        ? totalSteps
+        : activeIdx >= 0
+        ? activeIdx + 1
+        : 1;
+      const activeItem = allCompleted
+        ? timeline[totalSteps - 1]
+        : activeIdx >= 0
+        ? timeline[activeIdx]
+        : timeline[0];
+      const stepLabel =
+        activeItem?.label ||
+        (activeItem?.status ? activeItem.status.replace(/_/g, " ") : "In progress");
+
+      const isQuoteReady =
+        status === "quote_ready" ||
+        status === "quote_provided" ||
+        status === "awaiting_approval";
+      const isQuoteAccepted = status === "quote_accepted";
+      const isAwaitingCustomerApproval = status === "awaiting_customer_approval";
+      const isAwaitingBookingPayment = status === "awaiting_booking_payment";
+
+      let actionText = "Track repair";
+      let actionHref = `/dashboard/repairs/${repairId}`;
+      if (isQuoteReady) {
+        actionText = "Review quote";
+        actionHref = `/dashboard/repairs/${repairId}/quote`;
+      } else if (isQuoteAccepted) {
+        actionText = "Pay for repair";
+        actionHref = `/dashboard/repairs/${repairId}/payment`;
+      } else if (isAwaitingCustomerApproval) {
+        actionText = "Review additional work";
+        actionHref = `/dashboard/repairs/${repairId}`;
+      } else if (isAwaitingBookingPayment) {
+        actionText = "Pay booking fee";
+        actionHref = `/dashboard/repairs/book/payment?repairId=${repairId}`;
+      }
+
+      const badgeText =
+        status === "pending_quote"
+          ? "Quote requested"
+          : isQuoteReady
+          ? "Quote ready"
+          : status
+          ? status
+              .replace(/_/g, " ")
+              .replace(/\b\w/g, (c) => c.toUpperCase())
+          : "In progress";
+
+      const badgeType =
+        status === "completed" || status === "delivered"
+          ? "badge-success"
+          : isQuoteReady || isAwaitingCustomerApproval || isAwaitingBookingPayment
+          ? "badge-warning"
+          : "badge-info";
+
+      return {
+        currentStep,
+        totalSteps,
+        allCompleted,
+        stepText: `Step ${currentStep} of ${totalSteps}: ${stepLabel.toLowerCase()}`,
+        actionText,
+        actionHref,
+        badgeText,
+        badgeType,
+      };
+    }
 
     if (status.includes("cancel")) {
       return {
@@ -391,7 +558,7 @@ const MyOrders = () => {
                     <>
                       <button
                         type="button"
-                        disabled={resumingDraftId === dId}
+                        disabled={resumingDraftId === dId || verifyingDraftId === dId}
                         onClick={() => setConfirmingDiscardId(dId)}
                         style={{
                           background: "#ffffff",
@@ -401,14 +568,37 @@ const MyOrders = () => {
                           fontSize: "13px",
                           fontWeight: 600,
                           color: "#111827",
-                          cursor: resumingDraftId === dId ? "not-allowed" : "pointer",
+                          cursor:
+                            resumingDraftId === dId || verifyingDraftId === dId
+                              ? "not-allowed"
+                              : "pointer",
                         }}
                       >
                         Discard
                       </button>
                       <button
                         type="button"
-                        disabled={resumingDraftId === dId}
+                        disabled={resumingDraftId === dId || verifyingDraftId === dId}
+                        onClick={() => handleVerifyDraft(dId)}
+                        style={{
+                          background: "#ffffff",
+                          border: "1.5px solid #cbd5e1",
+                          borderRadius: "9999px",
+                          padding: "8px 16px",
+                          fontSize: "13px",
+                          fontWeight: 600,
+                          color: "#334155",
+                          cursor:
+                            resumingDraftId === dId || verifyingDraftId === dId
+                              ? "not-allowed"
+                              : "pointer",
+                        }}
+                      >
+                        {verifyingDraftId === dId ? "Verifying..." : "I've paid · Verify"}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={resumingDraftId === dId || verifyingDraftId === dId}
                         onClick={() => handleResumeDraft(dId)}
                         style={{
                           background: "#ffc400",
@@ -418,7 +608,10 @@ const MyOrders = () => {
                           fontSize: "13px",
                           fontWeight: 700,
                           color: "#111827",
-                          cursor: resumingDraftId === dId ? "not-allowed" : "pointer",
+                          cursor:
+                            resumingDraftId === dId || verifyingDraftId === dId
+                              ? "not-allowed"
+                              : "pointer",
                         }}
                       >
                         {resumingDraftId === dId ? "Loading..." : "Resume payment"}
@@ -495,15 +688,14 @@ const MyOrders = () => {
                 </div>
               ) : (
                 activeRepairs.map((activeRepair) => {
-                  const progressInfo = getProgressInfo(activeRepair);
+                  const rId = activeRepair._id || activeRepair.id;
+                  const progressInfo = getProgressInfo(activeRepair, trackMap[rId]);
 
                   return (
                     <div
-                      key={activeRepair._id}
+                      key={rId}
                       className="active-repair-card"
-                      onClick={() =>
-                        router.push(`/dashboard/repairs/${activeRepair._id}`)
-                      }
+                      onClick={() => router.push(`/dashboard/repairs/${rId}`)}
                       style={{ cursor: "pointer" }}
                     >
                       <div className="active-card-label">Active</div>
@@ -514,7 +706,7 @@ const MyOrders = () => {
                             {formatDeviceName(activeRepair.device)}
                           </h2>
                           <p className="active-repair-sub">
-                            {formatIssue(activeRepair.issueDescription, activeRepair.issueCategory)} · Repair #{formatRepairId(activeRepair._id)}
+                            {formatIssue(activeRepair.issueDescription, activeRepair.issueCategory)} · Repair #{formatRepairId(rId)}
                           </p>
                         </div>
 
@@ -524,11 +716,17 @@ const MyOrders = () => {
                         </div>
                       </div>
 
-                      {/* 6-segment Progress Bar */}
+                      {/* Dynamic Progress Bar from /track */}
                       <div className="progress-segments-row">
-                        {[1, 2, 3, 4, 5, 6].map((stepNum) => {
+                        {Array.from(
+                          { length: progressInfo.totalSteps || 6 },
+                          (_, i) => i + 1
+                        ).map((stepNum) => {
                           let segmentClass = "upcoming";
-                          if (stepNum < progressInfo.currentStep) {
+                          if (
+                            progressInfo.allCompleted ||
+                            stepNum < progressInfo.currentStep
+                          ) {
                             segmentClass = "completed";
                           } else if (stepNum === progressInfo.currentStep) {
                             segmentClass = "active";
@@ -548,9 +746,10 @@ const MyOrders = () => {
                         </span>
                         <Link
                           href={
-                            progressInfo.actionText === "Review quote"
-                              ? `/dashboard/repairs/${activeRepair._id}/quote`
-                              : `/dashboard/repairs/${activeRepair._id}`
+                            progressInfo.actionHref ||
+                            (progressInfo.actionText === "Review quote"
+                              ? `/dashboard/repairs/${rId}/quote`
+                              : `/dashboard/repairs/${rId}`)
                           }
                           className="review-quote-action"
                           onClick={(e) => e.stopPropagation()}

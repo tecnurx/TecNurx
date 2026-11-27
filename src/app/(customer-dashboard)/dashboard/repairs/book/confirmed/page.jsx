@@ -14,8 +14,20 @@ function BookingConfirmedContent() {
   const repairId =
     searchParams.get("id") ||
     searchParams.get("repairId") ||
-    (typeof window !== "undefined" ? sessionStorage.getItem("pending_booking_repair_id") : null) ||
+    (typeof window !== "undefined"
+      ? sessionStorage.getItem("pending_booking_repair_id") ||
+        localStorage.getItem("pending_booking_repair_id")
+      : null) ||
     "3EA19933";
+  const txReference =
+    searchParams.get("reference") ||
+    searchParams.get("trxref") ||
+    searchParams.get("transactionId") ||
+    (typeof window !== "undefined"
+      ? sessionStorage.getItem("pending_booking_reference") ||
+        localStorage.getItem("pending_booking_reference") ||
+        localStorage.getItem(`draft_ref_${repairId}`)
+      : null);
 
   const [repair, setRepair] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -28,6 +40,14 @@ function BookingConfirmedContent() {
         setLoading(true);
         if (repairId && repairId !== "3EA19933") {
           try {
+            if (txReference) {
+              try {
+                await repairService.verifyPayment(txReference);
+              } catch (verifyErr) {
+                console.warn("Direct verifyPayment fallback:", verifyErr);
+              }
+            }
+
             let statusData = null;
             for (let attempt = 0; attempt < 5; attempt++) {
               if (cancelled) return;
@@ -68,6 +88,9 @@ function BookingConfirmedContent() {
             if (typeof window !== "undefined") {
               sessionStorage.removeItem("pending_booking_repair_id");
               sessionStorage.removeItem("pending_booking_reference");
+              localStorage.removeItem("pending_booking_repair_id");
+              localStorage.removeItem("pending_booking_reference");
+              localStorage.removeItem(`draft_ref_${repairId}`);
             }
           }
         }

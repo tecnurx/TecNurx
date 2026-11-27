@@ -41,7 +41,7 @@ function RepairQuoteContent({ params }) {
 
   // Manual state toggle for testing/demoing available vs unavailable in UI
   const rnplQueryOverride = searchParams?.get("rnpl"); // "available" | "unavailable" | "true" | "false"
-  const [rnplDemoState, setRnplDemoState] = useState(null);
+  const [rnplDemoState, setRnplDemoState] = useState(true);
 
   useEffect(() => {
     const fetchRepair = async () => {
@@ -180,10 +180,35 @@ function RepairQuoteContent({ params }) {
       window.location.pathname.includes("/my-orders/");
 
     if (paymentMethod === "rnpl") {
-      const targetUrl = isMyOrders
+      setIsProcessing(true);
+      try {
+        const alreadyAccepted =
+          repair?.quote?.decision === "accepted" ||
+          (repair?.status || "").toLowerCase() === "quote_accepted";
+        if (!alreadyAccepted) {
+          await repairService.acceptQuote(repairId);
+        }
+      } catch (err) {
+        console.warn("Accept quote warning before pay-later:", err);
+      } finally {
+        setIsProcessing(false);
+      }
+
+      const appStatus = (quoteData?.payLater?.applicationStatus || "").toLowerCase();
+      const base = isMyOrders
         ? `/dashboard/my-orders/${repairId}/pay-later`
         : `/dashboard/repairs/${repairId}/pay-later`;
-      router.push(targetUrl);
+      if (appStatus === "pending") {
+        router.push(`${base}/review`);
+      } else if (appStatus === "not_approved") {
+        router.push(`${base}/result`);
+      } else if (appStatus === "approved") {
+        router.push(`${base}/offer`);
+      } else if (appStatus === "more_info_needed") {
+        router.push(`${base}/more-information`);
+      } else {
+        router.push(base);
+      }
       return;
     }
 
@@ -245,7 +270,7 @@ function RepairQuoteContent({ params }) {
         </div>
 
         {/* Demo Switcher for Previewing Available vs. Unavailable */}
-        <div className="quote-preview-toggle-wrap">
+        {/* <div className="quote-preview-toggle-wrap">
           <span className="quote-preview-toggle-label">Preview RNPL:</span>
           <button
             type="button"
@@ -265,7 +290,7 @@ function RepairQuoteContent({ params }) {
           >
             Unavailable
           </button>
-        </div>
+        </div> */}
       </div>
 
       {actionSuccess && (

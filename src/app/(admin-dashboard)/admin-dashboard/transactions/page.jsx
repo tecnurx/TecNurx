@@ -28,7 +28,16 @@ const AdminTransactions = () => {
               res.value?.payments ||
               (Array.isArray(res.value?.data) ? res.value.data : [])
             : [];
-        setPayments(paymentsData);
+        const sortedPayments = [...paymentsData].sort((a, b) => {
+          const dateA = new Date(
+            a.dateInitiated || a.datePayed || a.createdAt || a.initiatedAt || a.paidAt || a.updatedAt || 0
+          ).getTime();
+          const dateB = new Date(
+            b.dateInitiated || b.datePayed || b.createdAt || b.initiatedAt || b.paidAt || b.updatedAt || 0
+          ).getTime();
+          return dateA - dateB;
+        });
+        setPayments(sortedPayments);
 
         const baseStats =
           res.status === "fulfilled"
@@ -96,7 +105,7 @@ const AdminTransactions = () => {
       accessor: "paystackReference",
       render: (t) => (
         <code style={{ fontSize: "12px", background: "#f8fafc", padding: "2px 6px", borderRadius: "4px" }}>
-          {t.paystackReference || t.reference || t.paymentId || "—"}
+          {t.transactionId || t.paystackReference || t.providerReference || t.reference || t.paymentId || "—"}
         </code>
       ),
     },
